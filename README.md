@@ -25,4 +25,6 @@ See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more inform
 
 This library is licensed under the MIT-0 License. See the LICENSE file.
 
-Disclaimer: Deploying the Amazon Chime SDK demo applications contained in this repository will cause your AWS Account to be billed for services, including the Amazon Chime SDK, used by the application.
+Disclaimer: The demos in this repository are examples of how you can use the Amazon Chime SDK to build and customize audio, video and other collaboration experiences for your applications. These demos are for illustrative purposes only, and are not intended for production use. 
+Deploying the Amazon Chime SDK demo applications contained in this repository will cause your AWS Account to be billed for any AWS services, including the Amazon Chime SDK, used by the application.
+ 
