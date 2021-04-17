@@ -1,0 +1,482 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "AWS CloudFormation stack to set up Amazon Chime SDK messaging demo for moderated chat and sentiment analysis"
+Parameters:
+    DemoName:
+        Type: "String"
+        Default: "AWSSDKChimeModeratedChatDemo"
+        Description: Unique Name for Demo Resources
+
+Resources:
+    IAMManagedPolicyAppInstanceAdminModeratorBot:
+        Type: "AWS::IAM::ManagedPolicy"
+        Properties:
+            ManagedPolicyName: !Sub ${DemoName}-AppInstanceAdmin-ModeratorBot
+            Path: "/"
+            PolicyDocument: {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "chime:GetMessagingSessionEndpoint"
+                            ],
+                            "Resource": [
+                                "*"
+                            ]
+                        },
+                        {
+                            "Effect": "Allow",
+                            "Action": [
+                                "chime:SendChannelMessage",
+                                "chime:ListChannelMessages",
+                                "chime:CreateChannelMembership",
+                                "chime:ListChannelMemberships",
+                                "chime:DeleteChannelMembership",
+                                "chime:CreateChannelModerator",
+                                "chime:ListChannelModerators",
+                                "chime:DescribeChannelModerator",
+                                "chime:CreateChannel",
+                                "chime:DescribeChannel",
+                                "chime:ListChannels",
+                                "chime:DeleteChannel",
+                                "chime:RedactChannelMessage",
+                                "chime:UpdateChannelMessage",
+                                "chime:Connect",
+                                "chime:ListChannelBans",
+                                "chime:CreateChannelBan",
+                                "chime:DeleteChannelBan",
+                                "chime:ListChannelMembershipsForAppInstanceUser"
+                            ],
+                            "Resource": [
+                                !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/user/${aws:PrincipalTag/username}']],
+                                !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/channel/*']]
+                            ]
+                        }
+                    ]
+                }
+
+
+    AWSServiceRoleForAmazonChime:
+        Type: "AWS::IAM::ServiceLinkedRole"
+        Properties:
+          AWSServiceName: "chime.amazonaws.com"
+          Description: "Enables access to AWS Services and Resources used or managed by Amazon Chime."
+
+    LambdaExecuteRole:
+        Type: "AWS::IAM::Role"
+        Properties:
+            Path: "/"
+            RoleName: !Sub ${DemoName}-LambdaExecuteRole
+            AssumeRolePolicyDocument: "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"lambda.amazonaws.com\"},\"Action\":\"sts:AssumeRole\"}]}"
+            MaxSessionDuration: 3600
+            Description: "IAM role for Cloudformation setup"
+
+    AuthLambdaIAMRole:
+        Type: "AWS::IAM::Role"
+        Properties:
+            Path: "/"
+            RoleName: !Sub ${DemoName}-AuthLambdaIAMRole-1V0G095R47L10
+            AssumeRolePolicyDocument: "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"lambda.amazonaws.com\"},\"Action\":\"sts:AssumeRole\"}]}"
+            MaxSessionDuration: 3600
+            Description: "Role to allow lambda to call STSAssumeRole"
+
+    LambdaKinesisRole:
+        Type: "AWS::IAM::Role"
+        Properties:
+            Path: "/"
+            RoleName: !Sub ${DemoName}-LambdaKinesisRole
+            AssumeRolePolicyDocument: "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"lambda.amazonaws.com\"},\"Action\":\"sts:AssumeRole\"}]}"
+            MaxSessionDuration: 3600
+            ManagedPolicyArns:
+              - "arn:aws:iam::aws:policy/service-role/AWSLambdaKinesisExecutionRole"
+            Description: "Allows Lambda functions to access Kinesis stream for messaging demo"
+
+    LambdaAppInstanceAdminRole:
+        Type: "AWS::IAM::Role"
+        Properties:
+            Path: "/"
+            RoleName: !Sub ${DemoName}-LambdaAppInstanceAdminRole
+            Description: "Chime AppInstance admin role for moderator Lambda"
+            AssumeRolePolicyDocument: !Sub "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"AWS\":[\"arn:aws:iam::${AWS::AccountId}:root\",\"arn:aws:iam::${AWS::AccountId}:role/${LambdaKinesisRole}\"]},\"Action\":[\"sts:AssumeRole\",\"sts:TagSession\"],\"Condition\":{}}]}"
+            MaxSessionDuration: 3600
+            ManagedPolicyArns:
+              - !Ref IAMManagedPolicyAppInstanceAdminModeratorBot
+
+    AuthLambdaUserRole:
+        Type: "AWS::IAM::Role"
+        Properties:
+            Path: "/"
+            RoleName: !Sub ${DemoName}-AuthLambdaUserRole
+            AssumeRolePolicyDocument: !Sub "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"AWS\":\"arn:aws:iam::${AWS::AccountId}:role/${AuthLambdaIAMRole}\"},\"Action\":[\"sts:AssumeRole\",\"sts:TagSession\"]}]}"
+            MaxSessionDuration: 3600
+            Description: "Role for anonymous users"
+
+    LambdaAWSServicesPolicy:
+        Type: "AWS::IAM::Policy"
+        Properties:
+            PolicyDocument: |
+                {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Sid": "VisualEditor0",
+                            "Effect": "Allow",
+                            "Action": [
+                                "comprehend:BatchDetectDominantLanguage",
+                                "comprehend:DetectDominantLanguage",
+                                "comprehend:DetectPiiEntities",
+                                "comprehend:DetectSentiment",
+                                "comprehend:ClassifyDocument"
+                            ],
+                            "Resource": "*"
+                        }
+                    ]
+                }
+            Roles:
+              - !Ref LambdaKinesisRole
+            PolicyName: !Sub ${DemoName}-Lambda-AWSServices
+
+    LambdaChimeIAMSDKAPIAccessPolicy:
+        Type: "AWS::IAM::Policy"
+        Properties:
+            PolicyDocument: |
+                {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                  "Action": [
+                    "chime:CreateAppInstance",
+                    "chime:DescribeAppInstance",
+                    "chime:ListAppInstances",
+                    "chime:UpdateAppInstance",
+                    "chime:DeleteAppInstance",
+                    "chime:CreateAppInstanceUser",
+                    "chime:DeleteAppInstanceUser",
+                    "chime:ListAppInstanceUsers",
+                    "chime:UpdateAppInstanceUser",
+                    "chime:DescribeAppInstanceUser",
+                    "chime:CreateAppInstanceAdmin",
+                    "chime:DescribeAppInstanceAdmin",
+                    "chime:ListAppInstanceAdmins",
+                    "chime:DeleteAppInstanceAdmin",
+                    "chime:PutAppInstanceRetentionSettings",
+                    "chime:GetAppInstanceRetentionSettings",
+                    "chime:PutAppInstanceStreamingConfigurations",
+                    "chime:GetAppInstanceStreamingConfigurations",
+                    "chime:DeleteAppInstanceStreamingConfigurations",
+                    "chime:TagResource",
+                    "chime:UntagResource",
+                    "chime:ListTagsForResource"
+                  ],
+                  "Effect": "Allow",
+                  "Resource": "*"
+                  }
+                ]
+                }
+
+            Roles:
+              - !Ref LambdaExecuteRole
+              - !Ref LambdaKinesisRole
+            PolicyName: !Sub ${DemoName}-Lambda-ChimeIAMSDKAPIAccess
+
+    LambdaSTSAssumeRolePolicy:
+        Type: "AWS::IAM::Policy"
+        Properties:
+            PolicyDocument: |
+                {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Action": [
+                      "sts:AssumeRole",
+                      "sts:TagSession"
+                    ],
+                  "Resource": "*"
+                  }
+                ]
+                }
+
+            Roles:
+              - !Ref LambdaKinesisRole
+            PolicyName: !Sub ${DemoName}-Lambda-STSAssumeRole
+
+    LambdaCreateLogGroup:
+        Type: "AWS::IAM::Policy"
+        Properties:
+            PolicyDocument: "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Action\":[\"logs:CreateLogGroup\"],\"Resource\":\"*\",\"Effect\":\"Allow\"},{\"Action\":[\"logs:CreateLogStream\",\"logs:PutLogEvents\"],\"Resource\":\"*\",\"Effect\":\"Allow\"}]}"
+            Roles:
+              - !Ref LambdaExecuteRole
+            PolicyName: !Sub ${DemoName}-LambdaCreateLogGroup
+
+    LambdaUserCreatePolicy:
+        Type: "AWS::IAM::Policy"
+        Properties:
+            PolicyDocument: |
+                {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                        {
+                            "Action": [
+                                "chime:CreateAppInstance*",
+                                "chime:CreateAppInstanceUser",
+                                "chime:CreateAppInstanceAdmin",
+                                "chime:CreateChannel",
+                                "chime:PutAppInstanceStreamingConfigurations",
+                                "chime:GetAppInstanceStreamingConfigurations",
+                                "kinesis:*",
+                                "iam:*"
+                            ],
+                            "Resource": "*",
+                            "Effect": "Allow"
+                        }
+                    ]
+                }
+
+            Roles:
+              - !Ref LambdaExecuteRole
+            PolicyName: !Sub ${DemoName}-LambdaUserCreatePolicy
+
+    AuthLambdaChimePolicy:
+        Type: "AWS::IAM::Policy"
+        Properties:
+            PolicyDocument: "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Action\":[\"chime:CreateAppInstanceUser\",\"chime:GetMessagingSessionEndpoint\",\"chime:CreateChannelMembership\"],\"Resource\":\"*\",\"Effect\":\"Allow\"}]}"
+            Roles:
+              - !Ref AuthLambdaIAMRole
+            PolicyName: !Sub ${DemoName}-AuthLambdaChimePolicy
+
+    AuthLambdaLogPolicy:
+        Type: "AWS::IAM::Policy"
+        Properties:
+            PolicyDocument: !Sub "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Action\":[\"logs:CreateLogGroup\",\"logs:CreateLogStream\",\"logs:PutLogEvents\"],\"Resource\":[\"arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/${createChatUser}:*\"],\"Effect\":\"Allow\"}]}"
+            Roles:
+              - !Ref AuthLambdaIAMRole
+            PolicyName: !Sub ${DemoName}-AuthLambdaLogPolicy
+
+    ChimeSDKDemoUserPolicy:
+        Type: "AWS::IAM::Policy"
+        Properties:
+            PolicyDocument: "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Action\":[\"chime:GetMessagingSessionEndpoint\"],\"Resource\":\"*\",\"Effect\":\"Allow\"},{\"Action\":[\"chime:SendChannelMessage\",\"chime:ListChannelMessages\",\"chime:UpdateChannelMessage\",\"chime:ListChannelMembershipsForAppInstanceUser\",\"chime:ListChannelMemberships\",\"chime:DescribeChannel\",\"chime:Connect\"],\"Resource\":\"*\",\"Effect\":\"Allow\"}]}"
+            Roles:
+              - !Ref AuthLambdaUserRole
+            PolicyName: !Sub ${DemoName}-ChimeSDKDemoUserPolicy
+
+    KinesisStream:
+        Type: "AWS::Kinesis::Stream"
+        Properties:
+            Name: !Sub chime-messaging-${DemoName}-DataStream
+            RetentionPeriodHours: 24
+            StreamEncryption:
+                EncryptionType: "KMS"
+                KeyId: "alias/aws/kinesis"
+            ShardCount: 2
+
+    LambdaEventSourceMapping:
+        Type: "AWS::Lambda::EventSourceMapping"
+        Properties:
+            BatchSize: 5
+            EventSourceArn: !GetAtt KinesisStream.Arn
+            FunctionName: !GetAtt MessageModerator.Arn
+            Enabled: true
+            MaximumBatchingWindowInSeconds: 0
+            ParallelizationFactor: 1
+            MaximumRecordAgeInSeconds: -1
+            BisectBatchOnFunctionError: false
+            MaximumRetryAttempts: -1
+            TumblingWindowInSeconds: 0
+            StartingPosition: 'LATEST'
+
+    #Layer for the latest AWS SDK with Amazon Chime SDK for messaging
+    AWSSDKChimeLayer:
+        Type: AWS::Lambda::LayerVersion
+        Description: The AWS SDK with support for Amazon Chime SDK messaging features.
+        Properties:
+            CompatibleRuntimes:
+            - "nodejs12.x"
+            Content:
+                S3Bucket: aws-sdk-chime-moderatedchatdemo-assets
+                S3Key: AWSSDKChimeLayer.zip
+    MessageModerator:
+        Type: "AWS::Lambda::Function"
+        Properties:
+            Description: "Lambda for auto-moderation of Chime messaging channels"
+            Environment:
+                Variables:
+                    CHIME_APP_INSTANCE_ADMIN_ROLE_ARN: !GetAtt LambdaAppInstanceAdminRole.Arn
+                    DOCUMENT_CLASSIFIER_ENDPOINT: !Sub "arn:aws:comprehend:${AWS::Region}:${AWS::AccountId}:document-classifier-endpoint/profanityfilter"
+                    CHIME_APP_INSTANCE_ARN: !GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn
+            FunctionName: !Sub ${DemoName}-MessageModerator
+            Handler: "index.handler"
+            Code:
+                S3Bucket: aws-sdk-chime-moderatedchatdemo-assets
+                S3Key: AWSSDKChimeModeratedChatDemo-MessageModerator.zip
+            MemorySize: 128
+            Role: !GetAtt LambdaKinesisRole.Arn
+            Runtime: "nodejs12.x"
+            Timeout: 30
+            TracingConfig:
+                Mode: "PassThrough"
+
+    createChatUser:
+        Type: "AWS::Lambda::Function"
+        DependsOn:
+            - "AWSSDKChimeLayer"
+        Properties:
+            Description: "Create user Lambda function"
+            Environment:
+                Variables:
+                    UserRoleArn: !GetAtt AuthLambdaUserRole.Arn
+            FunctionName: !Sub ${DemoName}-createChatUser
+            Handler: "index.handler"
+            Code:
+                S3Bucket: aws-sdk-chime-moderatedchatdemo-assets
+                S3Key: AWSSDKChimeModeratedChatDemo-createChatUser.zip
+            MemorySize: 128
+            Role: !GetAtt AuthLambdaIAMRole.Arn
+            Runtime: "nodejs12.x"
+            Timeout: 3
+            TracingConfig:
+                Mode: "PassThrough"
+            Layers:
+                - !Ref AWSSDKChimeLayer
+
+    AppInstanceLambda:
+        Type: "AWS::Lambda::Function"
+        Properties:
+            Description: "Lambda to create Chime messaging resources needed for the demo."
+            FunctionName: !Sub ${DemoName}-AppInstanceLambda
+            Handler: "index.handler"
+            MemorySize: 128
+            Role: !GetAtt LambdaExecuteRole.Arn
+            Runtime: "nodejs12.x"
+            Timeout: 900
+            TracingConfig:
+                Mode: "PassThrough"
+            Code:
+                S3Bucket: aws-sdk-chime-moderatedchatdemo-assets
+                S3Key: AWSSDKChimeModeratedChatDemo-AppInstanceLambda.zip
+
+  # Trigger Lambda function to create Amazon Chime App Instance creation
+    TriggerChimeAppInstanceLambda:
+        Type: AWS::CloudFormation::CustomResource
+        DependsOn:
+            - "AppInstanceLambda"
+            - "LambdaUserCreatePolicy"
+        Properties:
+            ServiceToken: !GetAtt AppInstanceLambda.Arn
+            KinesisStreamArn: !GetAtt KinesisStream.Arn
+
+    LambdaPermission:
+        Type: "AWS::Lambda::Permission"
+        Properties:
+            Action: "lambda:InvokeFunction"
+            FunctionName: !GetAtt createChatUser.Arn
+            Principal: "apigateway.amazonaws.com"
+
+    # API Gateway API for CreatUser Lambda
+    ApiGatewayRestApi:
+        Type: "AWS::ApiGateway::RestApi"
+        Properties:
+            Name: "createUserAPI"
+            Description: "Create User API Gateway"
+            ApiKeySourceType: "HEADER"
+            EndpointConfiguration:
+                Types:
+                  - "REGIONAL"
+
+    ApiGatewayStage:
+        Type: "AWS::ApiGateway::Stage"
+        Properties:
+            StageName: "prod"
+            DeploymentId: !Ref ApiGatewayDeployment
+            RestApiId: !Ref ApiGatewayRestApi
+            CacheClusterEnabled: false
+            TracingEnabled: false
+
+    ApiGatewayDeployment:
+        Type: "AWS::ApiGateway::Deployment"
+        DependsOn:
+            - "ApiGatewayMethod2"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+
+    ApiGatewayMethod:
+        Type: "AWS::ApiGateway::Method"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+            ResourceId: { "Fn::GetAtt": [ApiGatewayRestApi, "RootResourceId"] }
+            HttpMethod: "OPTIONS"
+            AuthorizationType: "NONE"
+            ApiKeyRequired: false
+            RequestParameters: {}
+            RequestModels: {}
+            MethodResponses:
+              -
+                ResponseModels:
+                    "application/json": !Ref ApiGatewayModel
+                ResponseParameters:
+                    "method.response.header.Access-Control-Allow-Headers": true
+                    "method.response.header.Access-Control-Allow-Methods": true
+                    "method.response.header.Access-Control-Allow-Origin": true
+                StatusCode: "200"
+            Integration:
+                CacheNamespace: { "Fn::GetAtt": [ApiGatewayRestApi, "RootResourceId"] }
+                IntegrationResponses:
+                  -
+                    ResponseParameters:
+                        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+                        "method.response.header.Access-Control-Allow-Methods": "'POST,OPTIONS'"
+                        "method.response.header.Access-Control-Allow-Origin": "'*'"
+                    ResponseTemplates: {}
+                    StatusCode: "200"
+                PassthroughBehavior: "WHEN_NO_MATCH"
+                RequestParameters: {}
+                RequestTemplates:
+                    "application/json": "{\"statusCode\": 200}"
+                TimeoutInMillis: 29000
+                Type: "MOCK"
+
+    ApiGatewayMethod2:
+        Type: "AWS::ApiGateway::Method"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+            ResourceId: { "Fn::GetAtt": [ApiGatewayRestApi, "RootResourceId"] }
+            HttpMethod: "POST"
+            AuthorizationType: "NONE"
+            ApiKeyRequired: false
+            RequestParameters: {}
+            RequestModels: {}
+            Integration:
+                CacheNamespace: { "Fn::GetAtt": [ApiGatewayRestApi, "RootResourceId"] }
+                IntegrationHttpMethod: "POST"
+                PassthroughBehavior: "WHEN_NO_MATCH"
+                RequestParameters: {}
+                RequestTemplates: {}
+                TimeoutInMillis: 29000
+                Type: "AWS_PROXY"
+                Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:${createChatUser}/invocations"
+
+    ApiGatewayModel:
+        Type: "AWS::ApiGateway::Model"
+        Properties:
+            RestApiId: !Ref ApiGatewayRestApi
+            Name: "Empty2"
+            Description: "This is a default empty schema model"
+            Schema: |
+                {
+                  "$schema": "http://json-schema.org/draft-04/schema#",
+                  "title" : "Empty Schema",
+                  "type" : "object"
+                }
+            ContentType: "application/json"
+
+Outputs:
+    appInstanceArn:
+        Value: !GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn
+    createUserApiGatewayURL:
+        Value: !Sub "https://${ApiGatewayRestApi}.execute-api.${AWS::Region}.amazonaws.com/${ApiGatewayStage}/"
+    adminUserArn:
+        Value: !GetAtt TriggerChimeAppInstanceLambda.adminUserArn
+    channelArn:
+        Value: !GetAtt TriggerChimeAppInstanceLambda.channelArn
+
