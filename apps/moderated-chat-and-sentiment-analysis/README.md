@@ -9,7 +9,9 @@ We will start with a brief overview of the components of the demo application, t
 
 For this walk-through, you should have the following pre-requisites:
 
-* Install [AWS CLI](https://aws.amazon.com/cli/) and [Node](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) in your workspace.
+* [AWS CLI](https://aws.amazon.com/cli/).
+* [Node 14](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) or higher.
+* NPM 7 or higher.
 
 
 ## Application Architecture
@@ -46,10 +48,11 @@ There are 7 key components of this architecture:
 ### Step 2. Deploy the Amazon Chime SDK automated moderation demo app locally
 
 1. Run the following commands to install all the dependencies 
-    
+ 
     ```npm install```
 2. Edit src/Config.js with the outputs from the AWS CloudFormation stack from Step 1
-3. Once the configuration for the application is entered, run the following commands in the demo/(Demo name)  folder to set up your front-end server locally.
+3. Once the configuration for the application is entered, run the following command to set up your front-end server locally.
+ 
     ```npm run start```
 
 ## Authentication
