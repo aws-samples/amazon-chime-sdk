@@ -1,0 +1,38 @@
+.reaction-container {
+  z-index: 1000;
+  position: absolute;
+  bottom: 1rem;
+}
+
+.reaction-up {
+  display: inline-block;
+  position: absolute;
+  animation: up 4s ease-in-out forwards;
+}
+
+.reaction-wobble {
+  animation: wobble 4s ease-in-out forwards;
+}
+
+@keyframes up {
+  0% {
+      opacity: 0;
+      transform: translateY(0vh);
+  }
+  5%, 95% {
+      opacity: 1;
+  }
+  100% {
+      opacity: 0;
+      transform: translateY(-100vh);
+  }
+}
+
+@keyframes wobble {
+  33% {
+      transform: translateX(100px);
+  }
+  66% {
+      transform: translateX(-100px);
+  }
+}

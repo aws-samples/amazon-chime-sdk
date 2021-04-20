@@ -1,0 +1,11 @@
+.user-block {
+  /* Custom style */
+  right: 0;
+  display: inline-block;
+  position: absolute;
+  padding-right: 1rem;
+}
+
+.messaging-container {
+  background-color: #f0f1f2;
+}
