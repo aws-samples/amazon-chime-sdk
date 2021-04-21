@@ -1,5 +1,5 @@
-// Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
-// SPDX-License-Identifier: Apache-2.0
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: MIT-0
 
 const awsPath = '/Prod';
 export const rootPath = window.location.href.includes(awsPath)
