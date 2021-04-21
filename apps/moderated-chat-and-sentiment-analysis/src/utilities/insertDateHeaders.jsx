@@ -1,6 +1,6 @@
 /* eslint-disable no-plusplus */
-// Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
-// SPDX-License-Identifier: Apache-2.0
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: MIT-0
 
 import { Badge, formatDate } from 'amazon-chime-sdk-component-library-react';
 import React from 'react';
