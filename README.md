@@ -5,6 +5,16 @@ This repository contains samples intended to demonstrate different use cases for
 
 To provide feedback, please file an issue.
 
+## Samples
+
+### Analytics
+
+- [Amazon Chime SDK Meeting Event Dashboard](https://github.com/aws-samples/amazon-chime-sdk/tree/main/analytics/meeting-event-dashboard) - Monitors and troubleshoots with the Amazon Chime SDK meeting events
+
+### Applications
+
+- [Automated Moderation and Sentiment Analysis of Chat with the Amazon Chime SDK](https://github.com/aws-samples/amazon-chime-sdk/tree/main/apps/moderated-chat-and-sentiment-analysis) - Creates a chat application with automated moderation, message effects, and sentiment analysis
+
 ## Resources
 
 - [Amazon Chime SDK Overview](https://aws.amazon.com/chime/chime-sdk/)
