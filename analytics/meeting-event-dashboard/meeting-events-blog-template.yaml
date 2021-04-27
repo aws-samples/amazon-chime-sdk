@@ -1,0 +1,423 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: MIT-0
+
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >-
+  This CloudFormation template creates AWS Lambda, Amazon API Gateway, and Amazon CloudWatch resources
+  for searching and analyzing Amazon Chime SDK meeting events
+Parameters:
+  AccessControlAllowOrigin:
+    Type: String
+    Description: The value for the Access-Control-Allow-Origin header. For example, you can specify https://example.com. The default value (*) allows all origins to access the API response.
+    MinLength: 1
+    Default: "*"
+  MeetingEventMetricNamespace:
+    Type: String
+    Description: The namespace for the metric data. To avoid conflicts with AWS service namespaces, you should not specify a namespace that begins with AWS/
+    AllowedPattern: "[^:].*"
+    MinLength: 1
+    Default: AmazonChimeSDKMeetingEvents
+Mappings:
+  ConstantMap:
+    MeetingEventApiStageName:
+      Value: prod
+    MeetingEventApiPathName:
+      Value: meetingevents
+Resources:
+  MeetingEventUploader:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs12.x
+      Role: !GetAtt MeetingEventUploaderRole.Arn
+      Environment:
+        Variables:
+          LOG_GROUP_NAME: !Ref MeetingEventLogGroup
+          ACCESS_CONTROL_ALLOW_ORIGIN: !Ref AccessControlAllowOrigin
+          MEETING_EVENT_METRIC_NAMESPACE: !Ref MeetingEventMetricNamespace
+      Code:
+        ZipFile: |
+          const AWS = require('aws-sdk');
+          const cloudWatch = new AWS.CloudWatch({ apiVersion: '2010-08-01' });
+          const cloudWatchLogs = new AWS.CloudWatchLogs({ apiVersion: '2014-03-28' });
+
+          exports.handler = async function (event) {
+            let meetingEvents, meetingId, attendeeId;
+
+            try {
+              meetingEvents = JSON.parse(event.body);
+
+              if (!Array.isArray(meetingEvents)) {
+                throw new Error('The POST body does not contain a JSON array of meeting events');
+              }
+
+              if (!meetingEvents.length) {
+                return createReponse(200);
+              }
+
+              meetingId = meetingEvents[0].attributes.meetingId;
+              attendeeId = meetingEvents[0].attributes.attendeeId;
+              
+              if (!meetingId || !attendeeId) {
+                throw new Error('The POST body does not have a valid meeting ID and attendee ID');
+              }
+            } catch (error) {
+              console.error(error);
+              return createReponse(422, {
+                error: 'Invalid input: Ensure that you pass a JSON array of meeting events'
+              });
+            }
+            
+            try {
+              await Promise.all([
+                publishLogEvents(meetingId, attendeeId, meetingEvents),
+                publishMetricData(meetingEvents)
+              ]);
+            } catch (error) {
+              console.error(error);
+              return createReponse(500, {
+                error: 'Internal server error'
+              });
+            }
+
+            return createReponse(200);
+          }
+
+          async function publishLogEvents(meetingId, attendeeId, meetingEvents) {
+            const logGroupName = process.env.LOG_GROUP_NAME;
+            const logStreamName = `/meeting-events/${meetingId}/${attendeeId}/${Date.now()}`;
+
+            await cloudWatchLogs.createLogStream({
+              logGroupName,
+              logStreamName
+            }).promise();
+
+            await cloudWatchLogs.putLogEvents({
+              logEvents: meetingEvents.map(meetingEvent => ({
+                message: JSON.stringify(meetingEvent),
+                timestamp: meetingEvent.attributes.timestampMs
+              })),
+              logGroupName,
+              logStreamName
+            }).promise();
+          }
+
+          async function publishMetricData(meetingEvents) {
+            const metricData = meetingEvents
+              .filter(({ name, attributes }) => (
+                name === 'meetingStartSucceeded' &&
+                attributes.meetingStartDurationMs > 0
+              ))
+              .map(({ name, attributes }) => {
+                return {
+                  MetricName: 'meetingStartDurationMs',
+                  Timestamp: new Date(attributes.timestampMs).toISOString(),
+                  Unit: 'Milliseconds',
+                  Value: attributes.meetingStartDurationMs,
+                  Dimensions: [
+                    {
+                      Name: 'sdkName',
+                      Value: attributes.sdkName
+                    }
+                  ]
+                };
+              });
+            if (!metricData.length) {
+              return;
+            }
+
+            await cloudWatch.putMetricData({
+              Namespace: process.env.MEETING_EVENT_METRIC_NAMESPACE,
+              MetricData: metricData
+            }).promise();
+          }
+
+          // In a production environment, we recommend restricting access to your API using Lambda authorizers,
+          // Amazon Cognito user pools, or other mechanisms. For more information, see the "Controlling and
+          // managing access to a REST API in API Gateway" guide:
+          // https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-control-access-to-api.html
+          function createReponse(statusCode, body = {}) {
+            return {
+              statusCode,
+              body: JSON.stringify(body),
+              headers: {
+                'Access-Control-Allow-Origin': process.env.ACCESS_CONTROL_ALLOW_ORIGIN,
+                'Access-Control-Allow-Methods': 'OPTIONS,POST',
+                'Content-Type': 'application/json'
+              }
+            };
+          }
+  MeetingEventUploaderPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt MeetingEventUploader.Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub
+        - arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${MeetingEventApi}/*/POST/${MeetingEventApiPathName}
+        - MeetingEventApiPathName: !FindInMap [ConstantMap, MeetingEventApiPathName, Value]
+  MeetingEventUploaderRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Policies:
+      - PolicyName: MeetingEventUploaderPolicy
+        PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+          - Effect: Allow
+            Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+            - cloudwatch:PutMetricData
+            Resource: "*"
+  MeetingEventLogGroup: 
+    Type: AWS::Logs::LogGroup
+  MeetingEventApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+      Name: "Meeting Events API"
+  MeetingEventApiResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref MeetingEventApi
+      ParentId: !GetAtt MeetingEventApi.RootResourceId
+      PathPart: !FindInMap [ConstantMap, MeetingEventApiPathName, Value]
+  MeetingEventApiMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref MeetingEventApi
+      ResourceId: !Ref MeetingEventApiResource
+      HttpMethod: POST
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MeetingEventUploader.Arn}/invocations
+  MeetingEventApiDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn:
+      - MeetingEventApiMethod
+    Properties:
+      RestApiId: !Ref MeetingEventApi
+  MeetingEventApiStage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      StageName: !FindInMap [ConstantMap, MeetingEventApiStageName, Value]
+      RestApiId: !Ref MeetingEventApi
+      DeploymentId: !Ref MeetingEventApiDeployment
+      AccessLogSetting:
+        DestinationArn: !GetAtt MeetingEventApiAccessLogGroup.Arn
+        Format: '{ "requestId":"$context.requestId", "ip": "$context.identity.sourceIp", "caller":"$context.identity.caller", "user":"$context.identity.user","requestTime":"$context.requestTime", "httpMethod":"$context.httpMethod","resourcePath":"$context.resourcePath", "status":"$context.status","protocol":"$context.protocol", "responseLength":"$context.responseLength" }'
+  MeetingEventApiAccount:
+    Type: AWS::ApiGateway::Account
+    DependsOn: MeetingEventApiAccessLogRole
+    Properties:
+      CloudWatchRoleArn: !GetAtt MeetingEventApiAccessLogRole.Arn
+  MeetingEventApiAccessLogRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: ["sts:AssumeRole"]
+            Effect: Allow
+            Principal:
+              Service: [apigateway.amazonaws.com]
+        Version: "2012-10-17"
+      Path: "/"
+      ManagedPolicyArns: ["arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"]
+  MeetingEventApiAccessLogGroup:
+    Type: AWS::Logs::LogGroup
+  MeetingEventDashboard:
+    Type: AWS::CloudWatch::Dashboard
+    Properties:
+      DashboardBody: !Sub
+        - >
+          {
+              "widgets": [
+                  {
+                      "type": "log",
+                      "x": 12,
+                      "y": 6,
+                      "width": 12,
+                      "height": 6,
+                      "properties": {
+                          "query": "SOURCE \"${Source}\" | fields @timestamp, @message\n| filter name = \"meetingStartRequested\" and attributes.sdkName = \"amazon-chime-sdk-js\"\n| stats count(*) as startRequested by attributes.browserName as browser, attributes.browserMajorVersion as version\n| sort startRequested desc\n| limit 10",
+                          "region": "${AWS::Region}",
+                          "stacked": false,
+                          "title": "Top 10 browsers (JavaScript)",
+                          "view": "table"
+                      }
+                  },
+                  {
+                      "type": "log",
+                      "x": 0,
+                      "y": 6,
+                      "width": 12,
+                      "height": 6,
+                      "properties": {
+                          "query": "SOURCE \"${Source}\" | fields @timestamp, @message\n| filter name in [\"meetingStartRequested\"]\n| stats count(*) as startRequested by attributes.osName as operatingSystem\n| sort startRequested desc\n| limit 10",
+                          "region": "${AWS::Region}",
+                          "stacked": false,
+                          "title": "Top 10 operating systems",
+                          "view": "table"
+                      }
+                  },
+                  {
+                      "type": "log",
+                      "x": 0,
+                      "y": 30,
+                      "width": 24,
+                      "height": 6,
+                      "properties": {
+                          "query": "SOURCE \"${Source}\" | filter name in [\"audioInputFailed\", \"videoInputFailed\"]\n| fields\nfromMillis(@timestamp) as timestamp,\nattributes.sdkName as sdkName,\nconcat(attributes.osName, \" \", attributes.osVersion) as operatingSystem,\nconcat(attributes.browserName, \" \", attributes.browserMajorVersion) as browser,\nreplace(name, \"InputFailed\", \"\") as kind,\nconcat(attributes.audioInputErrorMessage, attributes.videoInputErrorMessage) as reason\n| sort @timestamp desc\n",
+                          "region": "${AWS::Region}",
+                          "stacked": false,
+                          "title": "Audio and video input failures",
+                          "view": "table"
+                      }
+                  },
+                  {
+                      "type": "log",
+                      "x": 0,
+                      "y": 18,
+                      "width": 24,
+                      "height": 6,
+                      "properties": {
+                          "query": "SOURCE \"${Source}\" | filter name in [\"meetingStartFailed\"]\n| fields fromMillis(@timestamp) as timestamp,\nattributes.sdkName as sdkName,\nconcat(attributes.osName, \" \", attributes.osVersion) as operatingSystem,\nconcat(attributes.browserName, \" \", attributes.browserMajorVersion) as browser,\nattributes.meetingStatus as failedStatus,\nconcat(attributes.signalingOpenDurationMs / 1000, \"s\")  as signalingOpenDurationMs,\nattributes.retryCount as retryCount\n| sort @timestamp desc\n",
+                          "region": "${AWS::Region}",
+                          "stacked": false,
+                          "title": "Meeting join failures",
+                          "view": "table"
+                      }
+                  },
+                  {
+                      "type": "log",
+                      "x": 0,
+                      "y": 24,
+                      "width": 24,
+                      "height": 6,
+                      "properties": {
+                          "query": "SOURCE \"${Source}\" | filter name in [\"meetingFailed\"]\n| fields\nfromMillis(@timestamp) as timestamp,\nattributes.sdkName as sdkName,\nconcat(attributes.osName, \" \", attributes.osVersion) as operatingSystem,\nconcat(attributes.browserName, \" \", attributes.browserMajorVersion) as browser,\nattributes.meetingStatus as failedStatus,\nconcat(attributes.meetingDurationMs / 1000, \"s\") as meetingDurationMs,\nattributes.retryCount as retryCount,\nattributes.poorConnectionCount as poorConnectionCount\n| sort @timestamp desc\n",
+                          "region": "${AWS::Region}",
+                          "stacked": false,
+                          "title": "Dropped attendees",
+                          "view": "table"
+                      }
+                  },
+                  {
+                      "type": "log",
+                      "x": 12,
+                      "y": 0,
+                      "width": 12,
+                      "height": 6,
+                      "properties": {
+                          "query": "SOURCE \"${Source}\" | filter name in [\"meetingStartRequested\"]\n| stats count(*) as startRequested by attributes.sdkName as SDK, attributes.sdkVersion as version",
+                          "region": "${AWS::Region}",
+                          "stacked": false,
+                          "title": "SDK versions",
+                          "view": "table"
+                      }
+                  },
+                  {
+                      "type": "log",
+                      "x": 0,
+                      "y": 0,
+                      "width": 12,
+                      "height": 6,
+                      "properties": {
+                          "query": "SOURCE \"${Source}\" | filter name in [\"meetingStartRequested\"]\n| stats count(*) as platform by attributes.sdkName",
+                          "region": "${AWS::Region}",
+                          "stacked": false,
+                          "title": "SDK platforms (JavaScript, iOS, and Android)",
+                          "view": "pie"
+                      }
+                  },
+                  {
+                      "type": "text",
+                      "x": 0,
+                      "y": 36,
+                      "width": 24,
+                      "height": 9,
+                      "properties": {
+                          "markdown": "\n## How to search events for a specific attendee?\n\nYou can use Amazon CloudWatch Logs Insights to search and analyze Amazon Chime SDK attendees.  For more information, see [Analyzing Log Data with CloudWatch Logs Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/AnalyzingLogData.html) in the *AWS CloudWatch Logs User Guide*.\n\n1. Click on the row number (▶) to expand a row.\n2. You can see detailed failure information.\n  - **attributes.meetingErrorMessage** explains the reason for the meeting failure.\n  - **attributes.audioInputErrorMessage** and **attributes.videoInputErrorMessage** indicate problems with the microphone and camera.\n  - **attributes.meetingHistory** shows up to last 15 attendee actions and events.\n3. To view a specific attendee's events, take note of **attributes.attendeeId** and choose **Insights** in the navigation pane.\n4. Select your ChimeBrowserMeetingEventLogs log group that starts with your stack name.\n  ```\n  __your_stack_name__ChimeBrowserMeetingEventLogs-...\n  ```\n5. In the query editor, delete the current contents, enter the following filter function, and then choose **Run query**.\n  ```\n  filter attributes.attendeeId = \"__your_attendee_id__\"\n  ```\n\n  The results show the number of SDK events from device selection to meeting end.\n"
+                      }
+                  },
+                  {
+                      "type": "metric",
+                      "x": 12,
+                      "y": 12,
+                      "width": 12,
+                      "height": 6,
+                      "properties": {
+                          "metrics": [
+                              [ "${Namespace}", "meetingStartDurationMs", "sdkName", "amazon-chime-sdk-js" ]
+                          ],
+                          "view": "timeSeries",
+                          "stacked": false,
+                          "region": "${AWS::Region}",
+                          "title": "Meeting start duration (P50)",
+                          "period": 300,
+                          "stat": "p50",
+                          "legend": {
+                              "position": "bottom"
+                          },
+                          "yAxis": {
+                              "left": {
+                                  "min": 0
+                              }
+                          }
+                      }
+                  },
+                  {
+                      "type": "metric",
+                      "x": 0,
+                      "y": 12,
+                      "width": 12,
+                      "height": 6,
+                      "properties": {
+                          "metrics": [
+                              [ "${Namespace}", "meetingStartDurationMs", "sdkName", "amazon-chime-sdk-js" ]
+                          ],
+                          "view": "timeSeries",
+                          "stacked": false,
+                          "region": "${AWS::Region}",
+                          "title": "Meeting start duration (P95)",
+                          "period": 300,
+                          "stat": "p95",
+                          "legend": {
+                              "position": "bottom"
+                          },
+                          "yAxis": {
+                              "left": {
+                                  "min": 0
+                              }
+                          }
+                      }
+                  }
+              ]
+          }
+        - Source: !Ref MeetingEventLogGroup
+          Namespace: !Ref MeetingEventMetricNamespace
+Outputs:
+  MeetingEventApiEndpoint:
+    Description: Meeting event API endpoint
+    Value: !Sub
+      - https://${MeetingEventApi}.execute-api.${AWS::Region}.amazonaws.com/${MeetingEventApiStageName}/${MeetingEventApiPathName}
+      - MeetingEventApiStageName: !FindInMap [ConstantMap, MeetingEventApiStageName, Value]
+        MeetingEventApiPathName: !FindInMap [ConstantMap, MeetingEventApiPathName, Value]
+  MeetingEventDashboard:
+    Description: Meeting event dashboard
+    Value: !Sub "https://console.aws.amazon.com/cloudwatch/home?region=${AWS::Region}#dashboards:name=${MeetingEventDashboard}"
