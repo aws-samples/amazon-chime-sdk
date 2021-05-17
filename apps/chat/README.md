@@ -31,11 +31,11 @@ This doc is intended for developers interested in the Amazon Chime Chat SDK, eve
 ## Running the Amazon Chime Sample App
 
 1. Ensure your workspace has node.js installed. Type `node -v` in your terminal to confirm, and it should return a version number.
-2. Navigate to the root folder of Amazon Chime Sample App `demo/chat`
-3. Open `src/Config.js` with the editor of your choice and update the each missing config with the values from the
+2. Navigate to the root folder of Amazon Chime Sample App `apps/chat`
+3. In the root directory `apps/chat`, Open `src/Config.js` with the editor of your choice and update the each missing config with the values from the
  previously created resources.
-4. In the root directory `apps/chat`, run `npm start` to start the client
-5. Open https://0.0.0.0:9000/ in your browser
+4. In the root directory `apps/chat`, run `npm install` and then `npm start` to build and start the client
+5. Open https://localhost:9000/ in your browser
 6. By default the demo uses Amazon Cognito User Pools to manage users and login.  Alternatively, you can get credentials through a small 
  lambda service that the cloudformation template sets up.  If you prefer to use the default Cognito flow
  continue with [Cognito User Pools - Register a New User](#cognito-user-pools-register-a-new-user).  If you prefer to use the credential 
@@ -73,9 +73,10 @@ Skip ahead to [Creating a Channel](#creating-a-channel)
 1. Open a browser of your choice and navigate to [http://localhost:9000](http://localhost:9000/) to access the client
 2. Change the drop down to Credential Exchange Service
 3. The Credential Exchange Service is a small lambda running behind API gateway that enables exchanging your applications or identity 
-provider's (IDP) token for AWS credentials.  To simulate the processes of exchanging credentials by default the lambda returns anonymous access
-regardless of the token provided.  Click "Exchange Token for AWS Credentials" to get anonymous access to the chat application.  If you
-wish to change the code to validate your application/IDP token, modify the following code in /backend/serverless/template.yml.
+provider's (IDP) token for AWS credentials, or for you to implement custom authentication.  To simulate the processes of exchanging 
+credentials, by default the lambda returns anonymous access regardless of the token provided.  Click "Exchange Token for AWS Credentials" 
+to get anonymous access to the chat application.  If you wish to change the code to validate your application/IDP token or implement
+custom authentication, modify the following code in /backend/serverless/template.yml.
 
 ```
  // STEP 1: Validate your identity providers access token and return user information
