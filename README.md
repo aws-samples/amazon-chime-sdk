@@ -14,6 +14,7 @@ To provide feedback, please file an issue.
 ### Applications
 
 - [Automated Moderation and Sentiment Analysis of Chat with the Amazon Chime SDK](https://github.com/aws-samples/amazon-chime-sdk/tree/main/apps/moderated-chat-and-sentiment-analysis) - Creates a chat application with automated moderation, message effects, and sentiment analysis
+- [Chat with Amazon Chime SDK Messaging](https://github.com/aws-samples/amazon-chime-sdk/tree/main/apps/chat-) - Creates a basic chat application
 
 ## Resources
 
