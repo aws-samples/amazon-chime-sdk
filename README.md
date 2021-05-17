@@ -15,6 +15,8 @@ To provide feedback, please file an issue.
 
 - [Automated Moderation and Sentiment Analysis of Chat with the Amazon Chime SDK](https://github.com/aws-samples/amazon-chime-sdk/tree/main/apps/moderated-chat-and-sentiment-analysis) - Creates a chat application with automated moderation, message effects, and sentiment analysis
 
+- [iOS WkWebView Sample](https://github.com/aws-samples/amazon-chime-sdk/tree/main/apps/iOS-WKWebView-sample) - Demonstrates how to join a WebRTC-based meeting application, like the [Amazon Chime JS SDK Serverless Demo](https://github.com/aws/amazon-chime-sdk-js/tree/master/demos/serverless), from within a WKWebView in iOS. 
+
 ## Resources
 
 - [Amazon Chime SDK Overview](https://aws.amazon.com/chime/chime-sdk/)
