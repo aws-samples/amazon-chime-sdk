@@ -71,7 +71,7 @@ Skip ahead to [Creating a Channel](#creating-a-channel)
 #### Credential Exchange Service: Login
 
 1. Open a browser of your choice and navigate to [http://localhost:9000](http://localhost:9000/) to access the client
-2. Change the drop down to Credential Exchange Service
+2. Change the drop down to Credential Exchange Service.
 3. The Credential Exchange Service is a small lambda running behind API gateway that enables exchanging your applications or identity
 provider's (IDP) token for AWS credentials, or for you to implement custom authentication. To simulate the processes of exchanging 
 credentials, by default the lambda returns anonymous access regardless of the token provided. Click "Exchange Token for AWS Credentials" 
