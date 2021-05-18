@@ -43,31 +43,7 @@ This doc is intended for developers interested in the Amazon Chime Chat SDK, eve
 
 #### Cognito User Pools: Register a New User
 
-New users can register through the Amazon Chime Sample App.+ (nullable NSString *)serializeTimestamp:(NSDictionary *)rules value:(id)value error:(NSError *__autoreleasing *)error {
-                                                               if (!value || value isEqual:[NSNull null]] || ![rules[@"type"] isEqualToString:@"timestamp"]) {
-                                                                   return nil;
-                                                               } else {
-                                                                   //generate string presentation of timestamp
-                                                                   NSString *timestampStr;
-                                                                   
-                                                                   NSDate *timeStampDate = [self parseTimestamp:value];
-                                                                   if (timeStampDate == nil) {
-                                                                       [self failWithCode:AWSTimestampParserError
-                                                                              description:[NSString stringWithFormat:@"the timestamp value is invalid:%@",value]
-                                                                                    error:error];
-                                                                   } else {
-                                                                       // we are able to parse the value into NSDate
-                                                                       if ([rules[@"timestampFormat"] isEqualToString:@"iso8601"]) {
-                                                                           timestampStr = [timeStampDate aws_stringValue:AWSDateISO8601DateFormat1];
-                                                                       } else if ([rules[@"timestampFormat"] isEqualToString:@"unixTimestamp"]) {
-                                                                           timestampStr = [NSString stringWithFormat:@"%.lf",[timeStampDate timeIntervalSince1970]];
-                                                                       } else if ([rules[@"timestampFormat"] isEqualToString:@"rfc822"]) {
-                                                                           timestampStr = [timeStampDate aws_stringValue: AWSDateRFC822DateFormat1];
-                                                                       }
-                                                                   }
-                                                                   return timestampStr;
-                                                               }
-                                                           }
+New users can register through the Amazon Chime Sample App.
 
 1. Open a browser of your choice and navigate to [http://localhost:9000](http://localhost:9000/) to access the client.
 2. Provide a Username and Password for the new user. The default user pool requires the password to be a minimum of 8 characters and contain at least one uppercase, lowercase, special character, and number.
