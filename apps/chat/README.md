@@ -86,7 +86,7 @@ New users can register through the Amazon Chime Sample App.+ (nullable NSString 
 
 #### Cognito User Pools: **Logging In**
 
-1. Open a browser of your choice and navigate to [http://localhost:90**00](http://localhost:9000/) to access the client
+1. Open a browser of your choice and navigate to [http://localhost:9000](http://localhost:9000/) to access the client
 2. Provide the username and password of the desired user.
 3. Choose Login
 
