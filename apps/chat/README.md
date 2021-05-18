@@ -32,7 +32,7 @@ This doc is intended for developers interested in the Amazon Chime Chat SDK, eve
 
 1. Ensure your workspace has node.js installed. Type `node -v` in your terminal to confirm, and it should return a version number.
 2. Navigate to the root folder of Amazon Chime Sample App `apps/chat`
-3. In the root directory `apps/chat`, Open `src/Config.js` with the editor of your choice and update the each missing config with the values from the
+3. In the root directory `apps/chat`, open `src/Config.js` with the editor of your choice and update the each missing config with the values from the
  previously created resources.
 4. In the root directory `apps/chat`, run `npm install` and then `npm start` to build and start the client
 5. Open https://localhost:9000/ in your browser
@@ -43,9 +43,33 @@ This doc is intended for developers interested in the Amazon Chime Chat SDK, eve
 
 #### Cognito User Pools: Register a New User
 
-New users can register through the Amazon Chime Sample App.
+New users can register through the Amazon Chime Sample App.+ (nullable NSString *)serializeTimestamp:(NSDictionary *)rules value:(id)value error:(NSError *__autoreleasing *)error {
+                                                               if (!value || value isEqual:[NSNull null]] || ![rules[@"type"] isEqualToString:@"timestamp"]) {
+                                                                   return nil;
+                                                               } else {
+                                                                   //generate string presentation of timestamp
+                                                                   NSString *timestampStr;
+                                                                   
+                                                                   NSDate *timeStampDate = [self parseTimestamp:value];
+                                                                   if (timeStampDate == nil) {
+                                                                       [self failWithCode:AWSTimestampParserError
+                                                                              description:[NSString stringWithFormat:@"the timestamp value is invalid:%@",value]
+                                                                                    error:error];
+                                                                   } else {
+                                                                       // we are able to parse the value into NSDate
+                                                                       if ([rules[@"timestampFormat"] isEqualToString:@"iso8601"]) {
+                                                                           timestampStr = [timeStampDate aws_stringValue:AWSDateISO8601DateFormat1];
+                                                                       } else if ([rules[@"timestampFormat"] isEqualToString:@"unixTimestamp"]) {
+                                                                           timestampStr = [NSString stringWithFormat:@"%.lf",[timeStampDate timeIntervalSince1970]];
+                                                                       } else if ([rules[@"timestampFormat"] isEqualToString:@"rfc822"]) {
+                                                                           timestampStr = [timeStampDate aws_stringValue: AWSDateRFC822DateFormat1];
+                                                                       }
+                                                                   }
+                                                                   return timestampStr;
+                                                               }
+                                                           }
 
-1. Open a browser of your choice and navigate to [http://localhost:9000](http://localhost:9000/) to access the client
+1. Open a browser of your choice and navigate to [http://localhost:9000](http://localhost:9000/) to access the client.
 2. Provide a Username and Password for the new user. The default user pool requires the password to be a minimum of 8 characters and contain at least one uppercase, lowercase, special character, and number.
 3. Choose **Register**
 4. Before this user can login, their account must be confirmed. The quickest way is to follow the steps under **Confirming a New Cognito User as an Account Admin**
@@ -62,7 +86,7 @@ New users can register through the Amazon Chime Sample App.
 
 #### Cognito User Pools: **Logging In**
 
-1. Open a browser of your choice and navigate to [http://localhost:9000](http://localhost:9000/) to access the client
+1. Open a browser of your choice and navigate to [http://localhost:90**00](http://localhost:9000/) to access the client
 2. Provide the username and password of the desired user.
 3. Choose Login
 
@@ -72,10 +96,10 @@ Skip ahead to [Creating a Channel](#creating-a-channel)
 
 1. Open a browser of your choice and navigate to [http://localhost:9000](http://localhost:9000/) to access the client
 2. Change the drop down to Credential Exchange Service
-3. The Credential Exchange Service is a small lambda running behind API gateway that enables exchanging your applications or identity 
-provider's (IDP) token for AWS credentials, or for you to implement custom authentication.  To simulate the processes of exchanging 
-credentials, by default the lambda returns anonymous access regardless of the token provided.  Click "Exchange Token for AWS Credentials" 
-to get anonymous access to the chat application.  If you wish to change the code to validate your application/IDP token or implement
+3. The Credential Exchange Service is a small lambda running behind API gateway that enables exchanging your applications or identity
+provider's (IDP) token for AWS credentials, or for you to implement custom authentication. To simulate the processes of exchanging 
+credentials, by default the lambda returns anonymous access regardless of the token provided. Click "Exchange Token for AWS Credentials" 
+to get anonymous access to the chat application. If you wish to change the code to validate your application/IDP token or implement
 custom authentication, modify the following code in /backend/serverless/template.yml.
 
 ```
