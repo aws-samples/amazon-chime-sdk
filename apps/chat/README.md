@@ -47,30 +47,30 @@ New users can register through the Amazon Chime Sample App.
 
 1. Open a browser of your choice and navigate to [http://localhost:9000](http://localhost:9000/) to access the client.
 2. Provide a Username and Password for the new user. The default user pool requires the password to be a minimum of 8 characters and contain at least one uppercase, lowercase, special character, and number.
-3. Choose **Register**
-4. Before this user can login, their account must be confirmed. The quickest way is to follow the steps under **Confirming a New Cognito User as an Account Admin**
+3. Choose **Register**.
+4. Before this user can login, their account must be confirmed. The quickest way is to follow the steps under **Confirming a New Cognito User as an Account Admin**.
 
 #### Cognito User Pools: **Confirming a New Cognito User as an Account Admin**
 
-1. Go to the [Amazon Cognito console](https://console.aws.amazon.com/cognito/home)
-2. Choose **Manage User Pools**
-3. Choose the pool that you created
+1. Go to the [Amazon Cognito console](https://console.aws.amazon.com/cognito/home).
+2. Choose **Manage User Pools**.
+3. Choose the pool that you created.
 4. Choose **Users and groups **in the left side panel.
-5. Choose the new user whose **Account Status** is **UNCONFIRMED.**
+5. Choose the new user whose **Account Status** is **UNCONFIRMED**.
 6. Choose **Confirm user.**
 7. Now that user should be able to log in.
 
 #### Cognito User Pools: **Logging In**
 
-1. Open a browser of your choice and navigate to [http://localhost:9000](http://localhost:9000/) to access the client
+1. Open a browser of your choice and navigate to [http://localhost:9000](http://localhost:9000/) to access the client.
 2. Provide the username and password of the desired user.
-3. Choose Login
+3. Choose Login.
 
 Skip ahead to [Creating a Channel](#creating-a-channel)
 
 #### Credential Exchange Service: Login
 
-1. Open a browser of your choice and navigate to [http://localhost:9000](http://localhost:9000/) to access the client
+1. Open a browser of your choice and navigate to [http://localhost:9000](http://localhost:9000/) to access the client.
 2. Change the drop down to Credential Exchange Service.
 3. The Credential Exchange Service is a small lambda running behind API gateway that enables exchanging your applications or identity
 provider's (IDP) token for AWS credentials, or for you to implement custom authentication. To simulate the processes of exchanging 
