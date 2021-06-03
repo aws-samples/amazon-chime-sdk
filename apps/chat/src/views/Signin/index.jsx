@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: MIT-0
 
 import React, {useState, setState} from 'react';
-import {Heading, Grid, Cell, Flex} from 'amazon-chime-sdk-component-library-react';
+import {Heading, Grid, Cell, Flex, Select} from 'amazon-chime-sdk-component-library-react';
 import { useTheme } from 'styled-components';
 import LoginWithCognito from '../../containers/loginWithCognito/LoginWithCognito';
 import LoginWithCredentialExchangeService from '../../containers/loginWithCredentialExchangeService/LoginWithCredentialExchangeService';
@@ -47,15 +47,21 @@ const Signin = () => {
         <Cell gridArea="main">
           <Flex className="signin-container" layout="stack">
             <Heading
-                css="font-size: 1.1875rem; line-height: 4rem;"
-                level="1"
+              css="font-size: 1.1875rem; line-height: 2rem;"
+              level="5"
             >
-              {signInMessage} <select name="signinProvider"
-                                      id="signinProvider"
-                                      onChange={e => updateSigninProvider(e.target.value)}>
-              <option value="cognito">Cognito User Pools</option>
-              <option value="ces">Credential Exchange Service</option>
-            </select>
+              {signInMessage}
+              <Select
+                name="signinProvider"
+                id="signinProvider"
+                value={signinProvider}
+                options={[
+                  { value: 'cognito', label: 'Cognito User Pools' },
+                  { value: 'ces', label: 'Credential Exchange Service' },
+                ]}
+                aria-label="sign in option"
+                onChange={e => updateSigninProvider(e.target.value)}
+              />
             </Heading>
             {provider}
           </Flex>
