@@ -6,6 +6,7 @@ import {
   Textarea,
   Input,
   Button,
+  Heading,
 } from 'amazon-chime-sdk-component-library-react';
 
 import './LoginWithCredentialExchangeService.css';
@@ -29,12 +30,12 @@ const LoginWithCredentialExchangeService = (props) => {
 
   return (
     <div>
-      <p
+      <Heading
         css="font-size: 0.875rem !important; line-height: 3rem !important;"
         level="2"
       >
         Enter your Identity Token (JWT, PASETO, custom, etc):
-      </p>
+      </Heading>
       <form onSubmit={onSubmit} className="signin-form">
         <div className="input-container">
           <Textarea
