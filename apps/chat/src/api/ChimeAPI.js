@@ -3,14 +3,18 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
+import routes from '../constants/routes';
 import appConfig from '../Config';
 // eslint-disable-next-line no-unused-vars
 const Chime = require('aws-sdk/clients/chime');
 
+export const BASE_URL = routes.SIGNIN;
 export const createMemberArn = userId =>
   `${appConfig.appInstanceArn}/user/${userId}`;
 
 const appInstanceUserArnHeader = 'x-amz-chime-bearer';
+
+const { v4: uuidv4 } = require('uuid');
 
 let chime = null;
 
@@ -38,6 +42,7 @@ async function getMessagingSessionEndpoint() {
 async function sendChannelMessage(
   channelArn,
   messageContent,
+  persistence,
   member,
   options = null
 ) {
@@ -46,7 +51,7 @@ async function sendChannelMessage(
   const params = {
     ChannelArn: channelArn,
     Content: messageContent,
-    Persistence: 'PERSISTENT', // Allowed types are PERSISTENT and NON_PERSISTENT
+    Persistence: persistence, // Allowed types are PERSISTENT and NON_PERSISTENT
     Type: 'STANDARD' // Allowed types are STANDARD and CONTROL
   };
   if (options && options.Metadata) {
@@ -227,10 +232,11 @@ async function listChannelMemberships(channelArn, userId) {
   return response.ChannelMemberships;
 }
 
-async function createChannel(appInstanceArn, name, mode, privacy, userId) {
+async function createChannel(appInstanceArn, metadata, name, mode, privacy, userId) {
   console.log('createChannel called');
   const params = {
     AppInstanceArn: appInstanceArn,
+    Metadata: metadata,
     Name: name,
     Mode: mode,
     Privacy: privacy
@@ -408,6 +414,64 @@ async function redactChannelMessage(channelArn, messageId, userId) {
   return response;
 }
 
+async function fetchMeeting(meetingId, attendeeId, userId, channelArn) {
+  const response = await fetch(
+    `${BASE_URL}join?title=${encodeURIComponent(
+      meetingId
+    )}&name=${encodeURIComponent(
+      attendeeId
+    )}&userId=${encodeURIComponent(
+      userId
+    )}&channel=${encodeURIComponent(
+      channelArn
+    )}`,
+    {
+      method: 'POST'
+    }
+  );
+  const data = await response.json();
+
+  if (data.error) {
+    throw new Error(`Server error: ${data.error}`);
+  }
+
+  return data;
+}
+
+function createGetAttendeeCallback(meetingId) {
+  return async (chimeAttendeeId, externalUserId) => {
+    const attendeeUrl = `${BASE_URL}attendee?title=${encodeURIComponent(
+      meetingId
+    )}&attendee=${encodeURIComponent(chimeAttendeeId)}`;
+    const res = await fetch(attendeeUrl, {
+      method: 'GET'
+    });
+
+    if (!res.ok) {
+      throw new Error('Invalid server response');
+    }
+
+    const data = await res.json();
+
+    return {
+      name: data.AttendeeInfo.Name
+    };
+  };
+}
+
+async function endMeeting(meetingId) {
+  const res = await fetch(
+    `${BASE_URL}end?title=${encodeURIComponent(meetingId)}`,
+    {
+      method: 'POST'
+    }
+  );
+
+  if (!res.ok) {
+    throw new Error('Server error ending meeting');
+  }
+}
+
 export {
   sendChannelMessage,
   listChannelMessages,
@@ -428,5 +492,8 @@ export {
   redactChannelMessage,
   getMessagingSessionEndpoint,
   listChannelMembershipsForAppInstanceUser,
-  listAppInstanceUsers
+  listAppInstanceUsers,
+  fetchMeeting,
+  createGetAttendeeCallback,
+  endMeeting
 };

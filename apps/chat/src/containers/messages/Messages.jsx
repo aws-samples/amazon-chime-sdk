@@ -192,6 +192,13 @@ const Messages = ({
       return m;
     }
 
+    if (m.Metadata) {
+      let metadata = JSON.parse(m.Metadata);
+      if (metadata.isMeetingInfo) {
+        return m;
+      };
+    }
+
     const variant =
       createMemberArn(userId) === m.senderId ? 'outgoing' : 'incoming';
     let actions = null;
@@ -271,7 +278,7 @@ const Messages = ({
                 {m.content}
                 {m.editedNote}
               </div>
-              {m.metadata && (
+              {m.metadata && attachment(m.metadata) && (
                 <div style={{ marginTop: '10px' }}>
                   <AttachmentProcessor
                     senderId={m.senderId}

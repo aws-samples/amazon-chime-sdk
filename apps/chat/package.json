@@ -4,7 +4,10 @@
   "description": "Demo app for for Amazon Chime Chat SDK",
   "scripts": {
     "lint": "eslint src --ext .js,.jsx --fix",
-    "start": "webpack serve"
+    "start:client": "webpack serve",
+    "start:backend": "node server.js",
+    "start:fast": "concurrently \"npm run start:client\" \"npm run start:backend\"",
+    "start": "npm install && npm run start:fast"
   },
   "dependencies": {
     "@aws-amplify/auth": "^3.4.20",
@@ -14,6 +17,7 @@
     "amazon-chime-sdk-js": "^2.7.0",
     "aws-amplify": "^3.3.17",
     "aws-sdk": "^2.883.0",
+    "concurrently": "5.2.0",
     "core-js": "^3.10.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
@@ -30,6 +34,8 @@
     "@babel/eslint-parser": "^7.13.14",
     "@babel/preset-env": "^7.13.15",
     "@babel/preset-react": "^7.13.13",
+    "@types/react-router-dom": "^5.1.7",
+    "@types/styled-components": "^5.1.10",
     "babel-loader": "^8.2.2",
     "css-loader": "^5.2.1",
     "eslint": "^7.24.0",

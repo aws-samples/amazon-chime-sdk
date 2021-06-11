@@ -10,11 +10,13 @@ import React, {
   useRef,
 } from 'react';
 
+import { useAppState } from '../../providers/AppStateProvider';
 import appConfig from '../../Config';
 import { useAuthContext } from '../AuthProvider';
 import { describeChannel, createMemberArn } from '../../api/ChimeAPI';
 import MessagingService from '../../services/MessagingService';
 import mergeArrayOfObjects from '../../utilities/mergeArrays';
+import routes from '../../constants/routes';
 
 const ChatMessagingServiceContext = createContext(MessagingService);
 const ChatMessagingState = createContext();
@@ -22,7 +24,7 @@ const ChatChannelState = createContext();
 
 const MessagingProvider = ({ children }) => {
   const { member, isAuthenticated } = useAuthContext();
-  const [messagingService] = useState(() => new MessagingService(member));
+  const [messagingService] = useState(() => new MessagingService());
   // Channel related
   const [activeChannel, setActiveChannel] = useState({});
   const [activeChannelMemberships, setActiveChannelMemberships] = useState([]);
@@ -41,6 +43,8 @@ const MessagingProvider = ({ children }) => {
   const activeChannelMembershipsRef = useRef(activeChannelMemberships);
   const [channelMessageToken, setChannelMessageToken] = useState('');
   const channelMessageTokenRef = useRef(channelMessageToken);
+  // Meeting
+  const [meetingInfo, setMeetingInfo] = useState('');
 
   useEffect(() => {
     messagesRef.current = messages;
@@ -56,7 +60,7 @@ const MessagingProvider = ({ children }) => {
     if (!isAuthenticated) return;
 
     // Start messaging service
-    messagingService.connect();
+    messagingService.connect(member);
 
     return () => {
       messagingService.close();
@@ -79,7 +83,7 @@ const MessagingProvider = ({ children }) => {
 
     let newMessages = [...messagesRef.current];
 
-    if (!isDuplicate) {
+    if (!isDuplicate && newMessage.Persistence === 'PERSISTENT') {
       newMessages = [...newMessages, newMessage];
     }
 
@@ -97,7 +101,14 @@ const MessagingProvider = ({ children }) => {
       case 'UPDATE_CHANNEL_MESSAGE':
       case 'DELETE_CHANNEL_MESSAGE':
         // Process ChannelMessage
-        if (activeChannelRef.current.ChannelArn === record?.ChannelArn) {
+        if (record.Metadata && record.Sender.Arn !== createMemberArn(member.userId)) {
+          let metadata = JSON.parse(record.Metadata);
+          if (metadata.isMeetingInfo) {
+            let meetingInfo = JSON.parse(record.Content);
+            setMeetingInfo(meetingInfo);
+          };
+        }
+        else if (activeChannelRef.current.ChannelArn === record?.ChannelArn) {
           processChannelMessage(record);
         } else {
           const findMatch = unreadChannelsListRef.current.find(
@@ -141,6 +152,12 @@ const MessagingProvider = ({ children }) => {
             record.ChannelArn,
             member.userId
           );
+
+          if (newChannel.Metadata) {
+            let metadata = JSON.parse(newChannel.Metadata);
+            if (metadata.isHidden) return;
+          }
+
           const newChannelList = mergeArrayOfObjects(
             [newChannel],
             channelListRef.current,
@@ -192,11 +209,13 @@ const MessagingProvider = ({ children }) => {
 
   // Subscribe to MessagingService for updates
   useEffect(() => {
+    if (!isAuthenticated) return;
+
     messagingService.subscribeToMessageUpdate(messagesProcessor);
     return () => {
       messagingService.unsubscribeFromMessageUpdate(messagesProcessor);
     };
-  }, [messagingService]);
+  }, [messagingService, isAuthenticated]);
 
   // Providers values
   const messageStateValue = {
@@ -214,11 +233,13 @@ const MessagingProvider = ({ children }) => {
     hasMembership,
     channelMessageToken,
     channelMessageTokenRef,
+    meetingInfo,
     setActiveChannel,
     setActiveChannelMemberships,
     setChannelMessageToken,
     setChannelList,
     setUnreadChannels,
+    setMeetingInfo,
   };
   return (
     <ChatMessagingServiceContext.Provider value={messagingService}>
@@ -270,4 +291,5 @@ export {
   useChatChannelState,
   useChatMessagingService,
   useChatMessagingState,
+  
 };

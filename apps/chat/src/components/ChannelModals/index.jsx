@@ -4,6 +4,7 @@
 export { AddMemberModal } from './AddMemberModal';
 export { DeleteChannelModal } from './DeleteChannelModal';
 export { LeaveChannelModal } from './LeaveChannelModal';
+export { JoinMeetingModal } from './JoinMeetingModal';
 export { ManageMembersModal } from './ManageMembersModal';
 export { NewChannelModal } from './NewChannelModal';
 export { ViewChannelDetailsModal } from './ViewChannelDetailsModal';

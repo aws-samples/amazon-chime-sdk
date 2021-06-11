@@ -74,6 +74,95 @@ Resources:
       Properties: 
         ServiceToken: !GetAtt ChimeAppInstanceLambda.Arn
 
+  #Lambda that creates AWS Chime App admin user
+  ChimeAppAdminLambda:
+      DependsOn: TriggerChimeAppInstanceLambda
+      Type: "AWS::Lambda::Function"
+      Properties:
+        Handler: "index.handler"
+        Role: !GetAtt LambdaExecuteRole.Arn
+        Runtime: "nodejs12.x"
+        Timeout: 60
+        Layers: 
+          - !Ref AWSSDKChimeLayer
+        Code:
+          ZipFile: >
+            "use strict";
+            const AWS = require("aws-sdk");
+            const uuidv4 = require("uuid");
+            var response = require("cfn-response"); 
+            AWS.config.update({ region: process.env.AWS_REGION });
+            const chime = new AWS.Chime({ region: process.env.AWS_REGION }); 
+
+            const { CHIME_APP_INSTANCE_ARN } = process.env;
+            
+            exports.handler = async (event, context, callback) => {
+              console.log("Event: \n", event);
+              console.log("Create Chime SDK App Admin");
+              if (event["RequestType"] === "Create") {
+                //create a chime app user
+                var createUserParams = {
+                  AppInstanceArn: CHIME_APP_INSTANCE_ARN,
+                  AppInstanceUserId: `Admin`,
+                  ClientRequestToken: `${uuidv4()}`,
+                  Name: `Admin`
+                };
+                try {
+                  await chime.createAppInstanceUser(
+                    createUserParams,
+                    function (err, data) {
+                      if (err) console.log(err, err.stack);
+                      // an error occurred
+                      else {
+                        console.log("Successfully created user");
+                        console.log(data); // successful response
+                        return data;
+                      }
+                    }
+                  ).promise();
+                } catch (error) {
+                  console.log("ERROR CAUGHT \n", error);
+                  await response.send(event, context, response.FAILED, {});
+                }
+
+                //create a chime app admin
+                var createAdminParams = {
+                  AppInstanceArn: CHIME_APP_INSTANCE_ARN,
+                  AppInstanceAdminArn: CHIME_APP_INSTANCE_ARN + '/user/Admin'
+                };
+                try {
+                  var admin_chime_response = await chime.createAppInstanceAdmin(
+                    createAdminParams,
+                    function (err, data) {
+                      if (err) console.log(err, err.stack);
+                      // an error occurred
+                      else {
+                        console.log("Successfully created admin");
+                        console.log(data); // successful response
+                        return data;
+                      }
+                    }
+                  ).promise();;
+                  await response.send(event, context, response.SUCCESS, admin_chime_response);
+                } catch (error) {
+                  console.log("ERROR CAUGHT \n", error);
+                  await response.send(event, context, response.FAILED, {});
+                }
+              } else {
+                //NOT A CREATE REQUEST
+                await response.send(event, context, response.SUCCESS, {});
+              }
+            };
+        Environment:
+          Variables:
+            CHIME_APP_INSTANCE_ARN: !GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn 
+
+  # Trigger Lambda function to create Amazon Chime App admin creation
+  TriggerChimeAppAdminLambda:
+      Type: AWS::CloudFormation::CustomResource
+      Properties: 
+        ServiceToken: !GetAtt ChimeAppAdminLambda.Arn
+
   # Creates an S3 bucket to store chat attachments
   ChatAttachmentsBucket:
     Type: AWS::S3::Bucket
@@ -95,6 +184,33 @@ Resources:
               - "x-amz-request-id"
               - "x-amz-id-2"
             MaxAge: "3000"
+
+  # Creates a role that allows meeting server to create meetings and attendees and verify membership
+  MeetingServerRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal: 
+              AWS: 
+                - !Join ['', ['arn:aws:iam::', !Ref AWS::AccountId, ':root']]       
+            Action: 
+              - "sts:AssumeRole"
+      Policies:
+        - PolicyName: !Sub ${DemoName}-MeetingServerPolicy
+          PolicyDocument: 
+            Version: "2012-10-17"
+            Statement: 
+              - Effect: "Allow"
+                Action: 
+                  - "chime:describeChannel"
+                  - "chime:describeChannelMembership"
+                  - "chime:createMeeting"
+                  - "chime:createAttendee"
+                  - "chime:deleteMeeting"
+                Resource: "*"
 
   # Creates a role that allows Cognito to send SNS messages
   SNSRole:
@@ -710,3 +826,5 @@ Outputs:
     Value: !Ref ChatAttachmentsBucket
   credentialExchangeServiceApiGatewayInvokeUrl:
     Value: !Sub https://${ApiGatewayApi}.execute-api.us-east-1.amazonaws.com/Stage/creds
+  meetingServerRoleArn:
+    Value: {"Fn::GetAtt" : ["MeetingServerRole", "Arn"] }

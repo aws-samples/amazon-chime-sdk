@@ -7,21 +7,25 @@
 /* eslint-disable react/prop-types */
 import React, { useState, useEffect } from 'react';
 
+import { v4 as uuid } from 'uuid';
 import {
   PopOverItem,
   PopOverSeparator,
   IconButton,
   Dots,
   useNotificationDispatch,
+  useMeetingManager,
   ChannelList,
   ChannelItem,
 } from 'amazon-chime-sdk-component-library-react';
 import { useTheme } from 'styled-components';
+import { useHistory } from 'react-router-dom';
 import {
   createMemberArn,
   createChannelMembership,
   createChannel,
   listChannelMessages,
+  sendChannelMessage,
   listChannels,
   listChannelMembershipsForAppInstanceUser,
   deleteChannel,
@@ -32,6 +36,8 @@ import {
   listChannelBans,
   createChannelBan,
   deleteChannelBan,
+  fetchMeeting,
+  createGetAttendeeCallback
 } from '../../api/ChimeAPI';
 import appConfig from '../../Config';
 
@@ -41,12 +47,16 @@ import {
   useChatChannelState,
   useChatMessagingState,
 } from '../../providers/ChatMessagesProvider';
+import { useAppState } from '../../providers/AppStateProvider';
 import { useAuthContext } from '../../providers/AuthProvider';
 import ModalManager from './ModalManager';
+import routes from '../../constants/routes';
 
 import './ChannelsWrapper.css';
 
 const ChannelsWrapper = () => {
+  const history = useHistory();
+  const meetingManager = useMeetingManager();
   const dispatch = useNotificationDispatch();
   const [modal, setModal] = useState('');
   const [selectedMember, setSelectedMember] = useState({}); // TODO change to an empty array when using batch api
@@ -55,8 +65,10 @@ const ChannelsWrapper = () => {
   const theme = useTheme();
   const userPermission = useUserPermission();
   const { userId } = useAuthContext().member;
+  const member = useAuthContext().member;
   const messagingUserArn = `${appConfig.appInstanceArn}/user/${userId}`;
   const {
+    activeChannelRef,
     channelList,
     setChannelList,
     setActiveChannel,
@@ -67,8 +79,11 @@ const ChannelsWrapper = () => {
     unreadChannels,
     setUnreadChannels,
     hasMembership,
+    meetingInfo,
+    setMeetingInfo,
   } = useChatChannelState();
   const { setMessages } = useChatMessagingState();
+  const { setAppMeetingInfo } = useAppState();
 
   // get all channels
   useEffect(() => {
@@ -98,6 +113,13 @@ const ChannelsWrapper = () => {
       fetchMemberships();
     }
   }, [activeChannel.ChannelArn]);
+
+  // get meeting id
+  useEffect(() => {
+    if (meetingInfo) {
+      setModal('JoinMeeting');
+    }
+  }, [meetingInfo]);
 
   const getBanList = async () => {
     const banListResponse = await listChannelBans(
@@ -156,6 +178,7 @@ const ChannelsWrapper = () => {
     } else {
       const channelArn = await createChannel(
         appConfig.appInstanceArn,
+        null,
         newName,
         mode,
         privacy,
@@ -197,6 +220,83 @@ const ChannelsWrapper = () => {
         });
       }
     }
+  };
+
+  const joinMeeting = async (e) => {
+    e.preventDefault();
+
+    if (activeChannel.Metadata) {
+      let metadata = JSON.parse(activeChannel.Metadata);
+      let meetingId = metadata.meetingId;
+
+      // Get own Join info and join meeting
+      meetingManager.getAttendee = createGetAttendeeCallback(meetingId);
+      const { JoinInfo } = await fetchMeeting(meetingId, member.username, member.userId, activeChannel.ChannelArn);
+      await meetingManager.join({
+        meetingInfo: JoinInfo.Meeting,
+        attendeeInfo: JoinInfo.Attendee
+      });
+
+      setAppMeetingInfo(meetingId, member.username);
+      history.push(routes.DEVICE);
+    }
+  }
+
+  const startMeeting = async (e) => {
+    e.preventDefault();
+
+    let meetingName = `${activeChannel.Name} Instant Meeting`;
+    let meetingId = uuid();
+    let metadata = {
+      isMeeting:true,
+      meetingId: meetingId
+    };
+    console.log(JSON.stringify(metadata));
+    // Create Meeting Channel and Membership
+    const meetingChannelArn = await createChannel(
+      appConfig.appInstanceArn,
+      JSON.stringify(metadata),
+      meetingName,
+      "RESTRICTED",
+      "PRIVATE",
+      userId
+    );
+    channelIdChangeHandler(meetingChannelArn);
+
+    const memberships = activeChannelMemberships;
+    memberships.forEach(membership => createChannelMembership(
+      meetingChannelArn,
+      membership.Member.Arn,
+      userId
+    )); 
+
+    // Send the meeting info as a chat message in the existing channel
+    const options = {};
+    options.Metadata = `{"isMeetingInfo":true}`;
+    let meetingInfo = {
+      meetingId: meetingId,
+      channelArn: meetingChannelArn,
+      channelName: meetingName,
+      inviter: member.username,
+    }
+    await sendChannelMessage(
+      activeChannel.ChannelArn,
+      JSON.stringify(meetingInfo),
+      'NON_PERSISTENT',
+      member,
+      options
+    );
+
+    // Get own Join info and join meeting
+    meetingManager.getAttendee = createGetAttendeeCallback(meetingId);
+    const { JoinInfo } = await fetchMeeting(meetingId, member.username, member.userId, meetingChannelArn);
+    await meetingManager.join({
+      meetingInfo: JoinInfo.Meeting,
+      attendeeInfo: JoinInfo.Attendee
+    });
+
+    setAppMeetingInfo(meetingId, member.username);
+    history.push(routes.DEVICE);
   };
 
   const joinChannel = async (e) => {
@@ -339,6 +439,35 @@ const ChannelsWrapper = () => {
     setSelectedMember(changes);
   };
 
+  const handleJoinMeeting = async (e, meetingId, meetingChannelArn) => {
+    e.preventDefault();
+
+    await channelIdChangeHandler(meetingChannelArn);
+
+    meetingManager.getAttendee = createGetAttendeeCallback(meetingId);
+    const { JoinInfo } = await fetchMeeting(meetingId, member.username, member.userId, meetingChannelArn);
+    await meetingManager.join({
+      meetingInfo: JoinInfo.Meeting,
+      attendeeInfo: JoinInfo.Attendee
+    });
+
+    setAppMeetingInfo(meetingId, member.username);
+
+    setModal('');
+    setMeetingInfo(null);
+
+    history.push(routes.DEVICE);
+  }
+
+  const handleMessageAll = async (e, meetingChannelArn) => {
+    e.preventDefault();
+
+    setModal('');
+    setMeetingInfo(null);
+
+    await channelIdChangeHandler(meetingChannelArn);
+  }
+
   const handleDeleteMemberships = () => {
     try {
       deleteChannelMembership(
@@ -401,7 +530,7 @@ const ChannelsWrapper = () => {
     setIsRestricted(activeChannel.Mode === 'RESTRICTED');
   }, [activeChannel]);
 
-  const loadUserActions = (role) => {
+  const loadUserActions = (role, channel) => {
     const joinChannelOption = (
       <PopOverItem key="join_channel" as="button" onClick={joinChannel}>
         <span>Join Channel</span>
@@ -457,6 +586,24 @@ const ChannelsWrapper = () => {
         <span>Ban/Allow members</span>
       </PopOverItem>
     );
+    const startMeetingOption = (
+      <PopOverItem
+        key="start_meeting"
+        as="button"
+        onClick={startMeeting}
+      >
+        <span>Start meeting</span>
+      </PopOverItem>
+    );
+    const joinMeetingOption = (
+      <PopOverItem
+        key="join_meeting"
+        as="button"
+        onClick={joinMeeting}
+      >
+        <span>Join meeting</span>
+      </PopOverItem>
+    );
     const leaveChannelOption = (
       <PopOverItem
         key="leave_channel"
@@ -476,6 +623,26 @@ const ChannelsWrapper = () => {
       </PopOverItem>
     );
 
+    const meetingModeratorActions = [
+      viewDetailsOption,
+      <PopOverSeparator key="separator1" className="separator" />,
+      addMembersOption,
+      manageMembersOption,
+      <PopOverSeparator key="separator2" className="separator" />,
+      joinMeetingOption,
+      <PopOverSeparator key="separator3" className="separator" />,
+      leaveChannelOption,
+      deleteChannelOption,
+    ];
+    const meetingMemberActions = [
+      viewDetailsOption,
+      <PopOverSeparator key="separator1" className="separator" />,
+      viewMembersOption,
+      <PopOverSeparator key="separator2" className="separator" />,
+      joinMeetingOption,
+      <PopOverSeparator key="separator3" className="separator" />,
+      leaveChannelOption,
+    ];
     const moderatorActions = [
       viewDetailsOption,
       editChannelOption,
@@ -484,6 +651,8 @@ const ChannelsWrapper = () => {
       manageMembersOption,
       banOrAllowOption,
       <PopOverSeparator key="separator2" className="separator" />,
+      startMeetingOption,
+      <PopOverSeparator key="separator3" className="separator" />,
       leaveChannelOption,
       deleteChannelOption,
     ];
@@ -492,6 +661,8 @@ const ChannelsWrapper = () => {
       <PopOverSeparator key="separator1" className="separator" />,
       viewMembersOption,
       <PopOverSeparator key="separator2" className="separator" />,
+      startMeetingOption,
+      <PopOverSeparator key="separator3" className="separator" />,
       leaveChannelOption,
     ];
     const unrestrictedMemberActions = [
@@ -500,6 +671,8 @@ const ChannelsWrapper = () => {
       viewMembersOption,
       addMembersOption,
       <PopOverSeparator key="separator2" className="separator" />,
+      startMeetingOption,
+      <PopOverSeparator key="separator3" className="separator" />,
       leaveChannelOption,
     ];
 
@@ -511,6 +684,13 @@ const ChannelsWrapper = () => {
 
     if (!hasMembership) {
       return nonMemberActions;
+    }
+
+    if (channel.Metadata) {
+      let metadata = JSON.parse(channel.Metadata);
+      if (metadata.isMeeting) {
+        return role === 'moderator' ? meetingModeratorActions : meetingMemberActions;
+      }
     }
 
     if (role === 'moderator') {
@@ -525,10 +705,13 @@ const ChannelsWrapper = () => {
         modal={modal}
         setModal={setModal}
         activeChannel={activeChannel}
+        meetingInfo={meetingInfo}
         userId={userId}
         onAddMember={onAddMember}
         handleChannelDeletion={handleChannelDeletion}
         handleDeleteMemberships={handleDeleteMemberships}
+        handleJoinMeeting={handleJoinMeeting}
+        handleMessageAll={handleMessageAll}
         handlePickerChange={handlePickerChange}
         formatMemberships={formatMemberships}
         activeChannelMemberships={activeChannelMemberships}
@@ -558,7 +741,7 @@ const ChannelsWrapper = () => {
             <ChannelItem
               key={channel.ChannelArn}
               name={channel.Name}
-              actions={loadUserActions(userPermission.role)}
+              actions={loadUserActions(userPermission.role, channel)}
               isSelected={channel.ChannelArn === activeChannel.ChannelArn}
               onClick={e => {
                 e.stopPropagation();
