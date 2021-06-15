@@ -696,11 +696,36 @@ const ChannelsWrapper = () => {
       viewMembersOption,
       addMembersOption,
       <PopOverSeparator key="separator2" className="separator" />,
+      leaveChannelOption,
+    ];
+    const noMeetingModeratorActions = [
+      viewDetailsOption,
+      editChannelOption,
+      <PopOverSeparator key="separator1" className="separator" />,
+      addMembersOption,
+      manageMembersOption,
+      banOrAllowOption,
+      <PopOverSeparator key="separator2" className="separator" />,
+      leaveChannelOption,
+      deleteChannelOption,
+    ];
+    const noMeetingRestrictedMemberActions = [
+      viewDetailsOption,
+      <PopOverSeparator key="separator1" className="separator" />,
+      viewMembersOption,
+      <PopOverSeparator key="separator2" className="separator" />,
+      leaveChannelOption,
+    ];
+    const noMeetingUnrestrictedMemberActions = [
+      viewDetailsOption,
+      <PopOverSeparator key="separator1" className="separator" />,
+      viewMembersOption,
+      addMembersOption,
+      <PopOverSeparator key="separator2" className="separator" />,
       startMeetingOption,
       <PopOverSeparator key="separator3" className="separator" />,
       leaveChannelOption,
     ];
-
     const nonMemberActions = [
       joinChannelOption,
       viewDetailsOption,
@@ -711,17 +736,24 @@ const ChannelsWrapper = () => {
       return nonMemberActions;
     }
 
-    if (channel.Metadata) {
-      let metadata = JSON.parse(channel.Metadata);
-      if (metadata.isMeeting) {
-        return role === 'moderator' ? meetingModeratorActions : meetingMemberActions;
+    if (appConfig.apiGatewayInvokeUrl) {
+      if (channel.Metadata) {
+        let metadata = JSON.parse(channel.Metadata);
+        if (metadata.isMeeting) {
+          return role === 'moderator' ? meetingModeratorActions : meetingMemberActions;
+        }
       }
+
+      if (role === 'moderator') {
+        return moderatorActions;
+      }
+      return isRestricted ? restrictedMemberActions : unrestrictedMemberActions;
     }
 
     if (role === 'moderator') {
-      return moderatorActions;
+      return noMeetingModeratorActions;
     }
-    return isRestricted ? restrictedMemberActions : unrestrictedMemberActions;
+    return isRestricted ? noMeetingRestrictedMemberActions : noMeetingUnrestrictedMemberActions;
   };
 
   return (
