@@ -27,7 +27,7 @@ export const JoinMeetingModal = ({
       </div>
       <ModalBody>
         <form
-          onSubmit={(e) => handleJoinMeeting(e, meetingInfo.meetingId, meetingInfo.channelArn)}
+          onSubmit={(e) => handleJoinMeeting(e, meetingInfo.meeting, meetingInfo.channelArn)}
           id="join-meeting-form"
         />
         <form

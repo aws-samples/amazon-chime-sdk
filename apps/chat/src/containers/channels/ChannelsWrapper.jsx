@@ -24,6 +24,7 @@ import {
   createMemberArn,
   createChannelMembership,
   createChannel,
+  updateChannel,
   listChannelMessages,
   sendChannelMessage,
   listChannels,
@@ -36,7 +37,9 @@ import {
   listChannelBans,
   createChannelBan,
   deleteChannelBan,
-  fetchMeeting,
+  createMeeting,
+  createAttendee,
+  endMeeting,
   createGetAttendeeCallback
 } from '../../api/ChimeAPI';
 import appConfig from '../../Config';
@@ -227,17 +230,17 @@ const ChannelsWrapper = () => {
 
     if (activeChannel.Metadata) {
       let metadata = JSON.parse(activeChannel.Metadata);
-      let meetingId = metadata.meetingId;
+      let meeting = metadata.meeting; 
 
-      // Get own Join info and join meeting
-      meetingManager.getAttendee = createGetAttendeeCallback(meetingId);
-      const { JoinInfo } = await fetchMeeting(meetingId, member.username, member.userId, activeChannel.ChannelArn);
+      // Create own attendee and join meeting
+      meetingManager.getAttendee = createGetAttendeeCallback();
+      const { JoinInfo } = await createAttendee(member.username, member.userId, activeChannel.ChannelArn, meeting);
       await meetingManager.join({
         meetingInfo: JoinInfo.Meeting,
         attendeeInfo: JoinInfo.Attendee
       });
 
-      setAppMeetingInfo(meetingId, member.username);
+      setAppMeetingInfo(JoinInfo.Meeting.MeetingId, member.username);
       history.push(routes.DEVICE);
     }
   }
@@ -246,16 +249,11 @@ const ChannelsWrapper = () => {
     e.preventDefault();
 
     let meetingName = `${activeChannel.Name} Instant Meeting`;
-    let meetingId = uuid();
-    let metadata = {
-      isMeeting:true,
-      meetingId: meetingId
-    };
-    console.log(JSON.stringify(metadata));
-    // Create Meeting Channel and Membership
+    
+    // Create Meeting Channel and Memberships from existing Channel
     const meetingChannelArn = await createChannel(
       appConfig.appInstanceArn,
-      JSON.stringify(metadata),
+      null,
       meetingName,
       "RESTRICTED",
       "PRIVATE",
@@ -270,31 +268,48 @@ const ChannelsWrapper = () => {
       userId
     )); 
 
+    // Create meeting and attendee for self
+    meetingManager.getAttendee = createGetAttendeeCallback();
+    const { JoinInfo } = await createMeeting(member.username, member.userId, meetingChannelArn);
+    await meetingManager.join({
+      meetingInfo: JoinInfo.Meeting,
+      attendeeInfo: JoinInfo.Attendee
+    });
+
+    const meetingId = JoinInfo.Meeting.MeetingId;
+    const meeting = JSON.stringify(JoinInfo.Meeting);
+
+    // Update meeting channel metadata with meeting info
+    let meetingChannelmetadata = {
+      isMeeting: true,
+      meeting: meeting
+    };
+
+    await updateChannel(
+      meetingChannelArn,
+      meetingName,
+      "RESTRICTED",
+      JSON.stringify(meetingChannelmetadata),
+      userId
+    );
+
     // Send the meeting info as a chat message in the existing channel
     const options = {};
     options.Metadata = `{"isMeetingInfo":true}`;
-    let meetingInfo = {
-      meetingId: meetingId,
+    let meetingInfoMessage = {
+      meeting: meeting,
       channelArn: meetingChannelArn,
       channelName: meetingName,
       inviter: member.username,
     }
     await sendChannelMessage(
       activeChannel.ChannelArn,
-      JSON.stringify(meetingInfo),
+      JSON.stringify(meetingInfoMessage),
       'NON_PERSISTENT',
       member,
       options
     );
-
-    // Get own Join info and join meeting
-    meetingManager.getAttendee = createGetAttendeeCallback(meetingId);
-    const { JoinInfo } = await fetchMeeting(meetingId, member.username, member.userId, meetingChannelArn);
-    await meetingManager.join({
-      meetingInfo: JoinInfo.Meeting,
-      attendeeInfo: JoinInfo.Attendee
-    });
-
+    
     setAppMeetingInfo(meetingId, member.username);
     history.push(routes.DEVICE);
   };
@@ -400,8 +415,18 @@ const ChannelsWrapper = () => {
     setUnreadChannels(unreadChannels.filter((c) => c !== channelArn));
   };
 
-  const handleChannelDeletion = async (e, channelArn) => {
+  const handleChannelDeletion = async (e, channelArn, channelMetadata) => {
     e.preventDefault();
+
+    // If the channel was a meeting channel, end the associated meeting
+    if (channelMetadata) {
+      const metadata = JSON.parse(channelMetadata);
+      if (metadata.isMeeting) {
+        const meeting = JSON.parse(metadata.meeting);
+        await endMeeting(meeting.MeetingId);
+      }
+    }
+
     await deleteChannel(channelArn, userId);
     const newChannelList = channelList.filter(
       (channel) => channel.ChannelArn !== channelArn
@@ -439,19 +464,19 @@ const ChannelsWrapper = () => {
     setSelectedMember(changes);
   };
 
-  const handleJoinMeeting = async (e, meetingId, meetingChannelArn) => {
+  const handleJoinMeeting = async (e, meeting, meetingChannelArn) => {
     e.preventDefault();
 
     await channelIdChangeHandler(meetingChannelArn);
 
-    meetingManager.getAttendee = createGetAttendeeCallback(meetingId);
-    const { JoinInfo } = await fetchMeeting(meetingId, member.username, member.userId, meetingChannelArn);
+    meetingManager.getAttendee = createGetAttendeeCallback();
+    const { JoinInfo } = await createAttendee(member.username, member.userId, meetingChannelArn, meeting);
     await meetingManager.join({
       meetingInfo: JoinInfo.Meeting,
       attendeeInfo: JoinInfo.Attendee
     });
 
-    setAppMeetingInfo(meetingId, member.username);
+    setAppMeetingInfo(JoinInfo.Meeting.MeetingId, member.username);
 
     setModal('');
     setMeetingInfo(null);

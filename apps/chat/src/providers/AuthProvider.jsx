@@ -152,7 +152,7 @@ const AuthProvider = ({ children }) => {
 
   // Credential Exchange Service Code.  Set Access Token on Authorization header using Bearer type.
   const userExchangeTokenForAwsCreds = accessToken => {
-    fetch(appConfig.credentialExchangeServiceApiGatewayInvokeUrl, {
+    fetch(`${appConfig.apiGatewayInvokeUrl}creds`, {
       method: 'POST',
       credentials: 'include',
       headers: new Headers({

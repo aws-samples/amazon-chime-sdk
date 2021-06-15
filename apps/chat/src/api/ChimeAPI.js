@@ -269,13 +269,14 @@ async function describeChannel(channelArn, userId) {
   return response.Channel;
 }
 
-async function updateChannel(channelArn, name, mode, userId) {
+async function updateChannel(channelArn, name, mode, metadata, userId) {
   console.log('updateChannel called');
 
   const params = {
     ChannelArn: channelArn,
     Name: name,
-    Mode: mode
+    Mode: mode,
+    Metadata: metadata
   };
 
   const request = (await chimeClient()).updateChannel(params);
@@ -414,12 +415,10 @@ async function redactChannelMessage(channelArn, messageId, userId) {
   return response;
 }
 
-async function fetchMeeting(meetingId, attendeeId, userId, channelArn) {
+async function createMeeting(name, userId, channelArn) {
   const response = await fetch(
-    `${BASE_URL}join?title=${encodeURIComponent(
-      meetingId
-    )}&name=${encodeURIComponent(
-      attendeeId
+    `${appConfig.apiGatewayInvokeUrl}create?name=${encodeURIComponent(
+      name
     )}&userId=${encodeURIComponent(
       userId
     )}&channel=${encodeURIComponent(
@@ -438,30 +437,41 @@ async function fetchMeeting(meetingId, attendeeId, userId, channelArn) {
   return data;
 }
 
-function createGetAttendeeCallback(meetingId) {
-  return async (chimeAttendeeId, externalUserId) => {
-    const attendeeUrl = `${BASE_URL}attendee?title=${encodeURIComponent(
-      meetingId
-    )}&attendee=${encodeURIComponent(chimeAttendeeId)}`;
-    const res = await fetch(attendeeUrl, {
-      method: 'GET'
-    });
-
-    if (!res.ok) {
-      throw new Error('Invalid server response');
+async function createAttendee(name, userId, channelArn, meeting) {
+  const response = await fetch(
+    `${appConfig.apiGatewayInvokeUrl}join?name=${encodeURIComponent(
+      name
+    )}&userId=${encodeURIComponent(
+      userId
+    )}&channel=${encodeURIComponent(
+      channelArn
+    )}&meeting=${encodeURIComponent(
+      meeting
+    )}`,
+    {
+      method: 'POST'
     }
+  );
+  const data = await response.json();
 
-    const data = await res.json();
+  if (data.error) {
+    throw new Error(`Server error: ${data.error}`);
+  }
 
+  return data;
+}
+
+function createGetAttendeeCallback() {
+  return async (chimeAttendeeId, externalUserId) => {
     return {
-      name: data.AttendeeInfo.Name
+      name: externalUserId
     };
   };
 }
 
 async function endMeeting(meetingId) {
   const res = await fetch(
-    `${BASE_URL}end?title=${encodeURIComponent(meetingId)}`,
+    `${appConfig.apiGatewayInvokeUrl}end?meetingId=${encodeURIComponent(meetingId)}`,
     {
       method: 'POST'
     }
@@ -493,7 +503,8 @@ export {
   getMessagingSessionEndpoint,
   listChannelMembershipsForAppInstanceUser,
   listAppInstanceUsers,
-  fetchMeeting,
+  createMeeting,
+  createAttendee,
   createGetAttendeeCallback,
   endMeeting
 };

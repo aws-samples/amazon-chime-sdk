@@ -21,7 +21,7 @@ export const DeleteChannelModal = ({
       <ModalHeader title={`Delete channel ${channel.Name}`} />
       <ModalBody>
         <form
-          onSubmit={(e) => handleChannelDeletion(e, channel.ChannelArn)}
+          onSubmit={(e) => handleChannelDeletion(e, channel.ChannelArn, channel.Metadata)}
           id="deletion-form"
         />
         <p>You cannot undo this action.</p>
