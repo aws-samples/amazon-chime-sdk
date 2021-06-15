@@ -46,11 +46,11 @@ class HomeViewController: UIViewController {
         }
 
         switch AVAudioSession.sharedInstance().recordPermission {
-        case AVAudioSessionRecordPermission.granted:
+        case AVAudioSession.RecordPermission.granted:
             return
-        case AVAudioSessionRecordPermission.denied:
+        case AVAudioSession.RecordPermission.denied:
             presentMicrophonePermissionDeniedAlert()
-        case AVAudioSessionRecordPermission.undetermined:
+        case AVAudioSession.RecordPermission.undetermined:
             // Request to record audio
             AVAudioSession.sharedInstance().requestRecordPermission { granted in
                 if granted {
