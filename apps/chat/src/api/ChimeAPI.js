@@ -14,8 +14,6 @@ export const createMemberArn = userId =>
 
 const appInstanceUserArnHeader = 'x-amz-chime-bearer';
 
-const { v4: uuidv4 } = require('uuid');
-
 let chime = null;
 
 // Setup Chime Client lazily
