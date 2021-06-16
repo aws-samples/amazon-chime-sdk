@@ -107,22 +107,14 @@ Resources:
                   ClientRequestToken: `${uuidv4()}`,
                   Name: `Admin`
                 };
+                
                 try {
-                  await chime.createAppInstanceUser(
-                    createUserParams,
-                    function (err, data) {
-                      if (err) console.log(err, err.stack);
-                      // an error occurred
-                      else {
-                        console.log("Successfully created user");
-                        console.log(data); // successful response
-                        return data;
-                      }
-                    }
-                  ).promise();
+                  const userResponse = await chime.createAppInstanceUser(createUserParams).promise();
+
+                  console.log("Successfully created user");
+                  console.log(userResponse); // successful response
                 } catch (error) {
                   console.log("ERROR CAUGHT \n", error);
-                  await response.send(event, context, response.FAILED, {});
                 }
 
                 //create a chime app admin
@@ -130,27 +122,20 @@ Resources:
                   AppInstanceArn: CHIME_APP_INSTANCE_ARN,
                   AppInstanceAdminArn: CHIME_APP_INSTANCE_ARN + '/user/Admin'
                 };
+
                 try {
-                  const admin_chime_response = await chime.createAppInstanceAdmin(
-                    createAdminParams,
-                    function (err, data) {
-                      if (err) console.log(err, err.stack);
-                      // an error occurred
-                      else {
-                        console.log("Successfully created admin");
-                        console.log(data); // successful response
-                        return data;
-                      }
-                    }
-                  ).promise();;
-                  await response.send(event, context, response.SUCCESS, admin_chime_response);
+                  const adminResponse = await chime.createAppInstanceAdmin(createAdminParams).promise();
+
+                  console.log("Successfully created user");
+                  console.log(adminResponse); // successful response
+                  await response.send(event, context, response.SUCCESS, adminResponse);
                 } catch (error) {
                   console.log("ERROR CAUGHT \n", error);
                   await response.send(event, context, response.FAILED, {});
                 }
               } else {
                 //NOT A CREATE REQUEST
-                await response.send(event, context, response.SUCCESS, {});
+                await response.send(event, context, response.FAILED, {});
               }
             };
         Environment:
@@ -826,7 +811,7 @@ Resources:
       Handler: index.handler
       InlineCode: |
         const AWS = require('aws-sdk');
-        const uuidv4 = require("uuid");
+        const uuidv4 = require('uuid');
         const chime = new AWS.Chime({ region: 'us-east-1' });
 
         const APP_INSTANCE_ID = process.env.ChimeAppInstanceArn;
@@ -836,10 +821,8 @@ Resources:
         const appInstanceUserArnHeader = 'x-amz-chime-bearer';
 
         exports.handler = async event => {
-          let name = event.queryStringParameters.name;
-          let userId = event.queryStringParameters.userId;
-          let channel = event.queryStringParameters.channel;
-          let region = 'us-east-1';
+          const { userId, channel, name } = event.queryStringParameters;
+          const region = 'us-east-1';
 
           console.info('Validating channel');
           const describeChannelParams = {
@@ -854,14 +837,14 @@ Resources:
 
           if (!describeChannelResponse.Channel) {
             return {
-            statusCode: 404,
-            headers: {
-              'Access-Control-Allow-Headers': 'Authorization',
-              'Access-Control-Allow-Origin': 'https://localhost:9000',
-              'Access-Control-Allow-Methods': 'POST, OPTIONS',
-              'Access-Control-Allow-Credentials': 'true'
-            },
-            body: 'Meeting channel does not exist'
+              statusCode: 404,
+              headers: {
+                'Access-Control-Allow-Headers': 'Authorization',
+                'Access-Control-Allow-Origin': 'https://localhost:9000',
+                'Access-Control-Allow-Methods': 'POST, OPTIONS',
+                'Access-Control-Allow-Credentials': 'true'
+              },
+              body: 'Meeting channel does not exist'
             };
           }
 
@@ -879,14 +862,14 @@ Resources:
 
           if (!describeChannelMembershipResponse.ChannelMembership) {
             return {
-            statusCode: 403,
-            headers: {
-              'Access-Control-Allow-Headers': 'Authorization',
-              'Access-Control-Allow-Origin': 'https://localhost:9000',
-              'Access-Control-Allow-Methods': 'POST, OPTIONS',
-              'Access-Control-Allow-Credentials': 'true'
-            },
-            body: 'User is not a member of meeting channel'
+              statusCode: 403,
+              headers: {
+                'Access-Control-Allow-Headers': 'Authorization',
+                'Access-Control-Allow-Origin': 'https://localhost:9000',
+                'Access-Control-Allow-Methods': 'POST, OPTIONS',
+                'Access-Control-Allow-Credentials': 'true'
+              },
+              body: 'User is not a member of meeting channel'
             };
           }
 
@@ -911,14 +894,14 @@ Resources:
           };
 
           return {
-          statusCode: 200,
-          headers: {
-            'Access-Control-Allow-Headers': 'Authorization',
-            'Access-Control-Allow-Origin': 'https://localhost:9000',
-            'Access-Control-Allow-Methods': 'POST, OPTIONS',
-            'Access-Control-Allow-Credentials': 'true'
-          },
-          body: JSON.stringify(joinInfo, '', 2)
+            statusCode: 200,
+            headers: {
+              'Access-Control-Allow-Headers': 'Authorization',
+              'Access-Control-Allow-Origin': 'https://localhost:9000',
+              'Access-Control-Allow-Methods': 'POST, OPTIONS',
+              'Access-Control-Allow-Credentials': 'true'
+            },
+            body: JSON.stringify(joinInfo, '', 2)
           };
         };
 
@@ -943,7 +926,7 @@ Resources:
       Handler: index.handler
       InlineCode: |
         const AWS = require('aws-sdk');
-        const uuidv4 = require("uuid");
+        const uuidv4 = require('uuid');
         const chime = new AWS.Chime({ region: 'us-east-1' });
 
         const APP_INSTANCE_ID = process.env.ChimeAppInstanceArn;
@@ -953,11 +936,8 @@ Resources:
         const appInstanceUserArnHeader = 'x-amz-chime-bearer';
 
         exports.handler = async event => {
-          let name = event.queryStringParameters.name;
-          let userId = event.queryStringParameters.userId;
-          let channel = event.queryStringParameters.channel;
-          let meeting = event.queryStringParameters.meeting;
-          let region = 'us-east-1';
+          const { userId, channel, name, meeting } = event.queryStringParameters;
+          const region = 'us-east-1';
 
           console.info('Validating channel');
           const describeChannelParams = {
@@ -972,14 +952,14 @@ Resources:
 
           if (!describeChannelResponse.Channel) {
             return {
-            statusCode: 404,
-            headers: {
-              'Access-Control-Allow-Headers': 'Authorization',
-              'Access-Control-Allow-Origin': 'https://localhost:9000',
-              'Access-Control-Allow-Methods': 'POST, OPTIONS',
-              'Access-Control-Allow-Credentials': 'true'
-            },
-            body: 'Meeting channel does not exist'
+              statusCode: 404,
+              headers: {
+                'Access-Control-Allow-Headers': 'Authorization',
+                'Access-Control-Allow-Origin': 'https://localhost:9000',
+                'Access-Control-Allow-Methods': 'POST, OPTIONS',
+                'Access-Control-Allow-Credentials': 'true'
+              },
+              body: 'Meeting channel does not exist'
             };
           }
 
@@ -997,14 +977,14 @@ Resources:
 
           if (!describeChannelMembershipResponse.ChannelMembership) {
             return {
-            statusCode: 403,
-            headers: {
-              'Access-Control-Allow-Headers': 'Authorization',
-              'Access-Control-Allow-Origin': 'https://localhost:9000',
-              'Access-Control-Allow-Methods': 'POST, OPTIONS',
-              'Access-Control-Allow-Credentials': 'true'
-            },
-            body: 'User is not a member of meeting channel'
+              statusCode: 403,
+              headers: {
+                'Access-Control-Allow-Headers': 'Authorization',
+                'Access-Control-Allow-Origin': 'https://localhost:9000',
+                'Access-Control-Allow-Methods': 'POST, OPTIONS',
+                'Access-Control-Allow-Credentials': 'true'
+              },
+              body: 'User is not a member of meeting channel'
             };
           }
 
@@ -1024,14 +1004,14 @@ Resources:
           };
 
           return {
-          statusCode: 200,
-          headers: {
-            'Access-Control-Allow-Headers': 'Authorization',
-            'Access-Control-Allow-Origin': 'https://localhost:9000',
-            'Access-Control-Allow-Methods': 'POST, OPTIONS',
-            'Access-Control-Allow-Credentials': 'true'
-          },
-          body: JSON.stringify(joinInfo, '', 2)
+            statusCode: 200,
+            headers: {
+              'Access-Control-Allow-Headers': 'Authorization',
+              'Access-Control-Allow-Origin': 'https://localhost:9000',
+              'Access-Control-Allow-Methods': 'POST, OPTIONS',
+              'Access-Control-Allow-Credentials': 'true'
+            },
+            body: JSON.stringify(joinInfo, '', 2)
           };
         };
 
@@ -1059,7 +1039,7 @@ Resources:
         const chime = new AWS.Chime({ region: 'us-east-1' });
 
         exports.handler = async event => {
-          let meetingId = event.queryStringParameters.meetingId;
+          const meetingId = event.queryStringParameters.meetingId;
 
           console.info('Deleting meeting');
           await chime
@@ -1069,14 +1049,14 @@ Resources:
           .promise();
 
           return {
-          statusCode: 200,
-          headers: {
-            'Access-Control-Allow-Headers': 'Authorization',
-            'Access-Control-Allow-Origin': 'https://localhost:9000',
-            'Access-Control-Allow-Methods': 'POST, OPTIONS',
-            'Access-Control-Allow-Credentials': 'true'
-          },
-          body: ''
+            statusCode: 200,
+            headers: {
+              'Access-Control-Allow-Headers': 'Authorization',
+              'Access-Control-Allow-Origin': 'https://localhost:9000',
+              'Access-Control-Allow-Methods': 'POST, OPTIONS',
+              'Access-Control-Allow-Credentials': 'true'
+            },
+            body: ''
           };
         };
          
