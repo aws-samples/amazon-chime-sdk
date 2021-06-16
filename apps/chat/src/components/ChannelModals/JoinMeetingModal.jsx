@@ -1,5 +1,5 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: MIT-0
 
 import React from 'react';
 
@@ -11,6 +11,8 @@ import {
   ModalButton,
 } from 'amazon-chime-sdk-component-library-react';
 
+import './JoinMeetingModal.css';
+
 export const JoinMeetingModal = ({
   onClose,
   meetingInfo,
@@ -18,14 +20,10 @@ export const JoinMeetingModal = ({
   handleMessageAll,
 }) => {
   return (
-    <Modal>
-      <div>
-        <ModalHeader title={`${meetingInfo.channelName}`} />
-      </div>
-      <div>
-        <ModalHeader title={`${meetingInfo.inviter}`} />
-      </div>
-      <ModalBody>
+    <Modal onClose={onClose} className="join-modal">
+      <ModalHeader className="join-header" title={`${meetingInfo.channelName}`} />
+      <ModalBody className="join-modal-body">
+        <p>{`${meetingInfo.inviter}`}</p>
         <form
           onSubmit={(e) => handleJoinMeeting(e, meetingInfo.meeting, meetingInfo.channelArn)}
           id="join-meeting-form"
@@ -35,23 +33,32 @@ export const JoinMeetingModal = ({
           id="message-all-form"
         />
       </ModalBody>
-      <ModalButtonGroup
-        primaryButtons={[
-          <ModalButton
-            label="Join"
-            form="join-meeting-form"
-            type="submit"
-            variant="primary"
-          />,
-          <ModalButton label="Decline" closesModal variant="secondary" />,
-          <ModalButton
-            label="Message all"
-            form="message-all-form"
-            type="submit"
-            variant="primary"
-          />
-        ]}
-      />
+      <div className="response-buttons">
+        <ModalButtonGroup 
+          primaryButtons={[
+            <ModalButton className="join-button"
+              label="Join"
+              form="join-meeting-form"
+              type="submit"
+              variant="primary"
+            />,
+            <ModalButton className="decline-button" label="Decline" closesModal variant="secondary" />
+          ]}
+        />
+      </div>
+      <div className="message-buttons">
+        <ModalButtonGroup 
+          primaryButtons={[
+            <ModalButton className="message-all-button"
+              label="Message all"
+              form="message-all-form"
+              type="submit"
+              variant="secondary"
+              closesModal
+            />
+          ]}
+        />
+      </div>
     </Modal>
   );
 };

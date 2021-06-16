@@ -33,7 +33,7 @@ Resources:
                 "use strict";
                 const AWS = require("aws-sdk");
                 const uuidv4 = require("uuid");
-                var response = require("cfn-response"); 
+                const response = require("cfn-response"); 
                 AWS.config.update({ region: process.env.AWS_REGION });
                 const chime = new AWS.Chime({ region: process.env.AWS_REGION }); 
                 
@@ -42,11 +42,11 @@ Resources:
                   console.log("Create Chime SDK App Instance");
                   if (event["RequestType"] === "Create") {
                     //create a chime app instance
-                    var params = {
+                    const params = {
                       Name: `AWSChimeMessagingSDKDemo-${uuidv4()}`,
                     };
                     try {
-                      var chime_response = await chime.createAppInstance(
+                      const chime_response = await chime.createAppInstance(
                         params,
                         function (err, data) {
                           if (err) console.log(err, err.stack);
@@ -90,7 +90,7 @@ Resources:
             "use strict";
             const AWS = require("aws-sdk");
             const uuidv4 = require("uuid");
-            var response = require("cfn-response"); 
+            const response = require("cfn-response"); 
             AWS.config.update({ region: process.env.AWS_REGION });
             const chime = new AWS.Chime({ region: process.env.AWS_REGION }); 
 
@@ -101,7 +101,7 @@ Resources:
               console.log("Create Chime SDK App Admin");
               if (event["RequestType"] === "Create") {
                 //create a chime app user
-                var createUserParams = {
+                const createUserParams = {
                   AppInstanceArn: CHIME_APP_INSTANCE_ARN,
                   AppInstanceUserId: `Admin`,
                   ClientRequestToken: `${uuidv4()}`,
@@ -126,12 +126,12 @@ Resources:
                 }
 
                 //create a chime app admin
-                var createAdminParams = {
+                const createAdminParams = {
                   AppInstanceArn: CHIME_APP_INSTANCE_ARN,
                   AppInstanceAdminArn: CHIME_APP_INSTANCE_ARN + '/user/Admin'
                 };
                 try {
-                  var admin_chime_response = await chime.createAppInstanceAdmin(
+                  const admin_chime_response = await chime.createAppInstanceAdmin(
                     createAdminParams,
                     function (err, data) {
                       if (err) console.log(err, err.stack);

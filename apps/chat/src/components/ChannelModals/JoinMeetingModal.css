@@ -1,0 +1,30 @@
+.join-modal {
+    text-align: center;
+}
+
+.join-header {
+    margin-top: 2rem;
+}
+
+.response-buttons{
+    margin: 0 auto;
+    width: 50%;
+    margin-top: 1rem;
+}
+
+.message-buttons{
+    margin: 0 auto;
+    width: 28%;
+    margin-bottom: 2rem;
+}
+
+.join-button{
+    margin: 0 0.5rem 0 5rem;
+    background-color: #067000 !important;
+}
+
+.decline-button{
+    margin: 0 0.5rem 0 5rem;
+    color: #ffffff !important;
+    background-color: #c52000 !important;
+}

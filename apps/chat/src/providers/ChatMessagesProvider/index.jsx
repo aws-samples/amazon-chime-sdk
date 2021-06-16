@@ -101,10 +101,10 @@ const MessagingProvider = ({ children }) => {
       case 'UPDATE_CHANNEL_MESSAGE':
       case 'DELETE_CHANNEL_MESSAGE':
         // Process ChannelMessage
-        if (record.Metadata && record.Sender.Arn !== createMemberArn(member.userId)) {
-          let metadata = JSON.parse(record.Metadata);
-          if (metadata.isMeetingInfo) {
-            let meetingInfo = JSON.parse(record.Content);
+        if (record.Metadata) {
+          const metadata = JSON.parse(record.Metadata);
+          if (metadata.isMeetingInfo && record.Sender.Arn !== createMemberArn(member.userId)) {
+            const meetingInfo = JSON.parse(record.Content);
             setMeetingInfo(meetingInfo);
           };
         }

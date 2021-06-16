@@ -243,7 +243,7 @@ const ChannelsWrapper = () => {
       setAppMeetingInfo(JoinInfo.Meeting.MeetingId, member.username);
       history.push(routes.DEVICE);
     }
-  }
+  };
 
   const startMeeting = async (e) => {
     e.preventDefault();
@@ -255,8 +255,8 @@ const ChannelsWrapper = () => {
       appConfig.appInstanceArn,
       null,
       meetingName,
-      "RESTRICTED",
-      "PRIVATE",
+      'RESTRICTED',
+      'PRIVATE',
       userId
     );
     channelIdChangeHandler(meetingChannelArn);
@@ -288,7 +288,7 @@ const ChannelsWrapper = () => {
     await updateChannel(
       meetingChannelArn,
       meetingName,
-      "RESTRICTED",
+      'RESTRICTED',
       JSON.stringify(meetingChannelmetadata),
       userId
     );
@@ -418,15 +418,6 @@ const ChannelsWrapper = () => {
   const handleChannelDeletion = async (e, channelArn, channelMetadata) => {
     e.preventDefault();
 
-    // If the channel was a meeting channel, end the associated meeting
-    if (channelMetadata) {
-      const metadata = JSON.parse(channelMetadata);
-      if (metadata.isMeeting) {
-        const meeting = JSON.parse(metadata.meeting);
-        await endMeeting(meeting.MeetingId);
-      }
-    }
-
     await deleteChannel(channelArn, userId);
     const newChannelList = channelList.filter(
       (channel) => channel.ChannelArn !== channelArn
@@ -443,6 +434,15 @@ const ChannelsWrapper = () => {
         autoClose: true,
       },
     });
+
+    // If the channel was a meeting channel, end the associated meeting
+    if (channelMetadata) {
+      const metadata = JSON.parse(channelMetadata);
+      if (metadata.isMeeting) {
+        const meeting = JSON.parse(metadata.meeting);
+        await endMeeting(meeting.MeetingId);
+      }
+    }
   };
 
   const formatMemberships = (memArr) =>
