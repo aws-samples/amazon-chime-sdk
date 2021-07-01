@@ -11,6 +11,7 @@
     "amazon-chime-sdk-component-library-react": "^2.6.0",
     "amazon-chime-sdk-js": "^2.11.0",
     "aws-sdk": "^2.731.0",
+    "fs-extra": "^10.0.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-router-dom": "^5.1.2",
