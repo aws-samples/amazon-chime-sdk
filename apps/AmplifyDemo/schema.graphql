@@ -1,0 +1,23 @@
+type Meeting @model(mutations: {create: "createMeetingGraphQL", delete: "deleteMeetingGraphQL"}, subscriptions: null) @key(fields: ["title"]){
+  meetingId: String!
+  title: String!
+  data: String!
+}
+
+type Attendee @model(mutations: {create: "createAttendeeGraphQL", delete: "deleteAttendeeGraphQL"}, subscriptions: null) @key(fields: ["attendeeId"]){
+  attendeeId: String!
+  name: String!
+}
+
+type Query {
+  createChimeMeeting(title: String, name: String, region: String): Response @function(name: "reactSampleLambda-${env}")
+  joinChimeMeeting(meetingId: String, name: String): Response @function(name: "reactSampleLambda-${env}")
+  endChimeMeeting(meetingId: String): Response  @function(name: "reactSampleLambda-${env}")
+}
+
+type Response {
+  statusCode: String!
+  headers: String
+  body: String
+  isBase64Encoded: String
+}
