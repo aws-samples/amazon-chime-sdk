@@ -10,6 +10,8 @@ import {
   ControlBarButton,
   Phone,
   useMeetingManager,
+  MeetingStatus,
+  useMeetingStatus,
   VideoInputControl,
   VideoTileGrid
 } from 'amazon-chime-sdk-component-library-react';
@@ -20,6 +22,7 @@ const Meeting: FC = () => {
 
   const clickedEndMeeting = async () => {
     const meetingId = meetingManager.meetingId;
+    const meetingStatus = useMeetingStatus();
     if (meetingId) {
       await endMeeting(meetingId);
       await meetingManager.leave();
@@ -29,15 +32,19 @@ const Meeting: FC = () => {
   return (
       <div style={{marginTop: '2rem', height: '40rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
         <VideoTileGrid/>
-        <ControlBar
-          layout="undocked-horizontal"
-          showLabels
-        >
-          <AudioInputControl />
-          <VideoInputControl />
-          <AudioOutputControl />
-          <ControlBarButton icon={<Phone />} onClick={clickedEndMeeting} label="End" />
-        </ControlBar>
+        {meetingStatus === MeetingStatus.Succeeded ?
+          <ControlBar
+            layout="undocked-horizontal"
+            showLabels
+          >
+            <AudioInputControl />
+            <VideoInputControl />
+            <AudioOutputControl />
+            <ControlBarButton icon={<Phone />} onClick={clickedEndMeeting} label="End" />
+          </ControlBar> 
+          :
+          <div/>
+        }
       </div>
   );
 };
