@@ -16,7 +16,7 @@ export const AUDIO_INPUT = {
   440: '440 Hz',
 };
 
-export const MAX_REMOTE_VIDEOS = 16;
+export const MAX_REMOTE_VIDEOS = 25;
 
 export const AVAILABLE_AWS_REGIONS = {
   'us-east-1': 'United States (N. Virginia)',
