@@ -1,0 +1,10 @@
+{
+  "extends": "@amazon-chime-sdk-messaging-yjs-demo/build-tools/tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+  },
+  "include": [
+    "src/**/*"
+  ]
+}

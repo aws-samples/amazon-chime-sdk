@@ -1,0 +1,14 @@
+{
+  "name": "amazon-chime-sdk-messaging-yjs-demo",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "lerna run build",
+    "postinstall": "lerna bootstrap --hoist --strict --ignore-prepublish",
+    "clean": "lerna clean && lerna run clean --stream --parallel"
+  },
+  "author": "Amazon Chime",
+  "devDependencies": {
+    "lerna": "^4.0.0"
+  }
+}
