@@ -1,0 +1,22 @@
+{
+  "name": "@amazon-chime-sdk-messaging-yjs-demo/eslint-config",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Build tools for the Amazon Chime SDK Messaging Yjs Demo",
+  "scripts": {},
+  "author": "Amazon Chime SDK",
+  "private": true,
+  "devDependencies": {
+    "@rushstack/eslint-patch": "^1.0.6",
+    "@typescript-eslint/eslint-plugin": "^4.18.0",
+    "@typescript-eslint/parser": "^4.18.0",
+    "eslint": "^7.22.0",
+    "eslint-config-airbnb-typescript": "^12.3.1",
+    "eslint-plugin-eslint-comments": "^3.2.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-no-null": "^1.0.2",
+    "eslint-plugin-prefer-arrow": "^1.2.3",
+    "eslint-plugin-promise": "^5.1.0",
+    "eslint-plugin-unicorn": "^28.0.2"
+  }
+}

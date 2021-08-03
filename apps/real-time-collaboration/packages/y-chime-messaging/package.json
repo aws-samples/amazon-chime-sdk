@@ -1,0 +1,40 @@
+{
+  "name": "y-chime-messaging",
+  "version": "1.0.0",
+  "private": true,
+  "description": "The Yjs provider enabled by the messaging features of the Amazon Chime SDK",
+  "scripts": {
+    "build": "npm run build:compile && npm run lint",
+    "build:compile": "npm run tsc && npm run build:esnext",
+    "build:esnext": "tsc --project ./tsconfig.esnext.json",
+    "start": "npm run build:esnext -- --watch",
+    "clean": "rimraf dist lib *.tsbuildinfo *.build.log",
+    "lint": "eslint --format stylish src",
+    "lint:fix": "eslint --format stylish src --fix",
+    "tsc": "tsc",
+    "tsfmt": "tsfmt --verify",
+    "tsfmt:fix": "tsfmt --replace"
+  },
+  "author": "Amazon Chime SDK",
+  "main": "dist/index.js",
+  "module": "lib/index.js",
+  "types": "dist/index.d.ts",
+  "devDependencies": {
+    "@amazon-chime-sdk-messaging-yjs-demo/eslint-config": "1.0.0",
+    "@amazon-chime-sdk-messaging-yjs-demo/build-tools": "1.0.0",
+    "eslint": "^7.22.0",
+    "rimraf": "^3.0.2",
+    "typescript": "^4.2.3",
+    "typescript-formatter": "^7.2.2"
+  },
+  "dependencies": {
+    "@types/uuid": "^8.3.0",
+    "amazon-chime-sdk-js": "^2.6.0",
+    "aws-sdk": "^2.865.0",
+    "lib0": "^0.2.40",
+    "lodash": "^4.17.21",
+    "uuid": "^8.3.2",
+    "y-protocols": "^1.0.4",
+    "yjs": "^13.5.2"
+  }
+}
