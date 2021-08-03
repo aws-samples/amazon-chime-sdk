@@ -17,6 +17,8 @@ interface AppStateValue {
   toggleTheme: () => void;
   setAppMeetingInfo: (meetingId: string, name: string, region: string) => void;
   setMeetingMode: (meetingMode: MeetingMode) => void;
+  isInMeeting: boolean;
+  setIsInMeeting: (isInMeeting: boolean) => void;
 }
 
 const AppStateContext = React.createContext<AppStateValue | null>(null);
@@ -42,6 +44,7 @@ export function AppStateProvider({ children }: Props) {
     const storedTheme = localStorage.getItem('theme');
     return storedTheme || 'light';
   });
+  const [isInMeeting, setIsInMeeting] = useState<boolean>(false);
 
   const toggleTheme = (): void => {
     if (theme === 'light') {
@@ -72,6 +75,8 @@ export function AppStateProvider({ children }: Props) {
     toggleTheme,
     setAppMeetingInfo,
     setMeetingMode,
+    isInMeeting,
+    setIsInMeeting
   };
 
   return (

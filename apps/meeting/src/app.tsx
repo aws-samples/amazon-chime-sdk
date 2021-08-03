@@ -1,7 +1,7 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import {
@@ -64,8 +64,11 @@ const Theme: React.FC = ({ children }) => {
 };
 
 const MeetingModeSelector: React.FC = () => {
-  const { meetingMode } = useAppState();
-
+  const { meetingMode, isInMeeting, setIsInMeeting } = useAppState();
+  useEffect(() => {
+    console.log('Printing isInMeeting', isInMeeting);
+    setIsInMeeting(true);
+  });
   return (
     <Meeting mode={meetingMode} />
   );

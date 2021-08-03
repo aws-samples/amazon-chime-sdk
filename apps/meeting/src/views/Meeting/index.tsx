@@ -1,10 +1,11 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   VideoTileGrid,
-  UserActivityProvider
+  UserActivityProvider,
+  useLocalVideo
 } from 'amazon-chime-sdk-component-library-react';
 
 import { StyledLayout, StyledContent } from './Styled';
@@ -15,11 +16,20 @@ import MeetingControls from '../../containers/MeetingControls';
 import useMeetingEndRedirect from '../../hooks/useMeetingEndRedirect';
 import DynamicMeetingControls from '../../containers/DynamicMeetingControls';
 import { MeetingMode } from '../../types';
+import { useAppState } from '../../providers/AppStateProvider';
 
 const MeetingView = (props: { mode: MeetingMode, }) => {
   useMeetingEndRedirect();
   const { showNavbar, showRoster } = useNavigation();
+  const { isInMeeting } = useAppState();
+  const { isVideoEnabled, toggleVideo } = useLocalVideo();
 
+  useEffect(() => {
+    if (isInMeeting && !isVideoEnabled) {
+      toggleVideo();
+    }
+  }, [isInMeeting]);
+  
   return (
     <UserActivityProvider>
       <StyledLayout showNav={showNavbar} showRoster={showRoster}>
