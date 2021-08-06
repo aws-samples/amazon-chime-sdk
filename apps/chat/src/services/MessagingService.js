@@ -15,11 +15,10 @@ import {
 import { getMessagingSessionEndpoint, createMemberArn } from '../api/ChimeAPI';
 
 class MessagingService {
-  constructor(member) {
+  constructor() {
     this._session;
     this.sessionId = uuid();
     this._logger = new ConsoleLogger('SDK Chat Demo', LogLevel.INFO);
-    this._member = member;
     this._messageUpdateCallbacks = [];
   }
 
@@ -39,13 +38,13 @@ class MessagingService {
     }
   };
 
-  setMessagingEndpoint() {
+  setMessagingEndpoint(member) {
     getMessagingSessionEndpoint()
       .then(async response => {
         this._endpoint = response?.Endpoint?.Url;
 
         const sessionConfig = new MessagingSessionConfiguration(
-          createMemberArn(this._member.userId),
+          createMemberArn(member.userId),
           this.sessionId,
           this._endpoint,
           new AWS.Chime(),
@@ -65,8 +64,8 @@ class MessagingService {
       });
   }
 
-  connect() {
-    this.setMessagingEndpoint();
+  connect(member) {
+    this.setMessagingEndpoint(member);
   }
 
   close() {

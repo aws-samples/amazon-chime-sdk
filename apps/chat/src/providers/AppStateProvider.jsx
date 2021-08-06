@@ -5,6 +5,24 @@ import React, { useContext, useState } from 'react';
 const AppStateContext = React.createContext();
 
 export const AppStateProvider = ({ children }) => {
+
+  const setAppMeetingInfo = (meetingId, name) => {
+    setMeeting(meetingId);
+    setLocalName(name);
+  };
+
+  // Meeting ID
+  const [meetingId, setMeeting] = useState(() => {
+    const storedMeetingId = localStorage.getItem('meetingId');
+    return storedMeetingId || '';
+  });
+
+  // UserName
+  const [localUserName, setLocalName] = useState(() => {
+    const storedUserName = localStorage.getItem('localUserName');
+    return storedUserName || '';
+  });
+
   // Theme
   const [theme, setTheme] = useState(() => {
     const storedTheme = localStorage.getItem('theme');
@@ -22,8 +40,11 @@ export const AppStateProvider = ({ children }) => {
   };
 
   const providerValue = {
+    meetingId,
+    localUserName,
     theme,
     toggleTheme,
+    setAppMeetingInfo
   };
 
   return (

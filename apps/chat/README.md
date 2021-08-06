@@ -2,7 +2,7 @@
 
 ## Summary
 
-This doc is intended for developers interested in the Amazon Chime Chat SDK, even those who may not have a strong technical background. It is meant to guide the developer through the steps required to start using the basic Chat SDK demo client against their own AWS account. On completion of this guide, the developer will have a fully functional Chat client with basic auth sign in supported against their AWS resources. From here, the developer should have the minimal foundation required to expand the functionality to meet their own requirements.  For more information, please see the Amazon Chime SDK Messaging App blog post.
+This doc is intended for developers interested in the Amazon Chime Meeting and Chat SDK, even those who may not have a strong technical background. It is meant to guide the developer through the steps required to start using the basic AWS Chime SDK demo client against their own AWS account. On completion of this guide, the developer will have a fully functional messaging, audio, and video client with basic auth sign in supported against their AWS resources. From here, the developer should have the minimal foundation required to expand the functionality to meet their own requirements.  For more information, please see the Amazon Chime SDK App blog post.
 
 ## Assumptions
 
@@ -99,6 +99,12 @@ custom authentication, modify the following code in /backend/serverless/template
 1. Log into the client
 2. In the **Create new channel** box, enter a desired channel name
 3. Choose **Create**
+
+### Starting a Meeting
+
+1. Choose the desire Channel from which to start the meeting
+2. Choose the menu button for that Channel
+3. Choose **Start Meeting**
 
 **Sample Code**
 

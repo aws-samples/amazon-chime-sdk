@@ -9,6 +9,8 @@ export const rootPath = window.location.href.includes(awsPath)
 const routes = {
   SIGNIN: `${rootPath}`,
   CHAT: `${rootPath}rooms`,
+  DEVICE: `${rootPath}devices`,
+  MEETING: `${rootPath}meeting`,
 };
 
 export default routes;

@@ -33,7 +33,7 @@ Resources:
                 "use strict";
                 const AWS = require("aws-sdk");
                 const uuidv4 = require("uuid");
-                var response = require("cfn-response"); 
+                const response = require("cfn-response"); 
                 AWS.config.update({ region: process.env.AWS_REGION });
                 const chime = new AWS.Chime({ region: process.env.AWS_REGION }); 
                 
@@ -42,11 +42,11 @@ Resources:
                   console.log("Create Chime SDK App Instance");
                   if (event["RequestType"] === "Create") {
                     //create a chime app instance
-                    var params = {
+                    const params = {
                       Name: `AWSChimeMessagingSDKDemo-${uuidv4()}`,
                     };
                     try {
-                      var chime_response = await chime.createAppInstance(
+                      const chime_response = await chime.createAppInstance(
                         params,
                         function (err, data) {
                           if (err) console.log(err, err.stack);
@@ -73,6 +73,80 @@ Resources:
       Type: AWS::CloudFormation::CustomResource
       Properties: 
         ServiceToken: !GetAtt ChimeAppInstanceLambda.Arn
+
+  #Lambda that creates AWS Chime App admin user
+  ChimeAppAdminLambda:
+      DependsOn: TriggerChimeAppInstanceLambda
+      Type: "AWS::Lambda::Function"
+      Properties:
+        Handler: "index.handler"
+        Role: !GetAtt LambdaExecuteRole.Arn
+        Runtime: "nodejs12.x"
+        Timeout: 60
+        Layers: 
+          - !Ref AWSSDKChimeLayer
+        Code:
+          ZipFile: >
+            "use strict";
+            const AWS = require("aws-sdk");
+            const uuidv4 = require("uuid");
+            const response = require("cfn-response"); 
+            AWS.config.update({ region: process.env.AWS_REGION });
+            const chime = new AWS.Chime({ region: process.env.AWS_REGION }); 
+
+            const { CHIME_APP_INSTANCE_ARN } = process.env;
+            
+            exports.handler = async (event, context, callback) => {
+              console.log("Event: \n", event);
+              console.log("Create Chime SDK App Admin");
+              if (event["RequestType"] === "Create") {
+                //create a chime app user
+                const createUserParams = {
+                  AppInstanceArn: CHIME_APP_INSTANCE_ARN,
+                  AppInstanceUserId: `Admin`,
+                  ClientRequestToken: `${uuidv4()}`,
+                  Name: `Admin`
+                };
+                
+                try {
+                  const userResponse = await chime.createAppInstanceUser(createUserParams).promise();
+
+                  console.log("Successfully created user");
+                  console.log(userResponse); // successful response
+                } catch (error) {
+                  console.log("ERROR CAUGHT \n", error);
+                }
+
+                //create a chime app admin
+                const createAdminParams = {
+                  AppInstanceArn: CHIME_APP_INSTANCE_ARN,
+                  AppInstanceAdminArn: CHIME_APP_INSTANCE_ARN + '/user/Admin'
+                };
+
+                try {
+                  const adminResponse = await chime.createAppInstanceAdmin(createAdminParams).promise();
+
+                  console.log("Successfully created user");
+                  console.log(adminResponse); // successful response
+                  await response.send(event, context, response.SUCCESS, adminResponse);
+                } catch (error) {
+                  console.log("ERROR CAUGHT \n", error);
+                  await response.send(event, context, response.FAILED, {});
+                }
+              } else {
+                //NOT A CREATE REQUEST
+                await response.send(event, context, response.FAILED, {});
+              }
+            };
+        Environment:
+          Variables:
+            CHIME_APP_INSTANCE_ARN: !GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn 
+
+  # Trigger Lambda function to create Amazon Chime App admin creation
+  TriggerChimeAppAdminLambda:
+      Type: AWS::CloudFormation::CustomResource
+      Properties: 
+        ServiceToken: !GetAtt ChimeAppAdminLambda.Arn
 
   # Creates an S3 bucket to store chat attachments
   ChatAttachmentsBucket:
@@ -416,6 +490,19 @@ Resources:
                   - "chime:DescribeAppInstanceAdmin"
                 Resource:
                   - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/user/*']]
+
+        - PolicyName: !Sub ${DemoName}-MeetingLambdaChimePolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "chime:describeChannel"
+                  - "chime:describeChannelMembership"
+                  - "chime:createMeeting"
+                  - "chime:createAttendee"
+                  - "chime:deleteMeeting"
+                Resource: "*"
   AuthLambdaUserRole:
     Description: The Role the lambda parameterizes and returns to the user
     Type: "AWS::IAM::Role"
@@ -573,7 +660,8 @@ Resources:
         AllowOrigin: "'https://localhost:9000'"
         MaxAge: "'600'"
         AllowCredentials: True
-  ApiFunction: # Adds a POST api endpoint at "/creds" to the ApiGatewayApi via an Api event
+      
+  CredApiFunction: # Adds a POST api endpoint at "/creds" to the ApiGatewayApi via an Api event
     Type: AWS::Serverless::Function
     Properties:
       Role: !GetAtt AuthLambdaIAMRole.Arn
@@ -697,6 +785,281 @@ Resources:
              body: 'Not Authorized'
            };
          };
+
+  ###
+  ### RESOURCES FOR MEETING SERVER
+  ###
+
+  CreateMeetingApiFunction: # Adds a POST api endpoint at "/create" to create meetings
+    Type: AWS::Serverless::Function
+    Properties:
+      Role: !GetAtt AuthLambdaIAMRole.Arn
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /create
+            Method: POST
+            RestApiId:
+              Ref: ApiGatewayApi
+      Environment:
+        Variables:
+          ChimeAppInstanceArn: !GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn
+      Layers:
+        - !Ref AWSSDKChimeLayer
+      Runtime: nodejs12.x
+      Handler: index.handler
+      InlineCode: |
+        const AWS = require('aws-sdk');
+        const uuidv4 = require('uuid');
+        const chime = new AWS.Chime({ region: 'us-east-1' });
+
+        const APP_INSTANCE_ID = process.env.ChimeAppInstanceArn;
+
+        const serverAdminUserId = 'Admin';
+        const serverAdminArn = `${APP_INSTANCE_ID}/user/${serverAdminUserId}`;
+        const appInstanceUserArnHeader = 'x-amz-chime-bearer';
+
+        exports.handler = async event => {
+          const { userId, channel, name } = event.queryStringParameters;
+          const region = 'us-east-1';
+
+          console.info('Validating channel');
+          const describeChannelParams = {
+            ChannelArn: channel
+          };
+
+          const describeChanneRequest = await chime.describeChannel(describeChannelParams);
+          describeChanneRequest.on('build', function() {
+            describeChanneRequest.httpRequest.headers[appInstanceUserArnHeader] = serverAdminArn;
+          });
+          const describeChannelResponse = await describeChanneRequest.promise();
+
+          if (!describeChannelResponse.Channel) {
+            return {
+              statusCode: 404,
+              headers: {
+                'Access-Control-Allow-Headers': 'Authorization',
+                'Access-Control-Allow-Origin': 'https://localhost:9000',
+                'Access-Control-Allow-Methods': 'POST, OPTIONS',
+                'Access-Control-Allow-Credentials': 'true'
+              },
+              body: 'Meeting channel does not exist'
+            };
+          }
+
+          console.info('Validating membership');
+          const describeChannelMembershipParams = {
+            ChannelArn: channel,
+            MemberArn:  `${APP_INSTANCE_ID}/user/${userId}`
+          };
+
+          const describeChannelMembershipRequest = await chime.describeChannelMembership(describeChannelMembershipParams);
+          describeChannelMembershipRequest.on('build', function() {
+            describeChannelMembershipRequest.httpRequest.headers[appInstanceUserArnHeader] = serverAdminArn;
+          });
+          const describeChannelMembershipResponse = await describeChannelMembershipRequest.promise();
+
+          if (!describeChannelMembershipResponse.ChannelMembership) {
+            return {
+              statusCode: 403,
+              headers: {
+                'Access-Control-Allow-Headers': 'Authorization',
+                'Access-Control-Allow-Origin': 'https://localhost:9000',
+                'Access-Control-Allow-Methods': 'POST, OPTIONS',
+                'Access-Control-Allow-Credentials': 'true'
+              },
+              body: 'User is not a member of meeting channel'
+            };
+          }
+
+          console.info('Creating new meeting before joining');
+          const createMeetingRequest = {
+            ClientRequestToken: uuidv4(),
+            MediaRegion: region,
+          };
+          const meetingInfo = await chime.createMeeting(createMeetingRequest).promise();
+
+          console.info('Adding new attendee');
+          const attendeeInfo = (await chime.createAttendee({
+              MeetingId: meetingInfo.Meeting.MeetingId,
+              ExternalUserId: name,
+            }).promise());
+
+          const joinInfo = {
+            JoinInfo: {
+              Meeting: meetingInfo.Meeting,
+              Attendee: attendeeInfo.Attendee
+            },
+          };
+
+          return {
+            statusCode: 200,
+            headers: {
+              'Access-Control-Allow-Headers': 'Authorization',
+              'Access-Control-Allow-Origin': 'https://localhost:9000',
+              'Access-Control-Allow-Methods': 'POST, OPTIONS',
+              'Access-Control-Allow-Credentials': 'true'
+            },
+            body: JSON.stringify(joinInfo, '', 2)
+          };
+        };
+
+  CreateAttendeeApiFunction: # Adds a POST api endpoint at "/join" to join meetings as an attendee
+    Type: AWS::Serverless::Function
+    Properties:
+      Role: !GetAtt AuthLambdaIAMRole.Arn
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /join
+            Method: POST
+            RestApiId:
+              Ref: ApiGatewayApi
+      Environment:
+        Variables:
+          ChimeAppInstanceArn: !GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn
+      Layers:
+        - !Ref AWSSDKChimeLayer
+      Runtime: nodejs12.x
+      Handler: index.handler
+      InlineCode: |
+        const AWS = require('aws-sdk');
+        const uuidv4 = require('uuid');
+        const chime = new AWS.Chime({ region: 'us-east-1' });
+
+        const APP_INSTANCE_ID = process.env.ChimeAppInstanceArn;
+
+        const serverAdminUserId = 'Admin';
+        const serverAdminArn = `${APP_INSTANCE_ID}/user/${serverAdminUserId}`;
+        const appInstanceUserArnHeader = 'x-amz-chime-bearer';
+
+        exports.handler = async event => {
+          const { userId, channel, name, meeting } = event.queryStringParameters;
+          const region = 'us-east-1';
+
+          console.info('Validating channel');
+          const describeChannelParams = {
+            ChannelArn: channel
+          };
+
+          const describeChanneRequest = await chime.describeChannel(describeChannelParams);
+          describeChanneRequest.on('build', function() {
+            describeChanneRequest.httpRequest.headers[appInstanceUserArnHeader] = serverAdminArn;
+          });
+          const describeChannelResponse = await describeChanneRequest.promise();
+
+          if (!describeChannelResponse.Channel) {
+            return {
+              statusCode: 404,
+              headers: {
+                'Access-Control-Allow-Headers': 'Authorization',
+                'Access-Control-Allow-Origin': 'https://localhost:9000',
+                'Access-Control-Allow-Methods': 'POST, OPTIONS',
+                'Access-Control-Allow-Credentials': 'true'
+              },
+              body: 'Meeting channel does not exist'
+            };
+          }
+
+          console.info('Validating membership');
+          const describeChannelMembershipParams = {
+            ChannelArn: channel,
+            MemberArn:  `${APP_INSTANCE_ID}/user/${userId}`
+          };
+
+          const describeChannelMembershipRequest = await chime.describeChannelMembership(describeChannelMembershipParams);
+          describeChannelMembershipRequest.on('build', function() {
+            describeChannelMembershipRequest.httpRequest.headers[appInstanceUserArnHeader] = serverAdminArn;
+          });
+          const describeChannelMembershipResponse = await describeChannelMembershipRequest.promise();
+
+          if (!describeChannelMembershipResponse.ChannelMembership) {
+            return {
+              statusCode: 403,
+              headers: {
+                'Access-Control-Allow-Headers': 'Authorization',
+                'Access-Control-Allow-Origin': 'https://localhost:9000',
+                'Access-Control-Allow-Methods': 'POST, OPTIONS',
+                'Access-Control-Allow-Credentials': 'true'
+              },
+              body: 'User is not a member of meeting channel'
+            };
+          }
+
+          const meetingInfo = JSON.parse(meeting);
+
+          console.info('Adding new attendee');
+          const attendeeInfo = (await chime.createAttendee({
+              MeetingId: meetingInfo.MeetingId,
+              ExternalUserId: name,
+            }).promise());
+
+          const joinInfo = {
+            JoinInfo: {
+              Meeting: meetingInfo,
+              Attendee: attendeeInfo.Attendee
+            },
+          };
+
+          return {
+            statusCode: 200,
+            headers: {
+              'Access-Control-Allow-Headers': 'Authorization',
+              'Access-Control-Allow-Origin': 'https://localhost:9000',
+              'Access-Control-Allow-Methods': 'POST, OPTIONS',
+              'Access-Control-Allow-Credentials': 'true'
+            },
+            body: JSON.stringify(joinInfo, '', 2)
+          };
+        };
+
+  EndMeetingApiFunction: # Adds a POST api endpoint at "/join" to join meetings as an attendee
+    Type: AWS::Serverless::Function
+    Properties:
+      Role: !GetAtt AuthLambdaIAMRole.Arn
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /end
+            Method: POST
+            RestApiId:
+              Ref: ApiGatewayApi
+      Environment:
+        Variables:
+          ChimeAppInstanceArn: !GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn
+      Layers:
+        - !Ref AWSSDKChimeLayer
+      Runtime: nodejs12.x
+      Handler: index.handler
+      InlineCode: |
+        const AWS = require('aws-sdk');
+        const chime = new AWS.Chime({ region: 'us-east-1' });
+
+        exports.handler = async event => {
+          const meetingId = event.queryStringParameters.meetingId;
+
+          console.info('Deleting meeting');
+          await chime
+          .deleteMeeting({
+            MeetingId: meetingId
+          })
+          .promise();
+
+          return {
+            statusCode: 200,
+            headers: {
+              'Access-Control-Allow-Headers': 'Authorization',
+              'Access-Control-Allow-Origin': 'https://localhost:9000',
+              'Access-Control-Allow-Methods': 'POST, OPTIONS',
+              'Access-Control-Allow-Credentials': 'true'
+            },
+            body: ''
+          };
+        };
+         
 Outputs:
   cognitoUserPoolId:
     Value: !Ref UserPool
@@ -708,5 +1071,5 @@ Outputs:
     Value: !GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn
   attachmentsS3BucketName:
     Value: !Ref ChatAttachmentsBucket
-  credentialExchangeServiceApiGatewayInvokeUrl:
-    Value: !Sub https://${ApiGatewayApi}.execute-api.us-east-1.amazonaws.com/Stage/creds
+  apiGatewayInvokeUrl:
+    Value: !Sub https://${ApiGatewayApi}.execute-api.us-east-1.amazonaws.com/Stage/

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT-0
 
 const appConfig = {
-  credentialExchangeServiceApiGatewayInvokeUrl:'',
+  apiGatewayInvokeUrl:'',
   cognitoUserPoolId: '',
   cognitoAppClientId: '',
   cognitoIdentityPoolId: '',
