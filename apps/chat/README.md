@@ -129,7 +129,7 @@ async function createChannel(appInstanceArn, name, mode, privacy, userId) {
 
 ### Adding channel members
 
-1. Sign in to the client
+1. Sign in to the client.
 2. Select a channel in the **Channels** pane.
 3. Choose the channel menu (•••).
 4. Choose **Add members** under the dropdown menu (•••) of a selected channel. Note that this option only appears if you have permission to add a member.
@@ -161,7 +161,7 @@ async function createChannelMembership(channelArn, memberArn, userId) {
 
 ### Sending messages
 
-1. Sign in to the client
+1. Sign in to the client.
 2. Choose a channel.
 3. Type a message and choose **Send**.
 
