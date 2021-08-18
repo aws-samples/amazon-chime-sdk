@@ -18,6 +18,7 @@ To provide feedback, please file an issue.
 - [Chat with Amazon Chime SDK Messaging](https://github.com/aws-samples/amazon-chime-sdk/tree/main/apps/chat) - Creates a basic chat application
 - [React meeting demo app](https://github.com/aws-samples/amazon-chime-sdk/tree/main/apps/meeting) - Demonstrates how to use the Amazon Chime SDK and Chime SDK UI Component Library to build a react meeting app.
 - [iOS WkWebView Sample](https://github.com/aws-samples/amazon-chime-sdk/tree/main/apps/iOS-WKWebView-sample) - Demonstrates how to join a WebRTC-based meeting application, like the [Amazon Chime JS SDK Serverless Demo](https://github.com/aws/amazon-chime-sdk-js/tree/master/demos/serverless), from within a WKWebView in iOS.
+- [Android WebView Sample](https://github.com/aws-samples/amazon-chime-sdk/tree/main/apps/Android-WebView-sample) - Demonstrates how to join a WebRTC-based meeting application, like the [Amazon Chime JS SDK Serverless Demo](https://github.com/aws/amazon-chime-sdk-js/tree/master/demos/serverless), from within a WebView in Android.
 
 ## Resources
 
