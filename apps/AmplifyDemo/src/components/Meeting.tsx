@@ -19,10 +19,10 @@ import { endMeeting } from '../utils/api';
 
 const Meeting: FC = () => {
   const meetingManager = useMeetingManager();
+  const meetingStatus = useMeetingStatus();
 
   const clickedEndMeeting = async () => {
     const meetingId = meetingManager.meetingId;
-    const meetingStatus = useMeetingStatus();
     if (meetingId) {
       await endMeeting(meetingId);
       await meetingManager.leave();
