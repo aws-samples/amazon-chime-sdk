@@ -9,7 +9,8 @@ import {
   MeetingProvider,
   NotificationProvider,
   darkTheme,
-  GlobalStyles
+  GlobalStyles,
+  VoiceFocusProvider,
 } from 'amazon-chime-sdk-component-library-react';
 
 import { AppStateProvider, useAppState } from './providers/AppStateProvider';
@@ -28,23 +29,25 @@ const App: FC = () => (
         <NotificationProvider>
           <Notifications />
           <ErrorProvider>
-            <MeetingProvider {...meetingConfig}>
-              <NavigationProvider>
-                <Switch>
-                  <Route exact path={routes.HOME} component={Home} />
-                  <Route path={routes.DEVICE}>
-                    <NoMeetingRedirect>
-                      <DeviceSetup />
-                    </NoMeetingRedirect>
-                  </Route>
-                  <Route path={routes.MEETING}>
-                    <NoMeetingRedirect>
-                      <MeetingModeSelector />
-                    </NoMeetingRedirect>
-                  </Route>
-                </Switch>
-              </NavigationProvider>
-            </MeetingProvider>
+            <VoiceFocusProvider>
+              <MeetingProvider {...meetingConfig}>
+                <NavigationProvider>
+                  <Switch>
+                    <Route exact path={routes.HOME} component={Home} />
+                    <Route path={routes.DEVICE}>
+                      <NoMeetingRedirect>
+                        <DeviceSetup />
+                      </NoMeetingRedirect>
+                    </Route>
+                    <Route path={routes.MEETING}>
+                      <NoMeetingRedirect>
+                        <MeetingModeSelector />
+                      </NoMeetingRedirect>
+                    </Route>
+                  </Switch>
+                </NavigationProvider>
+              </MeetingProvider>
+            </VoiceFocusProvider>
           </ErrorProvider>
         </NotificationProvider>
       </Theme>

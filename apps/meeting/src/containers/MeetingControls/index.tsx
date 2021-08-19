@@ -4,13 +4,13 @@
 import React from 'react';
 import {
   ControlBar,
-  AudioInputControl,
+  AudioInputVFControl,
   VideoInputControl,
   ContentShareControl,
   AudioOutputControl,
   ControlBarButton,
   useUserActivityState,
-  Dots
+  Dots,
 } from 'amazon-chime-sdk-component-library-react';
 
 import EndMeetingControl from '../EndMeetingControl';
@@ -42,7 +42,7 @@ const MeetingControls = () => {
           onClick={handleToggle}
           label="Menu"
         />
-        <AudioInputControl />
+        <AudioInputVFControl />
         <VideoInputControl />
         <ContentShareControl />
         <AudioOutputControl />
