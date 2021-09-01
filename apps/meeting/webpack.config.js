@@ -2,15 +2,15 @@
 // SPDX-License-Identifier: Apache-2.0
 
 const path = require('path');
-const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin');
+const InlineChunkHtmlPlugin = require('react-dev-utils/InlineChunkHtmlPlugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const app = 'meeting';
 
 module.exports = {
-  mode: 'development',
+  mode: 'production',
   entry: ['./src/index.tsx'],
-  devtool: 'inline-source-map',
+  devtool: false,
   module: {
     rules: [
       {
@@ -30,6 +30,10 @@ module.exports = {
       react: path.resolve('./node_modules/react'),
       'styled-components': path.resolve('./node_modules/styled-components'),
       'react-dom': path.resolve('./node_modules/react-dom')
+    },
+    fallback: {
+      fs: false,
+      tls: false,
     }
   },
   output: {
@@ -39,10 +43,6 @@ module.exports = {
     libraryTarget: 'var',
     library: `app_${app}`
   },
-  node: {
-    fs: 'empty',
-    tls: 'empty'
-  },
   plugins: [
     new HtmlWebpackPlugin({
       inlineSource: '.(js|css)$',
@@ -50,7 +50,7 @@ module.exports = {
       filename: __dirname + `/dist/${app}.html`,
       inject: 'head'
     }),
-    new HtmlWebpackInlineSourcePlugin()
+    new InlineChunkHtmlPlugin(HtmlWebpackPlugin, [new RegExp(`${app}`)]),
   ],
   devServer: {
     proxy: {
@@ -64,15 +64,18 @@ module.exports = {
         }
       }
     },
-    contentBase: path.join(__dirname, 'dist'),
-    index: `${app}.html`,
-    compress: true,
+    static: {
+      directory: path.join(__dirname, 'dist')
+    },
+    devMiddleware: {
+      index: `${app}.html`,
+      writeToDisk: true,
+    },
     liveReload: true,
     hot: false,
     host: '0.0.0.0',
     port: 9000,
     https: true,
     historyApiFallback: true,
-    writeToDisk: true
   }
 };
