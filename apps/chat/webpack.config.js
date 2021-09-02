@@ -62,15 +62,18 @@ module.exports = {
         }
       }
     },
-    contentBase: path.join(__dirname, 'dist'),
-    index: `${app}.html`,
-    compress: true,
+    static: {
+      directory: path.join(__dirname, 'dist')
+    },
+    devMiddleware: {
+      index: `${app}.html`,
+      writeToDisk: true
+    },
     liveReload: true,
     hot: false,
     host: '0.0.0.0',
     port: 9000,
     https: true,
-    historyApiFallback: true,
-    writeToDisk: true
+    historyApiFallback: true
   }
 };
