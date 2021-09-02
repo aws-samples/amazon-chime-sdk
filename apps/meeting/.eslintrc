@@ -1,6 +1,5 @@
 {
   "extends": [
-    "wesbos",
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended"
   ],
@@ -13,7 +12,7 @@
     },
     "import/resolver": {
       "node": {
-        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+        "extensions": [".ts", ".tsx"]
       }
     }
   },
@@ -22,7 +21,7 @@
     "@typescript-eslint/eslint-plugin"
   ],
   "rules":  {
-    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx", ".ts", ".tsx"] }],
+    "react/jsx-filename-extension": [1, { "extensions": [".ts", ".tsx"] }],
     "react/prop-types": 0
   }
 }

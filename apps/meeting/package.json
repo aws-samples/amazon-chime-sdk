@@ -20,7 +20,7 @@
     "throttle-debounce": "^2.3.0"
   },
   "scripts": {
-    "lint": "eslint src --ext .js,.jsx --fix",
+    "lint": "eslint src --ext .ts,.tsx --fix",
     "build": "webpack --config ./webpack.config.js",
     "start:client": "npm run build && webpack serve",
     "start:backend": "node server.js",
@@ -38,7 +38,6 @@
     "eslint": "^5.16.0",
     "eslint-config-airbnb": "^17.1.1",
     "eslint-config-prettier": "^4.3.0",
-    "eslint-config-wesbos": "^0.0.19",
     "eslint-plugin-html": "^5.0.5",
     "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-jsx-a11y": "^6.2.3",
