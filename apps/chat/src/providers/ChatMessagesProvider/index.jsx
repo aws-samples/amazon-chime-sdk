@@ -106,9 +106,11 @@ const MessagingProvider = ({ children }) => {
           if (metadata.isMeetingInfo && record.Sender.Arn !== createMemberArn(member.userId)) {
             const meetingInfo = JSON.parse(record.Content);
             setMeetingInfo(meetingInfo);
+            break;
           };
         }
-        else if (activeChannelRef.current.ChannelArn === record?.ChannelArn) {
+
+        if (activeChannelRef.current.ChannelArn === record?.ChannelArn) {
           processChannelMessage(record);
         } else {
           const findMatch = unreadChannelsListRef.current.find(
