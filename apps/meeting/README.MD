@@ -12,6 +12,8 @@ This is the SDK react meeting demo app. It shows how to use the Amazon Chime SDK
 
 4. Open https://0.0.0.0:9000/ in your browser
 
+> Note: We have a `preinstall` script to install latest changes in the [amazon-chime-sdk-component-library-react](https://github.com/aws/amazon-chime-sdk-component-library-react) GitHub repo. However, you can always install the same package from [NPM](https://www.npmjs.com/package/amazon-chime-sdk-component-library-react) registry as well.
+
 ### Troubleshooting
 
 - You can change the `amazon-chime-sdk-js` [log level](https://aws.github.io/amazon-chime-sdk-js/enums/loglevel.html) by providing `logLevel` through URL as a query parameter with value 'warn' | 'error' | 'info' | 'debug' | 'off'.
