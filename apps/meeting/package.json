@@ -27,9 +27,6 @@
     "start": "concurrently \"npm run start:client\" \"npm run start:backend\""
   },
   "devDependencies": {
-    "@fortawesome/fontawesome-svg-core": "^1.2.30",
-    "@fortawesome/free-solid-svg-icons": "^5.14.0",
-    "@fortawesome/react-fontawesome": "^0.1.9",
     "@types/react-router-dom": "^5.1.3",
     "@types/styled-system": "^5.1.9",
     "@types/throttle-debounce": "^2.1.0",

@@ -8,9 +8,9 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const app = 'meeting';
 
 module.exports = {
-  mode: 'production',
+  mode: 'development',
   entry: ['./src/index.tsx'],
-  devtool: false,
+  devtool: 'inline-source-map',
   module: {
     rules: [
       {
@@ -21,7 +21,11 @@ module.exports = {
       {
         test: /\.css$/,
         use: ['style-loader', 'css-loader']
-      }
+      },
+      {
+        test: /\.(svg)$/,
+        type: 'asset/inline'
+      },
     ]
   },
   resolve: {
@@ -29,7 +33,7 @@ module.exports = {
     alias: {
       react: path.resolve('./node_modules/react'),
       'styled-components': path.resolve('./node_modules/styled-components'),
-      'react-dom': path.resolve('./node_modules/react-dom')
+      'react-dom': path.resolve('./node_modules/react-dom'),
     },
     fallback: {
       fs: false,
