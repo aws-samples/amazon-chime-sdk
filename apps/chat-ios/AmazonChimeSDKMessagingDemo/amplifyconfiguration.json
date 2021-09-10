@@ -1,0 +1,39 @@
+{
+    "auth": {
+        "plugins": {
+            "awsCognitoAuthPlugin": {
+                "IdentityManager": {
+                    "Default": {}
+                },
+                "CredentialsProvider": {
+                    "CognitoIdentity": {
+                        "Default": {
+                            "PoolId": "Your Cognito Identity Pool ID",
+                            "Region": "Your Region"
+                        }
+                    }
+                },
+                "CognitoUserPool": {
+                    "Default": {
+                        "PoolId": "Your Cognito User Pool ID",
+                        "AppClientId": "Your Cognito User Pool App Client ID",
+                        "Region": "Your Region"
+                    }
+                },
+                "Auth": {
+                    "Default": {
+                        "authenticationFlowType": "USER_SRP_AUTH"
+                    }
+                }
+            }
+        }
+    },
+    "storage": {
+        "plugins": {
+            "awsS3StoragePlugin": {
+                  "bucket": "Your S3 Bucket",
+                  "region": "Your Region"
+            }
+        }
+    }
+}

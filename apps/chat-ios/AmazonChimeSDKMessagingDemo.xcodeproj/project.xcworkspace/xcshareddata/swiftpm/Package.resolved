@@ -1,0 +1,43 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "Amplify",
+        "repositoryURL": "https://github.com/aws-amplify/amplify-ios",
+        "state": {
+          "branch": null,
+          "revision": "51f6563393db98e4e537ca9ba0540fb53b0e5d28",
+          "version": "1.9.2"
+        }
+      },
+      {
+        "package": "AppSyncRealTimeClient",
+        "repositoryURL": "https://github.com/aws-amplify/aws-appsync-realtime-client-ios.git",
+        "state": {
+          "branch": null,
+          "revision": "55d670f329b9cf9f4830d5f1b37e50b100934d09",
+          "version": "1.5.0"
+        }
+      },
+      {
+        "package": "AWSiOSSDKV2",
+        "repositoryURL": "https://github.com/aws-amplify/aws-sdk-ios-spm.git",
+        "state": {
+          "branch": null,
+          "revision": "7be6c13ea6fdcfdf54d50c08a10928e2e0bc3fb0",
+          "version": "2.24.0"
+        }
+      },
+      {
+        "package": "Starscream",
+        "repositoryURL": "https://github.com/daltoniam/Starscream",
+        "state": {
+          "branch": null,
+          "revision": "e6b65c6d9077ea48b4a7bdda8994a1d3c6969c8d",
+          "version": "3.1.1"
+        }
+      },
+    ]
+  },
+  "version": 1
+}
