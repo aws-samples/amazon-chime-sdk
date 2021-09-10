@@ -1,0 +1,6 @@
+.gradle/
+.idea/
+app/build/
+local.properties
+messaging-websocket/build/
+build/
