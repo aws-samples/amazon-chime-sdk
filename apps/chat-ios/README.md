@@ -2,7 +2,7 @@
 
 ## Overview
 
-By completing the steps below, you will learn how to run the Amazon Chime SDK iOS chat demo applications on your mobile device or on a simulator. This application enables users to send and receive messages/image attachments in chat channels in real time. This application is designed in a way that can be used as a starting point for your own application, or as a quick way to explore the features of the Amazon Chime SDK messaging. Please see the [Build chat applications in iOS and Android with Amazon Chime SDK messaging](https://aws-blogs-prod.amazon.com/business-productivity/build-chat-applications-in-ios-and-android-with-amazon-chime-sdk-messaging) for more information.
+By completing the steps below, you will learn how to run the Amazon Chime SDK iOS chat demo applications on your mobile device or on a simulator. This application enables users to send and receive messages/image attachments in chat channels in real time. This application is designed in a way that can be used as a starting point for your own application, or as a quick way to explore the features of the Amazon Chime SDK messaging. Please see the [Build chat applications in iOS and Android with Amazon Chime SDK messaging](https://aws.amazon.com/blogs/business-productivity/build-chat-applications-in-ios-and-android-with-amazon-chime-sdk-messaging) for more information.
 
 <p align="center">
 <img src="./media/awsChimeSDKMessagingDemo.png" alt="image" width="80%"/>
