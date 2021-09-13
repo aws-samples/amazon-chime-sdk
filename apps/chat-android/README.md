@@ -30,7 +30,7 @@ By completing the steps below, you will learn how to run the Amazon Chime SDK An
 4. Open `app/src/main/res/raw/amplifyconfiguration.json` and update the configuration with the values from outputs from the deployment of AWS CloudFormation template.
 5. Open `app/src/main/java/com/amazonaws/services/chime/sdkdemo/common/AppConstants.kt` and update `APP_INSTANCE_ARN` and `API_GATEWAY_INVOKE_URL`.
    ```
-    const val APP_INSTANCE_ARN = "<appInstanceArn fromm CloudFormation Outputs>"
-    const val API_GATEWAY_INVOKE_URL = "<apiGatewayInvokeUrl fromm CloudFormation Outputs>"
+    const val APP_INSTANCE_ARN = "<appInstanceArn from CloudFormation Outputs>"
+    const val API_GATEWAY_INVOKE_URL = "<apiGatewayInvokeUrl from CloudFormation Outputs>"
    ```
 6. Run the application on a simulator or a physical device. Sign in with `username` and `password` of desired Amazon Cognito user or via Credential Exchange Service.
