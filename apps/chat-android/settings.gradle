@@ -1,0 +1,7 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+include ':app', ':messaging-websocket'
+rootProject.name='amazon-chime-sdk-messaging-demo-app'

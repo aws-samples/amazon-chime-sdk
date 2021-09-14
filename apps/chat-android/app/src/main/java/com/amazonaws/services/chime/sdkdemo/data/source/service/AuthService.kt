@@ -1,0 +1,22 @@
+/*
+ * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+package com.amazonaws.services.chime.sdkdemo.data.source.service
+
+import com.amazonaws.auth.AWSCredentials
+import com.amazonaws.services.chime.sdkdemo.data.Result
+import com.amazonaws.services.chime.sdkdemo.data.User
+
+interface AuthService {
+    suspend fun signIn(userName: String, password: String): Result<Any>
+
+    suspend fun signOut()
+
+    suspend fun getCurrentUser(): Result<User>
+
+    suspend fun getAWSCredentials(): Result<AWSCredentials>
+
+    suspend fun exchangeTokenForAwsCredential(accessToken: String): String?
+}
