@@ -27,6 +27,7 @@ const MessagingProvider = ({ children }) => {
   const [messagingService] = useState(() => new MessagingService());
   // Channel related
   const [activeChannel, setActiveChannel] = useState({});
+  const [activeChannelFlow, setActiveChannelFlow]= useState({});
   const [activeChannelMemberships, setActiveChannelMemberships] = useState([]);
   const activeChannelRef = useRef(activeChannel.ChannelArn);
   const [channelList, setChannelList] = useState([]);
@@ -100,6 +101,12 @@ const MessagingProvider = ({ children }) => {
       case 'REDACT_CHANNEL_MESSAGE':
       case 'UPDATE_CHANNEL_MESSAGE':
       case 'DELETE_CHANNEL_MESSAGE':
+      case 'DENIED_CREATE_CHANNEL_MESSAGE':
+      case 'FAILED_CREATE_CHANNEL_MESSAGE':
+      case 'DENIED_UPDATE_CHANNEL_MESSAGE':
+      case 'FAILED_UPDATE_CHANNEL_MESSAGE':
+      case 'PENDING_CREATE_CHANNEL_MESSAGE':
+      case 'PENDING_UPDATE_CHANNEL_MESSAGE':
         // Process ChannelMessage
         if (record.Metadata) {
           const metadata = JSON.parse(record.Metadata);
@@ -228,6 +235,7 @@ const MessagingProvider = ({ children }) => {
   const channelStateValue = {
     channelList,
     activeChannel,
+    activeChannelFlow,
     activeChannelRef,
     channelListRef,
     unreadChannels,
@@ -237,6 +245,7 @@ const MessagingProvider = ({ children }) => {
     channelMessageTokenRef,
     meetingInfo,
     setActiveChannel,
+    setActiveChannelFlow,
     setActiveChannelMemberships,
     setChannelMessageToken,
     setChannelList,

@@ -2,7 +2,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
   Modal,
@@ -14,10 +14,11 @@ import {
 
 import './ChannelModals.css';
 
-export const ViewChannelDetailsModal = ({ onClose, channel, moderators }) => {
+export const ViewChannelDetailsModal = ({ onClose, channel, moderators, channelFlow}) => {
   const modNames = moderators.map((m) => (
     <div key={m.Moderator.Arn}>{m.Moderator.Name}</div>
   ));
+
   return (
     <Modal onClose={onClose} className="view-details">
       <ModalHeader title="Channel Details" />
@@ -78,7 +79,21 @@ export const ViewChannelDetailsModal = ({ onClose, channel, moderators }) => {
               )}
             </div>
           </div>
-        </div>
+          <div className="row">
+            <div className="key">Channel Flow</div>
+            <div className="value">
+              {channel.ChannelFlowArn == null ?
+                <span>
+                  <span className="main">No flow configured</span>
+                </span>
+                :
+                <span>
+                  <span className="main">{channelFlow.Name}</span>
+                </span>
+              }
+            </div>
+          </div>
+        </div>  
       </ModalBody>
       <ModalButtonGroup
         primaryButtons={[

@@ -12,10 +12,15 @@ import {
   Remove,
   Label,
 } from 'amazon-chime-sdk-component-library-react';
-import { sendChannelMessage } from '../../api/ChimeAPI';
+
+import {
+  sendChannelMessage,
+  getChannelMessage,
+} from '../../api/ChimeAPI';
 import formatBytes from '../../utilities/formatBytes';
 import './Input.css';
 import AttachmentService from '../../services/AttachmentService';
+import { useChatMessagingState } from '../../providers/ChatMessagesProvider';
 
 const uploadObjDefaults = {
   name: '',
@@ -33,6 +38,7 @@ const Input = ({ activeChannelArn, member, hasMembership }) => {
   const uploadRef = useRef();
   const [uploadObj, setUploadObj] = useState(uploadObjDefaults);
   const notificationDispatch = useNotificationDispatch();
+  const { messages, setMessages } = useChatMessagingState();
 
   const { isAnonymous } = useAuthContext();
 
@@ -66,6 +72,8 @@ const Input = ({ activeChannelArn, member, hasMembership }) => {
   const onSubmit = async (e) => {
     e.preventDefault();
 
+    let sendMessageResponse;
+
     if (uploadRef.current.files[0]) {
       try {
         // We have file to upload
@@ -89,7 +97,7 @@ const Input = ({ activeChannelArn, member, hasMembership }) => {
             },
           ],
         });
-        await sendChannelMessage(
+        sendMessageResponse = await sendChannelMessage(
           activeChannelArn,
           text || ' ',
           'PERSISTENT',
@@ -107,9 +115,14 @@ const Input = ({ activeChannelArn, member, hasMembership }) => {
         throw new Error(`Failed uploading... ${err}`);
       }
     } else {
-      await sendChannelMessage(activeChannelArn, text, 'PERSISTENT', member);
+      sendMessageResponse = await sendChannelMessage(activeChannelArn, text, 'PERSISTENT', member);
     }
     resetState();
+    if (sendMessageResponse.response.Status == 'PENDING') {
+      const sentMessage = await getChannelMessage(activeChannelArn, member, sendMessageResponse.response.MessageId);
+      const newMessages = [...messages, sentMessage];
+      setMessages(newMessages);
+    }
   };
 
   const onRemoveAttachmentHandler = (event) => {

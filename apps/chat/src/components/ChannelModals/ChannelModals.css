@@ -56,7 +56,8 @@ section .modal-header {
 }
 
 .add-members #add-member,
-.edit-channel #edit-channel {
+.edit-channel #edit-channel
+.add-channel-flow #add-channel-flow {
   display: flex;
   border-bottom: 1px solid #f0f1f2;
 }
@@ -66,17 +67,19 @@ section .modal-header {
 }
 
 .add-members .input,
-.edit-channel .input {
+.edit-channel .input,
+.add-channel-flow .input {
   width: 100%;
   margin: 1rem 0;
 }
 
 .add-members .input input,
-.edit-channel .input input {
+.edit-channel .input input,
+.add-channel-flow .input input {
   width: inherit;
 }
 
-.add-members .users-result li:hover {
+.add-members .users-result .add-channel-flow li:hover {
   background: #1e6dff;
   color: white;
 }
@@ -116,6 +119,27 @@ section .modal-header {
 }
 
 .view-details .detail {
+  color: #9b9da5;
+  padding-left: 0.25rem;
+}
+
+.add-channel-flow .container {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 0;
+}
+
+.add-channel-flow .row {
+  display: flex;
+  flex-direction: row;
+  padding-bottom: 1rem;
+}
+
+.add-channel-flow .key {
+  width: 30%;
+}
+
+.add-channel-flow .detail {
   color: #9b9da5;
   padding-left: 0.25rem;
 }
