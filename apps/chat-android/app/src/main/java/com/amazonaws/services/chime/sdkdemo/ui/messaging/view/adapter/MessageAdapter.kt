@@ -1,6 +1,6 @@
 /*
  * Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
- * SPDX-License-Identifier: Apache-2.0
+ * SPDX-License-Identifier: MIT-0
  */
 
 package com.amazonaws.services.chime.sdkdemo.ui.messaging.view.adapter
