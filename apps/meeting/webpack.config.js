@@ -8,9 +8,9 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const app = 'meeting';
 
 module.exports = {
-  mode: 'development',
+  mode: 'production',
   entry: ['./src/index.tsx'],
-  devtool: 'inline-source-map',
+  devtool: false,
   module: {
     rules: [
       {
