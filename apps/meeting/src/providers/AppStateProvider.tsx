@@ -14,10 +14,12 @@ interface AppStateValue {
   theme: string;
   region: string;
   isWebAudioEnabled: boolean;
+  isBackgroundBlurEnabled: boolean;
   meetingMode: MeetingMode;
   layout: Layout;
   toggleTheme: () => void;
   toggleWebAudio: () => void;
+  toggleBackgroundBlur: () => void;
   setAppMeetingInfo: (meetingId: string, name: string, region: string) => void;
   setMeetingMode: (meetingMode: MeetingMode) => void;
   setLayout: (layout: Layout) => void;
@@ -44,7 +46,8 @@ export function AppStateProvider({ children }: Props) {
   const [meetingMode, setMeetingMode] = useState(MeetingMode.Attendee);
   const [layout, setLayout] = useState(Layout.Gallery);
   const [localUserName, setLocalName] = useState('');
-  const [isWebAudioEnabled, setIsWebAudioEnabled] = useState(false);
+  const [isWebAudioEnabled, setIsWebAudioEnabled] = useState(true);
+  const [isBackgroundBlurEnabled, setIsBackgroundBlurEnabled] = useState(true);
   const [theme, setTheme] = useState(() => {
     const storedTheme = localStorage.getItem('theme');
     return storedTheme || 'light';
@@ -64,6 +67,10 @@ export function AppStateProvider({ children }: Props) {
     setIsWebAudioEnabled(current => !current);
   }
 
+  const toggleBackgroundBlur = (): void  => {
+    setIsBackgroundBlurEnabled(current => !current);
+  }
+
   const setAppMeetingInfo = (
     meetingId: string,
     name: string,
@@ -79,11 +86,13 @@ export function AppStateProvider({ children }: Props) {
     localUserName,
     theme,
     isWebAudioEnabled,
+    isBackgroundBlurEnabled,
     region,
     meetingMode,
     layout,
     toggleTheme,
     toggleWebAudio,
+    toggleBackgroundBlur,
     setAppMeetingInfo,
     setMeetingMode,
     setLayout,

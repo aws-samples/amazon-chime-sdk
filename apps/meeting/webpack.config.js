@@ -60,12 +60,6 @@ module.exports = {
     proxy: {
       '/': {
         target: 'http://localhost:8080',
-        bypass: function(req, _res, _proxyOptions) {
-          if (req.headers.accept.indexOf('html') !== -1) {
-            console.log('Skipping proxy for browser request.');
-            return `/${app}.html`;
-          }
-        }
       }
     },
     static: {
@@ -75,11 +69,15 @@ module.exports = {
       index: `${app}.html`,
       writeToDisk: true,
     },
+    client: {
+      overlay: false,
+    },
     liveReload: true,
     hot: false,
     host: '0.0.0.0',
     port: 9000,
     https: true,
     historyApiFallback: true,
+    open: true,
   }
 };

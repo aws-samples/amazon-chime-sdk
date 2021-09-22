@@ -34,7 +34,10 @@ const MeetingForm: React.FC = () => {
     region: appRegion,
     meetingId: appMeetingId,
     isWebAudioEnabled,
-    toggleWebAudio
+    isBackgroundBlurEnabled,
+    toggleBackgroundBlur,
+    toggleWebAudio,
+    setMeetingMode
   } = useAppState();
   const [meetingId, setMeetingId] = useState(appMeetingId);
   const [meetingErr, setMeetingErr] = useState(false);
@@ -45,7 +48,6 @@ const MeetingForm: React.FC = () => {
   const [isSpectatorModeSelected, setIsSpectatorModeSelected] = useState(false);
   const { errorMessage, updateErrorMessage } = useContext(getErrorContext());
   const history = useHistory();
-  const { setMeetingMode } = useAppState();
 
   const handleJoinMeeting = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -158,6 +160,13 @@ const MeetingForm: React.FC = () => {
         checked={isWebAudioEnabled}
         onChange={toggleWebAudio}
         infoText="Enable Web Audio to use Voice Focus"
+      />
+      <FormField
+        field={Checkbox}
+        label="Enable Background Blur"
+        value=""
+        checked={isBackgroundBlurEnabled}
+        onChange={toggleBackgroundBlur}
       />
       <Flex
         container
