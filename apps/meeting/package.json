@@ -15,6 +15,7 @@
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-router-dom": "^5.1.2",
+    "source-map-loader": "^3.0.0",
     "styled-components": "^5.0.0",
     "styled-system": "^5.1.5",
     "throttle-debounce": "^2.3.0"
