@@ -1,5 +1,5 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: MIT-0
 
 import { fetchMeeting } from '../../utils/api';
 import { AMAZON_CHIME_VOICE_CONNECTOR_PHONE_NUMDER } from '../../constants';

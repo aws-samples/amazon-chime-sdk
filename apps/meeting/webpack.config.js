@@ -1,5 +1,5 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: MIT-0
 
 const path = require('path');
 const InlineChunkHtmlPlugin = require('react-dev-utils/InlineChunkHtmlPlugin');
@@ -21,7 +21,11 @@ module.exports = {
       {
         test: /\.css$/,
         use: ['style-loader', 'css-loader']
-      }
+      },
+      {
+        test: /\.(svg)$/,
+        type: 'asset/inline'
+      },
     ]
   },
   resolve: {
@@ -29,7 +33,7 @@ module.exports = {
     alias: {
       react: path.resolve('./node_modules/react'),
       'styled-components': path.resolve('./node_modules/styled-components'),
-      'react-dom': path.resolve('./node_modules/react-dom')
+      'react-dom': path.resolve('./node_modules/react-dom'),
     },
     fallback: {
       fs: false,

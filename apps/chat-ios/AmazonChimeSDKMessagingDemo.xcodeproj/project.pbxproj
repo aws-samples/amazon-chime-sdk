@@ -1,0 +1,600 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 51;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		738DB97CE1F381C7FB3E09B9 /* Pods_AmazonChimeSDKMessagingDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72B17769D5180FDBED951437 /* Pods_AmazonChimeSDKMessagingDemo.framework */; };
+		ED251DFB26D5A625009AC316 /* HttpUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED251DFA26D5A625009AC316 /* HttpUtils.swift */; };
+		ED251DFE26D5C3FF009AC316 /* CredentialExchangeResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED251DFD26D5C3FF009AC316 /* CredentialExchangeResponse.swift */; };
+		ED33A2F326544160000621B5 /* AppConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED33A2F226544160000621B5 /* AppConfiguration.swift */; };
+		ED33A2F626545204000621B5 /* AWSChimeSDKService.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED33A2F526545204000621B5 /* AWSChimeSDKService.swift */; };
+		ED37EC6B26422A14005272D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED37EC6A26422A14005272D9 /* AppDelegate.swift */; };
+		ED37EC6D26422A14005272D9 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED37EC6C26422A14005272D9 /* SceneDelegate.swift */; };
+		ED37EC6F26422A14005272D9 /* SignInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED37EC6E26422A14005272D9 /* SignInViewController.swift */; };
+		ED37EC7226422A14005272D9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = ED37EC7026422A14005272D9 /* Main.storyboard */; };
+		ED37EC7426422A17005272D9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = ED37EC7326422A17005272D9 /* Assets.xcassets */; };
+		ED37EC7726422A17005272D9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = ED37EC7526422A17005272D9 /* LaunchScreen.storyboard */; };
+		ED37ECAE264A2F24005272D9 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED37ECAD264A2F24005272D9 /* Extensions.swift */; };
+		ED37ECB4264A5577005272D9 /* ChatModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED37ECB3264A5577005272D9 /* ChatModel.swift */; };
+		ED3B8D9B264C9BAC00E662F2 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3B8D9A264C9BAC00E662F2 /* Utils.swift */; };
+		ED3B8D9E264CD44B00E662F2 /* ChatMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3B8D9D264CD44A00E662F2 /* ChatMessageTableViewCell.swift */; };
+		ED3B8DA5264CD64200E662F2 /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3B8DA4264CD64200E662F2 /* ChatMessage.swift */; };
+		ED3B8DB5264DAC7E00E662F2 /* amplifyconfiguration.json in Resources */ = {isa = PBXBuildFile; fileRef = ED3B8DB4264DAC7E00E662F2 /* amplifyconfiguration.json */; };
+		ED3B8DB9264DAE6600E662F2 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED3B8DB8264DAE6600E662F2 /* AuthService.swift */; };
+		ED7CAEAC264C4CD500F45DD8 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED7CAEAB264C4CD500F45DD8 /* ChatViewController.swift */; };
+		EDB3BFC02654A53500CE699A /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDB3BFBF2654A53500CE699A /* User.swift */; };
+		EDB3BFC5265578C000CE699A /* ChimeUserCredentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDB3BFC4265578C000CE699A /* ChimeUserCredentials.swift */; };
+		EDB3BFCA26557B2700CE699A /* MessagingSessionConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDB3BFC926557B2700CE699A /* MessagingSessionConfiguration.swift */; };
+		EDB3BFCF265585BB00CE699A /* DefaultMessagingSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDB3BFCE265585BB00CE699A /* DefaultMessagingSession.swift */; };
+		EDB3BFD326558D9300CE699A /* ConcurrentMutableSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDB3BFD226558D9300CE699A /* ConcurrentMutableSet.swift */; };
+		EDB3BFD726558E7000CE699A /* MessagingSessionObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDB3BFD626558E7000CE699A /* MessagingSessionObserver.swift */; };
+		EDB3BFDA2655904200CE699A /* MessagingSessionStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDB3BFD92655904200CE699A /* MessagingSessionStatus.swift */; };
+		EDB3BFDD2655916800CE699A /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDB3BFDC2655916800CE699A /* Message.swift */; };
+		EDB3BFE02655D03800CE699A /* DefaultSigV4.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDB3BFDF2655D03800CE699A /* DefaultSigV4.swift */; };
+		EDB3C01A265C26B800CE699A /* SigV4.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDB3C019265C26B800CE699A /* SigV4.swift */; };
+		EDC8A49C26C50070006894E3 /* Payload.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDC8A49B26C50070006894E3 /* Payload.swift */; };
+		EDC8A50826D054CB006894E3 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDC8A50726D054CB006894E3 /* Constants.swift */; };
+		EDEBEF79265C420C00B567C7 /* MessagingSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDEBEF78265C420C00B567C7 /* MessagingSession.swift */; };
+		EDEBEF7D265C47C800B567C7 /* WebSocketAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDEBEF7C265C47C800B567C7 /* WebSocketAdapter.swift */; };
+		EDEBEF81265C498100B567C7 /* WebSocketAdapterObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDEBEF80265C498100B567C7 /* WebSocketAdapterObserver.swift */; };
+		EDEBEF84265C4EBF00B567C7 /* DefaultWebSocketAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDEBEF83265C4EBF00B567C7 /* DefaultWebSocketAdapter.swift */; };
+		EDEBEF87265C642700B567C7 /* ObserverUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDEBEF86265C642700B567C7 /* ObserverUtils.swift */; };
+		EDEBEFA7265F4BD500B567C7 /* AttachmentService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDEBEFA6265F4BD400B567C7 /* AttachmentService.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		5BE1FBD1AFA29C6B307098C4 /* Pods-AmazonChimeSDKMessagingDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AmazonChimeSDKMessagingDemo.debug.xcconfig"; path = "Target Support Files/Pods-AmazonChimeSDKMessagingDemo/Pods-AmazonChimeSDKMessagingDemo.debug.xcconfig"; sourceTree = "<group>"; };
+		72B17769D5180FDBED951437 /* Pods_AmazonChimeSDKMessagingDemo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_AmazonChimeSDKMessagingDemo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EB17A0B27E9E4E6A3A65D42A /* Pods-AmazonChimeSDKMessagingDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AmazonChimeSDKMessagingDemo.release.xcconfig"; path = "Target Support Files/Pods-AmazonChimeSDKMessagingDemo/Pods-AmazonChimeSDKMessagingDemo.release.xcconfig"; sourceTree = "<group>"; };
+		ED251DFA26D5A625009AC316 /* HttpUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpUtils.swift; sourceTree = "<group>"; };
+		ED251DFD26D5C3FF009AC316 /* CredentialExchangeResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialExchangeResponse.swift; sourceTree = "<group>"; };
+		ED33A2F226544160000621B5 /* AppConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfiguration.swift; sourceTree = "<group>"; };
+		ED33A2F526545204000621B5 /* AWSChimeSDKService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AWSChimeSDKService.swift; sourceTree = "<group>"; };
+		ED37EC6726422A14005272D9 /* AmazonChimeSDKMessagingDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AmazonChimeSDKMessagingDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		ED37EC6A26422A14005272D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		ED37EC6C26422A14005272D9 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		ED37EC6E26422A14005272D9 /* SignInViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewController.swift; sourceTree = "<group>"; };
+		ED37EC7126422A14005272D9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		ED37EC7326422A17005272D9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		ED37EC7626422A17005272D9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		ED37EC7826422A17005272D9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		ED37ECAD264A2F24005272D9 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		ED37ECB3264A5577005272D9 /* ChatModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatModel.swift; sourceTree = "<group>"; };
+		ED3B8D9A264C9BAC00E662F2 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
+		ED3B8D9D264CD44A00E662F2 /* ChatMessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageTableViewCell.swift; sourceTree = "<group>"; };
+		ED3B8DA4264CD64200E662F2 /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
+		ED3B8DB4264DAC7E00E662F2 /* amplifyconfiguration.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = amplifyconfiguration.json; sourceTree = "<group>"; };
+		ED3B8DB8264DAE6600E662F2 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
+		ED7CAEAB264C4CD500F45DD8 /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
+		EDB3BFBF2654A53500CE699A /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		EDB3BFC4265578C000CE699A /* ChimeUserCredentials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChimeUserCredentials.swift; sourceTree = "<group>"; };
+		EDB3BFC926557B2700CE699A /* MessagingSessionConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagingSessionConfiguration.swift; sourceTree = "<group>"; };
+		EDB3BFCE265585BB00CE699A /* DefaultMessagingSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultMessagingSession.swift; sourceTree = "<group>"; };
+		EDB3BFD226558D9300CE699A /* ConcurrentMutableSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConcurrentMutableSet.swift; sourceTree = "<group>"; };
+		EDB3BFD626558E7000CE699A /* MessagingSessionObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagingSessionObserver.swift; sourceTree = "<group>"; };
+		EDB3BFD92655904200CE699A /* MessagingSessionStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagingSessionStatus.swift; sourceTree = "<group>"; };
+		EDB3BFDC2655916800CE699A /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		EDB3BFDF2655D03800CE699A /* DefaultSigV4.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultSigV4.swift; sourceTree = "<group>"; };
+		EDB3C019265C26B800CE699A /* SigV4.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SigV4.swift; sourceTree = "<group>"; };
+		EDC8A49B26C50070006894E3 /* Payload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Payload.swift; sourceTree = "<group>"; };
+		EDC8A50726D054CB006894E3 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		EDEBEF78265C420C00B567C7 /* MessagingSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagingSession.swift; sourceTree = "<group>"; };
+		EDEBEF7C265C47C800B567C7 /* WebSocketAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketAdapter.swift; sourceTree = "<group>"; };
+		EDEBEF80265C498100B567C7 /* WebSocketAdapterObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketAdapterObserver.swift; sourceTree = "<group>"; };
+		EDEBEF83265C4EBF00B567C7 /* DefaultWebSocketAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultWebSocketAdapter.swift; sourceTree = "<group>"; };
+		EDEBEF86265C642700B567C7 /* ObserverUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObserverUtils.swift; sourceTree = "<group>"; };
+		EDEBEFA6265F4BD400B567C7 /* AttachmentService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentService.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		ED37EC6426422A14005272D9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				738DB97CE1F381C7FB3E09B9 /* Pods_AmazonChimeSDKMessagingDemo.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		9299B1D0223054C02138D278 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				5BE1FBD1AFA29C6B307098C4 /* Pods-AmazonChimeSDKMessagingDemo.debug.xcconfig */,
+				EB17A0B27E9E4E6A3A65D42A /* Pods-AmazonChimeSDKMessagingDemo.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		ED37EC5E26422A14005272D9 = {
+			isa = PBXGroup;
+			children = (
+				ED37EC6926422A14005272D9 /* AmazonChimeSDKMessagingDemo */,
+				ED37EC6826422A14005272D9 /* Products */,
+				ED3B8DBC264DBC4500E662F2 /* Frameworks */,
+				9299B1D0223054C02138D278 /* Pods */,
+			);
+			sourceTree = "<group>";
+		};
+		ED37EC6826422A14005272D9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				ED37EC6726422A14005272D9 /* AmazonChimeSDKMessagingDemo.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		ED37EC6926422A14005272D9 /* AmazonChimeSDKMessagingDemo */ = {
+			isa = PBXGroup;
+			children = (
+				EDB3BFC32655789200CE699A /* messaging-websocket */,
+				EDB3BFBD2654A38400CE699A /* entity */,
+				ED3B8DB7264DAE4400E662F2 /* service */,
+				ED3B8DA2264CD56B00E662F2 /* utils */,
+				ED37EC6A26422A14005272D9 /* AppDelegate.swift */,
+				ED37EC6C26422A14005272D9 /* SceneDelegate.swift */,
+				ED37EC6E26422A14005272D9 /* SignInViewController.swift */,
+				ED37EC7026422A14005272D9 /* Main.storyboard */,
+				ED37EC7326422A17005272D9 /* Assets.xcassets */,
+				ED37EC7526422A17005272D9 /* LaunchScreen.storyboard */,
+				ED37EC7826422A17005272D9 /* Info.plist */,
+				ED37ECB3264A5577005272D9 /* ChatModel.swift */,
+				ED7CAEAB264C4CD500F45DD8 /* ChatViewController.swift */,
+				ED3B8DB4264DAC7E00E662F2 /* amplifyconfiguration.json */,
+				ED33A2F226544160000621B5 /* AppConfiguration.swift */,
+			);
+			path = AmazonChimeSDKMessagingDemo;
+			sourceTree = "<group>";
+		};
+		ED3B8DA2264CD56B00E662F2 /* utils */ = {
+			isa = PBXGroup;
+			children = (
+				ED37ECAD264A2F24005272D9 /* Extensions.swift */,
+				ED3B8D9A264C9BAC00E662F2 /* Utils.swift */,
+				EDC8A50726D054CB006894E3 /* Constants.swift */,
+				ED251DFA26D5A625009AC316 /* HttpUtils.swift */,
+			);
+			path = utils;
+			sourceTree = "<group>";
+		};
+		ED3B8DB7264DAE4400E662F2 /* service */ = {
+			isa = PBXGroup;
+			children = (
+				ED3B8DB8264DAE6600E662F2 /* AuthService.swift */,
+				ED33A2F526545204000621B5 /* AWSChimeSDKService.swift */,
+				EDEBEFA6265F4BD400B567C7 /* AttachmentService.swift */,
+			);
+			path = service;
+			sourceTree = "<group>";
+		};
+		ED3B8DBC264DBC4500E662F2 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				72B17769D5180FDBED951437 /* Pods_AmazonChimeSDKMessagingDemo.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		EDB3BFBD2654A38400CE699A /* entity */ = {
+			isa = PBXGroup;
+			children = (
+				ED3B8D9D264CD44A00E662F2 /* ChatMessageTableViewCell.swift */,
+				ED3B8DA4264CD64200E662F2 /* ChatMessage.swift */,
+				EDB3BFBF2654A53500CE699A /* User.swift */,
+				EDB3BFDC2655916800CE699A /* Message.swift */,
+				EDC8A49B26C50070006894E3 /* Payload.swift */,
+				ED251DFD26D5C3FF009AC316 /* CredentialExchangeResponse.swift */,
+			);
+			path = entity;
+			sourceTree = "<group>";
+		};
+		EDB3BFC32655789200CE699A /* messaging-websocket */ = {
+			isa = PBXGroup;
+			children = (
+				EDEBEF7B265C478700B567C7 /* internal */,
+				EDB3BFD126558D6D00CE699A /* utils */,
+				EDB3BFC826557B0100CE699A /* session */,
+			);
+			path = "messaging-websocket";
+			sourceTree = "<group>";
+		};
+		EDB3BFC826557B0100CE699A /* session */ = {
+			isa = PBXGroup;
+			children = (
+				EDB3BFC4265578C000CE699A /* ChimeUserCredentials.swift */,
+				EDB3BFC926557B2700CE699A /* MessagingSessionConfiguration.swift */,
+				EDB3BFCE265585BB00CE699A /* DefaultMessagingSession.swift */,
+				EDB3BFD626558E7000CE699A /* MessagingSessionObserver.swift */,
+				EDB3BFD92655904200CE699A /* MessagingSessionStatus.swift */,
+				EDEBEF78265C420C00B567C7 /* MessagingSession.swift */,
+			);
+			path = session;
+			sourceTree = "<group>";
+		};
+		EDB3BFD126558D6D00CE699A /* utils */ = {
+			isa = PBXGroup;
+			children = (
+				EDB3BFD226558D9300CE699A /* ConcurrentMutableSet.swift */,
+				EDB3BFDF2655D03800CE699A /* DefaultSigV4.swift */,
+				EDB3C019265C26B800CE699A /* SigV4.swift */,
+				EDEBEF86265C642700B567C7 /* ObserverUtils.swift */,
+			);
+			path = utils;
+			sourceTree = "<group>";
+		};
+		EDEBEF7B265C478700B567C7 /* internal */ = {
+			isa = PBXGroup;
+			children = (
+				EDEBEF7C265C47C800B567C7 /* WebSocketAdapter.swift */,
+				EDEBEF80265C498100B567C7 /* WebSocketAdapterObserver.swift */,
+				EDEBEF83265C4EBF00B567C7 /* DefaultWebSocketAdapter.swift */,
+			);
+			path = internal;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		ED37EC6626422A14005272D9 /* AmazonChimeSDKMessagingDemo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = ED37EC9126422A18005272D9 /* Build configuration list for PBXNativeTarget "AmazonChimeSDKMessagingDemo" */;
+			buildPhases = (
+				7F92BDF2A82A9832C3EE85FE /* [CP] Check Pods Manifest.lock */,
+				ED37EC6326422A14005272D9 /* Sources */,
+				ED37EC6426422A14005272D9 /* Frameworks */,
+				ED37EC6526422A14005272D9 /* Resources */,
+				59DB9E7FF6D76B9275EA5375 /* [CP] Embed Pods Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AmazonChimeSDKMessagingDemo;
+			productName = AmazonChimeMessagingSDKDemo;
+			productReference = ED37EC6726422A14005272D9 /* AmazonChimeSDKMessagingDemo.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		ED37EC5F26422A14005272D9 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1200;
+				LastUpgradeCheck = 1200;
+				TargetAttributes = {
+					ED37EC6626422A14005272D9 = {
+						CreatedOnToolsVersion = 12.0;
+						LastSwiftMigration = 1200;
+					};
+				};
+			};
+			buildConfigurationList = ED37EC6226422A14005272D9 /* Build configuration list for PBXProject "AmazonChimeSDKMessagingDemo" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = ED37EC5E26422A14005272D9;
+			productRefGroup = ED37EC6826422A14005272D9 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				ED37EC6626422A14005272D9 /* AmazonChimeSDKMessagingDemo */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		ED37EC6526422A14005272D9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				ED37EC7726422A17005272D9 /* LaunchScreen.storyboard in Resources */,
+				ED37EC7426422A17005272D9 /* Assets.xcassets in Resources */,
+				ED37EC7226422A14005272D9 /* Main.storyboard in Resources */,
+				ED3B8DB5264DAC7E00E662F2 /* amplifyconfiguration.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		59DB9E7FF6D76B9275EA5375 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-AmazonChimeSDKMessagingDemo/Pods-AmazonChimeSDKMessagingDemo-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-AmazonChimeSDKMessagingDemo/Pods-AmazonChimeSDKMessagingDemo-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-AmazonChimeSDKMessagingDemo/Pods-AmazonChimeSDKMessagingDemo-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		7F92BDF2A82A9832C3EE85FE /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-AmazonChimeSDKMessagingDemo-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		ED37EC6326422A14005272D9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EDB3BFC02654A53500CE699A /* User.swift in Sources */,
+				ED3B8DA5264CD64200E662F2 /* ChatMessage.swift in Sources */,
+				ED37EC6F26422A14005272D9 /* SignInViewController.swift in Sources */,
+				ED251DFB26D5A625009AC316 /* HttpUtils.swift in Sources */,
+				EDB3BFD326558D9300CE699A /* ConcurrentMutableSet.swift in Sources */,
+				EDB3BFCF265585BB00CE699A /* DefaultMessagingSession.swift in Sources */,
+				EDC8A50826D054CB006894E3 /* Constants.swift in Sources */,
+				ED37ECB4264A5577005272D9 /* ChatModel.swift in Sources */,
+				EDEBEF81265C498100B567C7 /* WebSocketAdapterObserver.swift in Sources */,
+				ED37EC6B26422A14005272D9 /* AppDelegate.swift in Sources */,
+				ED37ECAE264A2F24005272D9 /* Extensions.swift in Sources */,
+				ED33A2F326544160000621B5 /* AppConfiguration.swift in Sources */,
+				EDEBEF79265C420C00B567C7 /* MessagingSession.swift in Sources */,
+				ED3B8DB9264DAE6600E662F2 /* AuthService.swift in Sources */,
+				EDB3BFC5265578C000CE699A /* ChimeUserCredentials.swift in Sources */,
+				ED37EC6D26422A14005272D9 /* SceneDelegate.swift in Sources */,
+				ED251DFE26D5C3FF009AC316 /* CredentialExchangeResponse.swift in Sources */,
+				ED33A2F626545204000621B5 /* AWSChimeSDKService.swift in Sources */,
+				EDEBEF84265C4EBF00B567C7 /* DefaultWebSocketAdapter.swift in Sources */,
+				EDEBEFA7265F4BD500B567C7 /* AttachmentService.swift in Sources */,
+				ED3B8D9B264C9BAC00E662F2 /* Utils.swift in Sources */,
+				ED7CAEAC264C4CD500F45DD8 /* ChatViewController.swift in Sources */,
+				EDB3BFD726558E7000CE699A /* MessagingSessionObserver.swift in Sources */,
+				EDC8A49C26C50070006894E3 /* Payload.swift in Sources */,
+				EDEBEF7D265C47C800B567C7 /* WebSocketAdapter.swift in Sources */,
+				EDEBEF87265C642700B567C7 /* ObserverUtils.swift in Sources */,
+				EDB3BFE02655D03800CE699A /* DefaultSigV4.swift in Sources */,
+				EDB3C01A265C26B800CE699A /* SigV4.swift in Sources */,
+				EDB3BFDA2655904200CE699A /* MessagingSessionStatus.swift in Sources */,
+				EDB3BFDD2655916800CE699A /* Message.swift in Sources */,
+				ED3B8D9E264CD44B00E662F2 /* ChatMessageTableViewCell.swift in Sources */,
+				EDB3BFCA26557B2700CE699A /* MessagingSessionConfiguration.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		ED37EC7026422A14005272D9 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				ED37EC7126422A14005272D9 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		ED37EC7526422A17005272D9 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				ED37EC7626422A17005272D9 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		ED37EC8F26422A18005272D9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		ED37EC9026422A18005272D9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		ED37EC9226422A18005272D9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5BE1FBD1AFA29C6B307098C4 /* Pods-AmazonChimeSDKMessagingDemo.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = AmazonChimeSDKMessagingDemo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.amazonaws.services.chime.AmazonChimeSDKMessagingDemo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		ED37EC9326422A18005272D9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = EB17A0B27E9E4E6A3A65D42A /* Pods-AmazonChimeSDKMessagingDemo.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = AmazonChimeSDKMessagingDemo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.amazonaws.services.chime.AmazonChimeSDKMessagingDemo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		ED37EC6226422A14005272D9 /* Build configuration list for PBXProject "AmazonChimeSDKMessagingDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				ED37EC8F26422A18005272D9 /* Debug */,
+				ED37EC9026422A18005272D9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		ED37EC9126422A18005272D9 /* Build configuration list for PBXNativeTarget "AmazonChimeSDKMessagingDemo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				ED37EC9226422A18005272D9 /* Debug */,
+				ED37EC9326422A18005272D9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = ED37EC5F26422A14005272D9 /* Project object */;
+}

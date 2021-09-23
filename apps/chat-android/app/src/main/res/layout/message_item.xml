@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+  ~ SPDX-License-Identifier: MIT-0
+  -->
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <import type="android.view.View"/>
+        <variable
+            name="message"
+            type="com.amazonaws.services.chime.sdkdemo.data.ChannelMessage" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="10dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:clipToPadding="false">
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_marginStart="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="4dp"
+            android:text="@{message.senderName}"
+            android:visibility="@{message.isLocal ? View.GONE : View.VISIBLE}"/>
+
+        <TextView
+            android:id="@+id/incomingMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/name"
+            android:layout_alignStart="@+id/name"
+            android:background="@drawable/bubble_their_message"
+            android:padding="10dp"
+            android:elevation="2dp"
+            android:textSize="18sp"
+            android:text="@{message.content}"
+            android:visibility="@{message.isLocal ? View.GONE : View.VISIBLE}"/>
+
+        <TextView
+            android:id="@+id/inMessageTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@id/incomingMessage"
+            android:layout_below="@id/incomingMessage"
+            android:textColor="#B1B1B1"
+            android:text="@{message.displayTime}"
+            android:visibility="@{message.isLocal ? View.GONE : View.VISIBLE}"/>
+
+        <TextView
+            android:id="@+id/outgoingMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/bubble_my_message"
+            android:textColor="#fff"
+            android:padding="10dp"
+            android:elevation="2dp"
+            android:textSize="18sp"
+            android:layout_alignParentEnd="true"
+            android:text="@{message.content}"
+            android:visibility="@{message.isLocal ? View.VISIBLE : View.GONE}"/>
+
+        <TextView
+            android:id="@+id/outMessageTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@id/outgoingMessage"
+            android:layout_below="@id/outgoingMessage"
+            android:textColor="#B1B1B1"
+            android:text="@{message.displayTime}"
+            android:visibility="@{message.isLocal ? View.VISIBLE : View.GONE}"/>
+    </RelativeLayout>
+</layout>

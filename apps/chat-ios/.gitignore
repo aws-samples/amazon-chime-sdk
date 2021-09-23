@@ -1,0 +1,5 @@
+Pods
+xcuserdata
+**/IDEWorkspaceChecks.plist
+.DS_Store
+Podfile.lock
