@@ -23,7 +23,7 @@
   "scripts": {
     "lint": "eslint src --ext .ts,.tsx --fix",
     "build": "webpack --config ./webpack.config.js",
-    "start:client": "webpack --config ./webpack.config.dev.js && webpack serve",
+    "start:client": "webpack serve --config ./webpack.config.dev.js",
     "start:backend": "node server.js",
     "start": "concurrently \"npm run start:client\" \"npm run start:backend\""
   },
