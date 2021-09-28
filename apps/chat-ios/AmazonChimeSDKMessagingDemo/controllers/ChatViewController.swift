@@ -1,15 +1,17 @@
+//  ChatViewController.swift
+//  AmazonChimeSDKMessagingDemo
+//
+//  Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+//  SPDX-License-Identifier: MIT-0
+//
+
 import UIKit
 import AWSCore
-import AWSChimeSDKMessaging
 import AWSPluginsCore
 
-class ChatViewController: UIViewController,
-                          UITextFieldDelegate,
-                          UIImagePickerControllerDelegate,
-                          UINavigationControllerDelegate {
+class ChatViewController: UIViewController {
 
     @IBOutlet var chatView: UIView!
-    @IBOutlet var loginAsLabel: UILabel!
     @IBOutlet var chatMessageTable: UITableView!
     @IBOutlet var inputBox: UIView!
     @IBOutlet var inputText: UITextField!
@@ -35,25 +37,34 @@ class ChatViewController: UIViewController,
         chatMessageTable.dataSource = chatModel
         inputText.delegate = self
 
+        navigationItem.title = chatModel.channelName
         chatMessageTable.separatorStyle = .none
-        loginAsLabel.text = "Login as \(AuthService.currentUser?.chimeDisplayName ?? "unknown")"
         sendMessageButton.isEnabled = false
         setupHideKeyboardOnTap()
         registerForKeyboardNotifications()
 
-        chatModel.messageUpdatedHandler = { [weak self] in
-            self?.chatMessageTable.reloadData()
+        chatModel.chatMessageTableUpdatedHandler = { [weak self] in
+            DispatchQueue.main.async {
+                self?.chatMessageTable.reloadData()
+                // scroll to bottom of the table automatically
+                if let count = self?.chatModel.chatMessageCount {
+                    if count > 0 {
+                        let indexPath = IndexPath(item: count - 1, section: 0)
+                        self?.chatMessageTable.scrollToRow(at: indexPath, at: .bottom, animated: true)
+                    }
+                }
+            }
         }
 
         chatModel.startMessagingSession()
     }
-
-    override func viewWillDisappear(_ animated: Bool) {
+    
+    deinit {
         chatModel.stopMessagingSession()
         deregisterFromKeyboardNotifications()
-        AuthService.signOut()
     }
 
+    // MARK: - IBAction functions
     @IBAction func inputTextChanged(_ sender: Any) {
         guard let text = inputText.text else {
             return
@@ -61,17 +72,17 @@ class ChatViewController: UIViewController,
         sendMessageButton.isEnabled = !text.isEmpty
     }
 
-    @IBAction func attachButtonClicked(_ sender: Any) {
+    @IBAction func attachButtonPressed(_ sender: UIButton) {
         imagePicker.allowsEditing = false
         imagePicker.sourceType = .photoLibrary
         present(imagePicker, animated: true, completion: nil)
     }
 
-    @IBAction func attachmentDeleteButtonClicked(_ sender: Any) {
+    @IBAction func attachmentDeleteButtonPressed(_ sender: UIButton) {
         deleteAttachment()
     }
 
-    @IBAction func sendButtonClicked(_ sender: Any) {
+    @IBAction func sendButtonPressed(_ sender: UIButton) {
         let messageToSend = inputText.text!.trimmingCharacters(in: .whitespacesAndNewlines)
         if messageToSend.isEmpty {
             return
@@ -87,19 +98,26 @@ class ChatViewController: UIViewController,
         deleteAttachment()
     }
 
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        return true
-    }
-
-    // MARK: - UIImagePickerControllerDelegate Methods
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        if let imageUrl = info[UIImagePickerController.InfoKey.imageURL] as? URL {
-            addAttachment(fileName: imageUrl.lastPathComponent, fileUrl: imageUrl)
+    @IBAction func settingsBarButtonPressed(_ sender: UIBarButtonItem) {
+        let optionMenu = UIAlertController(title: K.channelSettingsAlertTitle, message: "", preferredStyle: .actionSheet)
+        
+        let notificationSettinsAction = UIAlertAction(title: K.channelSettingsAlertNotificationSettings, style: .default) { _ in
+            self.performSegue(withIdentifier: K.segueNavigateToNotificationSettingsViewId, sender: self)
         }
-        dismiss(animated: true, completion: nil)
+        
+        let cancelAction = UIAlertAction(title: K.channelSettingsAlertCancel, style: .cancel)
+        optionMenu.addAction(cancelAction)
+        
+        optionMenu.addAction(notificationSettinsAction)
+        present(optionMenu, animated: true, completion: nil)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let notificationSettingsVC = segue.destination as! NotificationSettingsViewController
+        notificationSettingsVC.notificationSettingsModel.channelArn = chatModel.channelArn
     }
 
+    // MARK: - Private Methods
     private func addAttachment(fileName: String, fileUrl: URL) {
         self.fileName = fileName
         self.fileUrl = fileUrl
@@ -156,5 +174,21 @@ class ChatViewController: UIViewController,
 
     @objc private func keyboardHideHandler(notification _: NSNotification) {
         self.inputBoxBottomConstrain.constant = 0
+    }
+}
+
+extension ChatViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+}
+
+extension ChatViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        if let imageUrl = info[UIImagePickerController.InfoKey.imageURL] as? URL {
+            addAttachment(fileName: imageUrl.lastPathComponent, fileUrl: imageUrl)
+        }
+        dismiss(animated: true, completion: nil)
     }
 }

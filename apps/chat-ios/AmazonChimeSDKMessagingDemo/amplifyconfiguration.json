@@ -8,16 +8,16 @@
                 "CredentialsProvider": {
                     "CognitoIdentity": {
                         "Default": {
-                            "PoolId": "Your Cognito Identity Pool ID",
-                            "Region": "Your Region"
+                            "PoolId": "cognitoIdentityPoolId",
+                            "Region": "us-east-1"
                         }
                     }
                 },
                 "CognitoUserPool": {
                     "Default": {
-                        "PoolId": "Your Cognito User Pool ID",
-                        "AppClientId": "Your Cognito User Pool App Client ID",
-                        "Region": "Your Region"
+                        "PoolId": "cognitoUserPoolId",
+                        "AppClientId": "cognitoAppClientId",
+                        "Region": "us-east-1"
                     }
                 },
                 "Auth": {
@@ -31,8 +31,8 @@
     "storage": {
         "plugins": {
             "awsS3StoragePlugin": {
-                  "bucket": "Your S3 Bucket",
-                  "region": "Your Region"
+                  "bucket": "attachmentsS3BucketName",
+                  "region": "us-east-1"
             }
         }
     }
