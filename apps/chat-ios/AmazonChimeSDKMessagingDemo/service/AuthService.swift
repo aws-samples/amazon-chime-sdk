@@ -13,31 +13,34 @@ import AWSAuthCore
 class AuthService {
     static var currentUser: User?
     static var currentUserCredentials: ChimeUserCredentials?
+    private static let TAG = "AuthService"
     
     static func signIn(username: String, password: String, signedInHandler: @escaping (Bool) -> Void) {
         Amplify.Auth.signIn(username: username, password: password) { result in
             switch result {
             case .success:
-                print("AuthService signed in")
+                print("\(TAG) sign in success")
                 getAWSCredentials {
                     getCurrentUser {
                         signedInHandler(true)
                     }
                 }
             case .failure(let error):
-                print("AuthService sign in error \(error)")
+                print("\(TAG) sign in error \(error)")
                 signedInHandler(false)
             }
         }
     }
 
-    static func signOut() {
+    static func signOut(signedOutHandler: ((Bool) -> Void)?) {
         Amplify.Auth.signOut() { result in
             switch result {
             case .success:
-                print("AuthService signed out")
+                print("\(TAG) sign out success")
+                signedOutHandler?(true)
             case .failure(let error):
-                print("AuthService sign out error \(error)")
+                print("\(TAG) sign out error \(error)")
+                signedOutHandler?(false)
             }
         }
     }
@@ -50,7 +53,7 @@ class AuthService {
                 if let awsCredentialsProvider = session as? AuthAWSCredentialsProvider {
                     let credentials = try awsCredentialsProvider.getAWSCredentials().get() as? AuthAWSTemporaryCredentials
                     guard let creds = credentials else {
-                        print("AuthService getAWSCredentials() credentials is nil")
+                        print("\(TAG) getAWSCredentials() credentials is nil")
                         return
                     }
                     self.currentUserCredentials = ChimeUserCredentials(accessKeyId: creds.accessKey,
@@ -58,10 +61,10 @@ class AuthService {
                                                                        sessionToken: creds.sessionKey)
                     completion()
                 } else {
-                    print("AuthService getAWSCredentials() awsCredentialsProvider is nil")
+                    print("\(TAG) getAWSCredentials() awsCredentialsProvider is nil")
                 }
             } catch {
-                print("AuthService getAWSCredentials() error - \(error)")
+                print("\(TAG) getAWSCredentials() error \(error)")
             }
         }
     }
@@ -79,10 +82,10 @@ class AuthService {
                                             chimeAppInstanceUserArn: userArn)
                     completion()
                 } else {
-                    print("AuthService getCurrentUser() identityProvider is nil")
+                    print("\(TAG) getCurrentUser() identityProvider is nil")
                 }
             } catch {
-                print("AuthService getCurrentUser() error - \(error)")
+                print("\(TAG) getCurrentUser() error - \(error)")
             }
         }
     }
@@ -99,7 +102,7 @@ class AuthService {
                               jsonData: nil,
                               headers: headers) { (data, error) in
             if error != nil {
-                print("AuthService exchangeTokenForAwsCredential() error: \(String(describing: error))")
+                print("\(TAG) exchangeTokenForAwsCredential() error: \(String(describing: error))")
                 credentialExchanged(false)
             }
             if let data = data {
@@ -112,7 +115,7 @@ class AuthService {
                     self.currentUserCredentials = credentialExchangeResponse.chimeCredentials
                     credentialExchanged(true)
                 } catch {
-                    print("AuthService exchangeTokenForAwsCredential() JSON parsing error: \(error)")
+                    print("\(TAG) exchangeTokenForAwsCredential() JSON parsing error: \(error)")
                 }
             }
         }

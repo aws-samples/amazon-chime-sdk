@@ -14,4 +14,5 @@ struct ChatMessage {
     let displayTime: String
     let isSelf: Bool
     let imageUrl: URL?
+    var displayAttachmentHolder: Bool = false
 }
