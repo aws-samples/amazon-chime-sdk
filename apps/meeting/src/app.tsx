@@ -20,6 +20,7 @@ import { NavigationProvider } from './providers/NavigationProvider';
 import { Meeting, Home, DeviceSetup } from './views';
 import Notifications from './containers/Notifications';
 import NoMeetingRedirect from './containers/NoMeetingRedirect';
+import MeetingEventObserver from './containers/MeetingEventObserver';
 import meetingConfig from './meetingConfig';
 
 const App: FC = () => (
@@ -46,6 +47,7 @@ const App: FC = () => (
                     </Route>
                   </Switch>
                 </NavigationProvider>
+                <MeetingEventObserver />
               </MeetingProvider>
             </VoiceFocusProvider>
           </ErrorProvider>
