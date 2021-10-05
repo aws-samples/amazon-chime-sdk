@@ -22,6 +22,7 @@ import Notifications from './containers/Notifications';
 import NoMeetingRedirect from './containers/NoMeetingRedirect';
 import MeetingEventObserver from './containers/MeetingEventObserver';
 import meetingConfig from './meetingConfig';
+import { GridStateProvider } from './providers/GridStateProvider';
 
 const App: FC = () => (
   <Router>
@@ -33,19 +34,21 @@ const App: FC = () => (
             <VoiceFocusProvider>
               <MeetingProvider {...meetingConfig}>
                 <NavigationProvider>
-                  <Switch>
-                    <Route exact path={routes.HOME} component={Home} />
-                    <Route path={routes.DEVICE}>
-                      <NoMeetingRedirect>
-                        <DeviceSetup />
-                      </NoMeetingRedirect>
-                    </Route>
-                    <Route path={routes.MEETING}>
-                      <NoMeetingRedirect>
-                        <MeetingModeSelector />
-                      </NoMeetingRedirect>
-                    </Route>
-                  </Switch>
+                  <GridStateProvider>
+                    <Switch>
+                      <Route exact path={routes.HOME} component={Home} />
+                      <Route path={routes.DEVICE}>
+                        <NoMeetingRedirect>
+                          <DeviceSetup />
+                        </NoMeetingRedirect>
+                      </Route>
+                      <Route path={routes.MEETING}>
+                        <NoMeetingRedirect>
+                          <MeetingModeSelector />
+                        </NoMeetingRedirect>
+                      </Route>
+                    </Switch>
+                  </GridStateProvider>
                 </NavigationProvider>
                 <MeetingEventObserver />
               </MeetingProvider>

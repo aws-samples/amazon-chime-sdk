@@ -15,11 +15,14 @@ import {
 import { useNavigation } from '../../providers/NavigationProvider';
 import { useAppState } from '../../providers/AppStateProvider';
 import LocalMediaStreamMetrics from '../LocalMediaStreamMetrics';
+import { useGridState } from '../../providers/GridStateProvider';
+import GalleryLayout from '../../components/GalleryLayout';
+import FeaturedLayout from '../../components/FeaturedLayout';
 
 const Navigation = () => {
   const { toggleRoster, closeNavbar } = useNavigation();
   const { theme, toggleTheme } = useAppState();
-
+  const { layout, setLayout } = useGridState();
   return (
     <Navbar className="nav" flexDirection="column" container>
       <NavbarHeader title="Navigation" onClose={closeNavbar} />
@@ -40,6 +43,17 @@ const Navigation = () => {
       >
         <LocalMediaStreamMetrics />
       </NavbarItem>
+      <NavbarItem
+        icon={layout === 'gallery'
+          ? <GalleryLayout />
+          : <FeaturedLayout />}
+        onClick={() => {
+          layout === 'gallery'
+            ? setLayout('featured')
+            : setLayout('gallery')
+        }}
+        label="Switch Layout"
+      />
     </Navbar>
   );
 };
