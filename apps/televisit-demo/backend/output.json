@@ -1,0 +1,26 @@
+[
+    {
+        "OutputKey": "cognitoIdentityPoolId",
+        "OutputValue": "us-east-1:b4d74696-96e1-476e-8f1e-1f03147370e4"
+    },
+    {
+        "OutputKey": "appInstanceArn",
+        "OutputValue": "arn:aws:chime:us-east-1:104621577074:app-instance/05300ec3-530d-4b77-99f5-b576c0e63416"
+    },
+    {
+        "OutputKey": "apiGatewayInvokeUrl",
+        "OutputValue": "https://h5z8410kbe.execute-api.us-east-1.amazonaws.com/prod/"
+    },
+    {
+        "OutputKey": "attachmentsS3BucketName",
+        "OutputValue": "chime-sdk-televisit-demo-chatattachmentsbucket-5dr08pa3nlax"
+    },
+    {
+        "OutputKey": "cognitoAppClientId",
+        "OutputValue": "24e2hntc1mh4sghmnspkqn7el0"
+    },
+    {
+        "OutputKey": "cognitoUserPoolId",
+        "OutputValue": "us-east-1_qy6Kaxklv"
+    }
+]

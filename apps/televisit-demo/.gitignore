@@ -1,0 +1,5 @@
+package-lock.json
+dist
+node_modules
+.aws-sam
+sam-output.json
