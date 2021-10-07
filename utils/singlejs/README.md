@@ -18,7 +18,7 @@ It will generate `amazon-chime-sdk.min.js` and `amazon-chime-sdk.min.js.map` in 
 ### Using ChimeSDK
 
 In a browser environment, `window.ChimeSDK` will be available. You can access Chime SDK components by component name ([See the full list here](https://github.com/aws/amazon-chime-sdk-js/blob/master/src/index.ts)).
-For example, you can rewrite [the Meeting Application example](https://aws.github.io/amazon-chime-sdk-js/modules/gettingstarted.html#meeting-application) using `window.ChimeSDK`.
+For example, you can [create a meeting session](https://aws.github.io/amazon-chime-sdk-js/modules/apioverview.html#1-create-a-session) and [configure the meeting session](https://aws.github.io/amazon-chime-sdk-js/modules/apioverview.html#2-configure-the-session) using `window.ChimeSDK`.
 
 ```js
 const logger = new ChimeSDK.ConsoleLogger('ChimeMeetingLogs', ChimeSDK.LogLevel.INFO);
