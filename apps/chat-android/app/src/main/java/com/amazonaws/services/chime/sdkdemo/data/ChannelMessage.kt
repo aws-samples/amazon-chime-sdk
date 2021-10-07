@@ -5,10 +5,12 @@
 
 package com.amazonaws.services.chime.sdkdemo.data
 
+import java.util.*
+
 data class ChannelMessage(
     val messageId: String,
     val senderName: String,
     val isLocal: Boolean,
-    val displayTime: String,
+    val displayTime: Date,
     val content: String
 )

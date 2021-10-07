@@ -13,6 +13,8 @@ import com.amazonaws.services.chime.sdk.messaging.utils.DefaultSigV4
 import com.amazonaws.services.chime.sdk.messaging.utils.ObserverUtils
 import com.amazonaws.services.chime.sdk.messaging.utils.SigV4
 import com.amazonaws.services.chime.sdk.messaging.utils.logger.Logger
+import com.google.gson.FieldNamingPolicy
+import com.google.gson.GsonBuilder
 import org.json.JSONObject
 
 class DefaultMessagingSession(
@@ -23,6 +25,7 @@ class DefaultMessagingSession(
 ) : MessagingSession {
     private val observers = mutableSetOf<MessagingSessionObserver>()
     private var isFirstMessageReceived: Boolean = false
+    val gson = GsonBuilder().setFieldNamingStrategy(FieldNamingPolicy.UPPER_CAMEL_CASE).create()
 
     private val TAG = "DefaultMessageSession"
 
@@ -68,10 +71,7 @@ class DefaultMessagingSession(
 
     private fun handleMessage(data: String) {
         try {
-            val obj = JSONObject(data)
-            val type = obj.getJSONObject("Headers").getString("x-amz-chime-event-type")
-            val message = Message(type, obj.getJSONObject("Headers").toString(), data)
-
+            val message = gson.fromJson<Message>(data, Message::class.java)
             if (!isFirstMessageReceived) {
                 // Since backend does authorization after the websocket open we cannot rely on open event for onStarted
                 // as the socket will close if authorization fail after it open. So we trigger onStarted on first message event
@@ -86,7 +86,7 @@ class DefaultMessagingSession(
                 it.onMessagingSessionReceivedMessage(message)
             }
         } catch (error: Exception) {
-            logger.error(TAG, "Failed to parse messages: ${error.localizedMessage}")
+            logger.error(TAG, "Failed to parse messages $data: ${error.localizedMessage}")
         }
     }
 

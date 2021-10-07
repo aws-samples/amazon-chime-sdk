@@ -5,11 +5,15 @@
 
 package com.amazonaws.services.chime.sdkdemo.ui.signin.presentation
 
+import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.amazonaws.auth.AWSSessionCredentials
 import com.amazonaws.services.chime.sdk.messaging.session.ChimeUserCredentials
+import com.amazonaws.services.chime.sdkdemo.common.PASSWORD_KEY
+import com.amazonaws.services.chime.sdkdemo.common.USERNAME_KEY
 import com.amazonaws.services.chime.sdkdemo.data.User
 import com.amazonaws.services.chime.sdkdemo.data.onFailure
 import com.amazonaws.services.chime.sdkdemo.data.onSuccess
@@ -20,6 +24,7 @@ import com.amazonaws.services.chime.sdkdemo.ui.base.Success
 import com.amazonaws.services.chime.sdkdemo.ui.base.ViewState
 import kotlinx.coroutines.launch
 import org.json.JSONObject
+import java.util.logging.Logger
 
 class SignInViewModel(
     private val userRepository: UserRepository
@@ -32,6 +37,19 @@ class SignInViewModel(
 
     private val _viewState = MutableLiveData<ViewState<Any>>()
     val viewState: LiveData<ViewState<Any>> = _viewState
+
+    lateinit var sharedPrefs: SharedPreferences
+
+    fun checkSignedIn() {
+        val username = sharedPrefs.getString(USERNAME_KEY, "")
+        val password = sharedPrefs.getString(PASSWORD_KEY, "")
+
+        if (!username.isNullOrBlank() && !password.isNullOrBlank()) {
+            // already signed in from local prefs
+            // redirect to next screen
+            _viewState.value = Success()
+        }
+    }
 
     fun signIn() {
         val currentUserName = userName.value?.trim()
@@ -46,7 +64,29 @@ class SignInViewModel(
 
         viewModelScope.launch {
             userRepository.signIn(currentUserName, currentPassword)
-                .onSuccess { _viewState.value = Success(it) }
+                .onSuccess {
+
+                    // This is probably not a great way to store credentials locally
+                    with (sharedPrefs.edit()) {
+                        putString(USERNAME_KEY, userName.value)
+                        putString(PASSWORD_KEY, password.value)
+                        apply()
+                    }
+
+                    userRepository.getCurrentUser()
+                        .onSuccess {
+                            userRepository.getAWSCredentials().onSuccess {
+                                userRepository.initialize(
+                                    ChimeUserCredentials(
+                                        it.awsAccessKeyId,
+                                        it.awsSecretKey,
+                                        if (it is AWSSessionCredentials) it.sessionToken else null
+                                    )
+                                )
+                            }
+                        }
+                    _viewState.value = Success()
+                }
                 .onFailure { _viewState.value = Error(it) }
         }
     }

@@ -6,12 +6,19 @@
 package com.amazonaws.services.chime.sdkdemo
 
 import android.app.Application
+import android.content.Context
 import com.amazonaws.services.chime.sdk.messaging.utils.logger.ConsoleLogger
+import com.amazonaws.services.chime.sdkdemo.common.DEVICE_TOKEN_KEY
 import com.amazonaws.services.chime.sdkdemo.data.source.MessageRepository
 import com.amazonaws.services.chime.sdkdemo.data.source.UserRepository
+import com.amazonaws.services.chime.sdkdemo.ui.base.Error
 import com.amplifyframework.AmplifyException
 import com.amplifyframework.auth.cognito.AWSCognitoAuthPlugin
 import com.amplifyframework.core.Amplify
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.ktx.messaging
+import java.lang.RuntimeException
 
 class AmazonChimeSDKMessagingDemoApp : Application() {
     val userRepository: UserRepository
