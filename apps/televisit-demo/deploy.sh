@@ -9,37 +9,41 @@ if ! [ -x "$(command -v npm)" ]; then
   echo 'Error: npm is not installed.' >&2
   exit 1
 fi
-if ! [ -x "$(command -v aws)" ]; then
-  echo 'Error: aws is not installed.' >&2
-  exit 1
-fi
 if ! [ -x "$(command -v jq)" ]; then
   echo 'Error: jq is not installed.' >&2
   exit 1
 fi
-if ! [ -x "$(command -v sam)" ]; then
-  echo 'Error: sam is not installed.' >&2
+if ! [ -x "$(command -v aws)" ]; then
+  echo 'Error: aws is not installed.' >&2
   exit 1
 fi
-pushd backend
+if ! [ -x "$(command -v cdk)" ]; then
+  echo 'Error: cdk is not installed.' >&2
+  exit 1
+fi
+if ! [ -x "$(command -v git)" ]; then
+  echo 'Error: git is not installed.' >&2
+  exit 1
+fi
 echo ""
-echo "Building SAM"
+echo "Checking for Repository"
 echo ""
-sam build
-echo ""
-echo "Deploying SAM"
-echo ""
-sam deploy --resolve-s3
-echo ""
-echo "Getting Output"
-echo ""
-aws cloudformation describe-stacks --stack-name chime-sdk-televisit-demo --query 'Stacks[0].Outputs' --output json > ../frontend/src/sam-output.json
-popd
-pushd frontend
-echo ""
-echo "Building Client"
-echo ""
-npm install
-popd
-echo ""
-echo "Build Complete.  To run local client: cd frontend && npm run start"
+RepositoryExists=$( aws codecommit list-repositories | jq -e '.repositories|any(.repositoryName == "televisitdemo")' )
+if [[ "$RepositoryExists" == true  ]]; then
+  git push https://git-codecommit.us-east-1.amazonaws.com/v1/repos/televisitdemo --all
+else
+  echo ""
+  echo "Creating Repository"
+  echo ""
+  aws codecommit create-repository --repository-name televisitdemo --repository-description "Chime SDK Meeting TeleVisit Demo with Transcribe" --region us-east-1 > /dev/null 2>&1
+  echo ""
+  echo "Initializing Git"
+  echo ""
+  git init
+  echo ""
+  echo "Pushing to CodeCommit"
+  echo ""
+  git add .
+  git commit -m "Initial Commit"
+  git push https://git-codecommit.us-east-1.amazonaws.com/v1/repos/televisitdemo --all
+fi
