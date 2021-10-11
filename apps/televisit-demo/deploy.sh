@@ -21,10 +21,6 @@ if ! [ -x "$(command -v sam)" ]; then
   echo 'Error: sam is not installed.' >&2
   exit 1
 fi
-if ! [ -x "$(command -v uuidgen)" ]; then
-  echo 'Error: uuidgen is not installed.' >&2
-  exit 1
-fi
 pushd backend
 echo ""
 echo "Building SAM"
@@ -55,9 +51,9 @@ sam build
 echo ""
 echo "Deploying Client"
 echo ""
-BUCKET_NAME=$( uuidgen | tr 'A-Z' 'a-z')
-echo $BUCKET_NAME
-sam deploy --resolve-s3 --parameter-overrides S3BucketNameForWebSite=$BUCKET_NAME
-popd
+sam deploy --guided
 echo ""
-aws cloudformation describe-stacks --stack-name sam-hosting --query 'Stacks[0].Outputs' 
+echo "Copying Files to S3"
+WEBSITE_BUCKET=$(aws cloudformation describe-stacks --stack-name chime-sdk-televisit-frontend --query "Stacks[0].Outputs[?OutputKey=='createWebSiteS3BucketOP'].OutputValue" --output text)
+aws s3 cp dist s3://$WEBSITE_BUCKET --recursive
+popd

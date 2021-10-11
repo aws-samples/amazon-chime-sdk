@@ -8,3 +8,5 @@ node_modules
 cdk.out
 yarn.lock
 .aws-sam
+
+dist
