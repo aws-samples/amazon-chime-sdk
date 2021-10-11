@@ -35,15 +35,15 @@ echo "Getting Output"
 echo ""
 aws cloudformation describe-stacks --stack-name chime-sdk-televisit-demo --query 'Stacks[0].Outputs' --output json > ../client/src/sam-output.json
 popd
-pushd client
+pushd frontend
 echo ""
 echo "Installing Client Dependencies"
 echo ""
-yarn
+npm install
 echo ""
 echo "Building Client"
 echo ""
-yarn run build
+npm run build
 echo ""
 echo "Building SAM"
 echo ""
