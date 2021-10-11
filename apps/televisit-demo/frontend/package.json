@@ -4,7 +4,8 @@
   "description": "Demo app for for Amazon Chime Chat SDK",
   "scripts": {
     "lint": "eslint src --ext .js,.jsx --fix",
-    "start": "webpack serve"
+    "start": "webpack serve",
+    "build": "webpack build"
   },
   "dependencies": {
     "@aws-amplify/auth": "^3.4.20",
