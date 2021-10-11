@@ -9,6 +9,7 @@ import com.amazonaws.services.chime.sdkdemo.data.source.DefaultMessageRepository
 import com.amazonaws.services.chime.sdkdemo.data.source.DefaultUserRepository
 import com.amazonaws.services.chime.sdkdemo.data.source.MessageRepository
 import com.amazonaws.services.chime.sdkdemo.data.source.UserRepository
+import com.amazonaws.services.chime.sdkdemo.data.source.service.AmazonChimeSDKService
 import com.amazonaws.services.chime.sdkdemo.data.source.service.DefaultAmazonChimeSDKService
 import com.amazonaws.services.chime.sdkdemo.data.source.service.DefaultAuthService
 
@@ -27,13 +28,19 @@ object ServiceLocator {
 
     fun provideUserRepository(): UserRepository {
         synchronized(this) {
-            return userRepository ?: userRepository ?: DefaultUserRepository(authService)
+            return userRepository ?: userRepository ?: DefaultUserRepository(authService, chimeService)
         }
     }
 
     fun provideMessageRepository(): MessageRepository {
         synchronized(this) {
             return messageRepository ?: messageRepository ?: DefaultMessageRepository(chimeService)
+        }
+    }
+
+    fun provideChimeService(): AmazonChimeSDKService {
+        synchronized(this) {
+            return chimeService ?: chimeService
         }
     }
 }

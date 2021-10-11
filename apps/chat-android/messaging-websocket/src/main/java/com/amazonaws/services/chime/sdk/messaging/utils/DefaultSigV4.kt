@@ -7,7 +7,6 @@ package com.amazonaws.services.chime.sdk.messaging.utils
 
 import com.amazonaws.services.chime.sdk.messaging.session.ChimeUserCredentials
 import com.amazonaws.services.chime.sdk.messaging.utils.logger.Logger
-import java.lang.StringBuilder
 import java.net.URLEncoder
 import java.security.MessageDigest
 import java.text.SimpleDateFormat
@@ -22,7 +21,6 @@ class DefaultSigV4(
     private val credentials: ChimeUserCredentials,
     private val region: String
 ) : SigV4 {
-    private val TAG = "DefaultSigV4"
 
     override fun signURL(
         method: String,
