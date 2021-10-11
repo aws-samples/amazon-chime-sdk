@@ -23,7 +23,7 @@ Resources:
             IgnorePublicAcls: True
             RestrictPublicBuckets: True
         WebsiteConfiguration:
-            IndexDocument: index.html
+            IndexDocument: chat.html
             ErrorDocument: error.html
         BucketEncryption:
           ServerSideEncryptionConfiguration:
@@ -93,7 +93,7 @@ Resources:
                         - !Ref CloudFrontDistributionAccessIdentity
           Enabled: 'true'
           Comment: CloudFront for Static DICOMWeb Generator
-          DefaultRootObject: index.html
+          DefaultRootObject: chat.html
           DefaultCacheBehavior:
               AllowedMethods:
                   - DELETE
@@ -134,6 +134,6 @@ Outputs:
       - ''
       - - 'https://'
         - !GetAtt [CloudFrontDistribution, DomainName]
-        - '/index.html'
+        - '/chat.html'
     Description: Endpoint for Cloudfront distribution
   

@@ -10,3 +10,5 @@ yarn.lock
 .aws-sam
 
 dist
+!frontend/**/*.js
+sam-output.json

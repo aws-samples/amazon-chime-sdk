@@ -33,7 +33,7 @@ sam deploy --resolve-s3
 echo ""
 echo "Getting Output"
 echo ""
-aws cloudformation describe-stacks --stack-name chime-sdk-televisit-demo --query 'Stacks[0].Outputs' --output json > ../client/src/sam-output.json
+aws cloudformation describe-stacks --stack-name chime-sdk-televisit-backend --query 'Stacks[0].Outputs' --output json > ../frontend/src/sam-output.json
 popd
 pushd frontend
 echo ""

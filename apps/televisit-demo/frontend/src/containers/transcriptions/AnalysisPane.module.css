@@ -1,0 +1,76 @@
+.base {
+  font-size: 16px;
+  display: flex;
+  flex: 0 0 0px;
+  overflow: auto;
+  flex-direction: column;
+  position: relative;
+  transition: flex-grow 1000ms ease;
+  box-sizing: border-box;
+  border: solid 1px #eee;
+  background: white;
+}
+
+.visible {
+  flex-grow: 1;
+}
+
+.base dl {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  margin: 10;
+  flex: 1;
+  align-items: baseline;
+}
+
+.base dt,
+.base dd {
+  flex: 0 0 30%;
+  margin: 0;
+  padding: 0.25em 0;
+  box-sizing: border-box;
+  /* border-bottom: 1px solid rgba(0, 0, 0, 0.08); */
+}
+
+.base dt {
+  font-weight: bold;
+  text-align: right;
+  padding-right: 1em;
+  font-size: 0.75em;
+  /* padding-top: .6em; */
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.base dd {
+  flex: 0 0 70%;
+}
+
+.toggleLink {
+  color: #0095ff;
+  cursor: pointer;
+}
+
+.toggleLink:before {
+  display: inline-block;
+  width: 1em;
+  text-align: center;
+  margin-right: 0.25em;
+  font-size: 0.8em;
+}
+
+.removeButton {
+  cursor: pointer;
+  border: none;
+  width: 20px;
+  height: 20px;
+}
+
+@media print {
+  .base {
+    display: none;
+  }
+}
