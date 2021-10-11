@@ -3,7 +3,7 @@
     "module": "esnext",
     "outDir": "build",
     "noImplicitAny": true,
-    "noUnusedLocals": true,
+    "noUnusedLocals": false,
     "removeComments": true,
     "preserveConstEnums": true,
     "sourceMap": true,
@@ -36,7 +36,7 @@
     "suppressImplicitAnyIndexErrors": true,
     "noFallthroughCasesInSwitch": true,
     "isolatedModules": true,
-    "noEmit": true
+    "noEmit": false
   },
   "include": [
     "src/**/*"
