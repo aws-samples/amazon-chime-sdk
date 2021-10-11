@@ -8,5 +8,3 @@ region = "us-east-1"
 confirm_changeset = true
 capabilities = "CAPABILITY_IAM"
 image_repositories = []
-s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-1xdyvul6ryhyi"
-parameter_overrides = "S3BucketNameForWebSite=\"chime-televisit-globex6\""
