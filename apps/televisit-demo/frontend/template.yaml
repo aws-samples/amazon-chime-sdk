@@ -1,0 +1,139 @@
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: >
+  "Connect Chat UI with translation"
+
+Parameters:
+  S3BucketNameForWebSite:
+    Type: String
+    Default: "new-website-bucket-name"
+    Description: >
+      Enter the (globally unique) name you would like to use for the Amazon S3 bucket where we will store the website assets and the sample contact flow.
+      This template will fail to deploy if the bucket name you chose is currently in use.
+    AllowedPattern: '(?=^.{3,63}$)(?!^(\d+\.)+\d+$)(^(([a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9])\.)*([a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9])$)'
+
+Resources:
+  createWebSiteS3Bucket:
+      Type: 'AWS::S3::Bucket'
+      Properties:
+        BucketName: !Ref S3BucketNameForWebSite
+        PublicAccessBlockConfiguration:
+            BlockPublicAcls: True
+            BlockPublicPolicy: True
+            IgnorePublicAcls: True
+            RestrictPublicBuckets: True
+        WebsiteConfiguration:
+            IndexDocument: chat.html
+            ErrorDocument: error.html
+        BucketEncryption:
+          ServerSideEncryptionConfiguration:
+            - ServerSideEncryptionByDefault:
+                SSEAlgorithm: AES256
+
+  s3WebsiteBucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      DependsOn:
+          - createWebSiteS3Bucket
+          - CloudFrontDistributionAccessIdentity
+      Properties:
+          Bucket: !Ref createWebSiteS3Bucket
+          PolicyDocument:
+              Statement:
+                  -
+                    Action:
+                        - "s3:GetObject"
+                    Effect: "Allow"
+                    Principal:
+                        CanonicalUser:
+                            Fn::GetAtt: [ CloudFrontDistributionAccessIdentity , S3CanonicalUserId ]
+                    Resource:
+                        !Sub ${createWebSiteS3Bucket.Arn}/*
+                  - Action: 's3:*'
+                    Resource:
+                        !Sub ${createWebSiteS3Bucket.Arn}/*
+                    Effect: Deny
+                    Condition:
+                      Bool:
+                        'aws:SecureTransport': false
+                    Principal: '*'
+                  - Action: 's3:*'
+                    Resource:
+                        !Sub ${createWebSiteS3Bucket.Arn}/*
+                    Effect: Deny
+                    Condition:
+                      Bool:
+                        'aws:SecureTransport': false
+                    Principal: '*'
+ 
+
+  CloudFrontDistributionAccessIdentity:
+      Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+      Properties:
+        CloudFrontOriginAccessIdentityConfig:
+          Comment: 'CloudFront OAI for Static DICOMWeb Generator'
+
+  CloudFrontDistribution:
+      Type: AWS::CloudFront::Distribution
+      DependsOn:
+          - createWebSiteS3Bucket
+      Properties:
+        DistributionConfig:
+          Origins:
+          - DomainName:
+              !Join
+                  - ''
+                  - - !Ref S3BucketNameForWebSite
+                    - .s3.amazonaws.com
+            Id: !Ref S3BucketNameForWebSite
+            S3OriginConfig:
+              OriginAccessIdentity:
+                  !Join
+                      - ''
+                      - - 'origin-access-identity/cloudfront/'
+                        - !Ref CloudFrontDistributionAccessIdentity
+          Enabled: 'true'
+          Comment: CloudFront for Static DICOMWeb Generator
+          DefaultRootObject: chat.html
+          DefaultCacheBehavior:
+              AllowedMethods:
+                  - DELETE
+                  - GET
+                  - HEAD
+                  - OPTIONS
+                  - PATCH
+                  - POST
+                  - PUT
+              TargetOriginId: !Ref S3BucketNameForWebSite
+              ForwardedValues:
+                  QueryString: true
+                  Cookies:
+                      Forward: all
+              ViewerProtocolPolicy: redirect-to-https
+          PriceClass: PriceClass_100
+          Restrictions:
+              GeoRestriction:
+                  RestrictionType: whitelist
+                  Locations:
+                      - US
+                      - JP
+                      - AU
+                      - FR
+      Metadata:
+        cfn_nag:
+          rules_to_suppress:
+            - id: W70
+              reason: This is using Cloudfront default TLS, can be changed by customer if needed.
+
+
+Outputs:
+  createWebSiteS3BucketOP:
+    Description: Bucket contains website 
+    Value: !Ref createWebSiteS3Bucket
+  cloudfrontEndpoint:
+    Value: !Join
+      - ''
+      - - 'https://'
+        - !GetAtt [CloudFrontDistribution, DomainName]
+        - '/chat.html'
+    Description: Endpoint for Cloudfront distribution
+  
