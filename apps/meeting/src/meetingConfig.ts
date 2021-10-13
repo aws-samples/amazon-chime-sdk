@@ -22,7 +22,7 @@ const postLogConfig = {
   logLevel: SDK_LOG_LEVELS.info,
 };
 
-const enableWebAudio = true;
+const enableWebAudio = false;
 
 const config = {
   logLevel,
