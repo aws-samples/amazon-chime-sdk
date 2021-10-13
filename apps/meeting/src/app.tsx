@@ -41,8 +41,15 @@ const App: FC = () => (
 );
 
 const MeetingWrapper: React.FC = ({ children }) => {
+
+  const  { isWebAudioEnabled } =  useAppState();
+
+  const meetingConfigValue = {...meetingConfig,
+    enableWebAudio: isWebAudioEnabled
+  };
+
   return (
-    <MeetingProvider {...meetingConfig}>
+    <MeetingProvider {...meetingConfigValue}>
       <NavigationProvider>
         <Switch>
           <Route exact path={routes.HOME} component={Home} />
