@@ -1,8 +1,22 @@
-# Backend Infrastructure
+# Amazon Chime SDK Televisit Demo: Backend Infrastructure
 
 The diagram of Architecture is here:
 
 ![arch](images/chime-sdk-telemedicine.jpg)
+
+### Prerequisites
+
+To deploy the serverless demo you will need:
+
+- Node 10 or higher
+- npm 6.11 or higher
+
+And install aws and sam command line tools:
+
+* [Install the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv1.html)
+* [Install the AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
+
+### Run deployment script
 
 To build and deploy your application for the first time, run the following in your shell:
 
@@ -11,17 +25,17 @@ sam build
 sam deploy --guided --capabilities CAPABILITY_NAMED_IAM 
 ```
 
-When you deploy the template at first time, it will create a Amazon Chime App Instance through a Lambda function triggered by Custom Resource, so the parameter ChimeAppInstanceArn is not used. After first deployment, the ARN of Chime App Instance will be returned by Lambda function if the execution finished successfully, and it will be available in the Outputs of CFN stack. If the deployment suspends and waits for Custom Resource, please check the CloudWatch log of ChimeAppInstanceLambda function execution. 
-The ChimeAppInstanceLambda function will use the parameter ChimeAppInstanceArn during the following updates of the same stack, so please provide the parameter ChimeAppInstanceArn from first time deployment when you update the same stack.
+When you deploy the template for the first time, it will create an Amazon Chime App Instance through a Lambda function triggered by Custom Resource, so the parameter ChimeAppInstanceArn is not used. After the first deployment, the ARN of Chime App Instance will be returned by Lambda function if the execution is finished successfully, and it will be available in the Outputs of CFN stack. If the deployment suspends and waits for Custom Resource, please check the CloudWatch log of ChimeAppInstanceLambda function execution. 
+The ChimeAppInstanceLambda function will use the parameter ChimeAppInstanceArn during the following updates of the same stack, so please provide the parameter ChimeAppInstanceArn from the first-time deployment when you update the same stack.
 
-It is Okay to create Lambda functions without authorization defined during the guided SAM deployment, since the authorization is controled by Cognito authorized IAM role. So the first time guided deployment will look at this:
+It is Okay to create Lambda functions without authorization defined during the guided SAM deployment, since the authorization is controlled by Cognito authorized IAM role. So the first time guided deployment will look at this:
 
 ```
  Setting default arguments for 'sam deploy'
 =========================================
 Stack Name [sam-app]: 
 AWS Region [us-east-1]: 
-Parameter DemoName [ChimeSDKMessagingDemo]: 
+Parameter DemoName [ChimeSDKTelevisitDemo]: 
 Parameter ChimeAppInstanceArn [arn:aws:chime:us-east-1:<accountid>:app-instance/<isntanceid>]: 
 #Shows you resources changes to be deployed and require a 'Y' to initiate deploy
 Confirm changes before deploy [y/N]: 

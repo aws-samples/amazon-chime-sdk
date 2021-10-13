@@ -4,7 +4,7 @@ Description: AWS CloudFormation stack to set up infrastructure required for the 
 Parameters:
   DemoName:
     Type: String
-    Default: ChimeSDKMessagingDemo
+    Default: ChimeSDKTelevisitDemo
     Description: Unique Name for Demo Resources
   ChimeAppInstanceArn:
     Type: String 
