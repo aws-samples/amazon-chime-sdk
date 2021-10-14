@@ -58,7 +58,7 @@ export function AppStateProvider({ children }: Props) {
   };
 
   const toggleWebAudio = (): void  => {
-    setIsWebAudioEnabled(!isWebAudioEnabled);
+    setIsWebAudioEnabled(current => !current);
   }
 
   const setAppMeetingInfo = (

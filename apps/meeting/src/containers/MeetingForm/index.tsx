@@ -14,7 +14,7 @@ import {
   Modal,
   ModalBody,
   ModalHeader,
-  DeviceLabels,
+  DeviceLabels
 } from 'amazon-chime-sdk-component-library-react';
 
 import { getErrorContext } from '../../providers/ErrorProvider';
@@ -154,6 +154,7 @@ const MeetingForm: React.FC = () => {
         value=""
         checked={isWebAudioEnabled}
         onChange={toggleWebAudio}
+        infoText="Web Audio should be enabled for Voice Focus"
       />
       <Flex
         container

@@ -22,12 +22,9 @@ const postLogConfig = {
   logLevel: SDK_LOG_LEVELS.info,
 };
 
-const enableWebAudio = false;
-
 const config = {
   logLevel,
-  postLogConfig,
-  enableWebAudio,
+  postLogConfig
 };
 
 export default config;

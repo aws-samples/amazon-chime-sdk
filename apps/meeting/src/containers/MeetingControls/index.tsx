@@ -19,7 +19,7 @@ import { useNavigation } from '../../providers/NavigationProvider';
 import { StyledControls } from './Styled';
 import { useAppState } from '../../providers/AppStateProvider';
 
-const MeetingControls = (): JSX.Element => {
+const MeetingControls: React.FC = () => {
   const { toggleNavbar, closeRoster, showRoster } = useNavigation();
   const { isUserActive } = useUserActivityState();
   const { isWebAudioEnabled } = useAppState();
