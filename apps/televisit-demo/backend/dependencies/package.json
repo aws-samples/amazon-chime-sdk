@@ -1,21 +1,8 @@
 {
-  "name": "aws-sdk",
-  "version": "2.962.0",
-  "description": "AWS SDK for JavaScript",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/aws/aws-sdk-js.git"
-  },
+  "name": "aws-chime-sdk-televisit-demo-backend",
+  "version": "1.0",
   "author": "Amazon Web Services",
-  "license": "Apache-2.0",
-  "bugs": {
-    "url": "https://github.com/aws/aws-sdk-js/issues"
-  },
-  "homepage": "https://github.com/aws/aws-sdk-js#readme",
+  "license": "MIT-0",
   "dependencies": {
     "aws-sdk": "^2.962.0",
     "base64-js": "^1.5.1",

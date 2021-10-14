@@ -1,47 +1,37 @@
 const AWS = require("aws-sdk");
 AWS.config.update({ region: process.env.AWS_REGION });
-
-const { CHIME_APP_INSTANCE_ARN } = process.env;
-const { CHIME_APP_INSTANCE_ADMIN_ROLE_ARN } = process.env;
-const appInstanceUserArnHeader = 'x-amz-chime-bearer';
+const { CHIME_APP_INSTANCE_ARN, CHIME_APP_INSTANCE_ADMIN_ROLE_ARN } = process.env;
+const appInstanceUserArnHeader = "x-amz-chime-bearer";
 const appInstanceAdminRoleArn = CHIME_APP_INSTANCE_ADMIN_ROLE_ARN;
 const roleSessionName = "LambdaAssumeModeratorBotAppInstanceAdminRole";
 
 const createMemberArn = userId =>
     CHIME_APP_INSTANCE_ARN + `/user/${userId}`;
 
-async function chimeClient(uid = 'LambdaAppInstanceAdminRole') {
-    const sts = new AWS.STS({ region: process.env.REGION });
-    const stsParams = {
-        RoleArn: appInstanceAdminRoleArn,
-        RoleSessionName: roleSessionName,
-        Tags: [{
-                Key: 'username',
-                /* required */
-                Value: uid /* required */
-            },
-            /* more items */
-        ],
-    };
-    const assumeRoleStep1 = await sts.assumeRole(stsParams).promise();
-    console.log('Changed Credentials: ' + JSON.stringify(assumeRoleStep1.AssumedRoleUser));
+async function chimeClient(uid = "LambdaAppInstanceAdminRole") {
+  const sts = new AWS.STS({ region: process.env.REGION });
+  const stsParams = {
+    RoleArn: appInstanceAdminRoleArn,
+    RoleSessionName: roleSessionName,
+    Tags: [
+      {
+        Key: "username", /* required */
+        Value: uid /* required */
+      },
+      /* more items */
+    ],
+  };
+  const assumedRole = await sts.assumeRole(stsParams).promise();
+  console.log("Changed Credentials: "+JSON.stringify(assumedRole.AssumedRoleUser));
+  
+  const accessParams = {
+    accessKeyId: assumedRole.Credentials.AccessKeyId,
+    secretAccessKey: assumedRole.Credentials.SecretAccessKey,
+    sessionToken: assumedRole.Credentials.SessionToken,
+  };
 
-    const accessparams = {
-        accessKeyId: assumeRoleStep1.Credentials.AccessKeyId,
-        secretAccessKey: assumeRoleStep1.Credentials.SecretAccessKey,
-        sessionToken: assumeRoleStep1.Credentials.SessionToken,
-    };
-    try {
-        const chime = await new AWS.Chime(accessparams);
-        return chime;
-    } catch (e) {
-        console.log(JSON.stringify(e));
-        return {
-            statusCode: 500,
-            body: "Server error while creating Chime"
-        };
-    }
-
+  const chime = await new AWS.Chime(accessParams);
+  return chime;
 }
 
 async function getMessagingSessionEndpoint() {
@@ -64,63 +54,55 @@ async function sendChannelMessage(
     options = null,
     type = "STANDARD"
 ) {
-    console.log('sendChannelMessage called');
+  console.log('sendChannelMessage called');
 
-    const params = {
-        ChannelArn: channelArn,
-        Content: messageContent,
-        Persistence: 'PERSISTENT', // Allowed types are PERSISTENT and NON_PERSISTENT
-        Type: type // Allowed types are STANDARD and CONTROL
-    };
-    if (options) {
-        params.Metadata = options;
-    }
+  const params = {
+    ChannelArn: channelArn,
+    Content: messageContent,
+    Persistence: 'PERSISTENT', // Allowed types are PERSISTENT and NON_PERSISTENT
+    Type: type, // Allowed types are STANDARD and CONTROL
+    ChimeBearer: createMemberArn( member )
+  };
+  if (options) {
+    params.Metadata = options;
+  }
 
-    const request = (await chimeClient()).sendChannelMessage(params);
-    request.on('build', function() {
-        request.httpRequest.headers[appInstanceUserArnHeader] = createMemberArn(member);
-    });
-    const response = await request.promise();
-    const sentMessage = {
-        response: response,
-        CreatedTimestamp: new Date(),
-        Sender: { Arn: createMemberArn(member) }
-    };
-    return sentMessage;
+  const response = (await chimeClient()).sendChannelMessage(params).promise();
+  const sentMessage = {
+    response: response,
+    CreatedTimestamp: new Date(),
+    Sender: { Arn: createMemberArn(member) }
+  };
+  return sentMessage;
 }
 
 async function listChannelMessages(channelArn, userId, notAfter = null, notBefore = null, nextToken = null) {
-    console.log('listChannelMessages called');
+  console.log('listChannelMessages called');
 
-    const params = {
-        ChannelArn: channelArn,
-        NotAfter: notAfter,
-        NotBefore: notBefore,
-        NextToken: nextToken
-    };
+  const params = {
+    ChannelArn: channelArn,
+    NotAfter: notAfter,
+    NotBefore: notBefore,
+    NextToken: nextToken
+  };
 
-    const request = (await chimeClient()).listChannelMessages(params);
-    request.on('build', function() {
-        request.httpRequest.headers[appInstanceUserArnHeader] = createMemberArn(
-            userId
-        );
-    });
-    const response = await request.promise();
-    const messageList = response.ChannelMessages;
-    messageList.sort(function(a, b) {
-        return a.CreatedTimestamp < b.CreatedTimestamp ?
-            -1 :
-            a.CreatedTimestamp > b.CreatedTimestamp ?
-            1 :
-            0;
-    });
+ const request = (await chimeClient()).listChannelMessages(params);
+  request.on('build', function() {
+    request.httpRequest.headers[appInstanceUserArnHeader] = createMemberArn(
+      userId
+    );
+  });
+  const response = await request.promise();
+  const messageList = response.ChannelMessages;
+  messageList.sort(function(a, b) {
+    return a.CreatedTimestamp < b.CreatedTimestamp
+      ? -1
+      : a.CreatedTimestamp > b.CreatedTimestamp
+      ? 1
+      : 0;
+  });
 
-    const messages = [];
-    for (let i = 0; i < messageList.length; i++) {
-        const message = messageList[i];
-        messages.push(message);
-    }
-    return { Messages: messages, NextToken: response.NextToken };
+  return { Messages: messageList, NextToken: response.NextToken };
 }
 
 async function createChannelMembership(channelArn, memberArn, userId) {
