@@ -30,7 +30,7 @@ exports.handler = async (event, context, callback) => {
     console.log(JSON.stringify(e));
     return {
       statusCode: 500,
-      body: e.stack
+      body: "Server error while creating app instance"
     };
   }
   // Return to Amazon Cognito

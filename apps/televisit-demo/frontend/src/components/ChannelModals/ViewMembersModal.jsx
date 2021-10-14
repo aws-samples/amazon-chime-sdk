@@ -15,8 +15,6 @@ import {
 import './ChannelModals.css';
 
 export const ViewMembersModal = ({ onClose, channel, members, moderators }) => {
-  // TODO: Add search functionality
-
   const modArns = moderators.map((m) => m.Moderator.Arn);
 
   const channelMembers = members.map((m) => {

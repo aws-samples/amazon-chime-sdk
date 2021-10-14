@@ -35,7 +35,6 @@ const MeetingTranscript = ({transcriptEvent}:any) => {
       });
     }
   }
-  // initialTranscripts.sort((a:any, b:any) => b.startTimeMs - a.startTimeMs);
 
   const [partialTranscript, setPartialTranscript] = useState(' ');
   const [transcripts, setTranscripts] = useState(initialTranscripts);

@@ -317,7 +317,7 @@ Resources:
               - "x-amz-server-side-encryption"
               - "x-amz-request-id"
               - "x-amz-id-2"
-            MaxAge: "3000"
+            MaxAge: 3000
             
   LoggingBucket:
     Type: 'AWS::S3::Bucket'
@@ -622,7 +622,6 @@ Resources:
   ###
   AuthLambdaIAMRole:
     Type: AWS::IAM::Role
-    Description: The role for the Credential Exchange Service lambda that gives AWS creds to users runs with
     Properties:
       AssumeRolePolicyDocument:
         Version: 2012-10-17
@@ -696,7 +695,6 @@ Resources:
                         - /*
                         
   AuthLambdaUserRole:
-    Description: The Role the lambda parameterizes and returns to the user
     Type: "AWS::IAM::Role"
     Properties:
       AssumeRolePolicyDocument:
@@ -743,7 +741,6 @@ Resources:
               
   
   AuthLambdaAnonUserRole:
-    Description: The Role the lambda parameterizes and returns to the user when Anonymous, same as above except no s3 permissions
     Type: "AWS::IAM::Role"
     Properties:
       AssumeRolePolicyDocument:
@@ -945,7 +942,6 @@ Resources:
   ###
   CreateMeetingLambdaRole:
     Type: AWS::IAM::Role
-    Description: The role for the create Chime SDK meeting
     Properties:
       AssumeRolePolicyDocument:
         Version: 2012-10-17
@@ -1017,7 +1013,6 @@ Resources:
 
   
   StartTranscriptionLambdaRole:
-    Description: The Role to start live transcription
     Type: "AWS::IAM::Role"
     Properties:
       AssumeRolePolicyDocument:
@@ -1068,7 +1063,6 @@ Resources:
   
   
   CreateAttendeeLambdaRole:
-    Description: The Role to create chime meeting attendee
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -1141,7 +1135,6 @@ Resources:
   
   StartRecordingLambdaRole:
     Type: AWS::IAM::Role
-    Description: The role for the starting media pipeline 
     Properties:
       AssumeRolePolicyDocument:
         Version: 2012-10-17
@@ -1228,7 +1221,6 @@ Resources:
   
   StopRecordingLambdaRole:
     Type: AWS::IAM::Role
-    Description: The role for the deleting media capture pipeline
     Properties:
       AssumeRolePolicyDocument:
         Version: 2012-10-17
@@ -1292,7 +1284,6 @@ Resources:
         
   
   EndMeetingLambdaRole:
-    Description: The Role to stop chime meeting
     Type: "AWS::IAM::Role"
     Properties:
       AssumeRolePolicyDocument:
