@@ -24,8 +24,8 @@ const MeetingProviderWrapper: React.FC = () => {
     enableWebAudio: isWebAudioEnabled,
   };
 
-  return (
-    <VoiceFocusProvider>
+  const getMeetingProviderWrapper = () => {
+    return (
       <MeetingProvider {...meetingConfigValue}>
         <NavigationProvider>
           <Switch>
@@ -44,7 +44,21 @@ const MeetingProviderWrapper: React.FC = () => {
         </NavigationProvider>
         <MeetingEventObserver />
       </MeetingProvider>
-    </VoiceFocusProvider>
+    );
+  };
+
+  const getMeetingProviderWrapperWithVF = () => {
+    return (
+      <VoiceFocusProvider>
+        {getMeetingProviderWrapper()}
+      </VoiceFocusProvider>
+    )
+  }
+
+  return (
+    <>
+      {isWebAudioEnabled ? getMeetingProviderWrapperWithVF() : getMeetingProviderWrapper()}
+    </>
   );
 };
 
