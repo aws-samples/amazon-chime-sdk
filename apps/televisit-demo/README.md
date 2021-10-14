@@ -1,6 +1,6 @@
 # Welcome to Amazon Chime SDK Televisit Demo
 
-The diagram of Architecture is here:
+The diagram of architecture is here:
 
 ![arch](images/chime-sdk-telemedicine.jpg)
 
@@ -16,7 +16,7 @@ And install aws and sam command line tools:
 * [Install the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv1.html)
 * [Install the AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
 
-* Install [jq](https://stedolan.github.io/jq/):
+* Install [jq](https://stedolan.github.io/jq/), like:
 ```bash
 npm install -g jq
 ```
