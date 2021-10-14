@@ -1,9 +1,5 @@
 # Amazon Chime SDK Televisit Demo: Backend Infrastructure
 
-The diagram of Architecture is here:
-
-![arch](images/chime-sdk-telemedicine.jpg)
-
 ### Prerequisites
 
 To deploy the serverless demo you will need:
