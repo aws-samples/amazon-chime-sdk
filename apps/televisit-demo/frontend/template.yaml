@@ -1,12 +1,11 @@
 AWSTemplateFormatVersion: '2010-09-09'
 
 Description: >
-  "Connect Chat UI with translation"
+  "Front End Deployment for Chime SDK TeleVisit Demo"
 
 Parameters:
   S3BucketNameForWebSite:
     Type: String
-    Default: "new-website-bucket-name"
     Description: >
       Enter the (globally unique) name you would like to use for the Amazon S3 bucket where we will store the website assets and the sample contact flow.
       This template will fail to deploy if the bucket name you chose is currently in use.
@@ -91,7 +90,7 @@ Resources:
                       - ''
                       - - 'origin-access-identity/cloudfront/'
                         - !Ref CloudFrontDistributionAccessIdentity
-          Enabled: 'true'
+          Enabled: True
           Comment: CloudFront for Static DICOMWeb Generator
           DefaultRootObject: chat.html
           DefaultCacheBehavior:

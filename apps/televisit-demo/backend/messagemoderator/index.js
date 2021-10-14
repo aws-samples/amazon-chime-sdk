@@ -12,7 +12,7 @@ const {
 
 console.log('Loading function');
 
-const { DOCUMENT_CLASSIFIER_ENDPOINT, CHIME_APP_INSTANCE_ARN, CHIME_APP_INSTANCE_ADMIN_ROLE_ARN } = process.env; 
+const { DOCUMENT_CLASSIFIER_ENDPOINT, CHIME_APP_INSTANCE_ARN, CHIME_APP_INSTANCE_ADMIN_ROLE_ARN } = process.env;
 
 exports.handler = function(event, context) {
   event.Records.forEach(async (record) => {  // If event.Records has many items, e.g. 100 times, this Lambda will make 100 sendChannelMessage API calls simultaneously, so please consider throttling exceptions. 
