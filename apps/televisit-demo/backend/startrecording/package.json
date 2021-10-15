@@ -1,0 +1,5 @@
+{
+  "name": "startrecording",
+  "version": "1.0.0",
+  "description": "JavaScript implementation of API GW endpoint at /startrecord to start meeting recording"
+}

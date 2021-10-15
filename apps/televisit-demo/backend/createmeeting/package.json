@@ -1,0 +1,5 @@
+{
+  "name": "createmeeting",
+  "version": "1.0.0",
+  "description": "JavaScript implementation of API GW endpoint /create to create meetings"
+}

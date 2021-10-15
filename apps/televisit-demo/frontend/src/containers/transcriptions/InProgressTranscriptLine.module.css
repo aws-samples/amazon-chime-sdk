@@ -1,0 +1,53 @@
+.base {
+  opacity: 0.5;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.base span {
+  position: relative;
+  display: inline-block;
+}
+
+.enter {
+  transform: translateX(-1em);
+  opacity: 0;
+}
+
+.enterActive {
+  transform: translateX(0);
+  opacity: 1;
+  transition: opacity 200ms linear, transform 200ms ease;
+}
+
+.exit {
+  transform: translateY(0);
+  opacity: 1;
+  position: absolute;
+}
+
+.exitActive {
+  transform: translateY(-1em);
+  opacity: 0;
+  transition: opacity 200ms linear, transform 200ms ease;
+}
+
+.swapIn {
+  transform: translateY(1em);
+  opacity: 0;
+}
+
+.swapInActive {
+  transform: translateY(0);
+  opacity: 1;
+  transition: opacity 200ms linear, transform 200ms ease;
+}
+
+.word > span {
+  position: absolute;
+  left: 0;
+}
+
+.word > span:first-of-type {
+  position: relative;
+}

@@ -1,0 +1,129 @@
+.base {
+  font-size: 18px;
+  overflow: auto;
+  position: relative;
+  text-align: left;
+}
+
+.scrollable:before,
+.scrollable:after {
+  content: '';
+  flex: 1 1 0px;
+}
+
+.scrollable {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.inner {
+  width: calc(100% - 3em);
+  margin: 3em auto;
+  max-width: 800px;
+  transition: margin 2000ms ease;
+}
+
+.inner.inProgress {
+  margin: calc(50vh - 40px - 1.8em) auto;
+}
+
+.toggles {
+  font-size: 15px;
+  position: absolute;
+  top: 2rem;
+  right: 2em;
+  padding: 1em;
+  border-radius: 0.5em;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+  background: #eeeb;
+  backdrop-filter: blur(5px);
+  z-index: 4;
+  transition: transform 500ms ease, opacity 200ms ease;
+  transform: translateY(-100%) translateY(-150px);
+  transform-origin: 100% 0;
+}
+
+.toggles.visible {
+  transform: translateY(0);
+  transition-delay: 200ms;
+}
+
+.toggles h4 {
+  background: rgba(0, 0, 0, 0.1);
+  padding: 1em;
+  margin: -1em;
+  margin-bottom: 1em;
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
+  text-align: center;
+}
+
+.toggles > div {
+  margin: 0.5em 0;
+}
+
+.toggleWrapper {
+  vertical-align: middle;
+  font-size: 0.75em;
+  margin-right: 0.5em;
+}
+
+.toggles.collapse {
+  opacity: 0;
+  transform: scale(0.5);
+  transition-delay: 0ms !important;
+  transition-duration: 200ms !important;
+  pointer-events: none;
+}
+
+.showToggleButton {
+  position: absolute;
+  top: 2rem;
+  right: 2em;
+  width: 2em;
+  height: 2em;
+  cursor: pointer;
+  z-index: 4;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.showToggleButton.visible.show {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.hideToggleButton {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 3.2em;
+  height: 3.2em;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+.hideToggleButton:hover {
+  opacity: 0.8;
+}
+
+.hideToggleButton:active {
+  opacity: 1;
+}
+
+@media print {
+  .base {
+    display: none;
+  }
+}

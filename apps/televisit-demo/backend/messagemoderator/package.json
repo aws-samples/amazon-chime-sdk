@@ -1,0 +1,5 @@
+{
+  "name": "messagemoderator",
+  "version": "1.0.0",
+  "description": "JavaScript implementation of Kinesis stream message processing for moderator bot"
+}

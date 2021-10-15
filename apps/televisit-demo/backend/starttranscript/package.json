@@ -1,0 +1,5 @@
+{
+  "name": "starttranscript",
+  "version": "1.0.0",
+  "description": "JavaScript implementation of API GW endpoint at /transcript to start live transcription"
+}

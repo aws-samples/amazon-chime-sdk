@@ -1,0 +1,9 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "chime-sdk-televisit-backend"
+s3_prefix = "chime-sdk-televisit-backend"
+region = "us-east-1"
+capabilities = "CAPABILITY_NAMED_IAM"
+parameter_overrides = "DemoName=\"ChimeSDKTelevisitDemo\" ChimeAppInstanceArn=\"arn:aws:chime:us-east-1:<accountid>:app-instance/<instanceid>\""

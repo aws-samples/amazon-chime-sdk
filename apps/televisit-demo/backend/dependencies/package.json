@@ -1,0 +1,23 @@
+{
+  "name": "aws-chime-sdk-televisit-demo-backend",
+  "version": "1.0",
+  "author": "Amazon Web Services",
+  "license": "MIT-0",
+  "dependencies": {
+    "aws-sdk": "^2.962.0",
+    "base64-js": "^1.5.1",
+    "buffer": "^6.0.3",
+    "cfn-response": "^1.0.1",
+    "events": "^3.3.0",
+    "ieee754": "^1.2.1",
+    "isarray": "^2.0.5",
+    "jmespath": "^0.15.0",
+    "punycode": "^2.1.1",
+    "querystring": "^0.2.1",
+    "sax": "^1.2.4",
+    "url": "^0.11.0",
+    "uuid": "^8.3.2",
+    "xml2js": "^0.4.23",
+    "xmlbuilder": "^15.1.1"
+  }
+}
