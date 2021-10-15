@@ -1,8 +1,8 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import Amplify from '@aws-amplify/core';
-import appConfig from '../Config';
+import Amplify from '@aws-amplify/core'
+import appConfig from '../Config'
 
 const configureAmplify = () => {
   Amplify.configure({
@@ -27,7 +27,7 @@ const configureAmplify = () => {
       // REQUIRED Amazon Cognito Identity Pool ID
       identityPoolId: appConfig.cognitoIdentityPoolId
     }
-  });
-};
+  })
+}
 
-export default configureAmplify;
+export default configureAmplify

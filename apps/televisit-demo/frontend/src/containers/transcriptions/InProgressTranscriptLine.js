@@ -1,11 +1,9 @@
-import React, { useMemo } from 'react';
-import { TransitionGroup, CSSTransition } from 'react-transition-group';
+import React, { useMemo } from 'react'
+import { TransitionGroup, CSSTransition } from 'react-transition-group'
 
-import s from './InProgressTranscriptLine.module.css';
+import s from './InProgressTranscriptLine.module.css'
 
-
-
-function TranscriptWord({ word }) {
+function TranscriptWord ({ word }) {
   return (
     <span className={s.word}>
       <TransitionGroup component={null}>
@@ -17,12 +15,10 @@ function TranscriptWord({ word }) {
   )
 }
 
-
-
-export default function InProgressTranscriptLine({
+export default function InProgressTranscriptLine ({
   text
 }) {
-  const words = useMemo(() => (text || '').split(/(\W+)/).filter(Boolean), [ text ]);
+  const words = useMemo(() => (text || '').split(/(\W+)/).filter(Boolean), [text])
 
   return (
     <p className={s.base}>

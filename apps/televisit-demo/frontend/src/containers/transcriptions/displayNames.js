@@ -35,7 +35,7 @@ export const displayNames = {
   NAME: 'Name',
   PHONE_OR_FAX: 'Phone/Fax',
   PROFESSION: 'Profession',
-  DATE: 'Date',
-};
+  DATE: 'Date'
+}
 
-export default displayNames;
+export default displayNames

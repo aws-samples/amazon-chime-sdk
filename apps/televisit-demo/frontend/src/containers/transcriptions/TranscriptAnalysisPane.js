@@ -1,57 +1,57 @@
-import React, { useRef, useEffect, useState } from 'react';
-import TranscriptPane from './TranscriptPane';
-import AnalysisPane from './AnalysisPane';
-import useComprehension from './useComprehension';
-import generateSOAPSummary from './soapSummary';
-import SOAPReviewPane from './SOAPReviewPane';
+import React, { useRef, useEffect, useState } from 'react'
+import TranscriptPane from './TranscriptPane'
+import AnalysisPane from './AnalysisPane'
+import useComprehension from './useComprehension'
+import generateSOAPSummary from './soapSummary'
+import SOAPReviewPane from './SOAPReviewPane'
 
 import {
   Heading,
   Grid,
-  Cell,
-} from 'amazon-chime-sdk-component-library-react';
-import { useTheme } from 'styled-components';
+  Cell
+} from 'amazon-chime-sdk-component-library-react'
+import { useTheme } from 'styled-components'
 
-export default function TranscriptAnalysisPane({
+export default function TranscriptAnalysisPane ({
   transcriptChunks,
   partialTranscript,
   inProgress,
-  enableEditing,
+  enableEditing
 }) {
-  const currentTheme = useTheme();
-  const [comprehendResults, setComprehendResults] = useComprehension(transcriptChunks || []);
-  const [comprehendCustomEntities, setComprehendCustomEntities] = useState([]);
-  const [soapSummary, setSOAPSummary] = useState(() => generateSOAPSummary([].concat(...comprehendResults)));
+  const currentTheme = useTheme()
+  const [comprehendResults, setComprehendResults] = useComprehension(transcriptChunks || [])
+  const [comprehendCustomEntities, setComprehendCustomEntities] = useState([])
+  const [soapSummary, setSOAPSummary] = useState(() => generateSOAPSummary([].concat(...comprehendResults)))
 
   useEffect(() => {
-    setSOAPSummary(generateSOAPSummary([].concat(...[...comprehendResults, ...comprehendCustomEntities])));
-  }, [comprehendResults, comprehendCustomEntities]);
+    setSOAPSummary(generateSOAPSummary([].concat(...[...comprehendResults, ...comprehendCustomEntities])))
+  }, [comprehendResults, comprehendCustomEntities])
 
-  function updateSOAPSummary(e) {
-    setSOAPSummary(e.target.value);
+  function updateSOAPSummary (e) {
+    setSOAPSummary(e.target.value)
   }
 
   const onComprehendResultDelete = (r) => {
     r.isCustomEntity
       ? setComprehendCustomEntities((prevEntities) =>
-          prevEntities.map((prevEntity) => {
-            const index = prevEntity.findIndex((entity) => entity.id === r.id);
+        prevEntities.map((prevEntity) => {
+          const index = prevEntity.findIndex((entity) => entity.id === r.id)
 
-            if (index === -1) return prevEntity;
+          if (index === -1) return prevEntity
 
-            return [...prevEntity.slice(0, index), ...prevEntity.slice(index + 1)];
-          }),
-        )
+          return [...prevEntity.slice(0, index), ...prevEntity.slice(index + 1)]
+        })
+      )
       : setComprehendResults((prevResults) =>
-          prevResults.map((prevResult) => {
-            const index = prevResult.findIndex((result) => result.id === r.id);
+        prevResults.map((prevResult) => {
+          const index = prevResult.findIndex((result) => result.id === r.id)
 
-            if (index === -1) return prevResult;
+          if (index === -1) return prevResult
 
-            return [...prevResult.slice(0, index), ...prevResult.slice(index + 1)];
-          }),
-        );
-  };
+          return [...prevResult.slice(0, index), ...prevResult.slice(index + 1)]
+        })
+      )
+  }
 
   const onComprehendResultAddition = (val, category) => {
     setComprehendCustomEntities((prevEntities) => {
@@ -62,27 +62,27 @@ export default function TranscriptAnalysisPane({
         Traits: [],
         Attributes: [],
         Type: '',
-        isCustomEntity: true,
-      };
-      return [[newCustomEntity], ...prevEntities];
-    });
-  };
+        isCustomEntity: true
+      }
+      return [[newCustomEntity], ...prevEntities]
+    })
+  }
 
   const onSelectedConceptChange = (id, selectedConceptCode) => {
     setComprehendResults((prevResults) =>
       prevResults.map((prevResult) => {
-        const index = prevResult.findIndex((result) => result.id === id);
+        const index = prevResult.findIndex((result) => result.id === id)
 
-        if (index === -1) return prevResult;
+        if (index === -1) return prevResult
 
         const newEntity = {
           ...prevResult[index],
-          selectedConceptCode,
-        };
-        return [...prevResult.slice(0, index), newEntity, ...prevResult.slice(index + 1)];
-      }),
-    );
-  };
+          selectedConceptCode
+        }
+        return [...prevResult.slice(0, index), newEntity, ...prevResult.slice(index + 1)]
+      })
+    )
+  }
 
   return (
     <Grid
@@ -92,18 +92,18 @@ export default function TranscriptAnalysisPane({
       style={{ width: '40vw', height: '100vh' }}
       gridTemplateAreas='"analysis analysis" "soap transcription" "soap transcription"'
     >
-      <Cell 
+      <Cell
         gridArea="analysis"
-        style={{ overflowX: 'auto',overflowY: 'auto' }}
+        style={{ overflowX: 'auto', overflowY: 'auto' }}
       >
         <Heading
           level={6}
           style={{
             backgroundColor: currentTheme.colors.greys.grey80,
             height: '2rem',
-            textAlign: 'center', 
+            textAlign: 'center',
             fontWeight: 'bold',
-            color: 'white',
+            color: 'white'
           }}
           className="app-heading"
         >
@@ -116,18 +116,18 @@ export default function TranscriptAnalysisPane({
           onSelectedConceptChange={onSelectedConceptChange}
         />
       </Cell>
-      <Cell 
-        gridArea="transcription" 
-        style={{ overflowX: 'auto',overflowY: 'auto' }}
+      <Cell
+        gridArea="transcription"
+        style={{ overflowX: 'auto', overflowY: 'auto' }}
       >
         <Heading
           level={6}
           style={{
             backgroundColor: currentTheme.colors.greys.grey80,
             height: '2rem',
-            textAlign: 'center', 
+            textAlign: 'center',
             fontWeight: 'bold',
-            color: 'white',
+            color: 'white'
           }}
           className="app-heading"
         >
@@ -141,18 +141,18 @@ export default function TranscriptAnalysisPane({
           enableEditing={enableEditing}
         />
       </Cell>
-      <Cell 
+      <Cell
         gridArea="soap"
-        style={{ overflowX: 'auto',overflowY: 'auto' }}
+        style={{ overflowX: 'auto', overflowY: 'auto' }}
       >
         <Heading
           level={6}
           style={{
             backgroundColor: currentTheme.colors.greys.grey80,
             height: '2rem',
-            textAlign: 'center', 
+            textAlign: 'center',
             fontWeight: 'bold',
-            color: 'white',
+            color: 'white'
           }}
           className="app-heading"
         >
@@ -164,5 +164,5 @@ export default function TranscriptAnalysisPane({
         />
       </Cell>
     </Grid>
-  );
+  )
 }

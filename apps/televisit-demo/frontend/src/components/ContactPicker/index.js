@@ -1,17 +1,17 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useState } from 'react';
-import { withTheme } from 'styled-components';
-import Select from 'react-select';
+import React, { useState } from 'react'
+import { withTheme } from 'styled-components'
+import Select from 'react-select'
 
 export const MultiSelect = (props) => {
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState('')
 
-  const handleChange = (selections) => props.onChange(selections);
+  const handleChange = (selections) => props.onChange(selections)
 
   const getCustomStyles = () => {
-    const { theme } = props;
+    const { theme } = props
     const customStyles = {
       option: (provided, state) => ({
         ...provided,
@@ -20,10 +20,10 @@ export const MultiSelect = (props) => {
         color: state.isFocused ? `${theme.colors.greys.white}` : `${theme.colors.greys.grey70}`,
         padding: 16,
         '&:first-of-type': {
-           borderRadius:  `${theme.radii.default} ${theme.radii.default} 0 0`
+          borderRadius: `${theme.radii.default} ${theme.radii.default} 0 0`
         },
         '&:last-of-type': {
-          borderRadius:  `0 0 ${theme.radii.default} ${theme.radii.default}`
+          borderRadius: `0 0 ${theme.radii.default} ${theme.radii.default}`
         },
         '&:hover': {
           backgroundColor: `${theme.colors.primary.light}`,
@@ -49,10 +49,10 @@ export const MultiSelect = (props) => {
         fontSize: `${theme.fontSizes.text.fontSize}`,
         lineHeight: `${theme.fontSizes.text.lineHeight}`,
         '&:focus-within': {
-          boxShadow:  `0 0 0 0.125rem ${theme.colors.primary.lightest}`
+          boxShadow: `0 0 0 0.125rem ${theme.colors.primary.lightest}`
         },
         '&:hover': {
-          borderColor: 'none',
+          borderColor: 'none'
         }
       }),
       menuList: () => ({
@@ -64,27 +64,26 @@ export const MultiSelect = (props) => {
         ...provided,
         backgroundColor: `${theme.colors.primary.light}`,
         borderRadius: '1rem',
-        color: `${theme.colors.greys.white}`,
+        color: `${theme.colors.greys.white}`
       }),
       multiValueLabel: (provided) => ({
         ...provided,
         color: `${theme.colors.greys.white}`,
-        fontWeight: 'bolder',
+        fontWeight: 'bolder'
       })
     }
-    return customStyles;
-  };
+    return customStyles
+  }
 
   const onInputChange = (inputValue, { action }) => {
     switch (action) {
       case 'input-change':
-        setInputValue (inputValue);
-        return;
+        setInputValue(inputValue)
+        return
       case 'set-value':
-        setInputValue ('');
-        return;
+        setInputValue('')
+
       default:
-        return;
     }
   }
 
@@ -92,8 +91,8 @@ export const MultiSelect = (props) => {
     <Select
       closeMenuOnSelect={false}
       components={{
-        DropdownIndicator:() => null,
-        IndicatorSeparator: () => null,
+        DropdownIndicator: () => null,
+        IndicatorSeparator: () => null
       }}
       defaultMenuIsOpen
       inputValue={inputValue}
@@ -106,7 +105,7 @@ export const MultiSelect = (props) => {
       styles={getCustomStyles()}
       captureMenuScroll={false}
     />
-  );
-};
+  )
+}
 
-export default withTheme(MultiSelect);
+export default withTheme(MultiSelect)
