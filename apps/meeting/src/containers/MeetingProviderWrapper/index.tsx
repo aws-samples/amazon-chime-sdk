@@ -52,8 +52,8 @@ const MeetingProviderWrapper: React.FC = () => {
       <VoiceFocusProvider>
         {getMeetingProviderWrapper()}
       </VoiceFocusProvider>
-    )
-  }
+    );
+  };
 
   return (
     <>

@@ -154,7 +154,7 @@ const MeetingForm: React.FC = () => {
         value=""
         checked={isWebAudioEnabled}
         onChange={toggleWebAudio}
-        infoText="Web Audio should be enabled for Voice Focus"
+        infoText="Enable Web Audio to use Voice Focus"
       />
       <Flex
         container
