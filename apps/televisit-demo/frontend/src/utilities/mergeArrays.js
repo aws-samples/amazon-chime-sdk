@@ -11,12 +11,12 @@ const mergeArrayOfObjects = (original, newdata, uniqueSelector = '') => {
   newdata.forEach(dat => {
     const foundIndex = original.findIndex(
       ori => ori[uniqueSelector] === dat[uniqueSelector]
-    )
-    if (foundIndex >= 0) original.splice(foundIndex, 1, dat)
-    else original.push(dat)
-  })
+    );
+    if (foundIndex >= 0) original.splice(foundIndex, 1, dat);
+    else original.push(dat);
+  });
 
-  return original
-}
+  return original;
+};
 
-export default mergeArrayOfObjects
+export default mergeArrayOfObjects;

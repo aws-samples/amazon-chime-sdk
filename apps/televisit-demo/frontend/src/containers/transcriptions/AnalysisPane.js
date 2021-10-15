@@ -1,14 +1,14 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react';
 
-import s from './AnalysisPane.module.css'
-import cs from 'clsx'
+import s from './AnalysisPane.module.css';
+import cs from 'clsx';
 
-import displayNames from './displayNames'
-import { VStack, Box, Flex, IconButton, Select, Input, FormControl, VisuallyHidden } from '@chakra-ui/react'
-import { AddIcon } from '@chakra-ui/icons'
-import { DeleteIcon } from './DeleteIcon'
-import highlightClasses from './transcriptHighlights'
-import { getSelectedConcept } from './conceptUtils'
+import displayNames from './displayNames';
+import { VStack, Box, Flex, IconButton, Select, Input, FormControl, VisuallyHidden } from '@chakra-ui/react';
+import { AddIcon } from '@chakra-ui/icons';
+import { DeleteIcon } from './DeleteIcon';
+import highlightClasses from './transcriptHighlights';
+import { getSelectedConcept } from './conceptUtils';
 
 const CATEGORIES = [
   'MEDICAL_CONDITION',
@@ -16,9 +16,9 @@ const CATEGORIES = [
   'TEST_TREATMENT_PROCEDURE',
   'ANATOMY',
   'PROTECTED_HEALTH_INFORMATION'
-]
+];
 
-const CONFIDENCE_THRESHOLD = 0.5
+const CONFIDENCE_THRESHOLD = 0.5;
 
 function ResultRow ({
   result,
@@ -40,19 +40,19 @@ function ResultRow ({
         }
       }}
     />
-  )
+  );
 
   const attrs = useMemo(() => {
     const a = [];
 
     (result.Attributes || []).forEach((attr) => {
-      a.push([displayNames[attr.Type], attr.Text])
-    })
-    return a
-  }, [result])
+      a.push([displayNames[attr.Type], attr.Text]);
+    });
+    return a;
+  }, [result]);
 
-  const conceptsPresent = result.ICD10CMConcepts || result.RxNormConcepts
-  const attributesPresent = result.Attributes && result.Attributes.length !== 0
+  const conceptsPresent = result.ICD10CMConcepts || result.RxNormConcepts;
+  const attributesPresent = result.Attributes && result.Attributes.length !== 0;
 
   if (!conceptsPresent && !attributesPresent) {
     return (
@@ -70,7 +70,7 @@ function ResultRow ({
         </Flex>
         {closeIcon}
       </Flex>
-    )
+    );
   }
 
   if (!conceptsPresent && attributesPresent) {
@@ -94,12 +94,12 @@ function ResultRow ({
 
         {closeIcon}
       </Flex>
-    )
+    );
   }
 
-  const concepts = [...(result.ICD10CMConcepts ? result.ICD10CMConcepts : result.RxNormConcepts)]
-  const selectedConcept = getSelectedConcept(result)
-  const borderColor = concepts[0].Score < CONFIDENCE_THRESHOLD ? '#B30000 ' : 'grey'
+  const concepts = [...(result.ICD10CMConcepts ? result.ICD10CMConcepts : result.RxNormConcepts)];
+  const selectedConcept = getSelectedConcept(result);
+  const borderColor = concepts[0].Score < CONFIDENCE_THRESHOLD ? '#B30000 ' : 'grey';
 
   return (
     <Flex width='100%' alignItems='center'>
@@ -123,7 +123,7 @@ function ResultRow ({
 
       {closeIcon}
     </Flex>
-  )
+  );
 }
 
 function ResultTable ({
@@ -133,20 +133,20 @@ function ResultTable ({
   onResultAdd,
   onSelectedConceptChange
 }) {
-  const filteredResults = useMemo(() => results.filter((r) => r.Category === category), [results, category])
-  const [inputValue, setInputValue] = useState('')
-  const handleInputChange = (event) => setInputValue(event.target.value)
+  const filteredResults = useMemo(() => results.filter((r) => r.Category === category), [results, category]);
+  const [inputValue, setInputValue] = useState('');
+  const handleInputChange = (event) => setInputValue(event.target.value);
 
   const handleSubmit = (event) => {
-    event.preventDefault()
-    const input = inputValue.trim()
+    event.preventDefault();
+    const input = inputValue.trim();
     if (input !== '') {
-      onResultAdd(input, category)
-      setInputValue('')
+      onResultAdd(input, category);
+      setInputValue('');
     }
-  }
+  };
 
-  const addEntityInputId = `add-${displayNames[category]}`
+  const addEntityInputId = `add-${displayNames[category]}`;
 
   const addIcon = (
     <IconButton
@@ -163,7 +163,7 @@ function ResultTable ({
         }
       }}
     />
-  )
+  );
 
   return (
     <Box mb={4} mx='3em' _first={{ marginTop: '1em' }} _last={{ marginBottom: '1em' }}>
@@ -210,7 +210,7 @@ function ResultTable ({
         ))}
       </VStack>
     </Box>
-  )
+  );
 }
 
 export default function AnalysisPane ({
@@ -219,7 +219,7 @@ export default function AnalysisPane ({
   onResultAdd,
   onSelectedConceptChange
 }) {
-  const allResults = useMemo(() => [].concat(...resultChunks), [resultChunks])
+  const allResults = useMemo(() => [].concat(...resultChunks), [resultChunks]);
 
   return (
     <div className={cs(s.base)}>
@@ -234,5 +234,5 @@ export default function AnalysisPane ({
         />
       ))}
     </div>
-  )
+  );
 }

@@ -1,7 +1,7 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import Storage from '@aws-amplify/storage'
+import Storage from '@aws-amplify/storage';
 
 /**
  * @class AttachmentService
@@ -33,11 +33,11 @@ class AttachmentService {
           contentType: fileObj.type,
           level: this.userLevel
         }
-      )
+      );
 
-      return response
+      return response;
     } catch (err) {
-      throw new Error(`Failed to upload file! with error: ${err}`)
+      throw new Error(`Failed to upload file! with error: ${err}`);
     }
   }
 
@@ -52,7 +52,7 @@ class AttachmentService {
     return Storage.get(fileKey, {
       level: this.userLevel,
       identityId: userId
-    })
+    });
   }
 
   /**
@@ -61,8 +61,8 @@ class AttachmentService {
    * @return - Promise resolves upon successful removal of the object
    */
   static delete (fileKey) {
-    return Storage.remove(fileKey, { level: this.userLevel })
+    return Storage.remove(fileKey, { level: this.userLevel });
   }
 }
 
-export default AttachmentService
+export default AttachmentService;

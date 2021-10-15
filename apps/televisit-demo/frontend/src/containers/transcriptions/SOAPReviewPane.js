@@ -1,8 +1,8 @@
-import React from 'react'
-import s from './SOAPReviewPane.module.css'
-import cs from 'clsx'
+import React from 'react';
+import s from './SOAPReviewPane.module.css';
+import cs from 'clsx';
 
-import { Heading, Textarea } from '@chakra-ui/react'
+import { Heading, Textarea } from '@chakra-ui/react';
 
 export default function SOAPReviewPane ({ onInputChange, inputText }) {
   return (
@@ -16,5 +16,5 @@ export default function SOAPReviewPane ({ onInputChange, inputText }) {
 	      />
       </div>
     </div>
-  )
+  );
 }

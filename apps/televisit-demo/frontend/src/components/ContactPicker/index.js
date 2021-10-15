@@ -1,17 +1,17 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useState } from 'react'
-import { withTheme } from 'styled-components'
-import Select from 'react-select'
+import React, { useState } from 'react';
+import { withTheme } from 'styled-components';
+import Select from 'react-select';
 
 export const MultiSelect = (props) => {
-  const [inputValue, setInputValue] = useState('')
+  const [inputValue, setInputValue] = useState('');
 
-  const handleChange = (selections) => props.onChange(selections)
+  const handleChange = (selections) => props.onChange(selections);
 
   const getCustomStyles = () => {
-    const { theme } = props
+    const { theme } = props;
     const customStyles = {
       option: (provided, state) => ({
         ...provided,
@@ -71,21 +71,21 @@ export const MultiSelect = (props) => {
         color: `${theme.colors.greys.white}`,
         fontWeight: 'bolder'
       })
-    }
-    return customStyles
-  }
+    };
+    return customStyles;
+  };
 
   const onInputChange = (inputValue, { action }) => {
     switch (action) {
       case 'input-change':
-        setInputValue(inputValue)
-        return
+        setInputValue(inputValue);
+        return;
       case 'set-value':
-        setInputValue('')
+        setInputValue('');
 
       default:
     }
-  }
+  };
 
   return (
     <Select
@@ -105,7 +105,7 @@ export const MultiSelect = (props) => {
       styles={getCustomStyles()}
       captureMenuScroll={false}
     />
-  )
-}
+  );
+};
 
-export default withTheme(MultiSelect)
+export default withTheme(MultiSelect);

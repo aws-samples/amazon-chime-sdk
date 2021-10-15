@@ -10,11 +10,11 @@ const arnParser = (arn) => {
     'namespace',
     'relativeId',
     'relativeValue'
-  ]
+  ];
   return arn.split(':').reduce(function (aggregator, piece, index) {
-    aggregator[arnMap[index]] = piece
-    return aggregator
-  }, {})
-}
+    aggregator[arnMap[index]] = piece;
+    return aggregator;
+  }, {});
+};
 
-export default arnParser
+export default arnParser;
