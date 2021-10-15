@@ -1,7 +1,7 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   Modal,
   ModalHeader,
@@ -10,12 +10,12 @@ import {
   ModalButton,
   Input,
   Checkbox,
-} from 'amazon-chime-sdk-component-library-react';
+} from "amazon-chime-sdk-component-library-react";
 
-import { createMemberArn } from '../../api/ChimeAPI';
-import { useIdentityService } from '../../providers/IdentityProvider';
+import { createMemberArn } from "../../api/ChimeAPI";
+import { useIdentityService } from "../../providers/IdentityProvider";
 
-import './ChannelModals.css';
+import "./ChannelModals.css";
 
 export const BanModal = ({
   onClose,
@@ -27,7 +27,7 @@ export const BanModal = ({
   unbanUser,
 }) => {
   let timeout = null;
-  const [userName, setUserName] = useState('');
+  const [userName, setUserName] = useState("");
   const [usersList, setUsersList] = useState([]);
   const identityClient = useIdentityService();
 
@@ -44,7 +44,7 @@ export const BanModal = ({
       .searchByName(name)
       .then((users) => {
         const list = users.map((user) => {
-          if (getUserAttributeByName(user, 'profile') !== 'none') {
+          if (getUserAttributeByName(user, "profile") !== "none") {
             return user;
           }
           return false;
@@ -62,7 +62,7 @@ export const BanModal = ({
       .getUsers()
       .then((users) => {
         const list = users.map((user) => {
-          if (getUserAttributeByName(user, 'profile') !== 'none') {
+          if (getUserAttributeByName(user, "profile") !== "none") {
             return user;
           }
           return false;
@@ -99,12 +99,12 @@ export const BanModal = ({
     }
 
     const userArn = createMemberArn(
-      user.Attributes.filter((attr) => attr.Name === 'profile')[0].Value
+      user.Attributes.filter((attr) => attr.Name === "profile")[0].Value
     );
     return {
       arn: userArn,
       name: user.Username,
-      role: memberArns.includes(userArn) ? 'Member' : '',
+      role: memberArns.includes(userArn) ? "Member" : "",
       banned: banList.length ? banList.includes(userArn) : false,
     };
   });

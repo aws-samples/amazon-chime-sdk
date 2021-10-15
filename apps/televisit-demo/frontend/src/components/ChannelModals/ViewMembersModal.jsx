@@ -2,7 +2,7 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import React from 'react';
+import React from "react";
 
 import {
   Modal,
@@ -10,18 +10,18 @@ import {
   ModalBody,
   ModalButtonGroup,
   ModalButton,
-} from 'amazon-chime-sdk-component-library-react';
+} from "amazon-chime-sdk-component-library-react";
 
-import './ChannelModals.css';
+import "./ChannelModals.css";
 
 export const ViewMembersModal = ({ onClose, channel, members, moderators }) => {
   const modArns = moderators.map((m) => m.Moderator.Arn);
 
   const channelMembers = members.map((m) => {
     if (modArns.indexOf(m.Member.Arn) >= 0) {
-      return { name: m.Member.Name, role: 'Moderator', arn: m.Member.Arn };
+      return { name: m.Member.Name, role: "Moderator", arn: m.Member.Arn };
     }
-    return { name: m.Member.Name, role: 'Member', arn: m.Member.Arn };
+    return { name: m.Member.Name, role: "Member", arn: m.Member.Arn };
   });
 
   const sortedMembers = channelMembers.sort((a, b) =>

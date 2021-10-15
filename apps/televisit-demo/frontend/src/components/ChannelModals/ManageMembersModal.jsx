@@ -1,16 +1,16 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import React from 'react';
+import React from "react";
 import {
   Modal,
   ModalHeader,
   ModalBody,
   ModalButtonGroup,
   ModalButton,
-} from 'amazon-chime-sdk-component-library-react';
+} from "amazon-chime-sdk-component-library-react";
 
-import ContactPicker from '../ContactPicker';
+import ContactPicker from "../ContactPicker";
 
 export const ManageMembersModal = ({
   onClose,

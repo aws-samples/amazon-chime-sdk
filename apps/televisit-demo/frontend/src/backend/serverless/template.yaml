@@ -1,4 +1,4 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 Description: AWS CloudFormation stack to set up infrastructure required for the Amazon Chime SDK chat demo app
 Parameters:
   DemoName:
@@ -19,59 +19,59 @@ Resources:
 
   #Lambda that creates AWS Chime App instance
   ChimeAppInstanceLambda:
-      Type: "AWS::Lambda::Function"
-      Properties:
-        Handler: "index.handler"
-        Role: !GetAtt LambdaExecuteRole.Arn
-        Runtime: "nodejs12.x"
-        Timeout: 60
-        Layers: 
-          - !Ref AWSSDKChimeLayer
-        Code:
-            ZipFile: >
-                "use strict";
-                const AWS = require("aws-sdk");
-                const uuidv4 = require("uuid");
-                var response = require("cfn-response"); 
-                AWS.config.update({ region: process.env.AWS_REGION });
-                const chime = new AWS.Chime({ region: process.env.AWS_REGION }); 
-                
-                exports.handler = async (event, context, callback) => {
-                  console.log("Event: \n", event);
-                  console.log("Create Chime SDK App Instance");
-                  if (event["RequestType"] === "Create") {
-                    //create a chime app instance
-                    var params = {
-                      Name: `AWSChimeMessagingSDKDemo-${uuidv4()}`,
-                    };
-                    try {
-                      var chime_response = await chime.createAppInstance(
-                        params,
-                        function (err, data) {
-                          if (err) console.log(err, err.stack);
-                          // an error occurred
-                          else {
-                            console.log(data); // successful response
-                            return data;
-                          }
-                        }
-                      ).promise();;
-                      await response.send(event, context, response.SUCCESS, chime_response);
-                    } catch (error) {
-                      console.log("ERROR CAUGHT \n", error);
-                      await response.send(event, context, response.FAILED, {});
+    Type: "AWS::Lambda::Function"
+    Properties:
+      Handler: "index.handler"
+      Role: !GetAtt LambdaExecuteRole.Arn
+      Runtime: "nodejs12.x"
+      Timeout: 60
+      Layers:
+        - !Ref AWSSDKChimeLayer
+      Code:
+        ZipFile: >
+          "use strict";
+          const AWS = require("aws-sdk");
+          const uuidv4 = require("uuid");
+          var response = require("cfn-response"); 
+          AWS.config.update({ region: process.env.AWS_REGION });
+          const chime = new AWS.Chime({ region: process.env.AWS_REGION }); 
+
+          exports.handler = async (event, context, callback) => {
+            console.log("Event: \n", event);
+            console.log("Create Chime SDK App Instance");
+            if (event["RequestType"] === "Create") {
+              //create a chime app instance
+              var params = {
+                Name: `AWSChimeMessagingSDKDemo-${uuidv4()}`,
+              };
+              try {
+                var chime_response = await chime.createAppInstance(
+                  params,
+                  function (err, data) {
+                    if (err) console.log(err, err.stack);
+                    // an error occurred
+                    else {
+                      console.log(data); // successful response
+                      return data;
                     }
-                  } else {
-                    //NOT A CREATE REQUEST
-                    await response.send(event, context, response.SUCCESS, {});
                   }
-                };
+                ).promise();;
+                await response.send(event, context, response.SUCCESS, chime_response);
+              } catch (error) {
+                console.log("ERROR CAUGHT \n", error);
+                await response.send(event, context, response.FAILED, {});
+              }
+            } else {
+              //NOT A CREATE REQUEST
+              await response.send(event, context, response.SUCCESS, {});
+            }
+          };
 
   # Trigger Lambda function to create Amazon Chime App Instance creation
   TriggerChimeAppInstanceLambda:
-      Type: AWS::CloudFormation::CustomResource
-      Properties: 
-        ServiceToken: !GetAtt ChimeAppInstanceLambda.Arn
+    Type: AWS::CloudFormation::CustomResource
+    Properties:
+      ServiceToken: !GetAtt ChimeAppInstanceLambda.Arn
 
   # Creates an S3 bucket to store chat attachments
   ChatAttachmentsBucket:
@@ -99,20 +99,20 @@ Resources:
   SNSRole:
     Type: "AWS::IAM::Role"
     Properties:
-      AssumeRolePolicyDocument: 
+      AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
           - Effect: "Allow"
-            Principal: 
-              Service: 
+            Principal:
+              Service:
                 - "cognito-idp.amazonaws.com"
-            Action: 
+            Action:
               - "sts:AssumeRole"
       Policies:
         - PolicyName: !Sub ${DemoName}-CognitoSNSPolicy
-          PolicyDocument: 
+          PolicyDocument:
             Version: "2012-10-17"
-            Statement: 
+            Statement:
               - Effect: "Allow"
                 Action: "sns:publish"
                 Resource: "*"
@@ -125,11 +125,11 @@ Resources:
       AssumeRolePolicyDocument:
         Statement:
           - Action:
-            - sts:AssumeRole
+              - sts:AssumeRole
             Effect: Allow
             Principal:
               Service:
-              - lambda.amazonaws.com
+                - lambda.amazonaws.com
         Version: 2012-10-17
       Policies:
         - PolicyName: !Sub ${DemoName}-LambdaUserCreatePolicy
@@ -138,21 +138,21 @@ Resources:
             Statement:
               - Effect: Allow
                 Action:
-                  - 'chime:CreateAppInstance*'
-                Resource: '*'
+                  - "chime:CreateAppInstance*"
+                Resource: "*"
         - PolicyName: !Sub ${DemoName}-LambdaCreateLogGroup
           PolicyDocument:
             Version: 2012-10-17
             Statement:
               - Effect: Allow
                 Action:
-                  - 'logs:CreateLogGroup'
-                Resource: '*'
+                  - "logs:CreateLogGroup"
+                Resource: "*"
               - Effect: Allow
                 Action:
-                  - 'logs:CreateLogStream'
-                  - 'logs:PutLogEvents'
-                Resource: '*'
+                  - "logs:CreateLogStream"
+                  - "logs:PutLogEvents"
+                Resource: "*"
 
   #Create Lambda used by Cognito Post Authentication Trigger to Create Chime App Instance user if user does not already exist
   SignInHookLambda:
@@ -164,8 +164,8 @@ Resources:
       Runtime: nodejs12.x
       MemorySize: 512
       Role: !GetAtt LambdaExecuteRole.Arn
-      Layers: 
-          - !Ref AWSSDKChimeLayer
+      Layers:
+        - !Ref AWSSDKChimeLayer
       Timeout: 800
       Code:
         ZipFile: |
@@ -209,24 +209,24 @@ Resources:
           };
       Environment:
         Variables:
-          CHIME_APP_INSTANCE_ARN: !GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn 
+          CHIME_APP_INSTANCE_ARN: !GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn
 
   # Allows Sign In Lambda to be called by Cognito
   LambdaInvocationPermission:
     Type: AWS::Lambda::Permission
-    Properties: 
+    Properties:
       Action: lambda:InvokeFunction
       FunctionName: !GetAtt SignInHookLambda.Arn
       Principal: cognito-idp.amazonaws.com
       SourceArn: !GetAtt UserPool.Arn
 
-  # Creates a Cognito User Pool with a Post Authentication Trigger of the Sign In Lambda      
+  # Creates a Cognito User Pool with a Post Authentication Trigger of the Sign In Lambda
   UserPool:
     Type: "AWS::Cognito::UserPool"
     DependsOn: SignInHookLambda
     Properties:
       UserPoolName: !Sub ${DemoName}-user-pool
-      LambdaConfig: 
+      LambdaConfig:
         PostAuthentication: !GetAtt SignInHookLambda.Arn
       AutoVerifiedAttributes:
         - email
@@ -245,7 +245,7 @@ Resources:
     Properties:
       IdentityPoolName: !Sub ${DemoName}_IdentityPool
       AllowUnauthenticatedIdentities: true
-      CognitoIdentityProviders: 
+      CognitoIdentityProviders:
         - ClientId: !Ref UserPoolClient
           ProviderName: !GetAtt UserPool.ProviderName
 
@@ -253,53 +253,53 @@ Resources:
   CognitoUnAuthorizedRole:
     Type: "AWS::IAM::Role"
     Properties:
-      AssumeRolePolicyDocument: 
+      AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
           - Effect: "Allow"
-            Principal: 
+            Principal:
               Federated: "cognito-identity.amazonaws.com"
-            Action: 
+            Action:
               - "sts:AssumeRoleWithWebIdentity"
             Condition:
-              StringEquals: 
+              StringEquals:
                 "cognito-identity.amazonaws.com:aud": !Ref IdentityPool
               "ForAnyValue:StringLike":
                 "cognito-identity.amazonaws.com:amr": unauthenticated
       Policies:
         - PolicyName: !Sub ${DemoName}-CognitoUnauthorizedPolicy
-          PolicyDocument: 
+          PolicyDocument:
             Version: "2012-10-17"
-            Statement: 
+            Statement:
               - Effect: "Allow"
                 Action:
                   - "mobileanalytics:PutEvents"
                   - "cognito-sync:*"
                 Resource: "*"
 
-  # Create a role for authorized access to AWS resources. Control what your user can access. 
-  # Allows users to access their s3 ChatBucket files 
+  # Create a role for authorized access to AWS resources. Control what your user can access.
+  # Allows users to access their s3 ChatBucket files
   CognitoAuthorizedRole:
     Type: "AWS::IAM::Role"
     Properties:
-      AssumeRolePolicyDocument: 
+      AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
           - Effect: "Allow"
-            Principal: 
+            Principal:
               Federated: "cognito-identity.amazonaws.com"
-            Action: 
+            Action:
               - "sts:AssumeRoleWithWebIdentity"
             Condition:
-              StringEquals: 
+              StringEquals:
                 "cognito-identity.amazonaws.com:aud": !Ref IdentityPool
               "ForAnyValue:StringLike":
                 "cognito-identity.amazonaws.com:amr": authenticated
       Policies:
         - PolicyName: !Sub ${DemoName}-CognitoAuthorizedPolicy
-          PolicyDocument: 
+          PolicyDocument:
             Version: "2012-10-17"
-            Statement: 
+            Statement:
               - Effect: "Allow"
                 Action:
                   - "mobileanalytics:PutEvents"
@@ -311,23 +311,39 @@ Resources:
                   - "lambda:InvokeFunction"
                 Resource: "*"
         - PolicyName: !Sub ${DemoName}-AttachmentsS3PermissionPolicy
-          PolicyDocument: 
+          PolicyDocument:
             Version: "2012-10-17"
-            Statement: 
+            Statement:
               - Effect: "Allow"
                 Action:
                   - "s3:GetObject"
                   - "s3:PutObject"
                   - "s3:DeleteObject"
-                Resource: !Join ['', ['arn:aws:s3:::', !Ref ChatAttachmentsBucket, '/protected/${cognito-identity.amazonaws.com:sub}/*']]
+                Resource:
+                  !Join [
+                    "",
+                    [
+                      "arn:aws:s3:::",
+                      !Ref ChatAttachmentsBucket,
+                      "/protected/${cognito-identity.amazonaws.com:sub}/*",
+                    ],
+                  ]
               - Effect: "Allow"
                 Action:
                   - "s3:GetObject"
-                Resource: !Join ['', ['arn:aws:s3:::', !Ref ChatAttachmentsBucket, '/protected/*']]       
+                Resource:
+                  !Join [
+                    "",
+                    [
+                      "arn:aws:s3:::",
+                      !Ref ChatAttachmentsBucket,
+                      "/protected/*",
+                    ],
+                  ]
         - PolicyName: !Sub ${DemoName}-ChimeSDKDemoUserPolicy
-          PolicyDocument: 
+          PolicyDocument:
             Version: "2012-10-17"
-            Statement: 
+            Statement:
               - Effect: "Allow"
                 Action:
                   - "chime:GetMessagingSessionEndpoint"
@@ -335,7 +351,16 @@ Resources:
               - Effect: "Allow"
                 Action:
                   - "cognito-idp:ListUsers"
-                Resource: !Join ['', ['arn:aws:cognito-idp:us-east-1:', !Ref AWS::AccountId, ':userpool/', !Ref UserPool]]
+                Resource:
+                  !Join [
+                    "",
+                    [
+                      "arn:aws:cognito-idp:us-east-1:",
+                      !Ref AWS::AccountId,
+                      ":userpool/",
+                      !Ref UserPool,
+                    ],
+                  ]
               - Effect: "Allow"
                 Action:
                   - "chime:SendChannelMessage"
@@ -354,13 +379,25 @@ Resources:
                   - "chime:RedactChannelMessage"
                   - "chime:UpdateChannelMessage"
                   - "chime:Connect"
-                  - "chime:ListChannelMembershipsForAppInstanceUser" 
+                  - "chime:ListChannelMembershipsForAppInstanceUser"
                   - "chime:CreateChannelBan"
                   - "chime:ListChannelBans"
                   - "chime:DeleteChannelBan"
                 Resource:
-                  - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/user/${cognito-identity.amazonaws.com:sub}']]
-                  - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/channel/*']]
+                  - !Join [
+                      "",
+                      [
+                        !GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn,
+                        "/user/${cognito-identity.amazonaws.com:sub}",
+                      ],
+                    ]
+                  - !Join [
+                      "",
+                      [
+                        !GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn,
+                        "/channel/*",
+                      ],
+                    ]
 
   # Assigns the roles to the Identity Pool
   IdentityPoolRoleMapping:
@@ -382,4 +419,3 @@ Outputs:
     Value: !GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn
   attachmentsS3BucketName:
     Value: !Ref ChatAttachmentsBucket
-  

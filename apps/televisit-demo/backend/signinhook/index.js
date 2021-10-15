@@ -1,4 +1,4 @@
-const AWS = require('aws-sdk');
+const AWS = require("aws-sdk");
 
 AWS.config.update({ region: process.env.AWS_REGION });
 const chime = new AWS.Chime({ region: process.env.AWS_REGION });
@@ -10,7 +10,7 @@ exports.handler = async (event, context, callback) => {
   const userId = event.request.userAttributes.profile;
 
   // 'none' is default user profile attribute in Cognito upon registration which
-  if (userId === 'none') {
+  if (userId === "none") {
     console.log(`User hasn't logged in yet and hasn't been setup with profile`);
     callback(null, event);
   }
@@ -18,7 +18,7 @@ exports.handler = async (event, context, callback) => {
   const chimeCreateAppInstanceUserParams = {
     AppInstanceArn: CHIME_APP_INSTANCE_ARN,
     AppInstanceUserId: userId,
-    Name: username
+    Name: username,
   };
 
   try {
@@ -30,7 +30,7 @@ exports.handler = async (event, context, callback) => {
     console.log(JSON.stringify(e));
     return {
       statusCode: 500,
-      body: "Server error while creating app instance"
+      body: "Server error while creating app instance",
     };
   }
   // Return to Amazon Cognito

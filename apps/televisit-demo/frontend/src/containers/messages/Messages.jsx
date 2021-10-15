@@ -3,7 +3,7 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   InfiniteList,
   PopOverItem,
@@ -17,19 +17,22 @@ import {
   EditableChatBubble,
   formatDate,
   formatTime,
-} from 'amazon-chime-sdk-component-library-react';
-import { AttachmentProcessor } from './AttachmentProcessor';
+} from "amazon-chime-sdk-component-library-react";
+import { AttachmentProcessor } from "./AttachmentProcessor";
 
 import {
   listChannelMessages,
   createMemberArn,
   updateChannelMessage,
   redactChannelMessage,
-} from '../../api/ChimeAPI';
-import insertDateHeaders from '../../utilities/insertDateHeaders';
+} from "../../api/ChimeAPI";
+import insertDateHeaders from "../../utilities/insertDateHeaders";
 
-import './Messages.css';
-import { useChatChannelState, useChatMessagingState } from '../../providers/ChatMessagesProvider';
+import "./Messages.css";
+import {
+  useChatChannelState,
+  useChatMessagingState,
+} from "../../providers/ChatMessagesProvider";
 
 const Messages = ({
   messages,
@@ -47,7 +50,7 @@ const Messages = ({
   const handleScrollTop = async () => {
     setIsLoading(true);
     if (!channelMessageTokenRef.current) {
-      console.log('No new messages');
+      console.log("No new messages");
       setIsLoading(false);
       return;
     }
@@ -66,12 +69,12 @@ const Messages = ({
   const [showDiscardModal, setShowDiscardModal] = useState(false);
   const [showRedactModal, setShowRedactModal] = useState(false);
 
-  const [editingMessageId, setEditingMessageId] = useState('');
-  const [redactingMessageId, setRedactingMessageId] = useState('');
+  const [editingMessageId, setEditingMessageId] = useState("");
+  const [redactingMessageId, setRedactingMessageId] = useState("");
 
   const handleDiscardEdit = () => {
     setShowDiscardModal(false);
-    setEditingMessageId('');
+    setEditingMessageId("");
   };
 
   const discardModal = (
@@ -106,7 +109,7 @@ const Messages = ({
   };
 
   const handleCloseRedactModal = () => {
-    setRedactingMessageId('');
+    setRedactingMessageId("");
     setShowRedactModal(false);
   };
 
@@ -140,7 +143,7 @@ const Messages = ({
       </ModalBody>
     </Modal>
   );
-  
+
   const cancelEdit = (e) => {
     e.preventDefault();
     setShowDiscardModal(true);
@@ -155,11 +158,11 @@ const Messages = ({
       metadata,
       userId
     );
-    setEditingMessageId('');
+    setEditingMessageId("");
   };
 
   const flattenedMessages = messages.map((m) => {
-    const content = !m.Content || m.Redacted ? '(Deleted)' : m.Content;
+    const content = !m.Content || m.Redacted ? "(Deleted)" : m.Content;
     let editedNote;
     if (m.LastEditedTimestamp && !m.Redacted) {
       const time = formatTime(m.LastEditedTimestamp);
@@ -167,11 +170,11 @@ const Messages = ({
         m.LastEditedTimestamp,
         undefined,
         undefined,
-        'today',
-        'yesterday'
+        "today",
+        "yesterday"
       );
       editedNote = (
-        <i style={{ fontStyle: 'italic' }}>{` (edited ${date} at ${time})`}</i>
+        <i style={{ fontStyle: "italic" }}>{` (edited ${date} at ${time})`}</i>
       );
     }
     return {
@@ -197,13 +200,13 @@ const Messages = ({
       let metadata = JSON.parse(m.Metadata);
       if (metadata.isMeetingInfo) {
         return m;
-      };
+      }
     }
- 
+
     const variant =
-      createMemberArn(userId) === m.senderId ? 'outgoing' : 'incoming';
+      createMemberArn(userId) === m.senderId ? "outgoing" : "incoming";
     let actions = null;
-    if (variant === 'outgoing') {
+    if (variant === "outgoing") {
       actions = [
         <PopOverItem
           key="1"
@@ -280,7 +283,7 @@ const Messages = ({
                 {m.editedNote}
               </div>
               {m.metadata && attachment(m.metadata) && (
-                <div style={{ marginTop: '10px' }}>
+                <div style={{ marginTop: "10px" }}>
                   <AttachmentProcessor
                     senderId={m.senderId}
                     {...attachment(m.metadata)}
@@ -300,7 +303,7 @@ const Messages = ({
       {showRedactModal && redactModal}
       <div className="message-list-header">{channelName}</div>
       <InfiniteList
-        style={{ display: 'flex', flexGrow: '1' }}
+        style={{ display: "flex", flexGrow: "1" }}
         items={messageList}
         onLoad={handleScrollTop}
         isLoading={isLoading}

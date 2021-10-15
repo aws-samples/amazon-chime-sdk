@@ -1,26 +1,26 @@
-import React, { useRef, useEffect } from 'react';
-import TranscriptLine from './TranscriptLine';
-import InProgressTranscriptLine from './InProgressTranscriptLine';
+import React, { useRef, useEffect } from "react";
+import TranscriptLine from "./TranscriptLine";
+import InProgressTranscriptLine from "./InProgressTranscriptLine";
 
-import cs from 'clsx';
-import s from './TranscriptPane.module.css';
+import cs from "clsx";
+import s from "./TranscriptPane.module.css";
 
-import { useTheme } from 'styled-components';
+import { useTheme } from "styled-components";
 
 const CATEGORIES = [
-  'PROTECTED_HEALTH_INFORMATION',
-  'MEDICAL_CONDITION',
-  'ANATOMY',
-  'MEDICATION',
-  'TEST_TREATMENT_PROCEDURE'
+  "PROTECTED_HEALTH_INFORMATION",
+  "MEDICAL_CONDITION",
+  "ANATOMY",
+  "MEDICATION",
+  "TEST_TREATMENT_PROCEDURE",
 ];
 
-export default function TranscriptPane ({
+export default function TranscriptPane({
   transcriptChunks,
   resultChunks,
   partialTranscript,
   inProgress,
-  enableEditing
+  enableEditing,
 }) {
   const currentTheme = useTheme();
 
@@ -31,7 +31,7 @@ export default function TranscriptPane ({
       }
       const newChunk = {
         ...t[i],
-        text: value
+        text: value,
       };
 
       return [...t.slice(0, i), newChunk, ...t.slice(i + 1)];
@@ -44,7 +44,7 @@ export default function TranscriptPane ({
 
       const newChunk = {
         ...t[i],
-        speaker: value
+        speaker: value,
       };
 
       return [...t.slice(0, i), newChunk, ...t.slice(i + 1)];
@@ -52,26 +52,29 @@ export default function TranscriptPane ({
   };
 
   return (
-      <div
-        style={{
-          backgroundColor: 'white',
-          height: '80%',
-          borderRight: `solid 1px ${currentTheme.colors.greys.grey30}`
-        }}
-      >
-        <InProgressTranscriptLine key={transcriptChunks ? transcriptChunks.length : 0} text={partialTranscript} />
+    <div
+      style={{
+        backgroundColor: "white",
+        height: "80%",
+        borderRight: `solid 1px ${currentTheme.colors.greys.grey30}`,
+      }}
+    >
+      <InProgressTranscriptLine
+        key={transcriptChunks ? transcriptChunks.length : 0}
+        text={partialTranscript}
+      />
 
-        {(transcriptChunks || []).map((x, i) => (
-          <TranscriptLine
-            key={i}
-            chunk={x}
-            results={resultChunks[i] ?? []}
-            enabledCategories={CATEGORIES}
-            enableEditing={enableEditing}
-            handleTranscriptChange={(value) => onTranscriptChange(i, value)}
-            onSpeakerChange={(value) => onSpeakerChange(i, value)}
-          />
-        ))}
-      </div>
+      {(transcriptChunks || []).map((x, i) => (
+        <TranscriptLine
+          key={i}
+          chunk={x}
+          results={resultChunks[i] ?? []}
+          enabledCategories={CATEGORIES}
+          enableEditing={enableEditing}
+          handleTranscriptChange={(value) => onTranscriptChange(i, value)}
+          onSpeakerChange={(value) => onSpeakerChange(i, value)}
+        />
+      ))}
+    </div>
   );
 }

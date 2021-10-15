@@ -121,12 +121,12 @@ section .modal-header {
 }
 
 .edit-channel .radio-buttons span:nth-child(1)::after {
-  content: ' (administrators and moderators can add members)';
+  content: " (administrators and moderators can add members)";
   color: #9b9da5;
 }
 
 .edit-channel .radio-buttons span:nth-child(2)::after {
-  content: ' (any member can add other members)';
+  content: " (any member can add other members)";
   color: #9b9da5;
 }
 .ban-users-list {

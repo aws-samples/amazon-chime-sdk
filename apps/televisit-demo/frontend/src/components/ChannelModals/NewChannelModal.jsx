@@ -1,7 +1,7 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 import {
   Modal,
@@ -12,15 +12,15 @@ import {
   Input,
   Label,
   RadioGroup,
-} from 'amazon-chime-sdk-component-library-react';
+} from "amazon-chime-sdk-component-library-react";
 
-import './NewChannelModal.css';
-import { useAuthContext } from '../../providers/AuthProvider';
+import "./NewChannelModal.css";
+import { useAuthContext } from "../../providers/AuthProvider";
 
 export const NewChannelModal = ({ onClose, onCreateChannel }) => {
-  const [name, setName] = useState('');
-  const [privacy, setPrivacy] = useState('PRIVATE');
-  const [mode, setMode] = useState('RESTRICTED');
+  const [name, setName] = useState("");
+  const [privacy, setPrivacy] = useState("PRIVATE");
+  const [mode, setMode] = useState("RESTRICTED");
 
   const { member } = useAuthContext();
   const onNameChange = (e) => {
@@ -59,22 +59,22 @@ export const NewChannelModal = ({ onClose, onCreateChannel }) => {
             <div className="value ch-type-options">
               <RadioGroup
                 options={[
-                  { value: 'PRIVATE', label: 'Private' },
-                  { value: 'PUBLIC', label: 'Public' },
+                  { value: "PRIVATE", label: "Private" },
+                  { value: "PUBLIC", label: "Public" },
                 ]}
                 value={privacy}
                 onChange={(e) => onPrivacyChange(e)}
               />
             </div>
           </div>
-          {privacy !== 'PUBLIC' && (
+          {privacy !== "PUBLIC" && (
             <div className="ch-form-field-input">
               <Label className="lbl">Mode</Label>
               <div className="value ch-mode-options">
                 <RadioGroup
                   options={[
-                    { value: 'RESTRICTED', label: 'Restricted' },
-                    { value: 'UNRESTRICTED', label: 'Unrestricted' },
+                    { value: "RESTRICTED", label: "Restricted" },
+                    { value: "UNRESTRICTED", label: "Unrestricted" },
                   ]}
                   value={mode}
                   onChange={(e) => onModeChange(e)}

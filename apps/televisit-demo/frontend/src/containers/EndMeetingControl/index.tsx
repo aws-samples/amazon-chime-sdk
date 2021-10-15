@@ -1,8 +1,8 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
 import {
   ControlBarButton,
   Phone,
@@ -10,13 +10,13 @@ import {
   ModalBody,
   ModalHeader,
   ModalButton,
-  ModalButtonGroup
-} from 'amazon-chime-sdk-component-library-react';
+  ModalButtonGroup,
+} from "amazon-chime-sdk-component-library-react";
 
-import { endMeeting } from '../../api/ChimeAPI';
-import { StyledP } from './Styled';
-import { useAppState } from '../../providers/AppStateProvider';
-import routes from '../../constants/routes';
+import { endMeeting } from "../../api/ChimeAPI";
+import { StyledP } from "./Styled";
+import { useAppState } from "../../providers/AppStateProvider";
+import routes from "../../constants/routes";
 
 const EndMeetingControl: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
@@ -35,7 +35,7 @@ const EndMeetingControl: React.FC = () => {
         history.push(routes.CHAT);
       }
     } catch (e) {
-      console.log('Could not end meeting', e);
+      console.log("Could not end meeting", e);
     }
   };
 
@@ -65,7 +65,7 @@ const EndMeetingControl: React.FC = () => {
                 label="Leave Meeting"
                 closesModal
               />,
-              <ModalButton variant="secondary" label="Cancel" closesModal />
+              <ModalButton variant="secondary" label="Cancel" closesModal />,
             ]}
           />
         </Modal>

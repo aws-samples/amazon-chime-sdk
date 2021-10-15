@@ -1,7 +1,7 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import React from 'react';
+import React from "react";
 
 import {
   Modal,
@@ -9,7 +9,7 @@ import {
   ModalBody,
   ModalButtonGroup,
   ModalButton,
-} from 'amazon-chime-sdk-component-library-react';
+} from "amazon-chime-sdk-component-library-react";
 
 export const JoinMeetingModal = ({
   onClose,
@@ -26,10 +26,7 @@ export const JoinMeetingModal = ({
         <ModalHeader title={`${meetingInfo.inviter}`} />
       </div>
       <ModalBody>
-        <form
-          onSubmit={(e) => handleJoinMeeting(e)}
-          id="join-meeting-form"
-        />
+        <form onSubmit={(e) => handleJoinMeeting(e)} id="join-meeting-form" />
         <form
           onSubmit={(e) => handleMessageAll(e, meetingInfo.channelArn)}
           id="message-all-form"
@@ -49,7 +46,7 @@ export const JoinMeetingModal = ({
             form="message-all-form"
             type="submit"
             variant="primary"
-          />
+          />,
         ]}
       />
     </Modal>

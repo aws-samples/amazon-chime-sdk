@@ -8,15 +8,15 @@ import React, {
   useEffect,
   useState,
   useRef,
-} from 'react';
+} from "react";
 
-import { useAppState } from '../../providers/AppStateProvider';
-import appConfig from '../../Config';
-import { useAuthContext } from '../AuthProvider';
-import { describeChannel, createMemberArn } from '../../api/ChimeAPI';
-import MessagingService from '../../services/MessagingService';
-import mergeArrayOfObjects from '../../utilities/mergeArrays';
-import routes from '../../constants/routes';
+import { useAppState } from "../../providers/AppStateProvider";
+import appConfig from "../../Config";
+import { useAuthContext } from "../AuthProvider";
+import { describeChannel, createMemberArn } from "../../api/ChimeAPI";
+import MessagingService from "../../services/MessagingService";
+import mergeArrayOfObjects from "../../utilities/mergeArrays";
+import routes from "../../constants/routes";
 
 const ChatMessagingServiceContext = createContext(MessagingService);
 const ChatMessagingState = createContext();
@@ -41,10 +41,10 @@ const MessagingProvider = ({ children }) => {
   const messagesRef = useRef(messages);
   const channelListRef = useRef(channelList);
   const activeChannelMembershipsRef = useRef(activeChannelMemberships);
-  const [channelMessageToken, setChannelMessageToken] = useState('');
+  const [channelMessageToken, setChannelMessageToken] = useState("");
   const channelMessageTokenRef = useRef(channelMessageToken);
   // Meeting
-  const [meetingInfo, setMeetingInfo] = useState('');
+  const [meetingInfo, setMeetingInfo] = useState("");
 
   useEffect(() => {
     messagesRef.current = messages;
@@ -75,7 +75,7 @@ const MessagingProvider = ({ children }) => {
 
     messagesRef.current.forEach((m, i, self) => {
       if ((m.response?.MessageId || m.MessageId) === newMessage.MessageId) {
-        console.log('Duplicate message found', newMessage);
+        console.log("Duplicate message found", newMessage);
         isDuplicate = true;
         self[i] = newMessage;
       }
@@ -83,7 +83,7 @@ const MessagingProvider = ({ children }) => {
 
     let newMessages = [...messagesRef.current];
 
-    if (!isDuplicate && newMessage.Persistence === 'PERSISTENT') {
+    if (!isDuplicate && newMessage.Persistence === "PERSISTENT") {
       newMessages = [...newMessages, newMessage];
     }
 
@@ -91,24 +91,26 @@ const MessagingProvider = ({ children }) => {
   };
 
   const messagesProcessor = async (message) => {
-    const messageType = message?.headers['x-amz-chime-event-type'];
+    const messageType = message?.headers["x-amz-chime-event-type"];
     const record = JSON.parse(message?.payload);
-    console.log('Incoming Message', message);
+    console.log("Incoming Message", message);
     switch (messageType) {
       // Channel Messages
-      case 'CREATE_CHANNEL_MESSAGE':
-      case 'REDACT_CHANNEL_MESSAGE':
-      case 'UPDATE_CHANNEL_MESSAGE':
-      case 'DELETE_CHANNEL_MESSAGE':
+      case "CREATE_CHANNEL_MESSAGE":
+      case "REDACT_CHANNEL_MESSAGE":
+      case "UPDATE_CHANNEL_MESSAGE":
+      case "DELETE_CHANNEL_MESSAGE":
         // Process ChannelMessage
         if (record.Metadata) {
           const metadata = JSON.parse(record.Metadata);
-          if (metadata.isMeetingInfo && record.Sender.Arn !== createMemberArn(member.userId)) {
+          if (
+            metadata.isMeetingInfo &&
+            record.Sender.Arn !== createMemberArn(member.userId)
+          ) {
             const meetingInfo = JSON.parse(record.Content);
             setMeetingInfo(meetingInfo);
-          };
-        }
-        else if (activeChannelRef.current.ChannelArn === record?.ChannelArn) {
+          }
+        } else if (activeChannelRef.current.ChannelArn === record?.ChannelArn) {
           processChannelMessage(record);
         } else {
           const findMatch = unreadChannelsListRef.current.find(
@@ -123,8 +125,8 @@ const MessagingProvider = ({ children }) => {
         }
         break;
       // Channels actions
-      case 'CREATE_CHANNEL':
-      case 'UPDATE_CHANNEL':
+      case "CREATE_CHANNEL":
+      case "UPDATE_CHANNEL":
         {
           const newChannelArn = record.ChannelArn;
           const updatedChannelList = channelListRef.current.map((c) => {
@@ -137,7 +139,7 @@ const MessagingProvider = ({ children }) => {
           setActiveChannel(record);
         }
         break;
-      case 'DELETE_CHANNEL': {
+      case "DELETE_CHANNEL": {
         setChannelList(
           channelListRef.current.filter(
             (chRef) => chRef.ChannelArn !== record.ChannelArn
@@ -146,7 +148,7 @@ const MessagingProvider = ({ children }) => {
         break;
       }
       // Channel Memberships
-      case 'CREATE_CHANNEL_MEMBERSHIP':
+      case "CREATE_CHANNEL_MEMBERSHIP":
         {
           const newChannel = await describeChannel(
             record.ChannelArn,
@@ -161,12 +163,12 @@ const MessagingProvider = ({ children }) => {
           const newChannelList = mergeArrayOfObjects(
             [newChannel],
             channelListRef.current,
-            'ChannelArn'
+            "ChannelArn"
           );
           setChannelList(newChannelList);
         }
         break;
-      case 'UPDATE_CHANNEL_MEMBERSHIP':
+      case "UPDATE_CHANNEL_MEMBERSHIP":
         if (
           `${appConfig.appInstanceArn}/user/${member.userId}` !==
           record?.InvitedBy.Arn
@@ -178,12 +180,12 @@ const MessagingProvider = ({ children }) => {
           const newChannelList = mergeArrayOfObjects(
             [channel],
             channelListRef.current,
-            'ChannelArn'
+            "ChannelArn"
           );
           setChannelList(newChannelList);
         }
         break;
-      case 'DELETE_CHANNEL_MEMBERSHIP':
+      case "DELETE_CHANNEL_MEMBERSHIP":
         // You are removed
         if (record.Member.Arn.includes(member.userId)) {
           setChannelList(
@@ -257,7 +259,7 @@ const useChatMessagingService = () => {
 
   if (!context) {
     throw new Error(
-      'useChatMessagingService must be used within ChatMessagingServiceContext'
+      "useChatMessagingService must be used within ChatMessagingServiceContext"
     );
   }
 
@@ -269,7 +271,7 @@ const useChatMessagingState = () => {
 
   if (!context) {
     throw new Error(
-      'useChatMessagingState must be used within ChatMessagingState'
+      "useChatMessagingState must be used within ChatMessagingState"
     );
   }
 
@@ -280,7 +282,7 @@ const useChatChannelState = () => {
   const context = useContext(ChatChannelState);
 
   if (!context) {
-    throw new Error('useChatChannelState must be used within ChatChannelState');
+    throw new Error("useChatChannelState must be used within ChatChannelState");
   }
 
   return context;

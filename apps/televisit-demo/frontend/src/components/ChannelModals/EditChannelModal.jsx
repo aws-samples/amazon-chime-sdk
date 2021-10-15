@@ -2,7 +2,7 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 import {
   Modal,
@@ -13,11 +13,11 @@ import {
   Input,
   RadioGroup,
   useNotificationDispatch,
-} from 'amazon-chime-sdk-component-library-react';
+} from "amazon-chime-sdk-component-library-react";
 
-import { updateChannel } from '../../api/ChimeAPI';
+import { updateChannel } from "../../api/ChimeAPI";
 
-import './ChannelModals.css';
+import "./ChannelModals.css";
 
 export const EditChannelModal = ({ onClose, channel, userId }) => {
   const [newName, setNewName] = useState(channel.Name);
@@ -35,8 +35,8 @@ export const EditChannelModal = ({ onClose, channel, userId }) => {
       dispatch({
         type: 0,
         payload: {
-          message: 'Successfully updated channel.',
-          severity: 'success',
+          message: "Successfully updated channel.",
+          severity: "success",
           autoClose: true,
         },
       });
@@ -44,8 +44,8 @@ export const EditChannelModal = ({ onClose, channel, userId }) => {
       dispatch({
         type: 0,
         payload: {
-          message: 'Unable to update channel.',
-          severity: 'error',
+          message: "Unable to update channel.",
+          severity: "error",
         },
       });
     }
@@ -66,8 +66,8 @@ export const EditChannelModal = ({ onClose, channel, userId }) => {
           <div className="radio-buttons">
             <RadioGroup
               options={[
-                { value: 'RESTRICTED', label: 'Restricted' },
-                { value: 'UNRESTRICTED', label: 'Unrestricted' },
+                { value: "RESTRICTED", label: "Restricted" },
+                { value: "UNRESTRICTED", label: "Unrestricted" },
               ]}
               value={newMode}
               onChange={(e) => setNewMode(e.target.value)}
