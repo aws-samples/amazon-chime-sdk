@@ -14,7 +14,7 @@ import {
   Modal,
   ModalBody,
   ModalHeader,
-  DeviceLabels,
+  DeviceLabels
 } from 'amazon-chime-sdk-component-library-react';
 
 import { getErrorContext } from '../../providers/ErrorProvider';
@@ -32,7 +32,9 @@ const MeetingForm: React.FC = () => {
   const {
     setAppMeetingInfo,
     region: appRegion,
-    meetingId: appMeetingId
+    meetingId: appMeetingId,
+    isWebAudioEnabled,
+    toggleWebAudio
   } = useAppState();
   const [meetingId, setMeetingId] = useState(appMeetingId);
   const [meetingErr, setMeetingErr] = useState(false);
@@ -142,9 +144,17 @@ const MeetingForm: React.FC = () => {
         label="Join w/o Audio and Video"
         value=""
         checked={isSpectatorModeSelected}
-        onChange={() => (
+        onChange={(): void => (
           setIsSpectatorModeSelected(!isSpectatorModeSelected)
         )}
+      />
+      <FormField
+        field={Checkbox}
+        label="Enable Web Audio"
+        value=""
+        checked={isWebAudioEnabled}
+        onChange={toggleWebAudio}
+        infoText="Enable Web Audio to use Voice Focus"
       />
       <Flex
         container

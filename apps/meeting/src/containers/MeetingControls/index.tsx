@@ -5,6 +5,7 @@ import React from 'react';
 import {
   ControlBar,
   AudioInputVFControl,
+  AudioInputControl,
   VideoInputControl,
   ContentShareControl,
   AudioOutputControl,
@@ -16,16 +17,17 @@ import {
 import EndMeetingControl from '../EndMeetingControl';
 import { useNavigation } from '../../providers/NavigationProvider';
 import { StyledControls } from './Styled';
+import { useAppState } from '../../providers/AppStateProvider';
 
-const MeetingControls = () => {
+const MeetingControls: React.FC = () => {
   const { toggleNavbar, closeRoster, showRoster } = useNavigation();
   const { isUserActive } = useUserActivityState();
+  const { isWebAudioEnabled } = useAppState();
 
-  const handleToggle = () => {
+  const handleToggle = (): void => {
     if (showRoster) {
       closeRoster();
     }
-
     toggleNavbar();
   };
 
@@ -42,7 +44,7 @@ const MeetingControls = () => {
           onClick={handleToggle}
           label="Menu"
         />
-        <AudioInputVFControl />
+        { isWebAudioEnabled ? <AudioInputVFControl /> :  <AudioInputControl /> }
         <VideoInputControl />
         <ContentShareControl />
         <AudioOutputControl />
