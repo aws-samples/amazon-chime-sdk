@@ -1,0 +1,1351 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: "AWS::Serverless-2016-10-31"
+Description: AWS CloudFormation stack to set up infrastructure required for the Amazon Chime SDK chat demo app
+Parameters:
+  DemoName:
+    Type: String
+    Default: ChimeSDKTelevisitDemo
+    Description: Unique Name for Demo Resources
+  ChimeAppInstanceArn:
+    Type: String 
+    Default: arn:aws:chime:us-east-1:<accountid>:app-instance/<isntanceid>
+    Description: Existing Chime AppInstanceArn
+Resources:
+  #Layer for the latest AWS SDK with Amazon Chime SDK for messaging
+  AWSSDKChimeLayer:
+    Type: AWS::Serverless::LayerVersion
+    Description: The AWS SDK with support for Amazon Chime SDK media capture feature.
+    Metadata:
+      BuildMethod: nodejs12.x
+    Properties:
+      LayerName: aws-chime-sdk-layer
+      Description: Dependencies Layer
+      ContentUri: dependencies/
+      CompatibleRuntimes:
+        - nodejs12.x
+
+  # service linked role for live transcription
+  ChimeServiceLinkedRole:
+    Type: AWS::IAM::ServiceLinkedRole
+    Properties: 
+      AWSServiceName: transcription.chime.amazonaws.com
+      Description: service linked role for live transcription
+
+  #Lambda that creates AWS Chime App instance
+  ChimeAppInstanceLambda:
+    Type: "AWS::Lambda::Function"
+    DependsOn: 
+      - KinesisStream
+    Properties:
+      Handler: "index.handler"
+      Role: !GetAtt LambdaExecuteRole.Arn
+      Runtime: "nodejs12.x"
+      Timeout: 60
+      ReservedConcurrentExecutions: 30
+      Layers: 
+        - !Ref AWSSDKChimeLayer
+      Environment:
+        Variables:
+          AppInstanceArn: !Ref ChimeAppInstanceArn
+      Code:
+        ZipFile: >
+          "use strict";
+          const AWS = require("aws-sdk");
+          const { v4: uuidv4 } = require('uuid');
+          var response = require("cfn-response"); 
+          AWS.config.update({ region: process.env.AWS_REGION });
+          const chime = new AWS.Chime({ region: process.env.AWS_REGION });
+          var chime_response; 
+          var dateNow = new Date();
+
+          exports.handler = async (event, context, callback) => {
+            console.log("Event: \n", event);
+            function sleep(ms) {
+              return new Promise(resolve => setTimeout(resolve, ms));
+            }
+            if (event["RequestType"] === "Create") {
+              console.log("Create Chime SDK App Instance");
+              var params = {
+                Name: `AWSChimeMessagingSDKDemo-${uuidv4()}`,
+              };
+              try {
+                chime_response = await chime.createAppInstance(
+                  params,
+                  function (err, data) {
+                    if (err) console.log(err, err.stack);
+                    // an error occurred
+                    else {
+                      console.log(data); // successful response
+                      return data;
+                    }
+                  }
+                ).promise();
+              } catch (error) {
+                console.log("ERROR CAUGHT \n", error);
+                await response.send(event, context, response.FAILED, {});
+              }
+            } else {
+              console.log("Update Chime SDK App Instance");
+              chime_response = {"AppInstanceArn": process.env.AppInstanceArn};
+            }
+
+            //Create AppInstanceAdmin
+            try {
+              var createUserParams = {
+                AppInstanceArn: chime_response.AppInstanceArn, /* required */
+                AppInstanceUserId: "ModeratorBot", /* required */
+                ClientRequestToken: dateNow.getHours().toString() + dateNow.getMinutes().toString(), /* required */
+                Name: "ModeratorBot", /* required */
+              };
+              await chime.createAppInstanceUser(
+                createUserParams,
+                function (err, data) {
+                  if (err) console.log(err, err.stack); // an error occurred
+                  else {
+                    console.log(data);           // successful response
+                    chime_response.adminUserArn = data.AppInstanceUserArn;
+                  }
+                }
+              ).promise();
+              var createAdminParams = {
+                AppInstanceAdminArn: chime_response.adminUserArn, /* required */
+                AppInstanceArn: chime_response.AppInstanceArn /* required */
+              };
+              await chime.createAppInstanceAdmin(
+                createAdminParams,
+                function (err, data) {
+                  if (err) console.log(err, err.stack); // an error occurred
+                  else {
+                    console.log(data);           // successful response
+                  }
+                }
+              ).promise();
+            } catch (error) {
+              console.log("ERROR CAUGHT \n", error);
+              await response.send(event, context, response.FAILED, {});
+            }
+
+            //Configure data streaming feature
+            async function putStreamConfig(maxAttempts, retryTimeout) {
+              if (maxAttempts > 0) {
+                try {
+                  await sleep(retryTimeout);
+                  var streaminConfigurationParams = {
+                    AppInstanceArn: chime_response.AppInstanceArn, /* required */
+                    AppInstanceStreamingConfigurations: [ /* required */
+                      {
+                        AppInstanceDataType: "ChannelMessage", /* required */
+                        ResourceArn: event.ResourceProperties.KinesisStreamArn /* required */
+                      },
+                      /* more items */
+                    ]
+                  };
+                  await chime.putAppInstanceStreamingConfigurations(
+                    streaminConfigurationParams,
+                    function (err, data) {
+                      if (err) console.log(err, err.stack); // an error occurred
+                      else {
+                        console.log(data);           // successful response
+                      }
+                    }
+                  ).promise();
+                } catch (error) {
+                    console.log("ERROR CAUGHT \n", error);
+                    await putStreamConfig(maxAttempts - 1, retryTimeout);
+                }
+              } else {
+                  console.log("Max retry reached.");
+                  await response.send(event, context, response.FAILED, {});
+              }
+            }
+            await putStreamConfig(30, 10000);
+            await response.send(event, context, response.SUCCESS, chime_response);
+          };
+
+  KinesisStream:
+    Type: "AWS::Kinesis::Stream"
+    Properties:
+      Name: !Sub chime-messaging-${DemoName}-DataStream
+      RetentionPeriodHours: 24
+      StreamEncryption: 
+        EncryptionType: "KMS"
+        KeyId: "alias/aws/kinesis"
+      ShardCount: 2
+
+  # Trigger Lambda function to create Amazon Chime App Instance creation
+  TriggerChimeAppInstanceLambda:
+    Type: AWS::CloudFormation::CustomResource
+    DependsOn:
+      - "ChimeAppInstanceLambda"
+    Properties: 
+      ServiceToken: !GetAtt ChimeAppInstanceLambda.Arn
+      KinesisStreamArn: !GetAtt KinesisStream.Arn
+
+  MessageModerator:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: "Lambda for auto-moderation of Chime messaging channels"
+      Role: !GetAtt LambdaKinesisRole.Arn
+      FunctionName: !Sub ${DemoName}-MessageModerator
+      CodeUri: messagemoderator/
+      Handler: index.handler
+      MemorySize: 128
+      Runtime: nodejs12.x
+      Timeout: 30
+      ReservedConcurrentExecutions: 30
+      Environment: 
+        Variables: 
+          CHIME_APP_INSTANCE_ADMIN_ROLE_ARN: !GetAtt LambdaKinesisRole.Arn
+          CHIME_APP_INSTANCE_ARN: !GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn
+      Events:
+        ApiEvent:
+          Type: Kinesis
+          Properties:
+            Stream: !GetAtt KinesisStream.Arn
+            StartingPosition: 'LATEST'
+            BatchSize: 5
+            Enabled: true
+            MaximumBatchingWindowInSeconds: 0
+            ParallelizationFactor: 1
+            MaximumRecordAgeInSeconds: 60
+            BisectBatchOnFunctionError: false
+            MaximumRetryAttempts: 1
+            TumblingWindowInSeconds: 0
+            
+
+  LambdaKinesisRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      Path: "/"
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal: 
+              Service: 
+                - "lambda.amazonaws.com"
+            Action: 
+              - "sts:AssumeRole"
+      MaxSessionDuration: 3600
+      Description: "Allows Lambda functions to access Kinesis stream for messaging demo"
+      Policies:
+        - PolicyName: !Sub ${DemoName}-AppInstanceAdmin-ModeratorBot
+          PolicyDocument: 
+            Version: "2012-10-17"
+            Statement: 
+              - Effect: Allow
+                Action: 
+                  - "chime:GetMessagingSessionEndpoint"
+                Resource: "*"
+              - Effect: Allow
+                Action: 
+                  - "sts:TagSession"
+                  - "sts:AssumeRole"
+                Resource: "*"
+              - Effect: Allow
+                Action: 
+                  - "comprehend:detectDominantLanguage"
+                  - "comprehend:detectPiiEntities"
+                  - "lex:postText"
+                  - "translate:translateText"
+                  - "kinesis:GetRecords"
+                  - "kinesis:GetShardIterator"
+                  - "kinesis:DescribeStream"
+                  - "kinesis:ListShards"
+                  - "kinesis:ListStreams"
+                  - 'logs:CreateLogGroup'
+                  - 'logs:CreateLogStream'
+                  - 'logs:PutLogEvents'
+                Resource: "*"
+              - Effect: "Allow"
+                Action: 
+                  - "chime:SendChannelMessage"
+                  - "chime:ListChannelMessages"
+                  - "chime:CreateChannelMembership"
+                  - "chime:ListChannelMemberships"
+                  - "chime:DeleteChannelMembership"
+                  - "chime:CreateChannelModerator"
+                  - "chime:ListChannelModerators"
+                  - "chime:DescribeChannelModerator"
+                  - "chime:CreateChannel"
+                  - "chime:DescribeChannel"
+                  - "chime:ListChannels"
+                  - "chime:DeleteChannel"
+                  - "chime:RedactChannelMessage"
+                  - "chime:UpdateChannelMessage"
+                  - "chime:Connect"
+                  - "chime:ListChannelBans"
+                  - "chime:CreateChannelBan"
+                  - "chime:DeleteChannelBan"
+                  - "chime:ListChannelMembershipsForAppInstanceUser"
+                Resource:
+                  - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/user/*']] 
+                  - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/channel/*']]
+
+
+  # Creates an S3 bucket to store chat attachments
+  ChatAttachmentsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: True
+        BlockPublicPolicy: True
+        IgnorePublicAcls: True
+        RestrictPublicBuckets: True
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      VersioningConfiguration:
+        Status: Enabled
+      LoggingConfiguration:
+        DestinationBucketName: !Ref LoggingBucket
+        LogFilePrefix: chatattachments-logs
+      CorsConfiguration:
+        CorsRules:
+          - AllowedHeaders:
+              - "*"
+            AllowedMethods:
+              - GET
+              - HEAD
+              - PUT
+              - POST
+              - DELETE
+            AllowedOrigins:
+              - "*"
+            ExposedHeaders:
+              - "x-amz-server-side-encryption"
+              - "x-amz-request-id"
+              - "x-amz-id-2"
+            MaxAge: 3000
+            
+  LoggingBucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      AccessControl: LogDeliveryWrite  
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256   
+            
+  ChatAttachmentsBucketPolicy:
+    Type: 'AWS::S3::BucketPolicy'
+    Properties:
+      Bucket: !Ref ChatAttachmentsBucket
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action:
+              - 's3:*'
+            Effect: Deny
+            Resource: !Join
+              - ''
+              - - 'arn:aws:s3:::'
+                - !Ref ChatAttachmentsBucket
+                - /*
+            Condition: 
+              Bool:
+                aws:SecureTransport: false
+            Principal: "*"
+          - Action:
+              - 's3:GetObject'
+              - 's3:PutObject'
+              - "s3:DeleteObject"
+            Effect: Allow
+            Resource: !Join
+              - ''
+              - - 'arn:aws:s3:::'
+                - !Ref ChatAttachmentsBucket
+                - /*
+            Principal: 
+              AWS: !GetAtt CognitoAuthorizedRole.Arn
+            
+
+  #Creates a role to creates AWS Chime App instance
+  LambdaExecuteRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action:
+            - sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service:
+              - lambda.amazonaws.com
+      Policies:
+        - PolicyName: !Sub ${DemoName}-LambdaCreateLogGroup
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'chime:CreateAppInstanceUser'
+                  - 'chime:CreateAppInstance'
+                  - 'chime:CreateAppInstanceAdmin'
+                  - 'chime:PutAppInstanceStreamingConfigurations'
+                  - "kinesis:DescribeStream"
+                  - "kinesis:DescribeStreamSummary"
+                  - "kinesis:GetRecords"
+                  - "kinesis:GetShardIterator"
+                  - "kinesis:ListShards"
+                  - "kinesis:ListStreams"
+                  - "kinesis:SubscribeToShard"
+                  - "logs:CreateLogGroup"
+                  - "logs:CreateLogStream"
+                  - "logs:PutLogEvents"
+                  - "iam:CreateServiceLinkedRole"
+                  - "iam:AttachRolePolicy"
+                  - "iam:CreateRole"
+                  - "iam:PutRolePolicy"
+                Resource: '*'
+  
+  #Creates a role to allow SignIn Lambda to execute
+  LambdaSignInRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action:
+            - sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service:
+              - lambda.amazonaws.com
+      Policies:
+        - PolicyName: !Sub ${DemoName}-LambdaCreateLogGroup
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'chime:CreateAppInstanceUser'
+                Resource:
+                  - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/*']]
+              - Effect: Allow
+                Action:
+                  - "logs:CreateLogGroup"
+                  - "logs:CreateLogStream"
+                  - "logs:PutLogEvents"
+                Resource: '*'
+
+  #Create Lambda used by Cognito Post Authentication Trigger to Create Chime App Instance user if user does not already exist
+  SignInHookLambda:
+    Type: AWS::Serverless::Function
+    DependsOn: 
+      - TriggerChimeAppInstanceLambda
+    Properties:
+      FunctionName: !Sub ${DemoName}-SignInHook
+      Handler: "index.handler"
+      Runtime: nodejs12.x
+      CodeUri: signinhook/
+      MemorySize: 512
+      Role: !GetAtt LambdaSignInRole.Arn
+      ReservedConcurrentExecutions: 30
+      Layers: 
+          - !Ref AWSSDKChimeLayer
+      Timeout: 800
+      Environment:
+        Variables:
+          CHIME_APP_INSTANCE_ARN: !GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn 
+
+  # Allows Sign In Lambda to be called by Cognito
+  LambdaInvocationPermission:
+    Type: AWS::Lambda::Permission
+    Properties: 
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt SignInHookLambda.Arn
+      Principal: cognito-idp.amazonaws.com
+      SourceArn: !GetAtt UserPool.Arn
+
+  # Creates a Cognito User Pool with a Post Authentication Trigger of the Sign In Lambda      
+  UserPool:
+    Type: "AWS::Cognito::UserPool"
+    DependsOn: 
+      - SignInHookLambda
+    Properties:
+      UserPoolName: !Sub ${DemoName}-user-pool
+      LambdaConfig: 
+        PostAuthentication: !GetAtt SignInHookLambda.Arn
+      UserPoolAddOns:
+        AdvancedSecurityMode: ENFORCED
+      AutoVerifiedAttributes:
+        - email
+
+  # Creates a User Pool Client to be used by the identity pool
+  UserPoolClient:
+    Type: "AWS::Cognito::UserPoolClient"
+    Properties:
+      ClientName: !Sub ${DemoName}-client
+      GenerateSecret: false
+      UserPoolId: !Ref UserPool
+
+  #Creates a federeated Identity pool
+  IdentityPool:
+    Type: "AWS::Cognito::IdentityPool"
+    Properties:
+      IdentityPoolName: !Sub ${DemoName}-IdentityPool
+      AllowUnauthenticatedIdentities: true
+      CognitoIdentityProviders: 
+        - ClientId: !Ref UserPoolClient
+          ProviderName: !GetAtt UserPool.ProviderName
+
+  # Create a role for unauthorized acces to AWS resources. Very limited access. Only allows users in the previously created Identity Pool
+  CognitoUnAuthorizedRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal: 
+              Federated: "cognito-identity.amazonaws.com"
+            Action: 
+              - "sts:AssumeRoleWithWebIdentity"
+            Condition:
+              StringEquals: 
+                "cognito-identity.amazonaws.com:aud": !Ref IdentityPool
+              "ForAnyValue:StringLike":
+                "cognito-identity.amazonaws.com:amr": unauthenticated
+      Policies:
+        - PolicyName: !Sub ${DemoName}-CognitoUnauthorizedPolicy
+          PolicyDocument: 
+            Version: "2012-10-17"
+            Statement: 
+              - Effect: "Allow"
+                Action:
+                  - "cognito-sync:Get*"
+                Resource:
+                  - !Join ['', ['arn:aws:cognito-sync:us-east-1:', !Ref AWS::AccountId, ':identitypool/${cognito-identity.amazonaws.com:aud}/identity/${cognito-identity.amazonaws.com:sub}/*']]
+
+  # Create a role for authorized acces to AWS resources. Control what your user can access. 
+  # Allows users to access their s3 ChatBucket files 
+  CognitoAuthorizedRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal: 
+              Federated: "cognito-identity.amazonaws.com"
+            Action: 
+              - "sts:AssumeRoleWithWebIdentity"
+            Condition:
+              StringEquals: 
+                "cognito-identity.amazonaws.com:aud": !Ref IdentityPool
+              "ForAnyValue:StringLike":
+                "cognito-identity.amazonaws.com:amr": authenticated
+      Policies:
+        - PolicyName: !Sub ${DemoName}-CognitoAuthorizedPolicy
+          PolicyDocument: 
+            Version: "2012-10-17"
+            Statement: 
+              - Effect: "Allow"
+                Action:
+                  - "cognito-sync:Get*"
+                  - "cognito-identity:Get*"
+                Resource: "*"
+              - Effect: "Allow"
+                Action:
+                  - "lambda:InvokeFunction"
+                Resource: "*"
+        - PolicyName: !Sub ${DemoName}-AttachmentsS3PermissionPolicy
+          PolicyDocument: 
+            Version: "2012-10-17"
+            Statement: 
+              - Effect: "Allow"
+                Action:
+                  - "s3:GetObject"
+                  - "s3:PutObject"
+                  - "s3:DeleteObject"
+                Resource: !Join ['', ['arn:aws:s3:::', !Ref ChatAttachmentsBucket, '/protected/${cognito-identity.amazonaws.com:sub}/*']]
+              - Effect: "Allow"
+                Action:
+                  - "s3:GetObject"
+                Resource: !Join ['', ['arn:aws:s3:::', !Ref ChatAttachmentsBucket, '/protected/*']]       
+        - PolicyName: !Sub ${DemoName}-ChimeSDKDemoUserPolicy
+          PolicyDocument: 
+            Version: "2012-10-17"
+            Statement: 
+              - Effect: "Allow"
+                Action:
+                  - "chime:GetMessagingSessionEndpoint"
+                  - "comprehendmedical:InferICD10CM"
+                  - "comprehendmedical:DetectEntitiesV2"
+                  - "comprehendmedical:InferRxNorm"
+                Resource: "*"
+              - Effect: "Allow"
+                Action:
+                  - "cognito-idp:ListUsers"
+                Resource: !Join ['', ['arn:aws:cognito-idp:us-east-1:', !Ref AWS::AccountId, ':userpool/', !Ref UserPool]]
+              - Effect: "Allow"
+                Action:
+                  - "chime:SendChannelMessage"
+                  - "chime:ListChannelMessages"
+                  - "chime:CreateChannelMembership"
+                  - "chime:ListChannelMemberships"
+                  - "chime:DeleteChannelMembership"
+                  - "chime:CreateChannelModerator"
+                  - "chime:ListChannelModerators"
+                  - "chime:DescribeChannelModerator"
+                  - "chime:CreateChannel"
+                  - "chime:DescribeChannel"
+                  - "chime:ListChannels"
+                  - "chime:UpdateChannel"
+                  - "chime:DeleteChannel"
+                  - "chime:RedactChannelMessage"
+                  - "chime:UpdateChannelMessage"
+                  - "chime:Connect"
+                  - "chime:ListChannelMembershipsForAppInstanceUser" 
+                  - "chime:CreateChannelBan"
+                  - "chime:ListChannelBans"
+                  - "chime:DeleteChannelBan"
+                Resource:
+                  - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/user/*']]
+                  - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/channel/*']]
+
+  # Assigns the roles to the Identity Pool
+  IdentityPoolRoleMapping:
+    Type: "AWS::Cognito::IdentityPoolRoleAttachment"
+    Properties:
+      IdentityPoolId: !Ref IdentityPool
+      Roles:
+        authenticated: !GetAtt CognitoAuthorizedRole.Arn
+        unauthenticated: !GetAtt CognitoUnAuthorizedRole.Arn
+
+  #############################################################
+  ###
+  ### RESOURCES FOR CREDENTIAL EXCHANGE SERVICE
+  ###
+  AuthLambdaIAMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action:
+              - sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+      Policies:
+        - PolicyName: !Sub ${DemoName}-AuthLambdaLogPolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Effect: Allow
+                Resource: '*'
+        - PolicyName: !Sub ${DemoName}-AuthLambdaChimePolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "chime:CreateAppInstanceUser"
+                  - "chime:CreateAppInstanceAdmin"
+                  - "chime:DescribeAppInstanceUser"
+                  - "chime:DescribeAppInstanceAdmin"
+                Resource:
+                  - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/user/*']]
+        - PolicyName: !Sub ${DemoName}-MeetingLambdaChimePolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "chime:describeChannel"
+                  - "chime:describeChannelMembership"
+                  - "chime:createMeeting"
+                  - "chime:createAttendee"
+                  - "chime:deleteMeeting"
+                  - "chime:getMeeting"
+                  - "chime:listAttendees"
+                  - "chime:createMediaCapturePipeline"
+                  - "chime:deleteMediaCapturePipeline"
+                  - "chime:startMeetingTranscription"
+                Resource: 
+                  - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/user/*']]
+                  - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/channel/*']]
+                  - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/meeting/*']]
+        - PolicyName: !Sub ${DemoName}-MediaCaptureS3Access
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject*
+                  - s3:GetBucket*
+                  - s3:List*
+                  - s3:DeleteObject*
+                  - s3:PutObject
+                  - s3:Abort*
+                Resource:
+                  - !GetAtt MediaCaptureBucket.Arn
+                  - !Join
+                      - ""
+                      - - !GetAtt MediaCaptureBucket.Arn
+                        - /*
+                        
+  AuthLambdaUserRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - "sts:AssumeRole"
+              - "sts:TagSession"
+      Policies:
+        - PolicyName: !Sub ${DemoName}-CognitoAuthorizedPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "lambda:InvokeFunction"
+                Resource: "*"
+        - PolicyName: !Sub ${DemoName}-ChimeSDKDemoUserPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "chime:GetMessagingSessionEndpoint"
+                Resource: "*"
+              - Effect: "Allow"
+                Action:
+                  - "chime:CreateChannelMembership"
+                  - "chime:ListChannelMemberships"
+                  - "chime:DeleteChannelMembership"
+                  - "chime:CreateChannelModerator"
+                  - "chime:ListChannelModerators"
+                  - "chime:DescribeChannelModerator"
+                  - "chime:ListAppInstanceUsers"
+                  - "chime:DescribeAppInstanceUser"
+                  - "chime:ListChannelMembershipsForAppInstanceUser"
+                Resource:
+                  - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/user/*']]
+                  - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/channel/*']]
+              
+  
+  AuthLambdaAnonUserRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - "sts:AssumeRole"
+              - "sts:TagSession"
+      Policies:
+        - PolicyName: !Sub ${DemoName}-CognitoAuthorizedPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "lambda:InvokeFunction"
+                Resource: "*"
+        - PolicyName: !Sub ${DemoName}-ChimeSDKDemoUserPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "chime:GetMessagingSessionEndpoint"
+                Resource: "*"
+              - Effect: "Allow"
+                Action:
+                  - "chime:SendChannelMessage"
+                  - "chime:GetChannelMessage"
+                  - "chime:ListChannelMessages"
+                  - "chime:CreateChannelMembership"
+                  - "chime:ListChannelMemberships"
+                  - "chime:DeleteChannelMembership"
+                  - "chime:CreateChannelModerator"
+                  - "chime:ListChannelModerators"
+                  - "chime:DescribeChannelModerator"
+                  - "chime:CreateChannel"
+                  - "chime:DescribeChannel"
+                  - "chime:ListChannels"
+                  - "chime:UpdateChannel"
+                  - "chime:DeleteChannel"
+                  - "chime:RedactChannelMessage"
+                  - "chime:UpdateChannelMessage"
+                  - "chime:Connect"
+                  - "chime:ListChannelMembershipsForAppInstanceUser"
+                  - "chime:CreateChannelBan"
+                  - "chime:ListChannelBans"
+                  - "chime:DeleteChannelBan"
+                Resource:
+                  - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/user/${aws:PrincipalTag/UserUUID}']]
+                  - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/channel/*']]
+                  - !GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn
+              - Effect: "Allow"
+                Action:
+                  - "chime:ListAppInstanceUsers"
+                  - "chime:DescribeAppInstanceUser"
+                Resource:
+                  - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/user/*']]
+  
+  APIGatewayLogRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - apigateway.amazonaws.com
+            Action: 'sts:AssumeRole'
+      Path: /
+      ManagedPolicyArns:
+        - >-
+          arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs
+
+  APIAccountLogRole:    
+    Type: 'AWS::ApiGateway::Account'
+    Properties:
+      CloudWatchRoleArn: !GetAtt APIGatewayLogRole.Arn
+
+  LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/chimesdk/${AWS::StackName}-meetingchat-loggroup"
+      RetentionInDays: 30
+  
+  ###################
+  ## media capture ##
+  ###################
+  MediaCaptureBucket:
+    Type: AWS::S3::Bucket
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+    Properties:
+      BucketName: !Sub chimesdk-mediacapture-bucket-${AWS::AccountId}
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: True
+        BlockPublicPolicy: True
+        IgnorePublicAcls: True
+        RestrictPublicBuckets: True
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      VersioningConfiguration:
+        Status: Enabled
+      LoggingConfiguration:
+        DestinationBucketName: !Ref LoggingBucket
+        LogFilePrefix: mediacapture-logs
+        
+  MediaCaptureBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref MediaCaptureBucket
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Action:
+              - 's3:*'
+            Effect: Deny
+            Resource: !Join
+              - ''
+              - - 'arn:aws:s3:::'
+                - !Ref MediaCaptureBucket
+                - /*
+            Condition: 
+              Bool:
+                aws:SecureTransport: false
+            Principal: "*"
+          - Action:
+              - s3:PutObject
+              - s3:PutObjectAcl
+            Effect: Allow
+            Principal:
+              Service: chime.amazonaws.com
+            Resource:
+              - !GetAtt MediaCaptureBucket.Arn
+              - Fn::Join:
+                  - ""
+                  - - !GetAtt MediaCaptureBucket.Arn
+                    - /*
+            Sid: ChimeSDKMediaCaptureBucketPolicy
+
+  ApiGatewayApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: prod
+      AccessLogSetting:
+        DestinationArn: !GetAtt LogGroup.Arn
+        Format: "{ \"requestId\": \"$context.requestId\", \"ip\": \"$context.identity.sourceIp\", \"caller\": \"$context.identity.caller\", \"requestTime\": \"$context.requestTimeEpoch\", \"httpMethod\": \"$context.httpMethod\", \"resourcePath\": \"$context.resourcePath\", \"status\": \"$context.status\", \"protocol\": \"$context.protocol\", \"responseLength\": \"$context.responseLength\" }"
+      MethodSettings:
+        - HttpMethod: "*"
+          ResourcePath: "/*"
+          LoggingLevel: "INFO"
+      Cors:
+        AllowMethods: "'POST, OPTIONS'"
+        AllowHeaders: "'Authorization'"
+        AllowOrigin: "'*'"
+        MaxAge: "'600'"
+  
+  RequestValidator:
+    Type: AWS::ApiGateway::RequestValidator
+    Properties:
+      Name: APIValidator
+      RestApiId: !Ref ApiGatewayApi
+      ValidateRequestBody: Yes
+      ValidateRequestParameters: Yes
+      
+  CredApiFunction: # Adds a POST api endpoint at "/creds" to the ApiGatewayApi via an Api event
+    Type: AWS::Serverless::Function
+    Properties:
+      Role: !GetAtt AuthLambdaIAMRole.Arn
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /creds
+            Method: POST
+            RestApiId:
+              Ref: ApiGatewayApi
+      Environment:
+        Variables:
+          ChimeAppInstanceArn: !GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn
+          UserRoleArn: !GetAtt AuthLambdaUserRole.Arn
+          AnonUserRole: !GetAtt AuthLambdaAnonUserRole.Arn
+      ReservedConcurrentExecutions: 30
+      Layers:
+        - !Ref AWSSDKChimeLayer
+      Runtime: nodejs12.x
+      CodeUri: usercreds/
+      Handler: index.handler
+
+  ###
+  ### RESOURCES FOR MEETING SERVER
+  ###
+  CreateMeetingLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action:
+              - sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+      Policies:
+        - PolicyName: !Sub ${DemoName}-AuthLambdaLogPolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Effect: Allow
+                Resource: '*'
+        - PolicyName: !Sub ${DemoName}-AuthLambdaChimePolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "chime:CreateAppInstanceUser"
+                  - "chime:CreateAppInstanceAdmin"
+                  - "chime:DescribeAppInstanceUser"
+                  - "chime:DescribeAppInstanceAdmin"
+                Resource:
+                  - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/user/*']]
+        - PolicyName: !Sub ${DemoName}-MeetingLambdaChimePolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "chime:describeChannel"
+                  - "chime:describeChannelMembership"
+                  - "chime:createMeeting"
+                  - "chime:createAttendee"
+                  - "chime:getMeeting"
+                  - "chime:listAttendees"
+                Resource: '*'
+                  
+  CreateMeetingApiFunction: # Adds a POST api endpoint at "/create" to create meetings
+    Type: AWS::Serverless::Function
+    Properties:
+      Role: !GetAtt CreateMeetingLambdaRole.Arn
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /create
+            Method: POST
+            RestApiId:
+              Ref: ApiGatewayApi
+      Environment:
+        Variables:
+          ChimeAppInstanceArn: !GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn
+      ReservedConcurrentExecutions: 30
+      Layers:
+        - !Ref AWSSDKChimeLayer
+      Runtime: nodejs12.x
+      CodeUri: createmeeting/
+      Handler: index.handler
+
+  
+  StartTranscriptionLambdaRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action:
+            - sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service:
+              - lambda.amazonaws.com
+      Policies:
+        - PolicyName: !Sub ${DemoName}-CognitoAuthorizedPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "lambda:InvokeFunction"
+                Resource: "*"
+        - PolicyName: !Sub ${DemoName}-ChimeSDKDemoUserPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "chime:startMeetingTranscription"
+                Resource: "*"
+                  
+  StartTranscriptionApiFunction: # Adds a POST api endpoint at "/transcript" to start live transcription
+    Type: AWS::Serverless::Function
+    Properties:
+      Role: !GetAtt StartTranscriptionLambdaRole.Arn
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /transcript
+            Method: POST
+            RestApiId:
+              Ref: ApiGatewayApi
+      Layers:
+        - !Ref AWSSDKChimeLayer
+      ReservedConcurrentExecutions: 30
+      Runtime: nodejs12.x
+      CodeUri: starttranscript/
+      Handler: index.handler
+  
+  
+  CreateAttendeeLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action:
+              - sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+      Policies:
+        - PolicyName: !Sub ${DemoName}-AuthLambdaLogPolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Effect: Allow
+                Resource: '*'
+        - PolicyName: !Sub ${DemoName}-AuthLambdaChimePolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "chime:CreateAppInstanceUser"
+                  - "chime:CreateAppInstanceAdmin"
+                  - "chime:DescribeAppInstanceUser"
+                  - "chime:DescribeAppInstanceAdmin"
+                Resource:
+                  - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/user/*']]
+        - PolicyName: !Sub ${DemoName}-MeetingLambdaChimePolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "chime:describeChannel"
+                  - "chime:describeChannelMembership"
+                  - "chime:createAttendee"
+                  - "chime:getMeeting"
+                  - "chime:listAttendees"
+                Resource: "*"
+                  
+  CreateAttendeeApiFunction: # Adds a POST api endpoint at "/join" to join meetings as an attendee
+    Type: AWS::Serverless::Function
+    Properties:
+      Role: !GetAtt CreateAttendeeLambdaRole.Arn
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /join
+            Method: POST
+            RestApiId:
+              Ref: ApiGatewayApi
+      Environment:
+        Variables:
+          ChimeAppInstanceArn: !GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn
+      ReservedConcurrentExecutions: 30
+      Layers:
+        - !Ref AWSSDKChimeLayer
+      Runtime: nodejs12.x
+      CodeUri: createattendee/
+      Handler: index.handler
+  
+  
+  StartRecordingLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action:
+              - sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+      Policies:
+        - PolicyName: !Sub ${DemoName}-AuthLambdaLogPolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Effect: Allow
+                Resource: '*'
+        - PolicyName: !Sub ${DemoName}-AuthLambdaChimePolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "chime:CreateAppInstanceUser"
+                  - "chime:CreateAppInstanceAdmin"
+                  - "chime:DescribeAppInstanceUser"
+                  - "chime:DescribeAppInstanceAdmin"
+                Resource:
+                  - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/user/*']]
+        - PolicyName: !Sub ${DemoName}-MeetingLambdaChimePolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "chime:createMediaCapturePipeline"
+                Resource: "*"
+        - PolicyName: !Sub ${DemoName}-MediaCaptureS3Access
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject*
+                  - s3:GetBucket*
+                  - s3:List*
+                  - s3:DeleteObject*
+                  - s3:PutObject
+                  - s3:Abort*
+                Resource:
+                  - !GetAtt MediaCaptureBucket.Arn
+                  - !Join
+                      - ""
+                      - - !GetAtt MediaCaptureBucket.Arn
+                        - /*
+                  
+  StartMeetingRecordingApiFunction: # Adds a POST api endpoint at "/startrecord" to start meeting recording
+    Type: AWS::Serverless::Function
+    Properties:
+      Role: !GetAtt StartRecordingLambdaRole.Arn
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /startrecord
+            Method: POST
+            RestApiId:
+              Ref: ApiGatewayApi
+      Environment:
+        Variables:
+          MEDIA_CAPTURE_BUCKET: !Ref MediaCaptureBucket
+          ACCOUNT_ID: !Ref AWS::AccountId
+      ReservedConcurrentExecutions: 30
+      Layers:
+        - !Ref AWSSDKChimeLayer
+      Runtime: nodejs12.x
+      CodeUri: startrecording/
+      Handler: index.handler
+  
+  
+  StopRecordingLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action:
+              - sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+      Policies:
+        - PolicyName: !Sub ${DemoName}-AuthLambdaLogPolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Effect: Allow
+                Resource: '*'
+        - PolicyName: !Sub ${DemoName}-AuthLambdaChimePolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "chime:CreateAppInstanceUser"
+                  - "chime:CreateAppInstanceAdmin"
+                  - "chime:DescribeAppInstanceUser"
+                  - "chime:DescribeAppInstanceAdmin"
+                Resource:
+                  - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/user/*']]
+        - PolicyName: !Sub ${DemoName}-MeetingLambdaChimePolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "chime:deleteMediaCapturePipeline"
+                Resource: "*"
+                  
+  StopMeetingRecordingApiFunction: # Adds a POST api endpoint at "/stoprecord" to stop meeting recording
+    Type: AWS::Serverless::Function
+    Properties:
+      Role: !GetAtt StopRecordingLambdaRole.Arn
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /stoprecord
+            Method: POST
+            RestApiId:
+              Ref: ApiGatewayApi
+      ReservedConcurrentExecutions: 30
+      Layers:
+        - !Ref AWSSDKChimeLayer
+      Runtime: nodejs12.x
+      CodeUri: stoprecording/
+      Handler: index.handler
+        
+  
+  EndMeetingLambdaRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Action:
+            - sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service:
+              - lambda.amazonaws.com
+      Policies:
+        - PolicyName: !Sub ${DemoName}-CognitoAuthorizedPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "lambda:InvokeFunction"
+                Resource: "*"
+        - PolicyName: !Sub ${DemoName}-ChimeSDKDemoUserPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "chime:GetMessagingSessionEndpoint"
+                  - "chime:DeleteMeeting"
+                  - "chime:GetMeeting"
+                Resource: "*"
+                  
+  EndMeetingApiFunction: # Adds a POST api endpoint at "/end" to end the meeting
+    Type: AWS::Serverless::Function
+    Properties:
+      Role: !GetAtt EndMeetingLambdaRole.Arn
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /end
+            Method: POST
+            RestApiId:
+              Ref: ApiGatewayApi
+      ReservedConcurrentExecutions: 30
+      Layers:
+        - !Ref AWSSDKChimeLayer
+      Runtime: nodejs12.x
+      CodeUri: endmeeting/
+      Handler: index.handler
+         
+
+Outputs:
+  cognitoUserPoolId:
+    Value: !Ref UserPool
+  cognitoAppClientId:
+    Value: !Ref UserPoolClient
+  cognitoIdentityPoolId:
+    Value: !Ref IdentityPool
+  appInstanceArn:
+    Value: !GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn
+  attachmentsS3BucketName:
+    Value: !Ref ChatAttachmentsBucket
+  apiGatewayInvokeUrl:
+    Value: !Sub https://${ApiGatewayApi}.execute-api.us-east-1.amazonaws.com/prod/
+  

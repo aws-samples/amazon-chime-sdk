@@ -1,0 +1,5 @@
+{
+  "name": "createattendee",
+  "version": "1.0.0",
+  "description": "JavaScript implementation of API GW endpoint at /join to join meetings as an attendee"
+}

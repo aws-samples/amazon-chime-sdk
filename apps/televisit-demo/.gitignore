@@ -1,0 +1,9 @@
+node_modules
+
+yarn.lock
+.aws-sam
+
+dist
+!frontend/**/*.js
+sam-output.json
+package-lock.json

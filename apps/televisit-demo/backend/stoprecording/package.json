@@ -1,0 +1,5 @@
+{
+  "name": "stoprecording",
+  "version": "1.0.0",
+  "description": "JavaScript implementation of API GW endpoint at /stoprecord to stop meeting recording"
+}
