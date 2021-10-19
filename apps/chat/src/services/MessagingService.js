@@ -47,7 +47,7 @@ class MessagingService {
           createMemberArn(member.userId),
           this.sessionId,
           this._endpoint,
-          new AWS.Chime(),
+          new AWS.ChimeSDKMessaging(),
           AWS
         );
 
