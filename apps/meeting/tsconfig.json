@@ -23,10 +23,15 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "suppressImplicitAnyIndexErrors": true,
+    "typeRoots": [
+      "node_modules/@types",
+      "typings"
+    ]
   },
   "include": ["src/**/*"],
   "exclude": [
     "node_modules",
-    "build"
+    "build",
+    "typings"
   ]
 }
