@@ -30,14 +30,22 @@ Alternatively, you can deploy backend and frontend manually: first go to backend
 ### Explore the televisit demo
 
 1. Register a new user
-![register](images/newregistration.png)
+<p align="center">
+  <img src="images/newregistration.png" width="200">
+</p>
 
 2. Confirm user registration on AWS Cognito console
-![confirm](images/confirmuser.png)
+<p align="center">
+  <img src="images/confirmuser.png" width="200">
+</p>
 
 3. Create a new channel and interact with chatbot through Amazon Chime SDK chat
-![chatbot](images/chatbot.png)
+<p align="center">
+  <img src="images/chatbot.png" width="200">
+</p>
 
 4. Start a new meeting and try live transcription and media capture functions
-![meeting](images/meeting.png)
+<p align="center">
+  <img src="images/meeting.png" width="200">
+</p>
 
