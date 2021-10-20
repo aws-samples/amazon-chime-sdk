@@ -21,6 +21,7 @@ import {
 import { useTheme } from 'styled-components';
 import { useHistory } from 'react-router-dom';
 import {
+  associateChannelFlow,
   createMemberArn,
   createChannelMembership,
   createChannel,
@@ -40,7 +41,10 @@ import {
   createMeeting,
   createAttendee,
   endMeeting,
-  createGetAttendeeCallback
+  createGetAttendeeCallback,
+  listChannelFlows,
+  describeChannelFlow,
+  disassociateChannelFlow
 } from '../../api/ChimeAPI';
 import appConfig from '../../Config';
 
@@ -84,6 +88,8 @@ const ChannelsWrapper = () => {
     hasMembership,
     meetingInfo,
     setMeetingInfo,
+    activeChannelFlow,
+    setActiveChannelFlow,
   } = useChatChannelState();
   const { setMessages } = useChatMessagingState();
   const { setAppMeetingInfo } = useAppState();
@@ -389,6 +395,92 @@ const ChannelsWrapper = () => {
     }
   };
 
+  const onManageChannelFlow = async () => {
+    if (!selectedMember) {
+      dispatch({
+        type: 0,
+        payload: {
+          message: 'Error, channel flow name cannot be blank.',
+          severity: 'error',
+        },
+      });
+      return;
+    }
+
+    if (selectedMember.value === 'None') {
+      try {
+        await disassociateChannelFlow(
+          activeChannel.ChannelArn,
+          activeChannelFlow.ChannelFlowArn,
+          userId
+        );
+        setActiveChannelFlow({});
+        dispatch({
+          type: 0,
+          payload: {
+            message: `Channel flow successfully removed from ${activeChannel.Name}`,
+            severity: 'success',
+            autoClose: true,
+          },
+        });
+        setModal('');
+      } catch {
+        dispatch({
+          type: 0,
+          payload: {
+            message: `Error occurred. Channel flow could not removed from ${activeChannel.Name}`,
+            severity: 'error',
+            autoClose: true,
+          },
+        });
+      }
+      return;
+    }
+
+    try {
+      await associateChannelFlow(
+        activeChannel.ChannelArn,
+        selectedMember.value,
+        userId
+      );
+
+      let flow = {Name:selectedMember.label, ChannelFlowArn:selectedMember.value};
+      setActiveChannelFlow(flow);
+      dispatch({
+        type: 0,
+        payload: {
+          message: `Channel flow ${selectedMember.label} successfully associated with ${activeChannel.Name}`,
+          severity: 'success',
+          autoClose: true,
+        },
+      });
+      setModal('');
+    } catch {
+      dispatch({
+        type: 0,
+        payload: {
+          message: `Error occurred. Channel flow not associated with channel ${activeChannel.Name}`,
+          severity: 'error',
+          autoClose: true,
+        },
+      });
+    }
+  };
+
+  const loadChannelFlow = async (channel) => {
+    if (channel.ChannelFlowArn == null) {
+      setActiveChannelFlow({});
+    } else {
+      let flow;
+      try {
+        flow = await describeChannelFlow(channel.ChannelFlowArn);
+        setActiveChannelFlow(flow);
+      } catch (err) {
+        console.error('ERROR', err);
+      }
+    }
+  };
+
   const channelIdChangeHandler = async (channelArn) => {
     if (activeChannel.ChannelArn === channelArn) return;
     let mods = [];
@@ -412,6 +504,7 @@ const ChannelsWrapper = () => {
     setMessages(newMessages.Messages);
     setChannelMessageToken(newMessages.NextToken);
     setActiveChannel(channel);
+    await loadChannelFlow(channel);
     setUnreadChannels(unreadChannels.filter((c) => c !== channelArn));
   };
 
@@ -570,6 +663,15 @@ const ChannelsWrapper = () => {
         <span>View channel details</span>
       </PopOverItem>
     );
+    const manageChannelFlowOption = (
+      <PopOverItem
+        key="manage_channel_flow"
+        as="button"
+        onClick={() => setModal('ManageChannelFlow')}
+      >
+        <span>Manage channel flow</span>
+      </PopOverItem>
+    );
     const editChannelOption = (
       <PopOverItem
         key="edit_channel"
@@ -676,8 +778,10 @@ const ChannelsWrapper = () => {
       manageMembersOption,
       banOrAllowOption,
       <PopOverSeparator key="separator2" className="separator" />,
-      startMeetingOption,
+      manageChannelFlowOption,
       <PopOverSeparator key="separator3" className="separator" />,
+      startMeetingOption,
+      <PopOverSeparator key="separator4" className="separator" />,
       leaveChannelOption,
       deleteChannelOption,
     ];
@@ -706,6 +810,8 @@ const ChannelsWrapper = () => {
       manageMembersOption,
       banOrAllowOption,
       <PopOverSeparator key="separator2" className="separator" />,
+      manageChannelFlowOption,
+      <PopOverSeparator key="separator3" className="separator" />,
       leaveChannelOption,
       deleteChannelOption,
     ];
@@ -765,6 +871,7 @@ const ChannelsWrapper = () => {
         meetingInfo={meetingInfo}
         userId={userId}
         onAddMember={onAddMember}
+        onManageChannelFlow={onManageChannelFlow}
         handleChannelDeletion={handleChannelDeletion}
         handleDeleteMemberships={handleDeleteMemberships}
         handleJoinMeeting={handleJoinMeeting}
@@ -779,6 +886,7 @@ const ChannelsWrapper = () => {
         banList={banList}
         banUser={banUser}
         unbanUser={unbanUser}
+        activeChannelFlow={activeChannelFlow}
       />
       <div className="channel-list-wrapper">
         <div className="channel-list-header">
@@ -802,6 +910,7 @@ const ChannelsWrapper = () => {
               isSelected={channel.ChannelArn === activeChannel.ChannelArn}
               onClick={e => {
                 e.stopPropagation();
+                console.log('Calling channel change handler');
                 channelIdChangeHandler(channel.ChannelArn);
               }}
               unread={unreadChannels.includes(channel.ChannelArn)}

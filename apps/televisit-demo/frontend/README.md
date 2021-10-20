@@ -11,6 +11,10 @@ This is the frontend React application that can be integrated with backend API G
   - Node.js can be downloaded here → https://nodejs.org/en/download/
 - **IMPORTANT** : We currently only support us-east-1 so all the set-up must be done in us-east-1.
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
 ## Running the Chime SDK Telemedicine Demo
 
 1. Ensure your workspace has node.js installed. Type `node -v` in your terminal to confirm, and it should return a version number.
@@ -43,3 +47,8 @@ New users can register through the Amazon Chime Sample App.
 2. Provide the username and password of the desired user.
 3. Choose Login
 4. Create new channel that can send message or create new meeting
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1

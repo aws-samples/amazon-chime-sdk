@@ -1,7 +1,11 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
+<<<<<<< HEAD
 import React, { useEffect, useState } from "react";
+=======
+import React, { useEffect, useState } from 'react';
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
 import {
   Modal,
   ModalHeader,
@@ -10,12 +14,21 @@ import {
   ModalButton,
   Input,
   Checkbox,
+<<<<<<< HEAD
 } from "amazon-chime-sdk-component-library-react";
 
 import { createMemberArn } from "../../api/ChimeAPI";
 import { useIdentityService } from "../../providers/IdentityProvider";
 
 import "./ChannelModals.css";
+=======
+} from 'amazon-chime-sdk-component-library-react';
+
+import { createMemberArn } from '../../api/ChimeAPI';
+import { useIdentityService } from '../../providers/IdentityProvider';
+
+import './ChannelModals.css';
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
 
 export const BanModal = ({
   onClose,
@@ -27,7 +40,11 @@ export const BanModal = ({
   unbanUser,
 }) => {
   let timeout = null;
+<<<<<<< HEAD
   const [userName, setUserName] = useState("");
+=======
+  const [userName, setUserName] = useState('');
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
   const [usersList, setUsersList] = useState([]);
   const identityClient = useIdentityService();
 
@@ -44,7 +61,11 @@ export const BanModal = ({
       .searchByName(name)
       .then((users) => {
         const list = users.map((user) => {
+<<<<<<< HEAD
           if (getUserAttributeByName(user, "profile") !== "none") {
+=======
+          if (getUserAttributeByName(user, 'profile') !== 'none') {
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
             return user;
           }
           return false;
@@ -62,7 +83,11 @@ export const BanModal = ({
       .getUsers()
       .then((users) => {
         const list = users.map((user) => {
+<<<<<<< HEAD
           if (getUserAttributeByName(user, "profile") !== "none") {
+=======
+          if (getUserAttributeByName(user, 'profile') !== 'none') {
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
             return user;
           }
           return false;
@@ -99,12 +124,20 @@ export const BanModal = ({
     }
 
     const userArn = createMemberArn(
+<<<<<<< HEAD
       user.Attributes.filter((attr) => attr.Name === "profile")[0].Value
+=======
+      user.Attributes.filter((attr) => attr.Name === 'profile')[0].Value
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
     );
     return {
       arn: userArn,
       name: user.Username,
+<<<<<<< HEAD
       role: memberArns.includes(userArn) ? "Member" : "",
+=======
+      role: memberArns.includes(userArn) ? 'Member' : '',
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
       banned: banList.length ? banList.includes(userArn) : false,
     };
   });

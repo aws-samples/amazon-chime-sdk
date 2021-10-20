@@ -3,8 +3,13 @@
 
 import {
   DefaultAudioMixController,
+<<<<<<< HEAD
   TimeoutScheduler,
 } from "amazon-chime-sdk-js";
+=======
+  TimeoutScheduler
+} from 'amazon-chime-sdk-js';
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
 
 class TestSound {
   constructor(
@@ -15,8 +20,12 @@ class TestSound {
     maxGainValue = 0.1
   ) {
     // @ts-ignore
+<<<<<<< HEAD
     const audioContext: AudioContext = new (window.AudioContext ||
       window.webkitAudioContext)();
+=======
+    const audioContext: AudioContext = new (window.AudioContext || window.webkitAudioContext)();
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
     const gainNode = audioContext.createGain();
     gainNode.gain.value = 0;
     const oscillatorNode = audioContext.createOscillator();
@@ -40,12 +49,20 @@ class TestSound {
     const audioMixController = new DefaultAudioMixController();
 
     const handlingBindingAsynchronous = async () => {
+<<<<<<< HEAD
       if ("setSinkId" in HTMLAudioElement.prototype) {
+=======
+      if ('setSinkId' in HTMLAudioElement.prototype) {
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
         try {
           // @ts-ignore
           await audioMixController.bindAudioDevice({ deviceId: sinkId });
         } catch (e) {
+<<<<<<< HEAD
           console.error("Failed to bind audio device", e);
+=======
+          console.error('Failed to bind audio device', e);
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
         }
       }
 
@@ -53,7 +70,11 @@ class TestSound {
         // @ts-ignore
         await audioMixController.bindAudioElement(new Audio());
       } catch (e) {
+<<<<<<< HEAD
         console.error("Failed to bind audio element", e);
+=======
+        console.error('Failed to bind audio element', e);
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
       }
     };
 

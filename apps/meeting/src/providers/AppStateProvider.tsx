@@ -13,8 +13,10 @@ interface AppStateValue {
   localUserName: string;
   theme: string;
   region: string;
+  isWebAudioEnabled: boolean;
   meetingMode: MeetingMode;
   toggleTheme: () => void;
+  toggleWebAudio: () => void;
   setAppMeetingInfo: (meetingId: string, name: string, region: string) => void;
   setMeetingMode: (meetingMode: MeetingMode) => void;
 }
@@ -33,11 +35,13 @@ export function useAppState(): AppStateValue {
 
 const query = new URLSearchParams(location.search);
 
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export function AppStateProvider({ children }: Props) {
   const [meetingId, setMeeting] = useState(query.get('meetingId') || '');
   const [region, setRegion] = useState(query.get('region') || '');
   const [meetingMode, setMeetingMode] = useState(MeetingMode.Attendee);
   const [localUserName, setLocalName] = useState('');
+  const [isWebAudioEnabled, setIsWebAudioEnabled] = useState(false);
   const [theme, setTheme] = useState(() => {
     const storedTheme = localStorage.getItem('theme');
     return storedTheme || 'light';
@@ -53,11 +57,15 @@ export function AppStateProvider({ children }: Props) {
     }
   };
 
+  const toggleWebAudio = (): void  => {
+    setIsWebAudioEnabled(current => !current);
+  }
+
   const setAppMeetingInfo = (
     meetingId: string,
     name: string,
     region: string
-  ) => {
+  ): void => {
     setRegion(region);
     setMeeting(meetingId);
     setLocalName(name);
@@ -67,9 +75,11 @@ export function AppStateProvider({ children }: Props) {
     meetingId,
     localUserName,
     theme,
+    isWebAudioEnabled,
     region,
     meetingMode,
     toggleTheme,
+    toggleWebAudio,
     setAppMeetingInfo,
     setMeetingMode,
   };

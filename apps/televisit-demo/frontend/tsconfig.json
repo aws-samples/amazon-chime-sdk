@@ -8,18 +8,40 @@
     "preserveConstEnums": true,
     "sourceMap": true,
     "target": "es2018",
+<<<<<<< HEAD
     "rootDirs": ["src"],
     "allowJs": true,
     "checkJs": false,
     "jsx": "react-jsx",
     "types": ["react"],
+=======
+    "rootDirs": [
+      "src"
+    ],
+    "allowJs": true,
+    "checkJs": false,
+    "jsx": "react-jsx",
+    "types": [
+      "react"
+    ],
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
     "pretty": true,
     "skipLibCheck": true,
     "strict": true,
     "strictNullChecks": false,
     "moduleResolution": "node",
     "esModuleInterop": true,
+<<<<<<< HEAD
     "lib": ["es5", "es6", "es7", "es2017", "dom"],
+=======
+    "lib": [
+      "es5",
+      "es6",
+      "es7",
+      "es2017",
+      "dom"
+    ],
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
@@ -28,6 +50,16 @@
     "isolatedModules": true,
     "noEmit": false
   },
+<<<<<<< HEAD
   "include": ["src/**/*"],
   "exclude": ["node_modules", "build"]
+=======
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "build"
+  ]
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
 }

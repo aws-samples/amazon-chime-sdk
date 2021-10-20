@@ -43,21 +43,37 @@
 }
 
 .ch-type-options span:nth-child(1)::after {
+<<<<<<< HEAD
   content: " (only members can read and send messages)";
+=======
+  content: ' (only members can read and send messages)';
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
   color: #9b9da5;
 }
 
 .ch-type-options span:nth-child(2)::after {
+<<<<<<< HEAD
   content: " (non-members can read and send messages)";
+=======
+  content: ' (non-members can read and send messages)';
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
   color: #9b9da5;
 }
 
 .ch-mode-options span:nth-child(1)::after {
+<<<<<<< HEAD
   content: " (administrators and moderators can add members)";
+=======
+  content: ' (administrators and moderators can add members)';
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
   color: #9b9da5;
 }
 
 .ch-mode-options span:nth-child(2)::after {
+<<<<<<< HEAD
   content: " (any member can add other members)";
+=======
+  content: ' (any member can add other members)';
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
   color: #9b9da5;
 }
