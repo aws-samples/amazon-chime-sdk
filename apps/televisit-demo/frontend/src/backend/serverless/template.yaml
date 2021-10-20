@@ -1,4 +1,4 @@
-AWSTemplateFormatVersion: "2010-09-09"
+AWSTemplateFormatVersion: '2010-09-09'
 Description: AWS CloudFormation stack to set up infrastructure required for the Amazon Chime SDK chat demo app
 Parameters:
   DemoName:
@@ -12,18 +12,18 @@ Resources:
     Description: The AWS SDK with support for Amazon Chime SDK messaging features.
     Properties:
       CompatibleRuntimes:
-        - "nodejs12.x"
+        - 'nodejs12.x'
       Content:
         S3Bucket: amazon-chime-blog-assets
         S3Key: AWS_SDK_CHIME_LAYER.zip
 
   #Lambda that creates AWS Chime App instance
   ChimeAppInstanceLambda:
-    Type: "AWS::Lambda::Function"
+    Type: 'AWS::Lambda::Function'
     Properties:
-      Handler: "index.handler"
+      Handler: 'index.handler'
       Role: !GetAtt LambdaExecuteRole.Arn
-      Runtime: "nodejs12.x"
+      Runtime: 'nodejs12.x'
       Timeout: 60
       Layers:
         - !Ref AWSSDKChimeLayer
@@ -80,7 +80,7 @@ Resources:
       CorsConfiguration:
         CorsRules:
           - AllowedHeaders:
-              - "*"
+              - '*'
             AllowedMethods:
               - GET
               - HEAD
@@ -88,34 +88,34 @@ Resources:
               - POST
               - DELETE
             AllowedOrigins:
-              - "*"
+              - '*'
             ExposedHeaders:
-              - "x-amz-server-side-encryption"
-              - "x-amz-request-id"
-              - "x-amz-id-2"
-            MaxAge: "3000"
+              - 'x-amz-server-side-encryption'
+              - 'x-amz-request-id'
+              - 'x-amz-id-2'
+            MaxAge: '3000'
 
   # Creates a role that allows Cognito to send SNS messages
   SNSRole:
-    Type: "AWS::IAM::Role"
+    Type: 'AWS::IAM::Role'
     Properties:
       AssumeRolePolicyDocument:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
         Statement:
-          - Effect: "Allow"
+          - Effect: 'Allow'
             Principal:
               Service:
-                - "cognito-idp.amazonaws.com"
+                - 'cognito-idp.amazonaws.com'
             Action:
-              - "sts:AssumeRole"
+              - 'sts:AssumeRole'
       Policies:
         - PolicyName: !Sub ${DemoName}-CognitoSNSPolicy
           PolicyDocument:
-            Version: "2012-10-17"
+            Version: '2012-10-17'
             Statement:
-              - Effect: "Allow"
-                Action: "sns:publish"
-                Resource: "*"
+              - Effect: 'Allow'
+                Action: 'sns:publish'
+                Resource: '*'
 
   #Creates a role to allow SignIn Lambda to execute
   LambdaExecuteRole:
@@ -138,21 +138,21 @@ Resources:
             Statement:
               - Effect: Allow
                 Action:
-                  - "chime:CreateAppInstance*"
-                Resource: "*"
+                  - 'chime:CreateAppInstance*'
+                Resource: '*'
         - PolicyName: !Sub ${DemoName}-LambdaCreateLogGroup
           PolicyDocument:
             Version: 2012-10-17
             Statement:
               - Effect: Allow
                 Action:
-                  - "logs:CreateLogGroup"
-                Resource: "*"
+                  - 'logs:CreateLogGroup'
+                Resource: '*'
               - Effect: Allow
                 Action:
-                  - "logs:CreateLogStream"
-                  - "logs:PutLogEvents"
-                Resource: "*"
+                  - 'logs:CreateLogStream'
+                  - 'logs:PutLogEvents'
+                Resource: '*'
 
   #Create Lambda used by Cognito Post Authentication Trigger to Create Chime App Instance user if user does not already exist
   SignInHookLambda:
@@ -160,7 +160,7 @@ Resources:
     DependsOn: TriggerChimeAppInstanceLambda
     Properties:
       FunctionName: !Sub ${DemoName}-SignInHook
-      Handler: "index.handler"
+      Handler: 'index.handler'
       Runtime: nodejs12.x
       MemorySize: 512
       Role: !GetAtt LambdaExecuteRole.Arn
@@ -222,7 +222,7 @@ Resources:
 
   # Creates a Cognito User Pool with a Post Authentication Trigger of the Sign In Lambda
   UserPool:
-    Type: "AWS::Cognito::UserPool"
+    Type: 'AWS::Cognito::UserPool'
     DependsOn: SignInHookLambda
     Properties:
       UserPoolName: !Sub ${DemoName}-user-pool
@@ -233,7 +233,7 @@ Resources:
 
   # Creates a User Pool Client to be used by the identity pool
   UserPoolClient:
-    Type: "AWS::Cognito::UserPoolClient"
+    Type: 'AWS::Cognito::UserPoolClient'
     Properties:
       ClientName: !Sub ${DemoName}-client
       GenerateSecret: false
@@ -241,7 +241,7 @@ Resources:
 
   #Creates a federated Identity pool
   IdentityPool:
-    Type: "AWS::Cognito::IdentityPool"
+    Type: 'AWS::Cognito::IdentityPool'
     Properties:
       IdentityPoolName: !Sub ${DemoName}_IdentityPool
       AllowUnauthenticatedIdentities: true
@@ -251,157 +251,157 @@ Resources:
 
   # Create a role for unauthorized access to AWS resources. Very limited access. Only allows users in the previously created Identity Pool
   CognitoUnAuthorizedRole:
-    Type: "AWS::IAM::Role"
+    Type: 'AWS::IAM::Role'
     Properties:
       AssumeRolePolicyDocument:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
         Statement:
-          - Effect: "Allow"
+          - Effect: 'Allow'
             Principal:
-              Federated: "cognito-identity.amazonaws.com"
+              Federated: 'cognito-identity.amazonaws.com'
             Action:
-              - "sts:AssumeRoleWithWebIdentity"
+              - 'sts:AssumeRoleWithWebIdentity'
             Condition:
               StringEquals:
-                "cognito-identity.amazonaws.com:aud": !Ref IdentityPool
-              "ForAnyValue:StringLike":
-                "cognito-identity.amazonaws.com:amr": unauthenticated
+                'cognito-identity.amazonaws.com:aud': !Ref IdentityPool
+              'ForAnyValue:StringLike':
+                'cognito-identity.amazonaws.com:amr': unauthenticated
       Policies:
         - PolicyName: !Sub ${DemoName}-CognitoUnauthorizedPolicy
           PolicyDocument:
-            Version: "2012-10-17"
+            Version: '2012-10-17'
             Statement:
-              - Effect: "Allow"
+              - Effect: 'Allow'
                 Action:
-                  - "mobileanalytics:PutEvents"
-                  - "cognito-sync:*"
-                Resource: "*"
+                  - 'mobileanalytics:PutEvents'
+                  - 'cognito-sync:*'
+                Resource: '*'
 
   # Create a role for authorized access to AWS resources. Control what your user can access.
   # Allows users to access their s3 ChatBucket files
   CognitoAuthorizedRole:
-    Type: "AWS::IAM::Role"
+    Type: 'AWS::IAM::Role'
     Properties:
       AssumeRolePolicyDocument:
-        Version: "2012-10-17"
+        Version: '2012-10-17'
         Statement:
-          - Effect: "Allow"
+          - Effect: 'Allow'
             Principal:
-              Federated: "cognito-identity.amazonaws.com"
+              Federated: 'cognito-identity.amazonaws.com'
             Action:
-              - "sts:AssumeRoleWithWebIdentity"
+              - 'sts:AssumeRoleWithWebIdentity'
             Condition:
               StringEquals:
-                "cognito-identity.amazonaws.com:aud": !Ref IdentityPool
-              "ForAnyValue:StringLike":
-                "cognito-identity.amazonaws.com:amr": authenticated
+                'cognito-identity.amazonaws.com:aud': !Ref IdentityPool
+              'ForAnyValue:StringLike':
+                'cognito-identity.amazonaws.com:amr': authenticated
       Policies:
         - PolicyName: !Sub ${DemoName}-CognitoAuthorizedPolicy
           PolicyDocument:
-            Version: "2012-10-17"
+            Version: '2012-10-17'
             Statement:
-              - Effect: "Allow"
+              - Effect: 'Allow'
                 Action:
-                  - "mobileanalytics:PutEvents"
-                  - "cognito-sync:*"
-                  - "cognito-identity:*"
-                Resource: "*"
-              - Effect: "Allow"
+                  - 'mobileanalytics:PutEvents'
+                  - 'cognito-sync:*'
+                  - 'cognito-identity:*'
+                Resource: '*'
+              - Effect: 'Allow'
                 Action:
-                  - "lambda:InvokeFunction"
-                Resource: "*"
+                  - 'lambda:InvokeFunction'
+                Resource: '*'
         - PolicyName: !Sub ${DemoName}-AttachmentsS3PermissionPolicy
           PolicyDocument:
-            Version: "2012-10-17"
+            Version: '2012-10-17'
             Statement:
-              - Effect: "Allow"
+              - Effect: 'Allow'
                 Action:
-                  - "s3:GetObject"
-                  - "s3:PutObject"
-                  - "s3:DeleteObject"
+                  - 's3:GetObject'
+                  - 's3:PutObject'
+                  - 's3:DeleteObject'
                 Resource:
                   !Join [
-                    "",
+                    '',
                     [
-                      "arn:aws:s3:::",
+                      'arn:aws:s3:::',
                       !Ref ChatAttachmentsBucket,
-                      "/protected/${cognito-identity.amazonaws.com:sub}/*",
+                      '/protected/${cognito-identity.amazonaws.com:sub}/*',
                     ],
                   ]
-              - Effect: "Allow"
+              - Effect: 'Allow'
                 Action:
-                  - "s3:GetObject"
+                  - 's3:GetObject'
                 Resource:
                   !Join [
-                    "",
+                    '',
                     [
-                      "arn:aws:s3:::",
+                      'arn:aws:s3:::',
                       !Ref ChatAttachmentsBucket,
-                      "/protected/*",
+                      '/protected/*',
                     ],
                   ]
         - PolicyName: !Sub ${DemoName}-ChimeSDKDemoUserPolicy
           PolicyDocument:
-            Version: "2012-10-17"
+            Version: '2012-10-17'
             Statement:
-              - Effect: "Allow"
+              - Effect: 'Allow'
                 Action:
-                  - "chime:GetMessagingSessionEndpoint"
-                Resource: "*"
-              - Effect: "Allow"
+                  - 'chime:GetMessagingSessionEndpoint'
+                Resource: '*'
+              - Effect: 'Allow'
                 Action:
-                  - "cognito-idp:ListUsers"
+                  - 'cognito-idp:ListUsers'
                 Resource:
                   !Join [
-                    "",
+                    '',
                     [
-                      "arn:aws:cognito-idp:us-east-1:",
+                      'arn:aws:cognito-idp:us-east-1:',
                       !Ref AWS::AccountId,
-                      ":userpool/",
+                      ':userpool/',
                       !Ref UserPool,
                     ],
                   ]
-              - Effect: "Allow"
+              - Effect: 'Allow'
                 Action:
-                  - "chime:SendChannelMessage"
-                  - "chime:ListChannelMessages"
-                  - "chime:CreateChannelMembership"
-                  - "chime:ListChannelMemberships"
-                  - "chime:DeleteChannelMembership"
-                  - "chime:CreateChannelModerator"
-                  - "chime:ListChannelModerators"
-                  - "chime:DescribeChannelModerator"
-                  - "chime:CreateChannel"
-                  - "chime:DescribeChannel"
-                  - "chime:ListChannels"
-                  - "chime:UpdateChannel"
-                  - "chime:DeleteChannel"
-                  - "chime:RedactChannelMessage"
-                  - "chime:UpdateChannelMessage"
-                  - "chime:Connect"
-                  - "chime:ListChannelMembershipsForAppInstanceUser"
-                  - "chime:CreateChannelBan"
-                  - "chime:ListChannelBans"
-                  - "chime:DeleteChannelBan"
+                  - 'chime:SendChannelMessage'
+                  - 'chime:ListChannelMessages'
+                  - 'chime:CreateChannelMembership'
+                  - 'chime:ListChannelMemberships'
+                  - 'chime:DeleteChannelMembership'
+                  - 'chime:CreateChannelModerator'
+                  - 'chime:ListChannelModerators'
+                  - 'chime:DescribeChannelModerator'
+                  - 'chime:CreateChannel'
+                  - 'chime:DescribeChannel'
+                  - 'chime:ListChannels'
+                  - 'chime:UpdateChannel'
+                  - 'chime:DeleteChannel'
+                  - 'chime:RedactChannelMessage'
+                  - 'chime:UpdateChannelMessage'
+                  - 'chime:Connect'
+                  - 'chime:ListChannelMembershipsForAppInstanceUser'
+                  - 'chime:CreateChannelBan'
+                  - 'chime:ListChannelBans'
+                  - 'chime:DeleteChannelBan'
                 Resource:
                   - !Join [
-                      "",
+                      '',
                       [
                         !GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn,
-                        "/user/${cognito-identity.amazonaws.com:sub}",
+                        '/user/${cognito-identity.amazonaws.com:sub}',
                       ],
                     ]
                   - !Join [
-                      "",
+                      '',
                       [
                         !GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn,
-                        "/channel/*",
+                        '/channel/*',
                       ],
                     ]
 
   # Assigns the roles to the Identity Pool
   IdentityPoolRoleMapping:
-    Type: "AWS::Cognito::IdentityPoolRoleAttachment"
+    Type: 'AWS::Cognito::IdentityPoolRoleAttachment'
     Properties:
       IdentityPoolId: !Ref IdentityPool
       Roles:

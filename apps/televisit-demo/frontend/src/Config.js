@@ -1,6 +1,6 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
-const samOutputs = require("./sam-output.json");
+const samOutputs = require('./sam-output.json');
 
 const mappedOutputs = {};
 
@@ -14,7 +14,7 @@ const appConfig = {
   cognitoAppClientId: mappedOutputs.cognitoAppClientId,
   cognitoIdentityPoolId: mappedOutputs.cognitoIdentityPoolId,
   appInstanceArn: mappedOutputs.appInstanceArn,
-  region: "us-east-1",
+  region: 'us-east-1',
   attachments_s3_bucket_name: mappedOutputs.attachments_s3_bucket_name,
 };
 export default appConfig;

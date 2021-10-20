@@ -1,12 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 
-import { v4 as uuid } from "uuid";
+import { v4 as uuid } from 'uuid';
 
-import detectEntities from "./detectEntities";
-import inferICD10CM from "./inferICD10CM";
-import inferRxNorm from "./inferRxNorm";
-import { sortByScoreDescending } from "./conceptUtils";
-import AWS from "aws-sdk";
+import detectEntities from './detectEntities';
+import inferICD10CM from './inferICD10CM';
+import inferRxNorm from './inferRxNorm';
+import { sortByScoreDescending } from './conceptUtils';
+import AWS from 'aws-sdk';
 
 // This WeakMap links single-line transcript chunks to their responses without directly attaching as a property
 const resultMap = new WeakMap();
@@ -15,7 +15,7 @@ const resultMap = new WeakMap();
 export default function useComprehension(transcriptChunks) {
   const [result, setResult] = useState([]);
   const clientParams = {
-    region: "us-east-1",
+    region: 'us-east-1',
     accessKeyId: AWS.config.credentials.accessKeyId,
     secretAccessKey: AWS.config.credentials.secretAccessKey,
     sessionToken: AWS.config.credentials.sessionToken,
@@ -65,7 +65,7 @@ export default function useComprehension(transcriptChunks) {
         inferRxNorm(chunk.text, clientParams).then((rawEntities) => {
           const entities = addSelectedConceptCodeAndSortConcepts(
             rawEntities,
-            "RxNormConcepts"
+            'RxNormConcepts'
           );
           addResult(chunk, entities);
         });
@@ -73,7 +73,7 @@ export default function useComprehension(transcriptChunks) {
         inferICD10CM(chunk.text, clientParams).then((rawEntities) => {
           const entities = addSelectedConceptCodeAndSortConcepts(
             rawEntities,
-            "ICD10CMConcepts"
+            'ICD10CMConcepts'
           );
           addResult(chunk, entities);
         });

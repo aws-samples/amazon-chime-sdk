@@ -1,5 +1,5 @@
-import React from "react";
-import { Icon } from "@chakra-ui/react";
+import React from 'react';
+import { Icon } from '@chakra-ui/react';
 
 export const DeleteIcon = (props) => (
   <Icon viewBox="0 0 278.07 278.07" color="#545b64" boxSize="1.5em" {...props}>

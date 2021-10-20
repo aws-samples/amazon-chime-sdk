@@ -2,7 +2,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 
 import {
   Modal,
@@ -10,16 +10,16 @@ import {
   ModalBody,
   ModalButtonGroup,
   ModalButton,
-} from "amazon-chime-sdk-component-library-react";
+} from 'amazon-chime-sdk-component-library-react';
 
-import { createMemberArn } from "../../api/ChimeAPI";
-import { useIdentityService } from "../../providers/IdentityProvider";
-import { useAuthContext } from "../../providers/AuthProvider";
-import ContactPicker from "../ContactPicker";
-import { listAppInstanceUsers } from "../../api/ChimeAPI";
+import { createMemberArn } from '../../api/ChimeAPI';
+import { useIdentityService } from '../../providers/IdentityProvider';
+import { useAuthContext } from '../../providers/AuthProvider';
+import ContactPicker from '../ContactPicker';
+import { listAppInstanceUsers } from '../../api/ChimeAPI';
 
-import "./ChannelModals.css";
-import appConfig from "../../Config";
+import './ChannelModals.css';
+import appConfig from '../../Config';
 
 export const AddMemberModal = ({
   onClose,
@@ -46,11 +46,11 @@ export const AddMemberModal = ({
       .getUsers()
       .then((users) => {
         const list = users.map((user) => {
-          if (getUserAttributeByName(user, "profile") !== "none") {
+          if (getUserAttributeByName(user, 'profile') !== 'none') {
             return {
               label: user.Username,
               value: user.Attributes.filter(
-                (attr) => attr.Name === "profile"
+                (attr) => attr.Name === 'profile'
               )[0].Value,
             };
           }
@@ -71,7 +71,7 @@ export const AddMemberModal = ({
         const list = users.map((user) => {
           return {
             label: user.Name,
-            value: user.AppInstanceUserArn.split("/user/")[1],
+            value: user.AppInstanceUserArn.split('/user/')[1],
           };
         });
         setUsersList(list);

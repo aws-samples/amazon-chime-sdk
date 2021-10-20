@@ -7,13 +7,13 @@ import React, {
   useEffect,
   useRef,
   ReactNode,
-} from "react";
-import { useLocation } from "react-router-dom";
-import { useMeetingManager } from "amazon-chime-sdk-component-library-react";
-import { useAppState } from "./AppStateProvider";
-import { startTranscription } from "../api/ChimeAPI";
+} from 'react';
+import { useLocation } from 'react-router-dom';
+import { useMeetingManager } from 'amazon-chime-sdk-component-library-react';
+import { useAppState } from './AppStateProvider';
+import { startTranscription } from '../api/ChimeAPI';
 
-import routes from "../constants/routes";
+import routes from '../constants/routes';
 
 export type NavigationContextType = {
   showNavbar: boolean;
@@ -83,8 +83,8 @@ const NavigationProvider = ({ children }: Props) => {
       }
     };
 
-    window.addEventListener("resize", handler);
-    return () => window.removeEventListener("resize", handler);
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
   }, []);
 
   const toggleRoster = (): void => {
@@ -176,7 +176,7 @@ const NavigationProvider = ({ children }: Props) => {
 const useNavigation = (): NavigationContextType => {
   const context = useContext(NavigationContext);
   if (!context) {
-    throw Error("Use useNavigation in NavigationProvider");
+    throw Error('Use useNavigation in NavigationProvider');
   }
   return context;
 };

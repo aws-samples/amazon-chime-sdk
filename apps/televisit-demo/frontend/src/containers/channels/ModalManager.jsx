@@ -1,7 +1,7 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import React from "react";
+import React from 'react';
 import {
   AddMemberModal,
   ManageMembersModal,
@@ -13,7 +13,7 @@ import {
   EditChannelModal,
   BanModal,
   JoinMeetingModal,
-} from "../../components/ChannelModals";
+} from '../../components/ChannelModals';
 
 const ModalManager = ({
   modal,
@@ -42,20 +42,20 @@ const ModalManager = ({
   }
 
   switch (modal) {
-    case "AddMembers":
+    case 'AddMembers':
       return (
         <AddMemberModal
-          onClose={() => setModal("")}
+          onClose={() => setModal('')}
           channel={activeChannel}
           onSubmit={onAddMember}
           handlePickerChange={handlePickerChange}
           members={activeChannelMemberships}
         />
       );
-    case "ManageMembers":
+    case 'ManageMembers':
       return (
         <ManageMembersModal
-          onClose={() => setModal("")}
+          onClose={() => setModal('')}
           channel={activeChannel}
           userId={userId}
           handleDeleteMemberships={handleDeleteMemberships}
@@ -64,50 +64,50 @@ const ModalManager = ({
           selectedMembers={selectedMembers}
         />
       );
-    case "NewChannel":
+    case 'NewChannel':
       return (
         <NewChannelModal
-          onClose={() => setModal("")}
+          onClose={() => setModal('')}
           onCreateChannel={onCreateChannel}
         />
       );
-    case "ViewDetails":
+    case 'ViewDetails':
       return (
         <ViewChannelDetailsModal
-          onClose={() => setModal("")}
+          onClose={() => setModal('')}
           channel={activeChannel}
           moderators={activeChannelModerators}
         />
       );
-    case "LeaveChannel":
+    case 'LeaveChannel':
       return (
         <LeaveChannelModal
-          onClose={() => setModal("")}
+          onClose={() => setModal('')}
           handleLeaveChannel={handleLeaveChannel}
           channel={activeChannel}
         />
       );
-    case "ViewMembers":
+    case 'ViewMembers':
       return (
         <ViewMembersModal
-          onClose={() => setModal("")}
+          onClose={() => setModal('')}
           channel={activeChannel}
           members={activeChannelMemberships}
           moderators={activeChannelModerators}
         />
       );
-    case "EditChannel":
+    case 'EditChannel':
       return (
         <EditChannelModal
-          onClose={() => setModal("")}
+          onClose={() => setModal('')}
           channel={activeChannel}
           userId={userId}
         />
       );
-    case "Ban":
+    case 'Ban':
       return (
         <BanModal
-          onClose={() => setModal("")}
+          onClose={() => setModal('')}
           handlePickerChange={handlePickerChange}
           channel={activeChannel}
           members={activeChannelMemberships}
@@ -117,25 +117,25 @@ const ModalManager = ({
           unbanUser={unbanUser}
         />
       );
-    case "DeleteChannel":
+    case 'DeleteChannel':
       return (
         <DeleteChannelModal
-          onClose={() => setModal("")}
+          onClose={() => setModal('')}
           channel={activeChannel}
           handleChannelDeletion={handleChannelDeletion}
         />
       );
-    case "JoinMeeting":
+    case 'JoinMeeting':
       return (
         <JoinMeetingModal
-          onClose={() => setModal("")}
+          onClose={() => setModal('')}
           meetingInfo={meetingInfo}
           handleJoinMeeting={handleJoinMeeting}
           handleMessageAll={handleMessageAll}
         />
       );
     default:
-      console.log("Unknown modal type called");
+      console.log('Unknown modal type called');
       return null;
   }
 };

@@ -1,38 +1,38 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 
-import MeetingRoster from "../MeetingRoster";
-import MeetingChat from "../MeetingChat";
-import TranscriptAnalysisPane from "../transcriptions/TranscriptAnalysisPane";
-import Navigation from ".";
-import { useNavigation } from "../../providers/NavigationProvider";
-import { useChatMessagingState } from "../../providers/ChatMessagesProvider";
+import MeetingRoster from '../MeetingRoster';
+import MeetingChat from '../MeetingChat';
+import TranscriptAnalysisPane from '../transcriptions/TranscriptAnalysisPane';
+import Navigation from '.';
+import { useNavigation } from '../../providers/NavigationProvider';
+import { useChatMessagingState } from '../../providers/ChatMessagesProvider';
 
-import { useAudioVideo } from "amazon-chime-sdk-component-library-react";
+import { useAudioVideo } from 'amazon-chime-sdk-component-library-react';
 import {
   Transcript,
   TranscriptEvent,
   TranscriptResult,
   Attendee,
   TranscriptItemType,
-} from "amazon-chime-sdk-js";
+} from 'amazon-chime-sdk-js';
 
 const MeetingTranscript = ({ transcriptEvent }: any) => {
   const { messages } = useChatMessagingState();
   const initialTranscripts: any[] = [];
   for (let i = 0; i < messages.length; i++) {
-    if (messages[i].Sender.Name != "ModeratorBot") {
+    if (messages[i].Sender.Name != 'ModeratorBot') {
       initialTranscripts.unshift({
         startTimeMs: Date.parse(messages[i].CreatedTimestamp),
         text: messages[i].Content,
-        speaker: "(Chat) " + messages[i].Sender.Name,
+        speaker: '(Chat) ' + messages[i].Sender.Name,
       });
     }
   }
 
-  const [partialTranscript, setPartialTranscript] = useState(" ");
+  const [partialTranscript, setPartialTranscript] = useState(' ');
   const [transcripts, setTranscripts] = useState(initialTranscripts);
 
   const addTranscriptChunk = (result: TranscriptResult) => {
@@ -40,7 +40,7 @@ const MeetingTranscript = ({ transcriptEvent }: any) => {
     const lines: any[] = [];
 
     let startTimeMs: number = null;
-    let content = "";
+    let content = '';
     let attendee: Attendee = null;
     for (const item of result.alternatives[0].items) {
       if (!startTimeMs) {
@@ -61,7 +61,7 @@ const MeetingTranscript = ({ transcriptEvent }: any) => {
           if (item.type === TranscriptItemType.PUNCTUATION) {
             content = content + item.content;
           } else {
-            content = content + " " + item.content;
+            content = content + ' ' + item.content;
           }
         }
       }
@@ -77,9 +77,9 @@ const MeetingTranscript = ({ transcriptEvent }: any) => {
       setPartialTranscript(
         lines
           .map(
-            (line) => `${line.speaker ? `${line.speaker} ` : ""}${line.text}`
+            (line) => `${line.speaker ? `${line.speaker} ` : ''}${line.text}`
           )
-          .join(" ")
+          .join(' ')
       );
     } else {
       setPartialTranscript(null);

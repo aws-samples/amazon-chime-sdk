@@ -1,17 +1,17 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import React from "react";
+import React from 'react';
 
 import {
   Flex,
   Heading,
   PrimaryButton,
   useMeetingManager,
-} from "amazon-chime-sdk-component-library-react";
+} from 'amazon-chime-sdk-component-library-react';
 
-import { useAppState } from "../../providers/AppStateProvider";
-import { StyledList } from "./Styled";
+import { useAppState } from '../../providers/AppStateProvider';
+import { StyledList } from './Styled';
 
 const MeetingDetails = () => {
   const { meetingId, toggleTheme, theme } = useAppState();
@@ -34,7 +34,7 @@ const MeetingDetails = () => {
           </div>
         </StyledList>
         <PrimaryButton
-          label={theme === "light" ? "Dark mode" : "Light mode"}
+          label={theme === 'light' ? 'Dark mode' : 'Light mode'}
           onClick={toggleTheme}
         ></PrimaryButton>
       </Flex>

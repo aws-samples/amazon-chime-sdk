@@ -1,16 +1,16 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import React from "react";
+import React from 'react';
 import {
   Heading,
   PreviewVideo,
   QualitySelection,
   CameraSelection,
   Label,
-} from "amazon-chime-sdk-component-library-react";
+} from 'amazon-chime-sdk-component-library-react';
 
-import { title, StyledInputGroup } from "../Styled";
+import { title, StyledInputGroup } from '../Styled';
 
 const CameraDevices = () => {
   return (
@@ -24,7 +24,7 @@ const CameraDevices = () => {
       <StyledInputGroup>
         <QualitySelection />
       </StyledInputGroup>
-      <Label style={{ display: "block", marginBottom: ".5rem" }}>
+      <Label style={{ display: 'block', marginBottom: '.5rem' }}>
         Video preview
       </Label>
       <PreviewVideo />

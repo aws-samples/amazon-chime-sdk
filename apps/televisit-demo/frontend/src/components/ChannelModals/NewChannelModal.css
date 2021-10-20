@@ -43,21 +43,21 @@
 }
 
 .ch-type-options span:nth-child(1)::after {
-  content: " (only members can read and send messages)";
+  content: ' (only members can read and send messages)';
   color: #9b9da5;
 }
 
 .ch-type-options span:nth-child(2)::after {
-  content: " (non-members can read and send messages)";
+  content: ' (non-members can read and send messages)';
   color: #9b9da5;
 }
 
 .ch-mode-options span:nth-child(1)::after {
-  content: " (administrators and moderators can add members)";
+  content: ' (administrators and moderators can add members)';
   color: #9b9da5;
 }
 
 .ch-mode-options span:nth-child(2)::after {
-  content: " (any member can add other members)";
+  content: ' (any member can add other members)';
   color: #9b9da5;
 }

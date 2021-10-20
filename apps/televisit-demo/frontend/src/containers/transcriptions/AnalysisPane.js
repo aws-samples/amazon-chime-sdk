@@ -1,9 +1,9 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState } from 'react';
 
-import s from "./AnalysisPane.module.css";
-import cs from "clsx";
+import s from './AnalysisPane.module.css';
+import cs from 'clsx';
 
-import displayNames from "./displayNames";
+import displayNames from './displayNames';
 import {
   VStack,
   Box,
@@ -13,18 +13,18 @@ import {
   Input,
   FormControl,
   VisuallyHidden,
-} from "@chakra-ui/react";
-import { AddIcon } from "@chakra-ui/icons";
-import { DeleteIcon } from "./DeleteIcon";
-import highlightClasses from "./transcriptHighlights";
-import { getSelectedConcept } from "./conceptUtils";
+} from '@chakra-ui/react';
+import { AddIcon } from '@chakra-ui/icons';
+import { DeleteIcon } from './DeleteIcon';
+import highlightClasses from './transcriptHighlights';
+import { getSelectedConcept } from './conceptUtils';
 
 const CATEGORIES = [
-  "MEDICAL_CONDITION",
-  "MEDICATION",
-  "TEST_TREATMENT_PROCEDURE",
-  "ANATOMY",
-  "PROTECTED_HEALTH_INFORMATION",
+  'MEDICAL_CONDITION',
+  'MEDICATION',
+  'TEST_TREATMENT_PROCEDURE',
+  'ANATOMY',
+  'PROTECTED_HEALTH_INFORMATION',
 ];
 
 const CONFIDENCE_THRESHOLD = 0.5;
@@ -38,10 +38,10 @@ function ResultRow({ result, onDeleteClick, onSelectedConceptChange }) {
       size="xs"
       isRound
       border="1px solid #545b64"
-      _hover={{ bg: "#545b64" }}
+      _hover={{ bg: '#545b64' }}
       sx={{
-        "&:hover svg": {
-          color: "#fff",
+        '&:hover svg': {
+          color: '#fff',
         },
       }}
     />
@@ -68,14 +68,14 @@ function ResultRow({ result, onDeleteClick, onSelectedConceptChange }) {
           height="2.5rem"
           border={
             result.Score && result.Score < CONFIDENCE_THRESHOLD
-              ? "2px solid #B30000"
-              : "1px solid grey"
+              ? '2px solid #B30000'
+              : '1px solid grey'
           }
           bg="white"
           px={4}
           alignItems="center"
         >
-          {result.Text} {result.Type && "|"} {displayNames[result.Type]}
+          {result.Text} {result.Type && '|'} {displayNames[result.Type]}
         </Flex>
         {closeIcon}
       </Flex>
@@ -91,8 +91,8 @@ function ResultRow({ result, onDeleteClick, onSelectedConceptChange }) {
           height="2.5rem"
           border={
             result.Score && result.Score < CONFIDENCE_THRESHOLD
-              ? "2px solid #B30000"
-              : "1px solid grey"
+              ? '2px solid #B30000'
+              : '1px solid grey'
           }
           bg="white"
           px={4}
@@ -100,7 +100,7 @@ function ResultRow({ result, onDeleteClick, onSelectedConceptChange }) {
         >
           {attrs.map(([key, value]) => (
             <React.Fragment key={key}>
-              {result.Text} {value && "|"} {value}
+              {result.Text} {value && '|'} {value}
             </React.Fragment>
           ))}
         </Flex>
@@ -117,7 +117,7 @@ function ResultRow({ result, onDeleteClick, onSelectedConceptChange }) {
   ];
   const selectedConcept = getSelectedConcept(result);
   const borderColor =
-    concepts[0].Score < CONFIDENCE_THRESHOLD ? "#B30000 " : "grey";
+    concepts[0].Score < CONFIDENCE_THRESHOLD ? '#B30000 ' : 'grey';
 
   return (
     <Flex width="100%" alignItems="center">
@@ -125,19 +125,19 @@ function ResultRow({ result, onDeleteClick, onSelectedConceptChange }) {
         mr={2}
         border={
           selectedConcept.Score < CONFIDENCE_THRESHOLD
-            ? "2px solid"
-            : "1px solid"
+            ? '2px solid'
+            : '1px solid'
         }
         borderColor={borderColor}
         borderRadius="0"
         bg="white"
         value={result.selectedConceptCode}
         onChange={(e) => onSelectedConceptChange(result.id, e.target.value)}
-        _hover={{ borderColor: borderColor, boxShadow: "none" }}
+        _hover={{ borderColor: borderColor, boxShadow: 'none' }}
       >
         {concepts.map(({ Code, Description, Score }) => (
           <option key={Code} value={Code}>
-            {result.Text} {Code && " | "} {Code} {Description && " | "}
+            {result.Text} {Code && ' | '} {Code} {Description && ' | '}
             {Description} &nbsp;&nbsp; {(Score * 100).toPrecision(4)}%
           </option>
         ))}
@@ -159,15 +159,15 @@ function ResultTable({
     () => results.filter((r) => r.Category === category),
     [results, category]
   );
-  const [inputValue, setInputValue] = useState("");
+  const [inputValue, setInputValue] = useState('');
   const handleInputChange = (event) => setInputValue(event.target.value);
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const input = inputValue.trim();
-    if (input !== "") {
+    if (input !== '') {
       onResultAdd(input, category);
-      setInputValue("");
+      setInputValue('');
     }
   };
 
@@ -181,10 +181,10 @@ function ResultTable({
       size="xs"
       isRound
       border="1px solid #545b64"
-      _hover={{ bg: "#545b64" }}
+      _hover={{ bg: '#545b64' }}
       sx={{
-        "&:hover svg": {
-          color: "#fff",
+        '&:hover svg': {
+          color: '#fff',
         },
       }}
     />
@@ -194,8 +194,8 @@ function ResultTable({
     <Box
       mb={4}
       mx="3em"
-      _first={{ marginTop: "1em" }}
-      _last={{ marginBottom: "1em" }}
+      _first={{ marginTop: '1em' }}
+      _last={{ marginBottom: '1em' }}
     >
       <Box
         as="h1"

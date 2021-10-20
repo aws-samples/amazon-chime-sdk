@@ -1,25 +1,25 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   FormField,
   Input,
   Flex,
   Button,
   Heading,
-} from "amazon-chime-sdk-component-library-react";
+} from 'amazon-chime-sdk-component-library-react';
 
-import "./login.css";
+import './login.css';
 
 const Login = (props) => {
-  const [userName, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [userName, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const { login, register } = props;
 
   const onRegister = (e) => {
     e.preventDefault();
-    register(userName, password, "");
+    register(userName, password, '');
   };
 
   const onLogin = (e) => {
@@ -64,7 +64,7 @@ const Login = (props) => {
           <FormField
             field={Input}
             label="Password"
-            fieldProps={{ type: "password" }}
+            fieldProps={{ type: 'password' }}
             className="input password-input"
             onChange={(e) => onPassword(e)}
             value={password}

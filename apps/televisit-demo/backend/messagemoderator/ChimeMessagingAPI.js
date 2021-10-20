@@ -1,14 +1,14 @@
-const AWS = require("aws-sdk");
+const AWS = require('aws-sdk');
 AWS.config.update({ region: process.env.AWS_REGION });
 const { CHIME_APP_INSTANCE_ARN, CHIME_APP_INSTANCE_ADMIN_ROLE_ARN } =
   process.env;
-const appInstanceUserArnHeader = "x-amz-chime-bearer";
+const appInstanceUserArnHeader = 'x-amz-chime-bearer';
 const appInstanceAdminRoleArn = CHIME_APP_INSTANCE_ADMIN_ROLE_ARN;
-const roleSessionName = "LambdaAssumeModeratorBotAppInstanceAdminRole";
+const roleSessionName = 'LambdaAssumeModeratorBotAppInstanceAdminRole';
 
 const createMemberArn = (userId) => CHIME_APP_INSTANCE_ARN + `/user/${userId}`;
 
-async function chimeClient(uid = "LambdaAppInstanceAdminRole") {
+async function chimeClient(uid = 'LambdaAppInstanceAdminRole') {
   try {
     const sts = new AWS.STS({ region: process.env.REGION });
     const stsParams = {
@@ -16,7 +16,7 @@ async function chimeClient(uid = "LambdaAppInstanceAdminRole") {
       RoleSessionName: roleSessionName,
       Tags: [
         {
-          Key: "username" /* required */,
+          Key: 'username' /* required */,
           Value: uid /* required */,
         },
         /* more items */
@@ -24,7 +24,7 @@ async function chimeClient(uid = "LambdaAppInstanceAdminRole") {
     };
     const assumedRole = await sts.assumeRole(stsParams).promise();
     console.log(
-      "Changed Credentials: " + JSON.stringify(assumedRole.AssumedRoleUser)
+      'Changed Credentials: ' + JSON.stringify(assumedRole.AssumedRoleUser)
     );
 
     const accessParams = {
@@ -64,15 +64,15 @@ async function sendChannelMessage(
   messageContent,
   member,
   options = null,
-  type = "STANDARD"
+  type = 'STANDARD'
 ) {
-  console.log("sendChannelMessage called");
+  console.log('sendChannelMessage called');
 
   try {
     const params = {
       ChannelArn: channelArn,
       Content: messageContent,
-      Persistence: "PERSISTENT", // Allowed types are PERSISTENT and NON_PERSISTENT
+      Persistence: 'PERSISTENT', // Allowed types are PERSISTENT and NON_PERSISTENT
       Type: type, // Allowed types are STANDARD and CONTROL
       ChimeBearer: createMemberArn(member),
     };
@@ -100,7 +100,7 @@ async function listChannelMessages(
   notBefore = null,
   nextToken = null
 ) {
-  console.log("listChannelMessages called");
+  console.log('listChannelMessages called');
 
   const params = {
     ChannelArn: channelArn,
@@ -112,7 +112,7 @@ async function listChannelMessages(
 
   try {
     const request = (await chimeClient()).listChannelMessages(params);
-    request.on("build", function () {
+    request.on('build', function () {
       request.httpRequest.headers[appInstanceUserArnHeader] =
         createMemberArn(userId);
     });
@@ -134,17 +134,17 @@ async function listChannelMessages(
 }
 
 async function createChannelMembership(channelArn, memberArn, userId) {
-  console.log("createChannelMembership called");
+  console.log('createChannelMembership called');
 
   const params = {
     ChannelArn: channelArn,
     MemberArn: memberArn,
-    Type: "DEFAULT", // OPTIONS ARE: DEFAULT and HIDDEN
+    Type: 'DEFAULT', // OPTIONS ARE: DEFAULT and HIDDEN
   };
 
   try {
     const request = (await chimeClient()).createChannelMembership(params);
-    request.on("build", function () {
+    request.on('build', function () {
       request.httpRequest.headers[appInstanceUserArnHeader] =
         createMemberArn(userId);
     });
@@ -157,7 +157,7 @@ async function createChannelMembership(channelArn, memberArn, userId) {
 }
 
 async function deleteChannelMembership(channelArn, memberArn, userId) {
-  console.log("deleteChannelMembership called");
+  console.log('deleteChannelMembership called');
 
   const params = {
     ChannelArn: channelArn,
@@ -166,7 +166,7 @@ async function deleteChannelMembership(channelArn, memberArn, userId) {
 
   try {
     const request = (await chimeClient()).deleteChannelMembership(params);
-    request.on("build", function () {
+    request.on('build', function () {
       request.httpRequest.headers[appInstanceUserArnHeader] =
         createMemberArn(userId);
     });
@@ -179,7 +179,7 @@ async function deleteChannelMembership(channelArn, memberArn, userId) {
 }
 
 async function createChannelBan(channelArn, memberArn, userId) {
-  console.log("createChannelBan called");
+  console.log('createChannelBan called');
 
   const params = {
     ChannelArn: channelArn,
@@ -188,7 +188,7 @@ async function createChannelBan(channelArn, memberArn, userId) {
 
   try {
     const request = (await chimeClient()).createChannelBan(params);
-    request.on("build", function () {
+    request.on('build', function () {
       request.httpRequest.headers[appInstanceUserArnHeader] =
         createMemberArn(userId);
     });
@@ -201,7 +201,7 @@ async function createChannelBan(channelArn, memberArn, userId) {
 }
 
 async function deleteChannelBan(channelArn, memberArn, userId) {
-  console.log("deleteChannelBan called");
+  console.log('deleteChannelBan called');
 
   const params = {
     ChannelArn: channelArn,
@@ -210,7 +210,7 @@ async function deleteChannelBan(channelArn, memberArn, userId) {
 
   try {
     const request = (await chimeClient()).deleteChannelBan(params);
-    request.on("build", function () {
+    request.on('build', function () {
       request.httpRequest.headers[appInstanceUserArnHeader] =
         createMemberArn(userId);
     });
@@ -223,7 +223,7 @@ async function deleteChannelBan(channelArn, memberArn, userId) {
 }
 
 async function listChannelBans(channelArn, maxResults, nextToken, userId) {
-  console.log("listChannelBans called");
+  console.log('listChannelBans called');
 
   const params = {
     ChannelArn: channelArn,
@@ -233,12 +233,12 @@ async function listChannelBans(channelArn, maxResults, nextToken, userId) {
 
   try {
     const request = (await chimeClient()).listChannelBans(params);
-    request.on("build", function () {
+    request.on('build', function () {
       request.httpRequest.headers[appInstanceUserArnHeader] =
         createMemberArn(userId);
     });
     const response = await request.promise();
-    console.log("listChannelBans response", response);
+    console.log('listChannelBans response', response);
     return response;
   } catch (e) {
     console.log(JSON.stringify(e));
@@ -247,14 +247,14 @@ async function listChannelBans(channelArn, maxResults, nextToken, userId) {
 }
 
 async function listChannelMemberships(channelArn, userId) {
-  console.log("listChannelMemberships called");
+  console.log('listChannelMemberships called');
   const params = {
     ChannelArn: channelArn,
   };
 
   try {
     const request = (await chimeClient()).listChannelMemberships(params);
-    request.on("build", function () {
+    request.on('build', function () {
       request.httpRequest.headers[appInstanceUserArnHeader] =
         createMemberArn(userId);
     });
@@ -267,7 +267,7 @@ async function listChannelMemberships(channelArn, userId) {
 }
 
 async function createChannel(appInstanceArn, name, mode, privacy, userId) {
-  console.log("createChannel called");
+  console.log('createChannel called');
   const params = {
     AppInstanceArn: appInstanceArn,
     Name: name,
@@ -277,7 +277,7 @@ async function createChannel(appInstanceArn, name, mode, privacy, userId) {
 
   try {
     const request = (await chimeClient()).createChannel(params);
-    request.on("build", function () {
+    request.on('build', function () {
       request.httpRequest.headers[appInstanceUserArnHeader] =
         createMemberArn(userId);
     });
@@ -290,7 +290,7 @@ async function createChannel(appInstanceArn, name, mode, privacy, userId) {
 }
 
 async function describeChannel(channelArn, userId) {
-  console.log("describeChannel called");
+  console.log('describeChannel called');
 
   const params = {
     ChannelArn: channelArn,
@@ -298,7 +298,7 @@ async function describeChannel(channelArn, userId) {
 
   try {
     const request = (await chimeClient()).describeChannel(params);
-    request.on("build", function () {
+    request.on('build', function () {
       request.httpRequest.headers[appInstanceUserArnHeader] =
         createMemberArn(userId);
     });
@@ -311,7 +311,7 @@ async function describeChannel(channelArn, userId) {
 }
 
 async function updateChannel(channelArn, name, mode, userId) {
-  console.log("updateChannel called");
+  console.log('updateChannel called');
 
   const params = {
     ChannelArn: channelArn,
@@ -321,12 +321,12 @@ async function updateChannel(channelArn, name, mode, userId) {
 
   try {
     const request = (await chimeClient()).updateChannel(params);
-    request.on("build", function () {
+    request.on('build', function () {
       request.httpRequest.headers[appInstanceUserArnHeader] =
         createMemberArn(userId);
     });
     const response = await request.promise();
-    console.log("response", response);
+    console.log('response', response);
     return response;
   } catch (e) {
     console.log(JSON.stringify(e));
@@ -335,13 +335,13 @@ async function updateChannel(channelArn, name, mode, userId) {
 }
 
 async function listChannelMembershipsForAppInstanceUser(userId) {
-  console.log("listChannelMembershipsForAppInstanceUser called");
+  console.log('listChannelMembershipsForAppInstanceUser called');
 
   try {
     const request = (
       await chimeClient()
     ).listChannelMembershipsForAppInstanceUser();
-    request.on("build", function () {
+    request.on('build', function () {
       request.httpRequest.headers[appInstanceUserArnHeader] =
         createMemberArn(userId);
     });
@@ -355,14 +355,14 @@ async function listChannelMembershipsForAppInstanceUser(userId) {
 }
 
 async function listChannels(appInstanceArn, userId) {
-  console.log("listChannels called");
+  console.log('listChannels called');
   const params = {
     AppInstanceArn: appInstanceArn,
   };
 
   try {
     const request = (await chimeClient()).listChannels(params);
-    request.on("build", function () {
+    request.on('build', function () {
       request.httpRequest.headers[appInstanceUserArnHeader] =
         createMemberArn(userId);
     });
@@ -376,17 +376,17 @@ async function listChannels(appInstanceArn, userId) {
 }
 
 async function listChannelsForAppInstanceUser(userId) {
-  console.log("listChannelsForAppInstanceUser called");
+  console.log('listChannelsForAppInstanceUser called');
 
   try {
     const request = (await chimeClient()).listChannelsForAppInstanceUser();
-    request.on("build", function () {
+    request.on('build', function () {
       request.httpRequest.headers[appInstanceUserArnHeader] =
         createMemberArn(userId);
     });
     const response = await request.promise();
     const channels = response.Channels;
-    console.log("channels", channels);
+    console.log('channels', channels);
     return channels;
   } catch (e) {
     console.log(JSON.stringify(e));
@@ -395,7 +395,7 @@ async function listChannelsForAppInstanceUser(userId) {
 }
 
 async function deleteChannel(channelArn, userId) {
-  console.log("deleteChannel called");
+  console.log('deleteChannel called');
 
   const params = {
     ChannelArn: channelArn,
@@ -403,7 +403,7 @@ async function deleteChannel(channelArn, userId) {
 
   try {
     const request = (await chimeClient()).deleteChannel(params);
-    request.on("build", function () {
+    request.on('build', function () {
       request.httpRequest.headers[appInstanceUserArnHeader] =
         createMemberArn(userId);
     });
@@ -415,14 +415,14 @@ async function deleteChannel(channelArn, userId) {
 }
 
 async function listChannelModerators(channelArn, userId) {
-  console.log("listChannelModerators called");
+  console.log('listChannelModerators called');
   const params = {
     ChannelArn: channelArn,
   };
 
   try {
     const request = (await chimeClient()).listChannelModerators(params);
-    request.on("build", function () {
+    request.on('build', function () {
       request.httpRequest.headers[appInstanceUserArnHeader] =
         createMemberArn(userId);
     });
@@ -441,7 +441,7 @@ async function updateChannelMessage(
   metadata,
   userId
 ) {
-  console.log("updateChannelMessage called");
+  console.log('updateChannelMessage called');
   const params = {
     ChannelArn: channelArn,
     MessageId: messageId,
@@ -451,7 +451,7 @@ async function updateChannelMessage(
 
   try {
     const request = (await chimeClient(userId)).updateChannelMessage(params);
-    request.on("build", function () {
+    request.on('build', function () {
       request.httpRequest.headers[appInstanceUserArnHeader] =
         createMemberArn(userId);
     });
@@ -465,7 +465,7 @@ async function updateChannelMessage(
 }
 
 async function redactChannelMessage(channelArn, messageId, userId) {
-  console.log("redactChannelMessage called");
+  console.log('redactChannelMessage called');
   const params = {
     ChannelArn: channelArn,
     MessageId: messageId,
@@ -473,13 +473,13 @@ async function redactChannelMessage(channelArn, messageId, userId) {
 
   try {
     const request = (await chimeClient()).redactChannelMessage(params);
-    request.on("build", function () {
+    request.on('build', function () {
       request.httpRequest.headers[appInstanceUserArnHeader] =
         createMemberArn(userId);
     });
 
     const response = await request.promise();
-    console.log("response", response);
+    console.log('response', response);
     return response;
   } catch (e) {
     console.log(JSON.stringify(e));
@@ -488,9 +488,9 @@ async function redactChannelMessage(channelArn, messageId, userId) {
 }
 
 function parseArn(arn) {
-  const segments = arn.split(":");
-  if (segments.length < 6 || segments[0] !== "arn")
-    throw new Error("Malformed ARN");
+  const segments = arn.split(':');
+  if (segments.length < 6 || segments[0] !== 'arn')
+    throw new Error('Malformed ARN');
   const [
     ,
     //Skip "arn" literal
@@ -506,7 +506,7 @@ function parseArn(arn) {
     service,
     region,
     accountId,
-    resource: resource.join(":"),
+    resource: resource.join(':'),
   };
 }
 

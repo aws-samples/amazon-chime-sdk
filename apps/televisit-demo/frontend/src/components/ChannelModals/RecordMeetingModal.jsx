@@ -1,7 +1,7 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
 import {
   Modal,
@@ -12,10 +12,10 @@ import {
   Input,
   Label,
   RadioGroup,
-} from "amazon-chime-sdk-component-library-react";
+} from 'amazon-chime-sdk-component-library-react';
 
-import "./NewChannelModal.css";
-import { useAuthContext } from "../../providers/AuthProvider";
+import './NewChannelModal.css';
+import { useAuthContext } from '../../providers/AuthProvider';
 
 const StartRecordMeetingModal = ({ isStartOpen, onClose, startRecording }) => {
   const [mode, setMode] = useState(1);
@@ -39,11 +39,11 @@ const StartRecordMeetingModal = ({ isStartOpen, onClose, startRecording }) => {
               <div className="value">
                 <RadioGroup
                   options={[
-                    { value: "1", label: "Just Recording" },
-                    { value: "2", label: "Recording and Transcription" },
+                    { value: '1', label: 'Just Recording' },
+                    { value: '2', label: 'Recording and Transcription' },
                     {
-                      value: "3",
-                      label: "Recording, Transcription, and Comprehension",
+                      value: '3',
+                      label: 'Recording, Transcription, and Comprehension',
                     },
                   ]}
                   value={1}
@@ -70,8 +70,8 @@ const StartRecordMeetingModal = ({ isStartOpen, onClose, startRecording }) => {
 };
 
 const StopRecordMeetingModal = ({ isStopOpen, onClose, stopRecording }) => {
-  const [privacy, setPrivacy] = useState("PRIVATE");
-  const [mode, setMode] = useState("RESTRICTED");
+  const [privacy, setPrivacy] = useState('PRIVATE');
+  const [mode, setMode] = useState('RESTRICTED');
 
   const { member } = useAuthContext();
 

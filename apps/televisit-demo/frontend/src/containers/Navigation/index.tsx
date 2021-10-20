@@ -1,7 +1,7 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
 import {
   Navbar,
@@ -14,17 +14,17 @@ import {
   Information,
   Camera,
   Pause,
-} from "amazon-chime-sdk-component-library-react";
-import { useNavigation } from "../../providers/NavigationProvider";
-import { useAppState } from "../../providers/AppStateProvider";
+} from 'amazon-chime-sdk-component-library-react';
+import { useNavigation } from '../../providers/NavigationProvider';
+import { useAppState } from '../../providers/AppStateProvider';
 import {
   StartRecordMeetingModal,
   StopRecordMeetingModal,
-} from "../../components/ChannelModals/RecordMeetingModal";
+} from '../../components/ChannelModals/RecordMeetingModal';
 import {
   startMeetingRecording,
   stopMeetingRecording,
-} from "../../api/ChimeAPI";
+} from '../../api/ChimeAPI';
 
 const Navigation = () => {
   const {
@@ -36,7 +36,7 @@ const Navigation = () => {
   } = useNavigation();
   const { meetingId, theme, toggleTheme } = useAppState();
   const [isRecording, setIsRecording] = useState(false);
-  const [mediaCapturePipeline, setMediaCapturePipeline] = useState("");
+  const [mediaCapturePipeline, setMediaCapturePipeline] = useState('');
   const [showStartRecording, setShowStartRecording] = useState(false);
   const [showStopRecording, setShowStopRecording] = useState(false);
 
@@ -71,7 +71,7 @@ const Navigation = () => {
       <NavbarItem
         icon={<Eye />}
         onClick={toggleTheme}
-        label={theme === "light" ? "Dark mode" : "Light mode"}
+        label={theme === 'light' ? 'Dark mode' : 'Light mode'}
       />
       <NavbarItem
         icon={<Document />}

@@ -13,10 +13,11 @@ To deploy the serverless demo you will need:
 
 And install aws and sam command line tools:
 
-* [Install the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv1.html)
-* [Install the AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
+- [Install the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv1.html)
+- [Install the AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
 
-* Install [jq](https://stedolan.github.io/jq/), like:
+- Install [jq](https://stedolan.github.io/jq/), like:
+
 ```bash
 npm install -g jq
 ```
@@ -25,7 +26,7 @@ npm install -g jq
 
 You can run deploy.sh script in this folder to automatically deploy both frontend and backend stacks.
 
-Alternatively, you can deploy backend and frontend manually: first go to backend folder and follow the README to deploy the CFN stack using AWS SAM CLI; then go to frontend folder and follow the READMD to build and deploy frontend stack. 
+Alternatively, you can deploy backend and frontend manually: first go to backend folder and follow the README to deploy the CFN stack using AWS SAM CLI; then go to frontend folder and follow the READMD to build and deploy frontend stack.
 
 ### Explore the televisit demo
 
@@ -48,4 +49,3 @@ Alternatively, you can deploy backend and frontend manually: first go to backend
 <p align="center">
   <img src="images/meeting.png" width="500">
 </p>
-

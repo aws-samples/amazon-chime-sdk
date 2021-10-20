@@ -2,11 +2,11 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useContext, useState, createContext, useEffect } from "react";
+import React, { useContext, useState, createContext, useEffect } from 'react';
 
-import appConfig from "../Config";
-import { IdentityService } from "../services/IdentityService";
-import { useAuthContext } from "./AuthProvider";
+import appConfig from '../Config';
+import { IdentityService } from '../services/IdentityService';
+import { useAuthContext } from './AuthProvider';
 
 const IdentityServiceContext = createContext(null);
 
@@ -33,7 +33,7 @@ export function useIdentityService() {
 
   if (context === undefined) {
     throw new Error(
-      "useIdentityService must be used within a IdentityServiceContext"
+      'useIdentityService must be used within a IdentityServiceContext'
     );
   }
 

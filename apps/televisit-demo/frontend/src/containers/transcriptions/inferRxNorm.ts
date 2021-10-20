@@ -1,5 +1,5 @@
-import { ComprehendMedical } from "aws-sdk";
-import { Entity } from "aws-sdk/clients/comprehendmedical";
+import { ComprehendMedical } from 'aws-sdk';
+import { Entity } from 'aws-sdk/clients/comprehendmedical';
 
 const detectEntities = async (
   text: string | undefined,
@@ -7,7 +7,7 @@ const detectEntities = async (
 ): Promise<Entity[]> => {
   const comprehendMedical = new ComprehendMedical(clientParams);
 
-  if (text === undefined || text.replace(/\s/g, "") === "") return [];
+  if (text === undefined || text.replace(/\s/g, '') === '') return [];
 
   const resp = await comprehendMedical.inferRxNorm({ Text: text }).promise();
   return resp.Entities;

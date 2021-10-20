@@ -1,4 +1,4 @@
-const AWS = require("aws-sdk");
+const AWS = require('aws-sdk');
 AWS.config.update({ region: process.env.AWS_REGION });
 const translate = new AWS.Translate();
 const comprehend = new AWS.Comprehend();
@@ -8,9 +8,9 @@ const {
   sendChannelMessage,
   updateChannelMessage,
   listChannelMessages,
-} = require("./ChimeMessagingAPI");
+} = require('./ChimeMessagingAPI');
 
-console.log("Loading function");
+console.log('Loading function');
 
 const { LEX_BOT_NAME, LEX_BOT_ALIAS } = process.env;
 
@@ -19,22 +19,22 @@ exports.handler = function (event, context) {
     event.Records.forEach(async (record) => {
       // If event.Records has many items, e.g. 100 times, this Lambda will make 100 sendChannelMessage API calls simultaneously, so please consider throttling exceptions.
       // Kinesis data is base64 encoded so decode here
-      const payload = Buffer.from(record.kinesis.data, "base64").toString();
-      console.log("Decoded payload:", payload);
+      const payload = Buffer.from(record.kinesis.data, 'base64').toString();
+      console.log('Decoded payload:', payload);
       //Parsing payload as a JSON message payload
       const jsonMessage = JSON.parse(payload);
       const senderId = jsonMessage.Payload.Sender.Arn.substring(
-        jsonMessage.Payload.Sender.Arn.lastIndexOf("/") + 1
+        jsonMessage.Payload.Sender.Arn.lastIndexOf('/') + 1
       );
       const channelArn = jsonMessage.Payload.ChannelArn;
       const messageId = jsonMessage.Payload.MessageId;
-      console.log("Message content:", jsonMessage.Payload.Content);
+      console.log('Message content:', jsonMessage.Payload.Content);
       // chatbot
       const userinput = jsonMessage.Payload.Content;
       if (
         jsonMessage.Payload.Redacted === true ||
-        jsonMessage.EventType === "UPDATE_CHANNEL_MESSAGE" ||
-        jsonMessage.Payload.Sender.Name === "ModeratorBot"
+        jsonMessage.EventType === 'UPDATE_CHANNEL_MESSAGE' ||
+        jsonMessage.Payload.Sender.Name === 'ModeratorBot'
       ) {
         return;
       }
@@ -44,37 +44,37 @@ exports.handler = function (event, context) {
       const detectedLang = await comprehend
         .detectDominantLanguage(comprehendParams)
         .promise();
-      console.log("detectedLang: " + detectedLang.Languages[0].LanguageCode);
+      console.log('detectedLang: ' + detectedLang.Languages[0].LanguageCode);
 
       let translatedText;
-      if (detectedLang.Languages[0].LanguageCode !== "en") {
+      if (detectedLang.Languages[0].LanguageCode !== 'en') {
         const translateParams = {
           SourceLanguageCode: detectedLang.Languages[0].LanguageCode,
-          TargetLanguageCode: "en",
+          TargetLanguageCode: 'en',
           Text: userinput,
         };
         translatedText = await translate
           .translateText(translateParams)
           .promise();
-        console.log("TranslatedText: " + translatedText.TranslatedText);
+        console.log('TranslatedText: ' + translatedText.TranslatedText);
         await updateChannelMessage(
           channelArn,
           messageId,
-          userinput + " " + translatedText.TranslatedText,
+          userinput + ' ' + translatedText.TranslatedText,
           jsonMessage.Payload.Metadata,
           senderId
         );
       }
 
       if (
-        senderId !== "ModeratorBot" &&
-        (userinput.toLowerCase() === "yes" || userinput.toLowerCase() === "no")
+        senderId !== 'ModeratorBot' &&
+        (userinput.toLowerCase() === 'yes' || userinput.toLowerCase() === 'no')
       ) {
         const messages = await listChannelMessages(channelArn, senderId);
         await updateChannelMessage(
           channelArn,
           messageId,
-          messages.Messages.slice(-2)[0].Content + ": " + userinput,
+          messages.Messages.slice(-2)[0].Content + ': ' + userinput,
           jsonMessage.Payload.Metadata,
           senderId
         );
@@ -89,32 +89,32 @@ exports.handler = function (event, context) {
         inputText: botinput,
         userId: senderId,
         sessionAttributes: {
-          userPreferredLocale: "en",
+          userPreferredLocale: 'en',
         },
       };
       const lexResponse = await lex.postText(params).promise();
-      console.log("Lex response: " + JSON.stringify(lexResponse));
+      console.log('Lex response: ' + JSON.stringify(lexResponse));
 
-      if (detectedLang.Languages[0].LanguageCode !== "en") {
+      if (detectedLang.Languages[0].LanguageCode !== 'en') {
         const translateParams = {
-          SourceLanguageCode: "en",
+          SourceLanguageCode: 'en',
           TargetLanguageCode: detectedLang.Languages[0].LanguageCode,
           Text: lexResponse.message,
         };
         translatedText = await translate
           .translateText(translateParams)
           .promise();
-        console.log("TranslatedText: " + translatedText.TranslatedText);
+        console.log('TranslatedText: ' + translatedText.TranslatedText);
         await sendChannelMessage(
           channelArn,
-          lexResponse.message + " " + translatedText.TranslatedText,
-          "ModeratorBot"
+          lexResponse.message + ' ' + translatedText.TranslatedText,
+          'ModeratorBot'
         );
       } else {
         await sendChannelMessage(
           channelArn,
           lexResponse.message,
-          "ModeratorBot"
+          'ModeratorBot'
         );
       }
     });

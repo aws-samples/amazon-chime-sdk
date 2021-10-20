@@ -1,5 +1,5 @@
-const fs = require("fs-extra");
-const path = require("path");
+const fs = require('fs-extra');
+const path = require('path');
 
 console.log(
   `Checking to see if the installed Amazon Chime JS SDK verison is compatible with the current demo.`
@@ -9,15 +9,15 @@ let componentsSdkVersion = JSON.parse(
   fs.readFileSync(
     path.resolve(
       __dirname,
-      "node_modules/amazon-chime-sdk-component-library-react/package.json"
+      'node_modules/amazon-chime-sdk-component-library-react/package.json'
     ),
-    "utf-8"
+    'utf-8'
   )
-).peerDependencies["amazon-chime-sdk-js"].toString();
+).peerDependencies['amazon-chime-sdk-js'].toString();
 let sdkVersion = JSON.parse(
   fs.readFileSync(
-    path.resolve(__dirname, "node_modules/amazon-chime-sdk-js/package.json"),
-    "utf-8"
+    path.resolve(__dirname, 'node_modules/amazon-chime-sdk-js/package.json'),
+    'utf-8'
   )
 ).version.toString();
 console.log(
@@ -30,13 +30,13 @@ const componentsSdkVersions = componentsSdkVersion.substring(1).split(`.`);
 for (var i = 0; i < sdkVersions.length; i++) {
   if (sdkVersions[i] < componentsSdkVersions[i]) {
     console.error(
-      "The SDK version installed in the components library meeting demo is not supported."
+      'The SDK version installed in the components library meeting demo is not supported.'
     );
     process.exit(1);
   }
 }
 
 console.log(
-  "OK: Installed SDK Version is supported on the components meeting demo."
+  'OK: Installed SDK Version is supported on the components meeting demo.'
 );
 process.exit(0);

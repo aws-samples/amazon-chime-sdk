@@ -1,6 +1,6 @@
 // Lambda that validates user tokens and returns AWS Creds for access to chime, scoped to that user
-const AWS = require("aws-sdk");
-const uuidv4 = require("uuid");
+const AWS = require('aws-sdk');
+const uuidv4 = require('uuid');
 AWS.config.update({ region: process.env.AWS_REGION });
 const chime = new AWS.Chime({ region: process.env.AWS_REGION });
 const sts = new AWS.STS({ region: process.env.AWS_REGION });
@@ -29,10 +29,10 @@ async function assumeRole(user) {
     .assumeRole({
       RoleArn: ANON_USER_ROLE_ARN, // Give anonymous permissions
       RoleSessionName: `chime_${user.uuid}`,
-      DurationSeconds: "3600", // 1 hour, often want to set this to the duration of access token from IdP
+      DurationSeconds: '3600', // 1 hour, often want to set this to the duration of access token from IdP
       Tags: [
         {
-          Key: "UserUUID", // parameterizes IAM Role with users UUID
+          Key: 'UserUUID', // parameterizes IAM Role with users UUID
           Value: user.uuid,
         },
       ],
@@ -68,10 +68,10 @@ exports.handler = async (event) => {
       return {
         statusCode: 200,
         headers: {
-          "Access-Control-Allow-Headers": "Authorization",
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "POST, OPTIONS",
-          "Access-Control-Allow-Credentials": "true",
+          'Access-Control-Allow-Headers': 'Authorization',
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'POST, OPTIONS',
+          'Access-Control-Allow-Credentials': 'true',
         },
         body: JSON.stringify({
           ChimeAppInstanceUserArn: userArn,
@@ -89,11 +89,11 @@ exports.handler = async (event) => {
   return {
     statusCode: 401,
     headers: {
-      "Access-Control-Allow-Headers": "Authorization",
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "POST, OPTIONS",
-      "Access-Control-Allow-Credentials": "true",
+      'Access-Control-Allow-Headers': 'Authorization',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Credentials': 'true',
     },
-    body: "Not Authorized",
+    body: 'Not Authorized',
   };
 };

@@ -1,7 +1,7 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import Storage from "@aws-amplify/storage";
+import Storage from '@aws-amplify/storage';
 
 /**
  * @class AttachmentService
@@ -12,12 +12,12 @@ class AttachmentService {
   /**
    * userLevel : private|protected|public
    */
-  static userLevel = "protected";
+  static userLevel = 'protected';
 
   /**
    * userUploadDir : Default prefix of upload directory
    */
-  static userUploadDir = "uploadfiles";
+  static userUploadDir = 'uploadfiles';
 
   /**
    * Upload file object to AWS S3 bucket using 'userLevel' defined within this class.

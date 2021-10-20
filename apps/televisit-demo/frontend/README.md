@@ -15,6 +15,7 @@ This is the frontend React application that can be integrated with backend API G
 
 1. Ensure your workspace has node.js installed. Type `node -v` in your terminal to confirm, and it should return a version number.
 2. Fill up the parameter values in the configuration file src/Config.js using the backend stack outputs:
+
 ```
 const appConfig = {
   apiGatewayInvokeUrl:'https://<API Gateway ID>.execute-api.us-east-1.amazonaws.com/Stage/',
@@ -28,6 +29,7 @@ const appConfig = {
 export default appConfig;
 
 ```
+
 3. Run `npm install` to install the required dependencies.
 4. In the frontend directory run `npm start` to start the client
 5. Open https://0.0.0.0:9000/ in your browser

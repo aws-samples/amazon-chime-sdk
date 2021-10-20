@@ -1,12 +1,12 @@
-import React, { useRef, useEffect, useState } from "react";
-import TranscriptPane from "./TranscriptPane";
-import AnalysisPane from "./AnalysisPane";
-import useComprehension from "./useComprehension";
-import generateSOAPSummary from "./soapSummary";
-import SOAPReviewPane from "./SOAPReviewPane";
+import React, { useRef, useEffect, useState } from 'react';
+import TranscriptPane from './TranscriptPane';
+import AnalysisPane from './AnalysisPane';
+import useComprehension from './useComprehension';
+import generateSOAPSummary from './soapSummary';
+import SOAPReviewPane from './SOAPReviewPane';
 
-import { Heading, Grid, Cell } from "amazon-chime-sdk-component-library-react";
-import { useTheme } from "styled-components";
+import { Heading, Grid, Cell } from 'amazon-chime-sdk-component-library-react';
+import { useTheme } from 'styled-components';
 
 export default function TranscriptAnalysisPane({
   transcriptChunks,
@@ -71,7 +71,7 @@ export default function TranscriptAnalysisPane({
         Text: val,
         Traits: [],
         Attributes: [],
-        Type: "",
+        Type: '',
         isCustomEntity: true,
       };
       return [[newCustomEntity], ...prevEntities];
@@ -103,21 +103,21 @@ export default function TranscriptAnalysisPane({
       gridTemplateRows="1fr 1fr 1fr"
       gridTemplateColumns="1fr 1fr"
       gridGap="5px"
-      style={{ width: "40vw", height: "100vh" }}
+      style={{ width: '40vw', height: '100vh' }}
       gridTemplateAreas='"analysis analysis" "soap transcription" "soap transcription"'
     >
       <Cell
         gridArea="analysis"
-        style={{ overflowX: "auto", overflowY: "auto" }}
+        style={{ overflowX: 'auto', overflowY: 'auto' }}
       >
         <Heading
           level={6}
           style={{
             backgroundColor: currentTheme.colors.greys.grey80,
-            height: "2rem",
-            textAlign: "center",
-            fontWeight: "bold",
-            color: "white",
+            height: '2rem',
+            textAlign: 'center',
+            fontWeight: 'bold',
+            color: 'white',
           }}
           className="app-heading"
         >
@@ -132,16 +132,16 @@ export default function TranscriptAnalysisPane({
       </Cell>
       <Cell
         gridArea="transcription"
-        style={{ overflowX: "auto", overflowY: "auto" }}
+        style={{ overflowX: 'auto', overflowY: 'auto' }}
       >
         <Heading
           level={6}
           style={{
             backgroundColor: currentTheme.colors.greys.grey80,
-            height: "2rem",
-            textAlign: "center",
-            fontWeight: "bold",
-            color: "white",
+            height: '2rem',
+            textAlign: 'center',
+            fontWeight: 'bold',
+            color: 'white',
           }}
           className="app-heading"
         >
@@ -155,15 +155,15 @@ export default function TranscriptAnalysisPane({
           enableEditing={enableEditing}
         />
       </Cell>
-      <Cell gridArea="soap" style={{ overflowX: "auto", overflowY: "auto" }}>
+      <Cell gridArea="soap" style={{ overflowX: 'auto', overflowY: 'auto' }}>
         <Heading
           level={6}
           style={{
             backgroundColor: currentTheme.colors.greys.grey80,
-            height: "2rem",
-            textAlign: "center",
-            fontWeight: "bold",
-            color: "white",
+            height: '2rem',
+            textAlign: 'center',
+            fontWeight: 'bold',
+            color: 'white',
           }}
           className="app-heading"
         >

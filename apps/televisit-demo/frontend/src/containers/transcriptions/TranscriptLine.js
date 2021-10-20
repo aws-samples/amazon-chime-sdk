@@ -1,14 +1,14 @@
-import React, { useMemo } from "react";
-import s from "./TranscriptLine.module.css";
-import cs from "clsx";
+import React, { useMemo } from 'react';
+import s from './TranscriptLine.module.css';
+import cs from 'clsx';
 
-import classMap from "./transcriptHighlights";
+import classMap from './transcriptHighlights';
 import {
   Editable,
   EditablePreview,
   EditableInput,
   Box,
-} from "@chakra-ui/react";
+} from '@chakra-ui/react';
 
 // Reduces results down to a single set of non-overlapping ranges, each with a list of applicable results
 function combineSegments(results) {

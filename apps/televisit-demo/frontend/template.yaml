@@ -1,4 +1,4 @@
-AWSTemplateFormatVersion: "2010-09-09"
+AWSTemplateFormatVersion: '2010-09-09'
 
 Description: >
   "Front End Deployment for Chime SDK TeleVisit Demo"
@@ -13,7 +13,7 @@ Parameters:
 
 Resources:
   createWebSiteS3Bucket:
-    Type: "AWS::S3::Bucket"
+    Type: 'AWS::S3::Bucket'
     Properties:
       BucketName: !Ref S3BucketNameForWebSite
       PublicAccessBlockConfiguration:
@@ -39,33 +39,33 @@ Resources:
       PolicyDocument:
         Statement:
           - Action:
-              - "s3:GetObject"
-            Effect: "Allow"
+              - 's3:GetObject'
+            Effect: 'Allow'
             Principal:
               CanonicalUser:
                 Fn::GetAtt:
                   [CloudFrontDistributionAccessIdentity, S3CanonicalUserId]
             Resource: !Sub ${createWebSiteS3Bucket.Arn}/*
-          - Action: "s3:*"
+          - Action: 's3:*'
             Resource: !Sub ${createWebSiteS3Bucket.Arn}/*
             Effect: Deny
             Condition:
               Bool:
-                "aws:SecureTransport": false
-            Principal: "*"
-          - Action: "s3:*"
+                'aws:SecureTransport': false
+            Principal: '*'
+          - Action: 's3:*'
             Resource: !Sub ${createWebSiteS3Bucket.Arn}/*
             Effect: Deny
             Condition:
               Bool:
-                "aws:SecureTransport": false
-            Principal: "*"
+                'aws:SecureTransport': false
+            Principal: '*'
 
   CloudFrontDistributionAccessIdentity:
     Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
     Properties:
       CloudFrontOriginAccessIdentityConfig:
-        Comment: "CloudFront OAI for Static DICOMWeb Generator"
+        Comment: 'CloudFront OAI for Static DICOMWeb Generator'
 
   CloudFrontDistribution:
     Type: AWS::CloudFront::Distribution
@@ -75,14 +75,14 @@ Resources:
       DistributionConfig:
         Origins:
           - DomainName: !Join
-              - ""
+              - ''
               - - !Ref S3BucketNameForWebSite
                 - .s3.amazonaws.com
             Id: !Ref S3BucketNameForWebSite
             S3OriginConfig:
               OriginAccessIdentity: !Join
-                - ""
-                - - "origin-access-identity/cloudfront/"
+                - ''
+                - - 'origin-access-identity/cloudfront/'
                   - !Ref CloudFrontDistributionAccessIdentity
         Enabled: True
         Comment: CloudFront for Static DICOMWeb Generator
@@ -123,8 +123,8 @@ Outputs:
     Value: !Ref createWebSiteS3Bucket
   cloudfrontEndpoint:
     Value: !Join
-      - ""
-      - - "https://"
+      - ''
+      - - 'https://'
         - !GetAtt [CloudFrontDistribution, DomainName]
-        - "/chat.html"
+        - '/chat.html'
     Description: Endpoint for Cloudfront distribution

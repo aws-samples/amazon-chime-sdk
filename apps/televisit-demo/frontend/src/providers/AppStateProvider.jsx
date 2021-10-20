@@ -1,7 +1,7 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useContext, useState } from "react";
+import React, { useContext, useState } from 'react';
 const AppStateContext = React.createContext();
 
 export const AppStateProvider = ({ children }) => {
@@ -12,29 +12,29 @@ export const AppStateProvider = ({ children }) => {
 
   // Meeting ID
   const [meetingId, setMeeting] = useState(() => {
-    const storedMeetingId = localStorage.getItem("meetingId");
-    return storedMeetingId || "";
+    const storedMeetingId = localStorage.getItem('meetingId');
+    return storedMeetingId || '';
   });
 
   // UserName
   const [localUserName, setLocalName] = useState(() => {
-    const storedUserName = localStorage.getItem("localUserName");
-    return storedUserName || "";
+    const storedUserName = localStorage.getItem('localUserName');
+    return storedUserName || '';
   });
 
   // Theme
   const [theme, setTheme] = useState(() => {
-    const storedTheme = localStorage.getItem("theme");
-    return storedTheme || "light";
+    const storedTheme = localStorage.getItem('theme');
+    return storedTheme || 'light';
   });
 
   const toggleTheme = () => {
-    if (theme === "light") {
-      setTheme("dark");
-      localStorage.setItem("theme", "dark");
+    if (theme === 'light') {
+      setTheme('dark');
+      localStorage.setItem('theme', 'dark');
     } else {
-      setTheme("light");
-      localStorage.setItem("theme", "light");
+      setTheme('light');
+      localStorage.setItem('theme', 'light');
     }
   };
 
@@ -57,7 +57,7 @@ export function useAppState() {
   const state = useContext(AppStateContext);
 
   if (!state) {
-    throw new Error("useAppState must be used within AppStateProvider");
+    throw new Error('useAppState must be used within AppStateProvider');
   }
 
   return state;

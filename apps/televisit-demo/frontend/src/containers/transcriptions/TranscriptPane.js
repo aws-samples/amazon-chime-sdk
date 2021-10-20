@@ -1,18 +1,18 @@
-import React, { useRef, useEffect } from "react";
-import TranscriptLine from "./TranscriptLine";
-import InProgressTranscriptLine from "./InProgressTranscriptLine";
+import React, { useRef, useEffect } from 'react';
+import TranscriptLine from './TranscriptLine';
+import InProgressTranscriptLine from './InProgressTranscriptLine';
 
-import cs from "clsx";
-import s from "./TranscriptPane.module.css";
+import cs from 'clsx';
+import s from './TranscriptPane.module.css';
 
-import { useTheme } from "styled-components";
+import { useTheme } from 'styled-components';
 
 const CATEGORIES = [
-  "PROTECTED_HEALTH_INFORMATION",
-  "MEDICAL_CONDITION",
-  "ANATOMY",
-  "MEDICATION",
-  "TEST_TREATMENT_PROCEDURE",
+  'PROTECTED_HEALTH_INFORMATION',
+  'MEDICAL_CONDITION',
+  'ANATOMY',
+  'MEDICATION',
+  'TEST_TREATMENT_PROCEDURE',
 ];
 
 export default function TranscriptPane({
@@ -54,8 +54,8 @@ export default function TranscriptPane({
   return (
     <div
       style={{
-        backgroundColor: "white",
-        height: "80%",
+        backgroundColor: 'white',
+        height: '80%',
         borderRight: `solid 1px ${currentTheme.colors.greys.grey30}`,
       }}
     >

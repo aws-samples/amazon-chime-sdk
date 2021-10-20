@@ -1,9 +1,9 @@
-const { v4: uuidv4 } = require("uuid");
-var AWS = require("aws-sdk");
-const chime = new AWS.Chime({ region: "us-east-1" });
+const { v4: uuidv4 } = require('uuid');
+var AWS = require('aws-sdk');
+const chime = new AWS.Chime({ region: 'us-east-1' });
 
 exports.handler = async (event) => {
-  console.log("trigger event: " + JSON.stringify(event));
+  console.log('trigger event: ' + JSON.stringify(event));
   const meetingId = event.queryStringParameters.meetingId;
   try {
     const response = await chime
@@ -11,10 +11,10 @@ exports.handler = async (event) => {
         MeetingId: meetingId,
         TranscriptionConfiguration: {
           EngineTranscribeMedicalSettings: {
-            Region: "us-east-1",
-            LanguageCode: "en-US",
-            Specialty: "PRIMARYCARE",
-            Type: "CONVERSATION",
+            Region: 'us-east-1',
+            LanguageCode: 'en-US',
+            Specialty: 'PRIMARYCARE',
+            Type: 'CONVERSATION',
           },
         },
       })
@@ -25,12 +25,12 @@ exports.handler = async (event) => {
     return {
       statusCode: 200,
       headers: {
-        "Access-Control-Allow-Headers": "Authorization",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "POST, OPTIONS",
-        "Access-Control-Allow-Credentials": "true",
+        'Access-Control-Allow-Headers': 'Authorization',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Credentials': 'true',
       },
-      body: JSON.stringify(response, "", 2),
+      body: JSON.stringify(response, '', 2),
     };
   } catch (err) {
     console.log(err);

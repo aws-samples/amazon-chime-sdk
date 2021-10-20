@@ -1,22 +1,22 @@
-const AWS = require("aws-sdk");
-const uuidv4 = require("uuid");
-const chime = new AWS.Chime({ region: "us-east-1" });
+const AWS = require('aws-sdk');
+const uuidv4 = require('uuid');
+const chime = new AWS.Chime({ region: 'us-east-1' });
 const APP_INSTANCE_ID = process.env.ChimeAppInstanceArn;
-const serverAdminUserId = "ModeratorBot";
+const serverAdminUserId = 'ModeratorBot';
 const serverAdminArn = `${APP_INSTANCE_ID}/user/${serverAdminUserId}`;
-const appInstanceUserArnHeader = "x-amz-chime-bearer";
+const appInstanceUserArnHeader = 'x-amz-chime-bearer';
 
 exports.handler = async (event) => {
   const { userId, channel, name, meeting } = event.queryStringParameters;
-  const region = "us-east-1";
-  console.info("Validating channel");
+  const region = 'us-east-1';
+  console.info('Validating channel');
   const describeChannelParams = {
     ChannelArn: channel,
   };
   const describeChanneRequest = await chime.describeChannel(
     describeChannelParams
   );
-  describeChanneRequest.on("build", function () {
+  describeChanneRequest.on('build', function () {
     describeChanneRequest.httpRequest.headers[appInstanceUserArnHeader] =
       serverAdminArn;
   });
@@ -25,22 +25,22 @@ exports.handler = async (event) => {
     return {
       statusCode: 404,
       headers: {
-        "Access-Control-Allow-Headers": "Authorization",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "POST, OPTIONS",
-        "Access-Control-Allow-Credentials": "true",
+        'Access-Control-Allow-Headers': 'Authorization',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Credentials': 'true',
       },
-      body: "Meeting channel does not exist",
+      body: 'Meeting channel does not exist',
     };
   }
-  console.info("Validating membership");
+  console.info('Validating membership');
   const describeChannelMembershipParams = {
     ChannelArn: channel,
     MemberArn: `${APP_INSTANCE_ID}/user/${userId}`,
   };
   const describeChannelMembershipRequest =
     await chime.describeChannelMembership(describeChannelMembershipParams);
-  describeChannelMembershipRequest.on("build", function () {
+  describeChannelMembershipRequest.on('build', function () {
     describeChannelMembershipRequest.httpRequest.headers[
       appInstanceUserArnHeader
     ] = serverAdminArn;
@@ -51,16 +51,16 @@ exports.handler = async (event) => {
     return {
       statusCode: 403,
       headers: {
-        "Access-Control-Allow-Headers": "Authorization",
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "POST, OPTIONS",
-        "Access-Control-Allow-Credentials": "true",
+        'Access-Control-Allow-Headers': 'Authorization',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Credentials': 'true',
       },
-      body: "User is not a member of meeting channel",
+      body: 'User is not a member of meeting channel',
     };
   }
   const meetingInfo = JSON.parse(meeting);
-  console.info("Adding new attendee");
+  console.info('Adding new attendee');
   const attendeeInfo = await chime
     .createAttendee({
       MeetingId: meetingInfo.MeetingId,
@@ -76,11 +76,11 @@ exports.handler = async (event) => {
   return {
     statusCode: 200,
     headers: {
-      "Access-Control-Allow-Headers": "Authorization",
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "POST, OPTIONS",
-      "Access-Control-Allow-Credentials": "true",
+      'Access-Control-Allow-Headers': 'Authorization',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Credentials': 'true',
     },
-    body: JSON.stringify(joinInfo, "", 2),
+    body: JSON.stringify(joinInfo, '', 2),
   };
 };

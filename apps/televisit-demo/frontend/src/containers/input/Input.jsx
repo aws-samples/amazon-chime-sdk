@@ -3,7 +3,7 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Input as InputComponent,
   Attachment,
@@ -11,21 +11,21 @@ import {
   useNotificationDispatch,
   Remove,
   Label,
-} from "amazon-chime-sdk-component-library-react";
-import { sendChannelMessage } from "../../api/ChimeAPI";
-import formatBytes from "../../utilities/formatBytes";
-import "./Input.css";
-import AttachmentService from "../../services/AttachmentService";
+} from 'amazon-chime-sdk-component-library-react';
+import { sendChannelMessage } from '../../api/ChimeAPI';
+import formatBytes from '../../utilities/formatBytes';
+import './Input.css';
+import AttachmentService from '../../services/AttachmentService';
 
 const uploadObjDefaults = {
-  name: "",
-  file: "",
-  type: "",
+  name: '',
+  file: '',
+  type: '',
   response: null,
-  key: "",
+  key: '',
 };
 const Input = ({ activeChannelArn, member, hasMembership }) => {
-  const [text, setText] = useState("");
+  const [text, setText] = useState('');
   const inputRef = useRef();
   const uploadRef = useRef();
   const [uploadObj, setUploadObj] = useState(uploadObjDefaults);
@@ -45,7 +45,7 @@ const Input = ({ activeChannelArn, member, hasMembership }) => {
   };
 
   const resetState = () => {
-    setText("");
+    setText('');
   };
 
   useEffect(() => {
@@ -86,14 +86,14 @@ const Input = ({ activeChannelArn, member, hasMembership }) => {
         });
         await sendChannelMessage(
           activeChannelArn,
-          text || " ",
-          "PERSISTENT",
+          text || ' ',
+          'PERSISTENT',
           member,
           options
         );
         // Cleanup upload refs
         setUploadObj(uploadObjDefaults);
-        uploadRef.current.value = "";
+        uploadRef.current.value = '';
       } catch (err) {
         setUploadObj({
           response: `Can't upload file: ${err}`,
@@ -102,7 +102,7 @@ const Input = ({ activeChannelArn, member, hasMembership }) => {
         throw new Error(`Failed uploading... ${err}`);
       }
     } else {
-      await sendChannelMessage(activeChannelArn, text, "PERSISTENT", member);
+      await sendChannelMessage(activeChannelArn, text, 'PERSISTENT', member);
     }
     resetState();
   };
@@ -129,11 +129,11 @@ const Input = ({ activeChannelArn, member, hasMembership }) => {
           {uploadObj.file ? (
             <div className="attachment-preview">
               <Attachment
-                style={{ margin: "auto 0" }}
+                style={{ margin: 'auto 0' }}
                 width="1.5rem"
                 height="1.5rem"
               />
-              <Label style={{ margin: "auto 0" }}>{uploadObj?.name}</Label>
+              <Label style={{ margin: 'auto 0' }}>{uploadObj?.name}</Label>
               <IconButton icon={<Remove width="1.5rem" height="1.5rem" />} />
             </div>
           ) : null}
@@ -149,7 +149,7 @@ const Input = ({ activeChannelArn, member, hasMembership }) => {
         <input
           type="file"
           accept="file_extension|audio/*|video/*|image/*|media_type"
-          style={{ display: "none" }}
+          style={{ display: 'none' }}
           ref={uploadRef}
           onChange={(event) => {
             const file = event.currentTarget.files[0];
@@ -167,7 +167,7 @@ const Input = ({ activeChannelArn, member, hasMembership }) => {
                   message: `File (${file.name}) size (${formatBytes(
                     file.size
                   )}) Maximum supported file size is up to 5MB.`,
-                  severity: "error",
+                  severity: 'error',
                 },
               });
             }

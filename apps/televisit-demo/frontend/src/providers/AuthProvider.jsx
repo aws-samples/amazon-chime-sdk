@@ -3,19 +3,19 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import React, { createContext, useContext, useState, useEffect } from "react";
-import { Auth } from "@aws-amplify/auth";
-import { useNotificationDispatch } from "amazon-chime-sdk-component-library-react";
-import appConfig from "../Config";
-import AWS from "aws-sdk";
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { Auth } from '@aws-amplify/auth';
+import { useNotificationDispatch } from 'amazon-chime-sdk-component-library-react';
+import appConfig from '../Config';
+import AWS from 'aws-sdk';
 
 const AuthContext = createContext();
 const AuthProvider = ({ children }) => {
   const notificationDispatch = useNotificationDispatch();
   // Member
   const [member, setMember] = useState({
-    username: "",
-    userId: "",
+    username: '',
+    userId: '',
   });
   // Auth state
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -41,25 +41,25 @@ const AuthProvider = ({ children }) => {
         password,
         attributes: {
           // TODO: Utilize input field for email that way we can then have users self confirm after reg.
-          email: "email@me.com",
-          profile: "none",
+          email: 'email@me.com',
+          profile: 'none',
         },
       });
       notificationDispatch({
         type: 0,
         payload: {
           message:
-            "Your registration information has been set to your administrator. Contact them for additional instructions.",
-          severity: "success",
+            'Your registration information has been set to your administrator. Contact them for additional instructions.',
+          severity: 'success',
         },
       });
     } catch (error) {
-      console.log("error signing up:", error);
+      console.log('error signing up:', error);
       notificationDispatch({
         type: 0,
         payload: {
-          message: "Registration failed.",
-          severity: "error",
+          message: 'Registration failed.',
+          severity: 'error',
         },
       });
     }
@@ -90,7 +90,7 @@ const AuthProvider = ({ children }) => {
     Auth.currentUserInfo()
       .then((curUser) => {
         setMember({ username: curUser.username, userId: curUser.id });
-        if (curUser.attributes?.profile === "none") {
+        if (curUser.attributes?.profile === 'none') {
           updateUserAttributes(curUser.id);
           // Once we set attribute let's have user relogin to refresh SigninHookFn trigger.
           setIsAuthenticated(false);
@@ -99,8 +99,8 @@ const AuthProvider = ({ children }) => {
             type: 0,
             payload: {
               message:
-                "Your account is activated! Please sign in again to confirm.",
-              severity: "success",
+                'Your account is activated! Please sign in again to confirm.',
+              severity: 'success',
             },
           });
         } else {
@@ -122,8 +122,8 @@ const AuthProvider = ({ children }) => {
         notificationDispatch({
           type: 0,
           payload: {
-            message: "Your username and/or password is invalid!",
-            severity: "error",
+            message: 'Your username and/or password is invalid!',
+            severity: 'error',
           },
         });
       });
@@ -151,8 +151,8 @@ const AuthProvider = ({ children }) => {
   // Credential Exchange Service Code.  Set Access Token on Authorization header using Bearer type.
   const userExchangeTokenForAwsCreds = (accessToken) => {
     fetch(`${appConfig.apiGatewayInvokeUrl}creds`, {
-      method: "POST",
-      credentials: "include",
+      method: 'POST',
+      credentials: 'include',
       headers: new Headers({
         Authorization: `Bearer ${btoa(accessToken)}`,
       }),
@@ -164,8 +164,8 @@ const AuthProvider = ({ children }) => {
         notificationDispatch({
           type: 0,
           payload: {
-            message: "Your username and/or password is invalid!",
-            severity: "error",
+            message: 'Your username and/or password is invalid!',
+            severity: 'error',
           },
         });
       });
@@ -202,7 +202,7 @@ const useAuthContext = () => {
   const context = useContext(AuthContext);
 
   if (!context) {
-    throw new Error("useAuthContext must be used within AuthProvider");
+    throw new Error('useAuthContext must be used within AuthProvider');
   }
 
   return context;

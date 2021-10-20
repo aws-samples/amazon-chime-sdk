@@ -7,7 +7,7 @@
  * @param {[]} newdata New array data to be appended to original
  * @param {string} uniqueSelector attribute key to select unique elements.
  */
-const mergeArrayOfObjects = (original, newdata, uniqueSelector = "") => {
+const mergeArrayOfObjects = (original, newdata, uniqueSelector = '') => {
   newdata.forEach((dat) => {
     const foundIndex = original.findIndex(
       (ori) => ori[uniqueSelector] === dat[uniqueSelector]
