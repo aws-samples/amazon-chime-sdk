@@ -2,11 +2,7 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-<<<<<<< HEAD
 import React, { useState } from "react";
-=======
-import React, { useState } from 'react';
->>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
 
 import {
   Modal,
@@ -17,19 +13,11 @@ import {
   Input,
   RadioGroup,
   useNotificationDispatch,
-<<<<<<< HEAD
 } from "amazon-chime-sdk-component-library-react";
 
 import { updateChannel } from "../../api/ChimeAPI";
 
 import "./ChannelModals.css";
-=======
-} from 'amazon-chime-sdk-component-library-react';
-
-import { updateChannel } from '../../api/ChimeAPI';
-
-import './ChannelModals.css';
->>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
 
 export const EditChannelModal = ({ onClose, channel, userId }) => {
   const [newName, setNewName] = useState(channel.Name);
@@ -47,13 +35,8 @@ export const EditChannelModal = ({ onClose, channel, userId }) => {
       dispatch({
         type: 0,
         payload: {
-<<<<<<< HEAD
           message: "Successfully updated channel.",
           severity: "success",
-=======
-          message: 'Successfully updated channel.',
-          severity: 'success',
->>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
           autoClose: true,
         },
       });
@@ -61,13 +44,8 @@ export const EditChannelModal = ({ onClose, channel, userId }) => {
       dispatch({
         type: 0,
         payload: {
-<<<<<<< HEAD
           message: "Unable to update channel.",
           severity: "error",
-=======
-          message: 'Unable to update channel.',
-          severity: 'error',
->>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
         },
       });
     }
@@ -88,13 +66,8 @@ export const EditChannelModal = ({ onClose, channel, userId }) => {
           <div className="radio-buttons">
             <RadioGroup
               options={[
-<<<<<<< HEAD
                 { value: "RESTRICTED", label: "Restricted" },
                 { value: "UNRESTRICTED", label: "Unrestricted" },
-=======
-                { value: 'RESTRICTED', label: 'Restricted' },
-                { value: 'UNRESTRICTED', label: 'Unrestricted' },
->>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
               ]}
               value={newMode}
               onChange={(e) => setNewMode(e.target.value)}

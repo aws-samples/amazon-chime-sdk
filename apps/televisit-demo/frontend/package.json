@@ -5,12 +5,8 @@
   "scripts": {
     "lint": "eslint src --ext .js,.jsx --fix",
     "start": "webpack serve",
-<<<<<<< HEAD
     "build": "webpack build",
     "lint": "eslint --config eslintrc.json src test --ext .ts,.tsx,.js --fix"
-=======
-    "build": "webpack build"
->>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
   },
   "dependencies": {
     "@aws-amplify/auth": "^3.4.20",

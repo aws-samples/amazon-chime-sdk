@@ -2,17 +2,10 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-<<<<<<< HEAD
 import { Badge, formatDate } from "amazon-chime-sdk-component-library-react";
 import React from "react";
 
 import "./styles.css";
-=======
-import { Badge, formatDate } from 'amazon-chime-sdk-component-library-react';
-import React from 'react';
-
-import './styles.css';
->>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
 
 const insertDateHeaders = (messageItems) => {
   const items = [...messageItems];

@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React, { useRef, useEffect, useState } from "react";
 import TranscriptPane from "./TranscriptPane";
 import AnalysisPane from "./AnalysisPane";
@@ -33,45 +32,12 @@ export default function TranscriptAnalysisPane({
   }, [comprehendResults, comprehendCustomEntities]);
 
   function updateSOAPSummary(e) {
-=======
-import React, { useRef, useEffect, useState } from 'react';
-import TranscriptPane from './TranscriptPane';
-import AnalysisPane from './AnalysisPane';
-import useComprehension from './useComprehension';
-import generateSOAPSummary from './soapSummary';
-import SOAPReviewPane from './SOAPReviewPane';
-
-import {
-  Heading,
-  Grid,
-  Cell
-} from 'amazon-chime-sdk-component-library-react';
-import { useTheme } from 'styled-components';
-
-export default function TranscriptAnalysisPane ({
-  transcriptChunks,
-  partialTranscript,
-  inProgress,
-  enableEditing
-}) {
-  const currentTheme = useTheme();
-  const [comprehendResults, setComprehendResults] = useComprehension(transcriptChunks || []);
-  const [comprehendCustomEntities, setComprehendCustomEntities] = useState([]);
-  const [soapSummary, setSOAPSummary] = useState(() => generateSOAPSummary([].concat(...comprehendResults)));
-
-  useEffect(() => {
-    setSOAPSummary(generateSOAPSummary([].concat(...[...comprehendResults, ...comprehendCustomEntities])));
-  }, [comprehendResults, comprehendCustomEntities]);
-
-  function updateSOAPSummary (e) {
->>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
     setSOAPSummary(e.target.value);
   }
 
   const onComprehendResultDelete = (r) => {
     r.isCustomEntity
       ? setComprehendCustomEntities((prevEntities) =>
-<<<<<<< HEAD
           prevEntities.map((prevEntity) => {
             const index = prevEntity.findIndex((entity) => entity.id === r.id);
 
@@ -95,25 +61,6 @@ export default function TranscriptAnalysisPane ({
             ];
           })
         );
-=======
-        prevEntities.map((prevEntity) => {
-          const index = prevEntity.findIndex((entity) => entity.id === r.id);
-
-          if (index === -1) return prevEntity;
-
-          return [...prevEntity.slice(0, index), ...prevEntity.slice(index + 1)];
-        })
-      )
-      : setComprehendResults((prevResults) =>
-        prevResults.map((prevResult) => {
-          const index = prevResult.findIndex((result) => result.id === r.id);
-
-          if (index === -1) return prevResult;
-
-          return [...prevResult.slice(0, index), ...prevResult.slice(index + 1)];
-        })
-      );
->>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
   };
 
   const onComprehendResultAddition = (val, category) => {
@@ -124,13 +71,8 @@ export default function TranscriptAnalysisPane ({
         Text: val,
         Traits: [],
         Attributes: [],
-<<<<<<< HEAD
         Type: "",
         isCustomEntity: true,
-=======
-        Type: '',
-        isCustomEntity: true
->>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
       };
       return [[newCustomEntity], ...prevEntities];
     });
@@ -145,7 +87,6 @@ export default function TranscriptAnalysisPane ({
 
         const newEntity = {
           ...prevResult[index],
-<<<<<<< HEAD
           selectedConceptCode,
         };
         return [
@@ -153,11 +94,6 @@ export default function TranscriptAnalysisPane ({
           newEntity,
           ...prevResult.slice(index + 1),
         ];
-=======
-          selectedConceptCode
-        };
-        return [...prevResult.slice(0, index), newEntity, ...prevResult.slice(index + 1)];
->>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
       })
     );
   };
@@ -167,36 +103,21 @@ export default function TranscriptAnalysisPane ({
       gridTemplateRows="1fr 1fr 1fr"
       gridTemplateColumns="1fr 1fr"
       gridGap="5px"
-<<<<<<< HEAD
       style={{ width: "40vw", height: "100vh" }}
-=======
-      style={{ width: '40vw', height: '100vh' }}
->>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
       gridTemplateAreas='"analysis analysis" "soap transcription" "soap transcription"'
     >
       <Cell
         gridArea="analysis"
-<<<<<<< HEAD
         style={{ overflowX: "auto", overflowY: "auto" }}
-=======
-        style={{ overflowX: 'auto', overflowY: 'auto' }}
->>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
       >
         <Heading
           level={6}
           style={{
             backgroundColor: currentTheme.colors.greys.grey80,
-<<<<<<< HEAD
             height: "2rem",
             textAlign: "center",
             fontWeight: "bold",
             color: "white",
-=======
-            height: '2rem',
-            textAlign: 'center',
-            fontWeight: 'bold',
-            color: 'white'
->>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
           }}
           className="app-heading"
         >
@@ -211,27 +132,16 @@ export default function TranscriptAnalysisPane ({
       </Cell>
       <Cell
         gridArea="transcription"
-<<<<<<< HEAD
         style={{ overflowX: "auto", overflowY: "auto" }}
-=======
-        style={{ overflowX: 'auto', overflowY: 'auto' }}
->>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
       >
         <Heading
           level={6}
           style={{
             backgroundColor: currentTheme.colors.greys.grey80,
-<<<<<<< HEAD
             height: "2rem",
             textAlign: "center",
             fontWeight: "bold",
             color: "white",
-=======
-            height: '2rem',
-            textAlign: 'center',
-            fontWeight: 'bold',
-            color: 'white'
->>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
           }}
           className="app-heading"
         >
@@ -245,29 +155,15 @@ export default function TranscriptAnalysisPane ({
           enableEditing={enableEditing}
         />
       </Cell>
-<<<<<<< HEAD
       <Cell gridArea="soap" style={{ overflowX: "auto", overflowY: "auto" }}>
-=======
-      <Cell
-        gridArea="soap"
-        style={{ overflowX: 'auto', overflowY: 'auto' }}
-      >
->>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
         <Heading
           level={6}
           style={{
             backgroundColor: currentTheme.colors.greys.grey80,
-<<<<<<< HEAD
             height: "2rem",
             textAlign: "center",
             fontWeight: "bold",
             color: "white",
-=======
-            height: '2rem',
-            textAlign: 'center',
-            fontWeight: 'bold',
-            color: 'white'
->>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
           }}
           className="app-heading"
         >

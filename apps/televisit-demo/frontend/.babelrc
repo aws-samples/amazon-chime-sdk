@@ -1,5 +1,4 @@
 {
-<<<<<<< HEAD
   "presets": ["@babel/preset-env", "@babel/preset-react"],
   "plugins": [
     "@babel/plugin-transform-regenerator",
@@ -8,16 +7,3 @@
     "@babel/plugin-syntax-jsx"
   ]
 }
-=======
-    "presets": [
-      "@babel/preset-env",
-      "@babel/preset-react"
-    ],
-    "plugins": [
-      "@babel/plugin-transform-regenerator",
-      "@babel/plugin-transform-runtime",
-      "@babel/plugin-proposal-class-properties",
-      "@babel/plugin-syntax-jsx"
-    ]
-  }
->>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1

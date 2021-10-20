@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 // Human-readable names for all the various codenames we have
 export const displayNames = {
   MEDICAL_CONDITION: "Medical Condition",
@@ -36,46 +35,6 @@ export const displayNames = {
   PHONE_OR_FAX: "Phone/Fax",
   PROFESSION: "Profession",
   DATE: "Date",
-=======
-
-// Human-readable names for all the various codenames we have
-export const displayNames = {
-  MEDICAL_CONDITION: 'Medical Condition',
-  MEDICATION: 'Medication',
-  ANATOMY: 'Anatomy',
-  PROTECTED_HEALTH_INFORMATION: 'Protected Health Information (PHI)',
-  TEST_TREATMENT_PROCEDURE: 'Tests, Treatments, & Procedures',
-  SYSTEM_ORGAN_SITE: 'System/Organ/Site',
-  DIRECTION: 'Direction',
-  DIAGNOSIS: 'Diagnosis',
-  DX_NAME: 'Medical Condition',
-  ACUITY: 'Acuity',
-  NEGATION: 'Negation',
-  SIGN: 'Sign',
-  SYMPTOM: 'Symptom',
-  BRAND_NAME: 'Brand Name',
-  GENERIC_NAME: 'Generic Name',
-  DOSAGE: 'Dosage',
-  DURATION: 'Duration',
-  FORM: 'Form',
-  FREQUENCY: 'Frequency',
-  RATE: 'Rate',
-  ROUTE_OR_MODE: 'Route/Mode',
-  STRENGTH: 'Strength',
-  PROCEDURE_NAME: 'Procedure Name',
-  TEST_NAME: 'Test Name',
-  TREATMENT_NAME: 'Treatment Name',
-  TEST_VALUE: 'Test Value',
-  TEST_UNIT: 'Test Unit',
-  ADDRESS: 'Address',
-  AGE: 'Age',
-  EMAIL: 'Email',
-  ID: 'Id',
-  NAME: 'Name',
-  PHONE_OR_FAX: 'Phone/Fax',
-  PROFESSION: 'Profession',
-  DATE: 'Date'
->>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
 };
 
 export default displayNames;

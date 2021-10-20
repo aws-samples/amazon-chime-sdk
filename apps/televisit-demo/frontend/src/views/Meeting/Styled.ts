@@ -1,11 +1,7 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-<<<<<<< HEAD
 import styled from "styled-components";
-=======
-import styled from 'styled-components';
->>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
 
 interface Props {
   showNav: boolean;
@@ -107,11 +103,7 @@ export const StyledLayout = styled.main<Props>`
 
   @media screen and (max-width: 768px) {
     grid-template-columns: 1fr;
-<<<<<<< HEAD
     grid-template-areas: "content";
-=======
-    grid-template-areas: 'content';
->>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
 
     .nav {
       grid-area: unset;

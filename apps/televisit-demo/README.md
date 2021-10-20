@@ -23,5 +23,21 @@ npm install -g jq
 
 ### Run deployment script
 
-You can run deploy.sh script in this folder, or deploy backend and frontend separately following the README in those folders.
+You can run deploy.sh script in this folder to automatically deploy both frontend and backend stacks.
+
+Alternatively, you can deploy backend and frontend manually: first go to backend folder and follow the README to deploy the CFN stack using AWS SAM CLI; then go to frontend folder and follow the READMD to build and deploy frontend stack. 
+
+### Explore the televisit demo
+
+1. Register a new user
+![register](images/newregistration.png)
+
+2. Confirm user registration on AWS Cognito console
+![confirm](images/confirmuser.png)
+
+3. Create a new channel and interact with chatbot through Amazon Chime SDK chat
+![chatbot](images/chatbot.png)
+
+4. Start a new meeting and try live transcription and media capture functions
+![meeting](images/meeting.png)
 

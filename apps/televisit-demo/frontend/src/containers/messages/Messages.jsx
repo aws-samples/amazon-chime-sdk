@@ -3,11 +3,7 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-<<<<<<< HEAD
 import React, { useState, useEffect } from "react";
-=======
-import React, { useState, useEffect } from 'react';
->>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
 import {
   InfiniteList,
   PopOverItem,
@@ -21,20 +17,14 @@ import {
   EditableChatBubble,
   formatDate,
   formatTime,
-<<<<<<< HEAD
 } from "amazon-chime-sdk-component-library-react";
 import { AttachmentProcessor } from "./AttachmentProcessor";
-=======
-} from 'amazon-chime-sdk-component-library-react';
-import { AttachmentProcessor } from './AttachmentProcessor';
->>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
 
 import {
   listChannelMessages,
   createMemberArn,
   updateChannelMessage,
   redactChannelMessage,
-<<<<<<< HEAD
 } from "../../api/ChimeAPI";
 import insertDateHeaders from "../../utilities/insertDateHeaders";
 
@@ -43,13 +33,6 @@ import {
   useChatChannelState,
   useChatMessagingState,
 } from "../../providers/ChatMessagesProvider";
-=======
-} from '../../api/ChimeAPI';
-import insertDateHeaders from '../../utilities/insertDateHeaders';
-
-import './Messages.css';
-import { useChatChannelState, useChatMessagingState } from '../../providers/ChatMessagesProvider';
->>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
 
 const Messages = ({
   messages,
@@ -67,11 +50,7 @@ const Messages = ({
   const handleScrollTop = async () => {
     setIsLoading(true);
     if (!channelMessageTokenRef.current) {
-<<<<<<< HEAD
       console.log("No new messages");
-=======
-      console.log('No new messages');
->>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
       setIsLoading(false);
       return;
     }
@@ -90,21 +69,12 @@ const Messages = ({
   const [showDiscardModal, setShowDiscardModal] = useState(false);
   const [showRedactModal, setShowRedactModal] = useState(false);
 
-<<<<<<< HEAD
   const [editingMessageId, setEditingMessageId] = useState("");
   const [redactingMessageId, setRedactingMessageId] = useState("");
 
   const handleDiscardEdit = () => {
     setShowDiscardModal(false);
     setEditingMessageId("");
-=======
-  const [editingMessageId, setEditingMessageId] = useState('');
-  const [redactingMessageId, setRedactingMessageId] = useState('');
-
-  const handleDiscardEdit = () => {
-    setShowDiscardModal(false);
-    setEditingMessageId('');
->>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
   };
 
   const discardModal = (
@@ -139,11 +109,7 @@ const Messages = ({
   };
 
   const handleCloseRedactModal = () => {
-<<<<<<< HEAD
     setRedactingMessageId("");
-=======
-    setRedactingMessageId('');
->>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
     setShowRedactModal(false);
   };
 
@@ -177,11 +143,7 @@ const Messages = ({
       </ModalBody>
     </Modal>
   );
-<<<<<<< HEAD
 
-=======
-  
->>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
   const cancelEdit = (e) => {
     e.preventDefault();
     setShowDiscardModal(true);
@@ -196,19 +158,11 @@ const Messages = ({
       metadata,
       userId
     );
-<<<<<<< HEAD
     setEditingMessageId("");
   };
 
   const flattenedMessages = messages.map((m) => {
     const content = !m.Content || m.Redacted ? "(Deleted)" : m.Content;
-=======
-    setEditingMessageId('');
-  };
-
-  const flattenedMessages = messages.map((m) => {
-    const content = !m.Content || m.Redacted ? '(Deleted)' : m.Content;
->>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
     let editedNote;
     if (m.LastEditedTimestamp && !m.Redacted) {
       const time = formatTime(m.LastEditedTimestamp);
@@ -216,19 +170,11 @@ const Messages = ({
         m.LastEditedTimestamp,
         undefined,
         undefined,
-<<<<<<< HEAD
         "today",
         "yesterday"
       );
       editedNote = (
         <i style={{ fontStyle: "italic" }}>{` (edited ${date} at ${time})`}</i>
-=======
-        'today',
-        'yesterday'
-      );
-      editedNote = (
-        <i style={{ fontStyle: 'italic' }}>{` (edited ${date} at ${time})`}</i>
->>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
       );
     }
     return {
@@ -254,7 +200,6 @@ const Messages = ({
       let metadata = JSON.parse(m.Metadata);
       if (metadata.isMeetingInfo) {
         return m;
-<<<<<<< HEAD
       }
     }
 
@@ -262,15 +207,6 @@ const Messages = ({
       createMemberArn(userId) === m.senderId ? "outgoing" : "incoming";
     let actions = null;
     if (variant === "outgoing") {
-=======
-      };
-    }
- 
-    const variant =
-      createMemberArn(userId) === m.senderId ? 'outgoing' : 'incoming';
-    let actions = null;
-    if (variant === 'outgoing') {
->>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
       actions = [
         <PopOverItem
           key="1"
@@ -347,11 +283,7 @@ const Messages = ({
                 {m.editedNote}
               </div>
               {m.metadata && attachment(m.metadata) && (
-<<<<<<< HEAD
                 <div style={{ marginTop: "10px" }}>
-=======
-                <div style={{ marginTop: '10px' }}>
->>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
                   <AttachmentProcessor
                     senderId={m.senderId}
                     {...attachment(m.metadata)}
@@ -371,11 +303,7 @@ const Messages = ({
       {showRedactModal && redactModal}
       <div className="message-list-header">{channelName}</div>
       <InfiniteList
-<<<<<<< HEAD
         style={{ display: "flex", flexGrow: "1" }}
-=======
-        style={{ display: 'flex', flexGrow: '1' }}
->>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
         items={messageList}
         onLoad={handleScrollTop}
         isLoading={isLoading}
