@@ -13,6 +13,7 @@ import {
   EditChannelModal,
   BanModal,
   JoinMeetingModal,
+  ManageChannelFlowModal,
 } from '../../components/ChannelModals';
 
 const ModalManager = ({
@@ -22,6 +23,7 @@ const ModalManager = ({
   meetingInfo,
   userId,
   onAddMember,
+  onManageChannelFlow,
   handleChannelDeletion,
   handleJoinMeeting,
   handleMessageAll,
@@ -36,6 +38,7 @@ const ModalManager = ({
   banList,
   banUser,
   unbanUser,
+  activeChannelFlow,
 }) => {
   if (!modal) {
     return null;
@@ -77,6 +80,7 @@ const ModalManager = ({
           onClose={() => setModal('')}
           channel={activeChannel}
           moderators={activeChannelModerators}
+          channelFlow={activeChannelFlow}
         />
       );
     case 'LeaveChannel':
@@ -96,6 +100,16 @@ const ModalManager = ({
           moderators={activeChannelModerators}
         />
       );
+    case 'ManageChannelFlow':
+      return (
+        <ManageChannelFlowModal
+          onClose={() => setModal('')}
+          channel={activeChannel}
+          handlePickerChange={handlePickerChange}
+          onSubmit={onManageChannelFlow}
+          channelFlow={activeChannelFlow}
+        />
+      );  
     case 'EditChannel':
       return (
         <EditChannelModal

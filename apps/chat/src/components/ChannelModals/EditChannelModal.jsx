@@ -31,7 +31,7 @@ export const EditChannelModal = ({ onClose, channel, userId }) => {
   const onSubmit = (e) => {
     e.preventDefault();
     try {
-      updateChannel(channel.ChannelArn, newName, newMode, userId);
+      updateChannel(channel.ChannelArn, newName, newMode, channel.Metadata, userId);
       dispatch({
         type: 0,
         payload: {

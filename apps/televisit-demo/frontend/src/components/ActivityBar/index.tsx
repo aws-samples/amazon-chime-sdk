@@ -1,8 +1,13 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
+<<<<<<< HEAD
 import React from "react";
 import styled from "styled-components";
+=======
+import React from 'react';
+import styled from 'styled-components';
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
 
 const Track = styled.div`
   width: 100%;

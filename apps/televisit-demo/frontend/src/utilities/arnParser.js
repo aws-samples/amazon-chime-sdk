@@ -3,6 +3,7 @@ const arnParser = (arn) => {
   // SPDX-License-Identifier: Apache-2.0
 
   const arnMap = [
+<<<<<<< HEAD
     "arn",
     "aws",
     "service",
@@ -12,6 +13,17 @@ const arnParser = (arn) => {
     "relativeValue",
   ];
   return arn.split(":").reduce(function (aggregator, piece, index) {
+=======
+    'arn',
+    'aws',
+    'service',
+    'region',
+    'namespace',
+    'relativeId',
+    'relativeValue'
+  ];
+  return arn.split(':').reduce(function (aggregator, piece, index) {
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
     aggregator[arnMap[index]] = piece;
     return aggregator;
   }, {});

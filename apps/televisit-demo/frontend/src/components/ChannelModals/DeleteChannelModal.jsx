@@ -1,7 +1,11 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
+<<<<<<< HEAD
 import React from "react";
+=======
+import React from 'react';
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
 
 import {
   Modal,
@@ -9,7 +13,11 @@ import {
   ModalBody,
   ModalButtonGroup,
   ModalButton,
+<<<<<<< HEAD
 } from "amazon-chime-sdk-component-library-react";
+=======
+} from 'amazon-chime-sdk-component-library-react';
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
 
 export const DeleteChannelModal = ({
   onClose,

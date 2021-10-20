@@ -173,6 +173,15 @@ const Messages = ({
         <i style={{ fontStyle: 'italic' }}>{` (edited ${date} at ${time})`}</i>
       );
     }
+
+    const messageStatus = m.Status.Value == null ? 'SENT' : m.Status.Value;
+    let statusNote;
+    if (messageStatus !== 'SENT') {
+      statusNote = (
+        <i style={{ fontStyle: 'italic' }}>{`     (${messageStatus})`}</i>
+      );
+    }
+    
     return {
       content: content,
       editedNote: editedNote,
@@ -182,6 +191,8 @@ const Messages = ({
       senderName: m.Sender.Name,
       senderId: m.Sender.Arn,
       metadata: m.Metadata,
+      status: m.Status.Value,
+      statusNote: statusNote,
     };
   });
 
@@ -202,7 +213,8 @@ const Messages = ({
     const variant =
       createMemberArn(userId) === m.senderId ? 'outgoing' : 'incoming';
     let actions = null;
-    if (variant === 'outgoing') {
+    const messageStatus = m.status == null ? 'SENT' : m.status;
+    if (variant === 'outgoing' && messageStatus === 'SENT') {
       actions = [
         <PopOverItem
           key="1"
@@ -277,6 +289,7 @@ const Messages = ({
               <div>
                 {m.content}
                 {m.editedNote}
+                {m.statusNote}
               </div>
               {m.metadata && attachment(m.metadata) && (
                 <div style={{ marginTop: '10px' }}>

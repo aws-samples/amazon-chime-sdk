@@ -6,6 +6,7 @@ import React, {
   useContext,
   useEffect,
   useRef,
+<<<<<<< HEAD
   ReactNode,
 } from "react";
 import { useLocation } from "react-router-dom";
@@ -14,6 +15,16 @@ import { useAppState } from "./AppStateProvider";
 import { startTranscription } from "../api/ChimeAPI";
 
 import routes from "../constants/routes";
+=======
+  ReactNode
+} from 'react';
+import { useLocation } from 'react-router-dom';
+import { useMeetingManager } from 'amazon-chime-sdk-component-library-react';
+import { useAppState } from './AppStateProvider';
+import {startTranscription} from '../api/ChimeAPI';
+
+import routes from '../constants/routes';
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
 
 export type NavigationContextType = {
   showNavbar: boolean;
@@ -83,8 +94,13 @@ const NavigationProvider = ({ children }: Props) => {
       }
     };
 
+<<<<<<< HEAD
     window.addEventListener("resize", handler);
     return () => window.removeEventListener("resize", handler);
+=======
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
   }, []);
 
   const toggleRoster = (): void => {
@@ -111,7 +127,11 @@ const NavigationProvider = ({ children }: Props) => {
   };
 
   const toggleMetrics = () => {
+<<<<<<< HEAD
     setShowMetrics((currentState) => !currentState);
+=======
+    setShowMetrics(currentState => !currentState);
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
   };
 
   const openNavbar = (): void => {
@@ -164,7 +184,11 @@ const NavigationProvider = ({ children }: Props) => {
     openTranscript,
     closeTranscript,
     openNavbar,
+<<<<<<< HEAD
     closeNavbar,
+=======
+    closeNavbar
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
   };
   return (
     <NavigationContext.Provider value={providerValue}>
@@ -176,7 +200,11 @@ const NavigationProvider = ({ children }: Props) => {
 const useNavigation = (): NavigationContextType => {
   const context = useContext(NavigationContext);
   if (!context) {
+<<<<<<< HEAD
     throw Error("Use useNavigation in NavigationProvider");
+=======
+    throw Error('Use useNavigation in NavigationProvider');
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
   }
   return context;
 };

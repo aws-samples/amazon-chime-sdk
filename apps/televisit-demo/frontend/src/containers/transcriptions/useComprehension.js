@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { useState, useEffect } from "react";
 
 import { v4 as uuid } from "uuid";
@@ -7,11 +8,23 @@ import inferICD10CM from "./inferICD10CM";
 import inferRxNorm from "./inferRxNorm";
 import { sortByScoreDescending } from "./conceptUtils";
 import AWS from "aws-sdk";
+=======
+import { useState, useEffect } from 'react';
+
+import { v4 as uuid } from 'uuid';
+
+import detectEntities from './detectEntities';
+import inferICD10CM from './inferICD10CM';
+import inferRxNorm from './inferRxNorm';
+import { sortByScoreDescending } from './conceptUtils';
+import AWS from 'aws-sdk';
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
 
 // This WeakMap links single-line transcript chunks to their responses without directly attaching as a property
 const resultMap = new WeakMap();
 
 // React hook to take an array of transcript chunks and return a corresponding array of Comprehend results, one for each
+<<<<<<< HEAD
 export default function useComprehension(transcriptChunks) {
   const [result, setResult] = useState([]);
   const clientParams = {
@@ -19,6 +32,15 @@ export default function useComprehension(transcriptChunks) {
     accessKeyId: AWS.config.credentials.accessKeyId,
     secretAccessKey: AWS.config.credentials.secretAccessKey,
     sessionToken: AWS.config.credentials.sessionToken,
+=======
+export default function useComprehension (transcriptChunks) {
+  const [result, setResult] = useState([]);
+  const clientParams = {
+    region: 'us-east-1',
+    accessKeyId: AWS.config.credentials.accessKeyId,
+    secretAccessKey: AWS.config.credentials.secretAccessKey,
+    sessionToken: AWS.config.credentials.sessionToken
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
   };
 
   useEffect(() => {
@@ -63,18 +85,26 @@ export default function useComprehension(transcriptChunks) {
         });
 
         inferRxNorm(chunk.text, clientParams).then((rawEntities) => {
+<<<<<<< HEAD
           const entities = addSelectedConceptCodeAndSortConcepts(
             rawEntities,
             "RxNormConcepts"
           );
+=======
+          const entities = addSelectedConceptCodeAndSortConcepts(rawEntities, 'RxNormConcepts');
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
           addResult(chunk, entities);
         });
 
         inferICD10CM(chunk.text, clientParams).then((rawEntities) => {
+<<<<<<< HEAD
           const entities = addSelectedConceptCodeAndSortConcepts(
             rawEntities,
             "ICD10CMConcepts"
           );
+=======
+          const entities = addSelectedConceptCodeAndSortConcepts(rawEntities, 'ICD10CMConcepts');
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
           addResult(chunk, entities);
         });
       }
@@ -90,9 +120,13 @@ const addSelectedConceptCodeAndSortConcepts = (rawEntities, conceptAttribute) =>
 
     const sortedConcepts = sortByScoreDescending(entity[conceptAttribute]);
 
+<<<<<<< HEAD
     return {
       ...entity,
       [conceptAttribute]: sortedConcepts,
       selectedConceptCode: sortedConcepts[0].Code,
     };
+=======
+    return { ...entity, [conceptAttribute]: sortedConcepts, selectedConceptCode: sortedConcepts[0].Code };
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
   });

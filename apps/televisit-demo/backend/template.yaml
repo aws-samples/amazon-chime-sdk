@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 AWSTemplateFormatVersion: "2010-09-09"
+=======
+AWSTemplateFormatVersion: '2010-09-09'
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
 Transform: "AWS::Serverless-2016-10-31"
 Description: AWS CloudFormation stack to set up infrastructure required for the Amazon Chime SDK chat demo app
 Parameters:
@@ -7,6 +11,7 @@ Parameters:
     Default: ChimeSDKTelevisitDemo
     Description: Unique Name for Demo Resources
   ChimeAppInstanceArn:
+<<<<<<< HEAD
     Type: String
     Default: arn:aws:chime:us-east-1:<accountid>:app-instance/<isntanceid>
     Description: Existing Chime AppInstanceArn
@@ -19,6 +24,11 @@ Parameters:
     Default: demo
     Description: The alias of Lex chatbot for Chime SDK messaging interaction
 
+=======
+    Type: String 
+    Default: arn:aws:chime:us-east-1:<accountid>:app-instance/<isntanceid>
+    Description: Existing Chime AppInstanceArn
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
 Resources:
   #Layer for the latest AWS SDK with Amazon Chime SDK for messaging
   AWSSDKChimeLayer:
@@ -36,14 +46,22 @@ Resources:
   # service linked role for live transcription
   ChimeServiceLinkedRole:
     Type: AWS::IAM::ServiceLinkedRole
+<<<<<<< HEAD
     Properties:
+=======
+    Properties: 
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
       AWSServiceName: transcription.chime.amazonaws.com
       Description: service linked role for live transcription
 
   #Lambda that creates AWS Chime App instance
   ChimeAppInstanceLambda:
     Type: "AWS::Lambda::Function"
+<<<<<<< HEAD
     DependsOn:
+=======
+    DependsOn: 
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
       - KinesisStream
     Properties:
       Handler: "index.handler"
@@ -51,7 +69,11 @@ Resources:
       Runtime: "nodejs12.x"
       Timeout: 60
       ReservedConcurrentExecutions: 30
+<<<<<<< HEAD
       Layers:
+=======
+      Layers: 
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
         - !Ref AWSSDKChimeLayer
       Environment:
         Variables:
@@ -176,7 +198,11 @@ Resources:
     Properties:
       Name: !Sub chime-messaging-${DemoName}-DataStream
       RetentionPeriodHours: 24
+<<<<<<< HEAD
       StreamEncryption:
+=======
+      StreamEncryption: 
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
         EncryptionType: "KMS"
         KeyId: "alias/aws/kinesis"
       ShardCount: 2
@@ -186,7 +212,11 @@ Resources:
     Type: AWS::CloudFormation::CustomResource
     DependsOn:
       - "ChimeAppInstanceLambda"
+<<<<<<< HEAD
     Properties:
+=======
+    Properties: 
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
       ServiceToken: !GetAtt ChimeAppInstanceLambda.Arn
       KinesisStreamArn: !GetAtt KinesisStream.Arn
 
@@ -202,18 +232,29 @@ Resources:
       Runtime: nodejs12.x
       Timeout: 30
       ReservedConcurrentExecutions: 30
+<<<<<<< HEAD
       Environment:
         Variables:
           CHIME_APP_INSTANCE_ADMIN_ROLE_ARN: !GetAtt LambdaKinesisRole.Arn
           CHIME_APP_INSTANCE_ARN: !GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn
           LEX_BOT_NAME: !Ref LexBotName
           LEX_BOT_ALIAS: !Ref LexBotAlias
+=======
+      Environment: 
+        Variables: 
+          CHIME_APP_INSTANCE_ADMIN_ROLE_ARN: !GetAtt LambdaKinesisRole.Arn
+          CHIME_APP_INSTANCE_ARN: !GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
       Events:
         ApiEvent:
           Type: Kinesis
           Properties:
             Stream: !GetAtt KinesisStream.Arn
+<<<<<<< HEAD
             StartingPosition: "LATEST"
+=======
+            StartingPosition: 'LATEST'
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
             BatchSize: 5
             Enabled: true
             MaximumBatchingWindowInSeconds: 0
@@ -222,11 +263,16 @@ Resources:
             BisectBatchOnFunctionError: false
             MaximumRetryAttempts: 1
             TumblingWindowInSeconds: 0
+<<<<<<< HEAD
+=======
+            
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
 
   LambdaKinesisRole:
     Type: "AWS::IAM::Role"
     Properties:
       Path: "/"
+<<<<<<< HEAD
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -235,11 +281,22 @@ Resources:
               Service:
                 - "lambda.amazonaws.com"
             Action:
+=======
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal: 
+              Service: 
+                - "lambda.amazonaws.com"
+            Action: 
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
               - "sts:AssumeRole"
       MaxSessionDuration: 3600
       Description: "Allows Lambda functions to access Kinesis stream for messaging demo"
       Policies:
         - PolicyName: !Sub ${DemoName}-AppInstanceAdmin-ModeratorBot
+<<<<<<< HEAD
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
@@ -249,11 +306,26 @@ Resources:
                 Resource: "*"
               - Effect: Allow
                 Action:
+=======
+          PolicyDocument: 
+            Version: "2012-10-17"
+            Statement: 
+              - Effect: Allow
+                Action: 
+                  - "chime:GetMessagingSessionEndpoint"
+                Resource: "*"
+              - Effect: Allow
+                Action: 
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
                   - "sts:TagSession"
                   - "sts:AssumeRole"
                 Resource: "*"
               - Effect: Allow
+<<<<<<< HEAD
                 Action:
+=======
+                Action: 
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
                   - "comprehend:detectDominantLanguage"
                   - "comprehend:detectPiiEntities"
                   - "lex:postText"
@@ -263,12 +335,21 @@ Resources:
                   - "kinesis:DescribeStream"
                   - "kinesis:ListShards"
                   - "kinesis:ListStreams"
+<<<<<<< HEAD
                   - "logs:CreateLogGroup"
                   - "logs:CreateLogStream"
                   - "logs:PutLogEvents"
                 Resource: "*"
               - Effect: "Allow"
                 Action:
+=======
+                  - 'logs:CreateLogGroup'
+                  - 'logs:CreateLogStream'
+                  - 'logs:PutLogEvents'
+                Resource: "*"
+              - Effect: "Allow"
+                Action: 
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
                   - "chime:SendChannelMessage"
                   - "chime:ListChannelMessages"
                   - "chime:CreateChannelMembership"
@@ -289,6 +370,7 @@ Resources:
                   - "chime:DeleteChannelBan"
                   - "chime:ListChannelMembershipsForAppInstanceUser"
                 Resource:
+<<<<<<< HEAD
                   - !Join [
                       "",
                       [
@@ -303,6 +385,11 @@ Resources:
                         "/channel/*",
                       ],
                     ]
+=======
+                  - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/user/*']] 
+                  - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/channel/*']]
+
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
 
   # Creates an S3 bucket to store chat attachments
   ChatAttachmentsBucket:
@@ -339,6 +426,7 @@ Resources:
               - "x-amz-request-id"
               - "x-amz-id-2"
             MaxAge: 3000
+<<<<<<< HEAD
 
   LoggingBucket:
     Type: "AWS::S3::Bucket"
@@ -351,12 +439,27 @@ Resources:
 
   ChatAttachmentsBucketPolicy:
     Type: "AWS::S3::BucketPolicy"
+=======
+            
+  LoggingBucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      AccessControl: LogDeliveryWrite  
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256   
+            
+  ChatAttachmentsBucketPolicy:
+    Type: 'AWS::S3::BucketPolicy'
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
     Properties:
       Bucket: !Ref ChatAttachmentsBucket
       PolicyDocument:
         Version: 2012-10-17
         Statement:
           - Action:
+<<<<<<< HEAD
               - "s3:*"
             Effect: Deny
             Resource: !Join
@@ -365,10 +468,21 @@ Resources:
                 - !Ref ChatAttachmentsBucket
                 - /*
             Condition:
+=======
+              - 's3:*'
+            Effect: Deny
+            Resource: !Join
+              - ''
+              - - 'arn:aws:s3:::'
+                - !Ref ChatAttachmentsBucket
+                - /*
+            Condition: 
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
               Bool:
                 aws:SecureTransport: false
             Principal: "*"
           - Action:
+<<<<<<< HEAD
               - "s3:GetObject"
               - "s3:PutObject"
               - "s3:DeleteObject"
@@ -380,6 +494,20 @@ Resources:
                 - /*
             Principal:
               AWS: !GetAtt CognitoAuthorizedRole.Arn
+=======
+              - 's3:GetObject'
+              - 's3:PutObject'
+              - "s3:DeleteObject"
+            Effect: Allow
+            Resource: !Join
+              - ''
+              - - 'arn:aws:s3:::'
+                - !Ref ChatAttachmentsBucket
+                - /*
+            Principal: 
+              AWS: !GetAtt CognitoAuthorizedRole.Arn
+            
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
 
   #Creates a role to creates AWS Chime App instance
   LambdaExecuteRole:
@@ -389,11 +517,19 @@ Resources:
         Version: 2012-10-17
         Statement:
           - Action:
+<<<<<<< HEAD
               - sts:AssumeRole
             Effect: Allow
             Principal:
               Service:
                 - lambda.amazonaws.com
+=======
+            - sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service:
+              - lambda.amazonaws.com
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
       Policies:
         - PolicyName: !Sub ${DemoName}-LambdaCreateLogGroup
           PolicyDocument:
@@ -401,10 +537,17 @@ Resources:
             Statement:
               - Effect: Allow
                 Action:
+<<<<<<< HEAD
                   - "chime:CreateAppInstanceUser"
                   - "chime:CreateAppInstance"
                   - "chime:CreateAppInstanceAdmin"
                   - "chime:PutAppInstanceStreamingConfigurations"
+=======
+                  - 'chime:CreateAppInstanceUser'
+                  - 'chime:CreateAppInstance'
+                  - 'chime:CreateAppInstanceAdmin'
+                  - 'chime:PutAppInstanceStreamingConfigurations'
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
                   - "kinesis:DescribeStream"
                   - "kinesis:DescribeStreamSummary"
                   - "kinesis:GetRecords"
@@ -419,8 +562,13 @@ Resources:
                   - "iam:AttachRolePolicy"
                   - "iam:CreateRole"
                   - "iam:PutRolePolicy"
+<<<<<<< HEAD
                 Resource: "*"
 
+=======
+                Resource: '*'
+  
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
   #Creates a role to allow SignIn Lambda to execute
   LambdaSignInRole:
     Type: AWS::IAM::Role
@@ -429,11 +577,19 @@ Resources:
         Version: 2012-10-17
         Statement:
           - Action:
+<<<<<<< HEAD
               - sts:AssumeRole
             Effect: Allow
             Principal:
               Service:
                 - lambda.amazonaws.com
+=======
+            - sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service:
+              - lambda.amazonaws.com
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
       Policies:
         - PolicyName: !Sub ${DemoName}-LambdaCreateLogGroup
           PolicyDocument:
@@ -441,6 +597,7 @@ Resources:
             Statement:
               - Effect: Allow
                 Action:
+<<<<<<< HEAD
                   - "chime:CreateAppInstanceUser"
                 Resource:
                   - !Join [
@@ -450,17 +607,30 @@ Resources:
                         "/*",
                       ],
                     ]
+=======
+                  - 'chime:CreateAppInstanceUser'
+                Resource:
+                  - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/*']]
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
               - Effect: Allow
                 Action:
                   - "logs:CreateLogGroup"
                   - "logs:CreateLogStream"
                   - "logs:PutLogEvents"
+<<<<<<< HEAD
                 Resource: "*"
+=======
+                Resource: '*'
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
 
   #Create Lambda used by Cognito Post Authentication Trigger to Create Chime App Instance user if user does not already exist
   SignInHookLambda:
     Type: AWS::Serverless::Function
+<<<<<<< HEAD
     DependsOn:
+=======
+    DependsOn: 
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
       - TriggerChimeAppInstanceLambda
     Properties:
       FunctionName: !Sub ${DemoName}-SignInHook
@@ -470,22 +640,36 @@ Resources:
       MemorySize: 512
       Role: !GetAtt LambdaSignInRole.Arn
       ReservedConcurrentExecutions: 30
+<<<<<<< HEAD
       Layers:
         - !Ref AWSSDKChimeLayer
       Timeout: 800
       Environment:
         Variables:
           CHIME_APP_INSTANCE_ARN: !GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn
+=======
+      Layers: 
+          - !Ref AWSSDKChimeLayer
+      Timeout: 800
+      Environment:
+        Variables:
+          CHIME_APP_INSTANCE_ARN: !GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn 
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
 
   # Allows Sign In Lambda to be called by Cognito
   LambdaInvocationPermission:
     Type: AWS::Lambda::Permission
+<<<<<<< HEAD
     Properties:
+=======
+    Properties: 
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
       Action: lambda:InvokeFunction
       FunctionName: !GetAtt SignInHookLambda.Arn
       Principal: cognito-idp.amazonaws.com
       SourceArn: !GetAtt UserPool.Arn
 
+<<<<<<< HEAD
   # Creates a Cognito User Pool with a Post Authentication Trigger of the Sign In Lambda
   UserPool:
     Type: "AWS::Cognito::UserPool"
@@ -494,6 +678,16 @@ Resources:
     Properties:
       UserPoolName: !Sub ${DemoName}-user-pool
       LambdaConfig:
+=======
+  # Creates a Cognito User Pool with a Post Authentication Trigger of the Sign In Lambda      
+  UserPool:
+    Type: "AWS::Cognito::UserPool"
+    DependsOn: 
+      - SignInHookLambda
+    Properties:
+      UserPoolName: !Sub ${DemoName}-user-pool
+      LambdaConfig: 
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
         PostAuthentication: !GetAtt SignInHookLambda.Arn
       UserPoolAddOns:
         AdvancedSecurityMode: ENFORCED
@@ -514,7 +708,11 @@ Resources:
     Properties:
       IdentityPoolName: !Sub ${DemoName}-IdentityPool
       AllowUnauthenticatedIdentities: true
+<<<<<<< HEAD
       CognitoIdentityProviders:
+=======
+      CognitoIdentityProviders: 
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
         - ClientId: !Ref UserPoolClient
           ProviderName: !GetAtt UserPool.ProviderName
 
@@ -522,6 +720,7 @@ Resources:
   CognitoUnAuthorizedRole:
     Type: "AWS::IAM::Role"
     Properties:
+<<<<<<< HEAD
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -532,18 +731,37 @@ Resources:
               - "sts:AssumeRoleWithWebIdentity"
             Condition:
               StringEquals:
+=======
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal: 
+              Federated: "cognito-identity.amazonaws.com"
+            Action: 
+              - "sts:AssumeRoleWithWebIdentity"
+            Condition:
+              StringEquals: 
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
                 "cognito-identity.amazonaws.com:aud": !Ref IdentityPool
               "ForAnyValue:StringLike":
                 "cognito-identity.amazonaws.com:amr": unauthenticated
       Policies:
         - PolicyName: !Sub ${DemoName}-CognitoUnauthorizedPolicy
+<<<<<<< HEAD
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
+=======
+          PolicyDocument: 
+            Version: "2012-10-17"
+            Statement: 
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
               - Effect: "Allow"
                 Action:
                   - "cognito-sync:Get*"
                 Resource:
+<<<<<<< HEAD
                   - !Join [
                       "",
                       [
@@ -568,14 +786,39 @@ Resources:
               - "sts:AssumeRoleWithWebIdentity"
             Condition:
               StringEquals:
+=======
+                  - !Join ['', ['arn:aws:cognito-sync:us-east-1:', !Ref AWS::AccountId, ':identitypool/${cognito-identity.amazonaws.com:aud}/identity/${cognito-identity.amazonaws.com:sub}/*']]
+
+  # Create a role for authorized acces to AWS resources. Control what your user can access. 
+  # Allows users to access their s3 ChatBucket files 
+  CognitoAuthorizedRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal: 
+              Federated: "cognito-identity.amazonaws.com"
+            Action: 
+              - "sts:AssumeRoleWithWebIdentity"
+            Condition:
+              StringEquals: 
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
                 "cognito-identity.amazonaws.com:aud": !Ref IdentityPool
               "ForAnyValue:StringLike":
                 "cognito-identity.amazonaws.com:amr": authenticated
       Policies:
         - PolicyName: !Sub ${DemoName}-CognitoAuthorizedPolicy
+<<<<<<< HEAD
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
+=======
+          PolicyDocument: 
+            Version: "2012-10-17"
+            Statement: 
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
               - Effect: "Allow"
                 Action:
                   - "cognito-sync:Get*"
@@ -586,14 +829,21 @@ Resources:
                   - "lambda:InvokeFunction"
                 Resource: "*"
         - PolicyName: !Sub ${DemoName}-AttachmentsS3PermissionPolicy
+<<<<<<< HEAD
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
+=======
+          PolicyDocument: 
+            Version: "2012-10-17"
+            Statement: 
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
               - Effect: "Allow"
                 Action:
                   - "s3:GetObject"
                   - "s3:PutObject"
                   - "s3:DeleteObject"
+<<<<<<< HEAD
                 Resource:
                   !Join [
                     "",
@@ -619,6 +869,17 @@ Resources:
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
+=======
+                Resource: !Join ['', ['arn:aws:s3:::', !Ref ChatAttachmentsBucket, '/protected/${cognito-identity.amazonaws.com:sub}/*']]
+              - Effect: "Allow"
+                Action:
+                  - "s3:GetObject"
+                Resource: !Join ['', ['arn:aws:s3:::', !Ref ChatAttachmentsBucket, '/protected/*']]       
+        - PolicyName: !Sub ${DemoName}-ChimeSDKDemoUserPolicy
+          PolicyDocument: 
+            Version: "2012-10-17"
+            Statement: 
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
               - Effect: "Allow"
                 Action:
                   - "chime:GetMessagingSessionEndpoint"
@@ -629,6 +890,7 @@ Resources:
               - Effect: "Allow"
                 Action:
                   - "cognito-idp:ListUsers"
+<<<<<<< HEAD
                 Resource:
                   !Join [
                     "",
@@ -639,6 +901,9 @@ Resources:
                       !Ref UserPool,
                     ],
                   ]
+=======
+                Resource: !Join ['', ['arn:aws:cognito-idp:us-east-1:', !Ref AWS::AccountId, ':userpool/', !Ref UserPool]]
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
               - Effect: "Allow"
                 Action:
                   - "chime:SendChannelMessage"
@@ -657,11 +922,16 @@ Resources:
                   - "chime:RedactChannelMessage"
                   - "chime:UpdateChannelMessage"
                   - "chime:Connect"
+<<<<<<< HEAD
                   - "chime:ListChannelMembershipsForAppInstanceUser"
+=======
+                  - "chime:ListChannelMembershipsForAppInstanceUser" 
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
                   - "chime:CreateChannelBan"
                   - "chime:ListChannelBans"
                   - "chime:DeleteChannelBan"
                 Resource:
+<<<<<<< HEAD
                   - !Join [
                       "",
                       [
@@ -676,6 +946,10 @@ Resources:
                         "/channel/*",
                       ],
                     ]
+=======
+                  - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/user/*']]
+                  - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/channel/*']]
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
 
   # Assigns the roles to the Identity Pool
   IdentityPoolRoleMapping:
@@ -712,7 +986,11 @@ Resources:
                   - logs:CreateLogStream
                   - logs:PutLogEvents
                 Effect: Allow
+<<<<<<< HEAD
                 Resource: "*"
+=======
+                Resource: '*'
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
         - PolicyName: !Sub ${DemoName}-AuthLambdaChimePolicy
           PolicyDocument:
             Version: "2012-10-17"
@@ -724,6 +1002,7 @@ Resources:
                   - "chime:DescribeAppInstanceUser"
                   - "chime:DescribeAppInstanceAdmin"
                 Resource:
+<<<<<<< HEAD
                   - !Join [
                       "",
                       [
@@ -731,6 +1010,9 @@ Resources:
                         "/user/*",
                       ],
                     ]
+=======
+                  - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/user/*']]
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
         - PolicyName: !Sub ${DemoName}-MeetingLambdaChimePolicy
           PolicyDocument:
             Version: "2012-10-17"
@@ -747,6 +1029,7 @@ Resources:
                   - "chime:createMediaCapturePipeline"
                   - "chime:deleteMediaCapturePipeline"
                   - "chime:startMeetingTranscription"
+<<<<<<< HEAD
                 Resource:
                   - !Join [
                       "",
@@ -769,6 +1052,12 @@ Resources:
                         "/meeting/*",
                       ],
                     ]
+=======
+                Resource: 
+                  - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/user/*']]
+                  - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/channel/*']]
+                  - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/meeting/*']]
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
         - PolicyName: !Sub ${DemoName}-MediaCaptureS3Access
           PolicyDocument:
             Version: "2012-10-17"
@@ -784,10 +1073,17 @@ Resources:
                 Resource:
                   - !GetAtt MediaCaptureBucket.Arn
                   - !Join
+<<<<<<< HEAD
                     - ""
                     - - !GetAtt MediaCaptureBucket.Arn
                       - /*
 
+=======
+                      - ""
+                      - - !GetAtt MediaCaptureBucket.Arn
+                        - /*
+                        
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
   AuthLambdaUserRole:
     Type: "AWS::IAM::Role"
     Properties:
@@ -830,6 +1126,7 @@ Resources:
                   - "chime:DescribeAppInstanceUser"
                   - "chime:ListChannelMembershipsForAppInstanceUser"
                 Resource:
+<<<<<<< HEAD
                   - !Join [
                       "",
                       [
@@ -845,6 +1142,12 @@ Resources:
                       ],
                     ]
 
+=======
+                  - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/user/*']]
+                  - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/channel/*']]
+              
+  
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
   AuthLambdaAnonUserRole:
     Type: "AWS::IAM::Role"
     Properties:
@@ -899,6 +1202,7 @@ Resources:
                   - "chime:ListChannelBans"
                   - "chime:DeleteChannelBan"
                 Resource:
+<<<<<<< HEAD
                   - !Join [
                       "",
                       [
@@ -913,12 +1217,17 @@ Resources:
                         "/channel/*",
                       ],
                     ]
+=======
+                  - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/user/${aws:PrincipalTag/UserUUID}']]
+                  - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/channel/*']]
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
                   - !GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn
               - Effect: "Allow"
                 Action:
                   - "chime:ListAppInstanceUsers"
                   - "chime:DescribeAppInstanceUser"
                 Resource:
+<<<<<<< HEAD
                   - !Join [
                       "",
                       [
@@ -929,6 +1238,12 @@ Resources:
 
   APIGatewayLogRole:
     Type: "AWS::IAM::Role"
+=======
+                  - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/user/*']]
+  
+  APIGatewayLogRole:
+    Type: 'AWS::IAM::Role'
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
     Properties:
       AssumeRolePolicyDocument:
         Version: 2012-10-17
@@ -937,14 +1252,23 @@ Resources:
             Principal:
               Service:
                 - apigateway.amazonaws.com
+<<<<<<< HEAD
             Action: "sts:AssumeRole"
+=======
+            Action: 'sts:AssumeRole'
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
       Path: /
       ManagedPolicyArns:
         - >-
           arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs
 
+<<<<<<< HEAD
   APIAccountLogRole:
     Type: "AWS::ApiGateway::Account"
+=======
+  APIAccountLogRole:    
+    Type: 'AWS::ApiGateway::Account'
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
     Properties:
       CloudWatchRoleArn: !GetAtt APIGatewayLogRole.Arn
 
@@ -953,7 +1277,11 @@ Resources:
     Properties:
       LogGroupName: !Sub "/chimesdk/${AWS::StackName}-meetingchat-loggroup"
       RetentionInDays: 30
+<<<<<<< HEAD
 
+=======
+  
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
   ###################
   ## media capture ##
   ###################
@@ -977,7 +1305,11 @@ Resources:
       LoggingConfiguration:
         DestinationBucketName: !Ref LoggingBucket
         LogFilePrefix: mediacapture-logs
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
   MediaCaptureBucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
@@ -986,6 +1318,7 @@ Resources:
         Version: "2012-10-17"
         Statement:
           - Action:
+<<<<<<< HEAD
               - "s3:*"
             Effect: Deny
             Resource: !Join
@@ -994,6 +1327,16 @@ Resources:
                 - !Ref MediaCaptureBucket
                 - /*
             Condition:
+=======
+              - 's3:*'
+            Effect: Deny
+            Resource: !Join
+              - ''
+              - - 'arn:aws:s3:::'
+                - !Ref MediaCaptureBucket
+                - /*
+            Condition: 
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
               Bool:
                 aws:SecureTransport: false
             Principal: "*"
@@ -1017,7 +1360,11 @@ Resources:
       StageName: prod
       AccessLogSetting:
         DestinationArn: !GetAtt LogGroup.Arn
+<<<<<<< HEAD
         Format: '{ "requestId": "$context.requestId", "ip": "$context.identity.sourceIp", "caller": "$context.identity.caller", "requestTime": "$context.requestTimeEpoch", "httpMethod": "$context.httpMethod", "resourcePath": "$context.resourcePath", "status": "$context.status", "protocol": "$context.protocol", "responseLength": "$context.responseLength" }'
+=======
+        Format: "{ \"requestId\": \"$context.requestId\", \"ip\": \"$context.identity.sourceIp\", \"caller\": \"$context.identity.caller\", \"requestTime\": \"$context.requestTimeEpoch\", \"httpMethod\": \"$context.httpMethod\", \"resourcePath\": \"$context.resourcePath\", \"status\": \"$context.status\", \"protocol\": \"$context.protocol\", \"responseLength\": \"$context.responseLength\" }"
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
       MethodSettings:
         - HttpMethod: "*"
           ResourcePath: "/*"
@@ -1027,7 +1374,11 @@ Resources:
         AllowHeaders: "'Authorization'"
         AllowOrigin: "'*'"
         MaxAge: "'600'"
+<<<<<<< HEAD
 
+=======
+  
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
   RequestValidator:
     Type: AWS::ApiGateway::RequestValidator
     Properties:
@@ -1035,7 +1386,11 @@ Resources:
       RestApiId: !Ref ApiGatewayApi
       ValidateRequestBody: Yes
       ValidateRequestParameters: Yes
+<<<<<<< HEAD
 
+=======
+      
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
   CredApiFunction: # Adds a POST api endpoint at "/creds" to the ApiGatewayApi via an Api event
     Type: AWS::Serverless::Function
     Properties:
@@ -1085,7 +1440,11 @@ Resources:
                   - logs:CreateLogStream
                   - logs:PutLogEvents
                 Effect: Allow
+<<<<<<< HEAD
                 Resource: "*"
+=======
+                Resource: '*'
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
         - PolicyName: !Sub ${DemoName}-AuthLambdaChimePolicy
           PolicyDocument:
             Version: "2012-10-17"
@@ -1097,6 +1456,7 @@ Resources:
                   - "chime:DescribeAppInstanceUser"
                   - "chime:DescribeAppInstanceAdmin"
                 Resource:
+<<<<<<< HEAD
                   - !Join [
                       "",
                       [
@@ -1104,6 +1464,9 @@ Resources:
                         "/user/*",
                       ],
                     ]
+=======
+                  - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/user/*']]
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
         - PolicyName: !Sub ${DemoName}-MeetingLambdaChimePolicy
           PolicyDocument:
             Version: "2012-10-17"
@@ -1116,8 +1479,13 @@ Resources:
                   - "chime:createAttendee"
                   - "chime:getMeeting"
                   - "chime:listAttendees"
+<<<<<<< HEAD
                 Resource: "*"
 
+=======
+                Resource: '*'
+                  
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
   CreateMeetingApiFunction: # Adds a POST api endpoint at "/create" to create meetings
     Type: AWS::Serverless::Function
     Properties:
@@ -1140,6 +1508,10 @@ Resources:
       CodeUri: createmeeting/
       Handler: index.handler
 
+<<<<<<< HEAD
+=======
+  
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
   StartTranscriptionLambdaRole:
     Type: "AWS::IAM::Role"
     Properties:
@@ -1147,11 +1519,19 @@ Resources:
         Version: 2012-10-17
         Statement:
           - Action:
+<<<<<<< HEAD
               - sts:AssumeRole
             Effect: Allow
             Principal:
               Service:
                 - lambda.amazonaws.com
+=======
+            - sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service:
+              - lambda.amazonaws.com
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
       Policies:
         - PolicyName: !Sub ${DemoName}-CognitoAuthorizedPolicy
           PolicyDocument:
@@ -1169,7 +1549,11 @@ Resources:
                 Action:
                   - "chime:startMeetingTranscription"
                 Resource: "*"
+<<<<<<< HEAD
 
+=======
+                  
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
   StartTranscriptionApiFunction: # Adds a POST api endpoint at "/transcript" to start live transcription
     Type: AWS::Serverless::Function
     Properties:
@@ -1188,7 +1572,12 @@ Resources:
       Runtime: nodejs12.x
       CodeUri: starttranscript/
       Handler: index.handler
+<<<<<<< HEAD
 
+=======
+  
+  
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
   CreateAttendeeLambdaRole:
     Type: AWS::IAM::Role
     Properties:
@@ -1211,7 +1600,11 @@ Resources:
                   - logs:CreateLogStream
                   - logs:PutLogEvents
                 Effect: Allow
+<<<<<<< HEAD
                 Resource: "*"
+=======
+                Resource: '*'
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
         - PolicyName: !Sub ${DemoName}-AuthLambdaChimePolicy
           PolicyDocument:
             Version: "2012-10-17"
@@ -1223,6 +1616,7 @@ Resources:
                   - "chime:DescribeAppInstanceUser"
                   - "chime:DescribeAppInstanceAdmin"
                 Resource:
+<<<<<<< HEAD
                   - !Join [
                       "",
                       [
@@ -1230,6 +1624,9 @@ Resources:
                         "/user/*",
                       ],
                     ]
+=======
+                  - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/user/*']]
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
         - PolicyName: !Sub ${DemoName}-MeetingLambdaChimePolicy
           PolicyDocument:
             Version: "2012-10-17"
@@ -1242,7 +1639,11 @@ Resources:
                   - "chime:getMeeting"
                   - "chime:listAttendees"
                 Resource: "*"
+<<<<<<< HEAD
 
+=======
+                  
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
   CreateAttendeeApiFunction: # Adds a POST api endpoint at "/join" to join meetings as an attendee
     Type: AWS::Serverless::Function
     Properties:
@@ -1264,7 +1665,12 @@ Resources:
       Runtime: nodejs12.x
       CodeUri: createattendee/
       Handler: index.handler
+<<<<<<< HEAD
 
+=======
+  
+  
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
   StartRecordingLambdaRole:
     Type: AWS::IAM::Role
     Properties:
@@ -1287,7 +1693,11 @@ Resources:
                   - logs:CreateLogStream
                   - logs:PutLogEvents
                 Effect: Allow
+<<<<<<< HEAD
                 Resource: "*"
+=======
+                Resource: '*'
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
         - PolicyName: !Sub ${DemoName}-AuthLambdaChimePolicy
           PolicyDocument:
             Version: "2012-10-17"
@@ -1299,6 +1709,7 @@ Resources:
                   - "chime:DescribeAppInstanceUser"
                   - "chime:DescribeAppInstanceAdmin"
                 Resource:
+<<<<<<< HEAD
                   - !Join [
                       "",
                       [
@@ -1306,6 +1717,9 @@ Resources:
                         "/user/*",
                       ],
                     ]
+=======
+                  - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/user/*']]
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
         - PolicyName: !Sub ${DemoName}-MeetingLambdaChimePolicy
           PolicyDocument:
             Version: "2012-10-17"
@@ -1329,10 +1743,17 @@ Resources:
                 Resource:
                   - !GetAtt MediaCaptureBucket.Arn
                   - !Join
+<<<<<<< HEAD
                     - ""
                     - - !GetAtt MediaCaptureBucket.Arn
                       - /*
 
+=======
+                      - ""
+                      - - !GetAtt MediaCaptureBucket.Arn
+                        - /*
+                  
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
   StartMeetingRecordingApiFunction: # Adds a POST api endpoint at "/startrecord" to start meeting recording
     Type: AWS::Serverless::Function
     Properties:
@@ -1355,7 +1776,12 @@ Resources:
       Runtime: nodejs12.x
       CodeUri: startrecording/
       Handler: index.handler
+<<<<<<< HEAD
 
+=======
+  
+  
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
   StopRecordingLambdaRole:
     Type: AWS::IAM::Role
     Properties:
@@ -1378,7 +1804,11 @@ Resources:
                   - logs:CreateLogStream
                   - logs:PutLogEvents
                 Effect: Allow
+<<<<<<< HEAD
                 Resource: "*"
+=======
+                Resource: '*'
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
         - PolicyName: !Sub ${DemoName}-AuthLambdaChimePolicy
           PolicyDocument:
             Version: "2012-10-17"
@@ -1390,6 +1820,7 @@ Resources:
                   - "chime:DescribeAppInstanceUser"
                   - "chime:DescribeAppInstanceAdmin"
                 Resource:
+<<<<<<< HEAD
                   - !Join [
                       "",
                       [
@@ -1397,6 +1828,9 @@ Resources:
                         "/user/*",
                       ],
                     ]
+=======
+                  - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/user/*']]
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
         - PolicyName: !Sub ${DemoName}-MeetingLambdaChimePolicy
           PolicyDocument:
             Version: "2012-10-17"
@@ -1405,7 +1839,11 @@ Resources:
                 Action:
                   - "chime:deleteMediaCapturePipeline"
                 Resource: "*"
+<<<<<<< HEAD
 
+=======
+                  
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
   StopMeetingRecordingApiFunction: # Adds a POST api endpoint at "/stoprecord" to stop meeting recording
     Type: AWS::Serverless::Function
     Properties:
@@ -1424,7 +1862,12 @@ Resources:
       Runtime: nodejs12.x
       CodeUri: stoprecording/
       Handler: index.handler
+<<<<<<< HEAD
 
+=======
+        
+  
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
   EndMeetingLambdaRole:
     Type: "AWS::IAM::Role"
     Properties:
@@ -1432,11 +1875,19 @@ Resources:
         Version: 2012-10-17
         Statement:
           - Action:
+<<<<<<< HEAD
               - sts:AssumeRole
             Effect: Allow
             Principal:
               Service:
                 - lambda.amazonaws.com
+=======
+            - sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service:
+              - lambda.amazonaws.com
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
       Policies:
         - PolicyName: !Sub ${DemoName}-CognitoAuthorizedPolicy
           PolicyDocument:
@@ -1456,7 +1907,11 @@ Resources:
                   - "chime:DeleteMeeting"
                   - "chime:GetMeeting"
                 Resource: "*"
+<<<<<<< HEAD
 
+=======
+                  
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
   EndMeetingApiFunction: # Adds a POST api endpoint at "/end" to end the meeting
     Type: AWS::Serverless::Function
     Properties:
@@ -1475,6 +1930,10 @@ Resources:
       Runtime: nodejs12.x
       CodeUri: endmeeting/
       Handler: index.handler
+<<<<<<< HEAD
+=======
+         
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
 
 Outputs:
   cognitoUserPoolId:
@@ -1489,3 +1948,7 @@ Outputs:
     Value: !Ref ChatAttachmentsBucket
   apiGatewayInvokeUrl:
     Value: !Sub https://${ApiGatewayApi}.execute-api.us-east-1.amazonaws.com/prod/
+<<<<<<< HEAD
+=======
+  
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1

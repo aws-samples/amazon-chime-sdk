@@ -2,7 +2,11 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
+<<<<<<< HEAD
 import React from "react";
+=======
+import React from 'react';
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
 
 import {
   Modal,
@@ -10,9 +14,15 @@ import {
   ModalBody,
   ModalButtonGroup,
   ModalButton,
+<<<<<<< HEAD
 } from "amazon-chime-sdk-component-library-react";
 
 import "./ChannelModals.css";
+=======
+} from 'amazon-chime-sdk-component-library-react';
+
+import './ChannelModals.css';
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
 
 export const ViewChannelDetailsModal = ({ onClose, channel, moderators }) => {
   const modNames = moderators.map((m) => (
@@ -38,7 +48,11 @@ export const ViewChannelDetailsModal = ({ onClose, channel, moderators }) => {
           <div className="row">
             <div className="key">Type</div>
             <div className="value">
+<<<<<<< HEAD
               {channel.Privacy === "PRIVATE" && (
+=======
+              {channel.Privacy === 'PRIVATE' && (
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
                 <span>
                   <span className="main">Private</span>
                   <span className="detail">
@@ -46,7 +60,11 @@ export const ViewChannelDetailsModal = ({ onClose, channel, moderators }) => {
                   </span>
                 </span>
               )}
+<<<<<<< HEAD
               {channel.Privacy === "PUBLIC" && (
+=======
+              {channel.Privacy === 'PUBLIC' && (
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
                 <span>
                   <span className="main">Public</span>
                   <span className="detail">
@@ -60,7 +78,11 @@ export const ViewChannelDetailsModal = ({ onClose, channel, moderators }) => {
           <div className="row">
             <div className="key">Mode</div>
             <div className="value">
+<<<<<<< HEAD
               {channel.Mode === "RESTRICTED" && (
+=======
+              {channel.Mode === 'RESTRICTED' && (
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
                 <span>
                   <span className="main">Restricted</span>
                   <span className="detail">
@@ -68,7 +90,11 @@ export const ViewChannelDetailsModal = ({ onClose, channel, moderators }) => {
                   </span>
                 </span>
               )}
+<<<<<<< HEAD
               {channel.Mode === "UNRESTRICTED" && (
+=======
+              {channel.Mode === 'UNRESTRICTED' && (
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
                 <span>
                   <span className="main">Unrestricted</span>
                   <span className="detail">

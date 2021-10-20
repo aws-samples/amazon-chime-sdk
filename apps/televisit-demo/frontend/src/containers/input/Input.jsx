@@ -3,7 +3,11 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
+<<<<<<< HEAD
 import React, { useState, useRef, useEffect } from "react";
+=======
+import React, { useState, useRef, useEffect } from 'react';
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
 import {
   Input as InputComponent,
   Attachment,
@@ -11,6 +15,7 @@ import {
   useNotificationDispatch,
   Remove,
   Label,
+<<<<<<< HEAD
 } from "amazon-chime-sdk-component-library-react";
 import { sendChannelMessage } from "../../api/ChimeAPI";
 import formatBytes from "../../utilities/formatBytes";
@@ -26,6 +31,23 @@ const uploadObjDefaults = {
 };
 const Input = ({ activeChannelArn, member, hasMembership }) => {
   const [text, setText] = useState("");
+=======
+} from 'amazon-chime-sdk-component-library-react';
+import { sendChannelMessage } from '../../api/ChimeAPI';
+import formatBytes from '../../utilities/formatBytes';
+import './Input.css';
+import AttachmentService from '../../services/AttachmentService';
+
+const uploadObjDefaults = {
+  name: '',
+  file: '',
+  type: '',
+  response: null,
+  key: '',
+};
+const Input = ({ activeChannelArn, member, hasMembership }) => {
+  const [text, setText] = useState('');
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
   const inputRef = useRef();
   const uploadRef = useRef();
   const [uploadObj, setUploadObj] = useState(uploadObjDefaults);
@@ -45,7 +67,11 @@ const Input = ({ activeChannelArn, member, hasMembership }) => {
   };
 
   const resetState = () => {
+<<<<<<< HEAD
     setText("");
+=======
+    setText('');
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
   };
 
   useEffect(() => {
@@ -86,14 +112,23 @@ const Input = ({ activeChannelArn, member, hasMembership }) => {
         });
         await sendChannelMessage(
           activeChannelArn,
+<<<<<<< HEAD
           text || " ",
           "PERSISTENT",
+=======
+          text || ' ',
+          'PERSISTENT',
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
           member,
           options
         );
         // Cleanup upload refs
         setUploadObj(uploadObjDefaults);
+<<<<<<< HEAD
         uploadRef.current.value = "";
+=======
+        uploadRef.current.value = '';
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
       } catch (err) {
         setUploadObj({
           response: `Can't upload file: ${err}`,
@@ -102,7 +137,11 @@ const Input = ({ activeChannelArn, member, hasMembership }) => {
         throw new Error(`Failed uploading... ${err}`);
       }
     } else {
+<<<<<<< HEAD
       await sendChannelMessage(activeChannelArn, text, "PERSISTENT", member);
+=======
+      await sendChannelMessage(activeChannelArn, text, 'PERSISTENT', member);
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
     }
     resetState();
   };
@@ -129,11 +168,19 @@ const Input = ({ activeChannelArn, member, hasMembership }) => {
           {uploadObj.file ? (
             <div className="attachment-preview">
               <Attachment
+<<<<<<< HEAD
                 style={{ margin: "auto 0" }}
                 width="1.5rem"
                 height="1.5rem"
               />
               <Label style={{ margin: "auto 0" }}>{uploadObj?.name}</Label>
+=======
+                style={{ margin: 'auto 0' }}
+                width="1.5rem"
+                height="1.5rem"
+              />
+              <Label style={{ margin: 'auto 0' }}>{uploadObj?.name}</Label>
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
               <IconButton icon={<Remove width="1.5rem" height="1.5rem" />} />
             </div>
           ) : null}
@@ -149,7 +196,11 @@ const Input = ({ activeChannelArn, member, hasMembership }) => {
         <input
           type="file"
           accept="file_extension|audio/*|video/*|image/*|media_type"
+<<<<<<< HEAD
           style={{ display: "none" }}
+=======
+          style={{ display: 'none' }}
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
           ref={uploadRef}
           onChange={(event) => {
             const file = event.currentTarget.files[0];
@@ -167,7 +218,11 @@ const Input = ({ activeChannelArn, member, hasMembership }) => {
                   message: `File (${file.name}) size (${formatBytes(
                     file.size
                   )}) Maximum supported file size is up to 5MB.`,
+<<<<<<< HEAD
                   severity: "error",
+=======
+                  severity: 'error',
+>>>>>>> fd93f5bbb41fc9082758a231d3888d823ddb8cc1
                 },
               });
             }

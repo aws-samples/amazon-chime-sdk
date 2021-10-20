@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT-0
 
 export { AddMemberModal } from './AddMemberModal';
+export { ManageChannelFlowModal } from './ManageChannelFlowModal';
 export { DeleteChannelModal } from './DeleteChannelModal';
 export { LeaveChannelModal } from './LeaveChannelModal';
 export { JoinMeetingModal } from './JoinMeetingModal';
