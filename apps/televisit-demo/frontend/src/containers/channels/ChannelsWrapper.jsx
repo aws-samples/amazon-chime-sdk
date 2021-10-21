@@ -41,7 +41,7 @@ import {
   createAttendee,
   endMeeting,
   createGetAttendeeCallback,
-  startTranscription
+  startTranscription,
 } from '../../api/ChimeAPI';
 import appConfig from '../../Config';
 
@@ -57,7 +57,6 @@ import ModalManager from './ModalManager';
 import routes from '../../constants/routes';
 
 import './ChannelsWrapper.css';
-
 
 const ChannelsWrapper = () => {
   const history = useHistory();
@@ -94,9 +93,8 @@ const ChannelsWrapper = () => {
   useEffect(() => {
     if (!userId) return;
     const fetchChannels = async () => {
-      const userChannelMemberships = await listChannelMembershipsForAppInstanceUser(
-        userId
-      );
+      const userChannelMemberships =
+        await listChannelMembershipsForAppInstanceUser(userId);
       const userChannelList = userChannelMemberships.map(
         (channelMembership) => channelMembership.ChannelSummary
       );
@@ -232,17 +230,22 @@ const ChannelsWrapper = () => {
 
     if (activeChannel.Metadata) {
       let metadata = JSON.parse(activeChannel.Metadata);
-      let meeting = metadata.meeting; 
+      let meeting = metadata.meeting;
 
       // Create own attendee and join meeting
       meetingManager.getAttendee = createGetAttendeeCallback();
 
-      const response = await createAttendee(member.username, member.userId, activeChannel.ChannelArn, meeting);
+      const response = await createAttendee(
+        member.username,
+        member.userId,
+        activeChannel.ChannelArn,
+        meeting
+      );
 
       if (response.JoinInfo) {
         await meetingManager.join({
           meetingInfo: response.JoinInfo.Meeting,
-          attendeeInfo: response.JoinInfo.Attendee
+          attendeeInfo: response.JoinInfo.Attendee,
         });
 
         setAppMeetingInfo(response.JoinInfo.Meeting.MeetingId, member.username);
@@ -252,7 +255,8 @@ const ChannelsWrapper = () => {
           dispatch({
             type: 0,
             payload: {
-              message: 'Unable to join the meeting that has ended. Please start a new meeting.',
+              message:
+                'Unable to join the meeting that has ended. Please start a new meeting.',
               severity: 'error',
               autoClose: true,
             },
@@ -261,10 +265,10 @@ const ChannelsWrapper = () => {
         setAppMeetingInfo(null, member.username);
         setModal('');
         setMeetingInfo(null);
-        
+
         // Update meeting channel metadata with meeting info
         let meetingChannelmetadata = {
-          isMeeting: false
+          isMeeting: false,
         };
 
         await updateChannel(
@@ -283,10 +287,14 @@ const ChannelsWrapper = () => {
 
     // Create meeting and attendee for self
     meetingManager.getAttendee = createGetAttendeeCallback();
-    const { JoinInfo } = await createMeeting(member.username, member.userId, activeChannel.ChannelArn);
+    const { JoinInfo } = await createMeeting(
+      member.username,
+      member.userId,
+      activeChannel.ChannelArn
+    );
     await meetingManager.join({
       meetingInfo: JoinInfo.Meeting,
-      attendeeInfo: JoinInfo.Attendee
+      attendeeInfo: JoinInfo.Attendee,
     });
 
     const meetingId = JoinInfo.Meeting.MeetingId;
@@ -295,7 +303,7 @@ const ChannelsWrapper = () => {
     // Update meeting channel metadata with meeting info
     let meetingChannelmetadata = {
       isMeeting: true,
-      meeting: meeting
+      meeting: meeting,
     };
 
     await updateChannel(
@@ -314,7 +322,7 @@ const ChannelsWrapper = () => {
       channelArn: activeChannel.ChannelArn,
       channelName: activeChannel.Name,
       inviter: member.username,
-    }
+    };
     await sendChannelMessage(
       activeChannel.ChannelArn,
       JSON.stringify(meetingInfoMessage),
@@ -322,7 +330,7 @@ const ChannelsWrapper = () => {
       member,
       options
     );
-    
+
     setAppMeetingInfo(meetingId, member.username);
     history.push(routes.DEVICE);
   };
@@ -422,10 +430,7 @@ const ChannelsWrapper = () => {
 
     const newMessages = await listChannelMessages(channelArn, userId);
     const channel = await describeChannel(channelArn, userId);
-    const memberships = await listChannelMemberships(
-      channelArn,
-      userId
-    );
+    const memberships = await listChannelMemberships(channelArn, userId);
     function containsUser(userName, list) {
       var i;
       for (i = 0; i < list.length; i++) {
@@ -437,17 +442,18 @@ const ChannelsWrapper = () => {
     }
     if (!containsUser('ModeratorBot', memberships)) {
       const newmember = await createChannelMembership(
-        channelArn, 
-        `${appConfig.appInstanceArn}/user/ModeratorBot`, 
-        userId);
+        channelArn,
+        `${appConfig.appInstanceArn}/user/ModeratorBot`,
+        userId
+      );
     }
     setMessages(newMessages.Messages);
     setChannelMessageToken(newMessages.NextToken);
     await sendChannelMessage(
       channelArn,
-      "Welcome to the Demo Waiting Room. Please let us know what you want to do while waiting for doctor to join. You have options as self evaluation, retireve lab results, get medications, schedule future appointments.",
+      'Welcome to the Demo Waiting Room. Please let us know what you want to do while waiting for doctor to join. You have options as self evaluation, retireve lab results, get medications, schedule future appointments.',
       'PERSISTENT',
-      {"userId": "ModeratorBot", "username": "ModeratorBot"}
+      { userId: 'ModeratorBot', username: 'ModeratorBot' }
     );
     setActiveChannel(channel);
     setUnreadChannels(unreadChannels.filter((c) => c !== channelArn));
@@ -506,13 +512,18 @@ const ChannelsWrapper = () => {
     e.preventDefault();
 
     await channelIdChangeHandler(meetingInfo.channelArn);
-    
+
     meetingManager.getAttendee = createGetAttendeeCallback();
-    const { JoinInfo } = await createAttendee(member.username, member.userId, meetingInfo.channelArn, meetingInfo.meeting);
+    const { JoinInfo } = await createAttendee(
+      member.username,
+      member.userId,
+      meetingInfo.channelArn,
+      meetingInfo.meeting
+    );
 
     await meetingManager.join({
       meetingInfo: JoinInfo.Meeting,
-      attendeeInfo: JoinInfo.Attendee
+      attendeeInfo: JoinInfo.Attendee,
     });
 
     setAppMeetingInfo(JoinInfo.Meeting.MeetingId, member.username);
@@ -521,7 +532,7 @@ const ChannelsWrapper = () => {
     setMeetingInfo(null);
 
     history.push(routes.DEVICE);
-  }
+  };
 
   const handleMessageAll = async (e, meetingChannelArn) => {
     e.preventDefault();
@@ -530,7 +541,7 @@ const ChannelsWrapper = () => {
     setMeetingInfo(null);
 
     await channelIdChangeHandler(meetingChannelArn);
-  }
+  };
 
   const handleDeleteMemberships = () => {
     try {
@@ -651,20 +662,12 @@ const ChannelsWrapper = () => {
       </PopOverItem>
     );
     const startMeetingOption = (
-      <PopOverItem
-        key="start_meeting"
-        as="button"
-        onClick={startMeeting}
-      >
+      <PopOverItem key="start_meeting" as="button" onClick={startMeeting}>
         <span>Start meeting</span>
       </PopOverItem>
     );
     const joinMeetingOption = (
-      <PopOverItem
-        key="join_meeting"
-        as="button"
-        onClick={joinMeeting}
-      >
+      <PopOverItem key="join_meeting" as="button" onClick={joinMeeting}>
         <span>Join meeting</span>
       </PopOverItem>
     );
@@ -779,7 +782,9 @@ const ChannelsWrapper = () => {
       if (channel.Metadata) {
         let metadata = JSON.parse(channel.Metadata);
         if (metadata.isMeeting) {
-          return role === 'moderator' ? meetingModeratorActions : meetingMemberActions;
+          return role === 'moderator'
+            ? meetingModeratorActions
+            : meetingMemberActions;
         }
       }
 
@@ -792,7 +797,9 @@ const ChannelsWrapper = () => {
     if (role === 'moderator') {
       return noMeetingModeratorActions;
     }
-    return isRestricted ? noMeetingRestrictedMemberActions : noMeetingUnrestrictedMemberActions;
+    return isRestricted
+      ? noMeetingRestrictedMemberActions
+      : noMeetingUnrestrictedMemberActions;
   };
 
   return (
@@ -839,7 +846,7 @@ const ChannelsWrapper = () => {
               name={channel.Name}
               actions={loadUserActions(userPermission.role, channel)}
               isSelected={channel.ChannelArn === activeChannel.ChannelArn}
-              onClick={e => {
+              onClick={(e) => {
                 e.stopPropagation();
                 channelIdChangeHandler(channel.ChannelArn);
               }}

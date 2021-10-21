@@ -7,7 +7,7 @@ const transcriptHighlights = {
   MEDICAL_CONDITION: s.condition,
   ANATOMY: s.anatomy,
   MEDICATION: s.medication,
-  TEST_TREATMENT_PROCEDURE: s.treatment
+  TEST_TREATMENT_PROCEDURE: s.treatment,
 };
 
 export default transcriptHighlights;

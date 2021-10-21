@@ -10,7 +10,7 @@ import {
   useMeetingManager,
   Modal,
   ModalBody,
-  ModalHeader
+  ModalHeader,
 } from 'amazon-chime-sdk-component-library-react';
 
 import routes from '../constants/routes';
@@ -33,7 +33,7 @@ const MeetingJoinDetails = () => {
       history.push(`${routes.MEETING}/${meetingId}`);
     } catch (error) {
       setIsLoading(false);
-      setError("start meeting manager error");
+      setError('start meeting manager error');
     }
   };
 

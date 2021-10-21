@@ -6,12 +6,12 @@ import React, {
   useContext,
   useEffect,
   useRef,
-  ReactNode
+  ReactNode,
 } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useMeetingManager } from 'amazon-chime-sdk-component-library-react';
 import { useAppState } from './AppStateProvider';
-import {startTranscription} from '../api/ChimeAPI';
+import { startTranscription } from '../api/ChimeAPI';
 
 import routes from '../constants/routes';
 
@@ -111,7 +111,7 @@ const NavigationProvider = ({ children }: Props) => {
   };
 
   const toggleMetrics = () => {
-    setShowMetrics(currentState => !currentState);
+    setShowMetrics((currentState) => !currentState);
   };
 
   const openNavbar = (): void => {
@@ -164,7 +164,7 @@ const NavigationProvider = ({ children }: Props) => {
     openTranscript,
     closeTranscript,
     openNavbar,
-    closeNavbar
+    closeNavbar,
   };
   return (
     <NavigationContext.Provider value={providerValue}>

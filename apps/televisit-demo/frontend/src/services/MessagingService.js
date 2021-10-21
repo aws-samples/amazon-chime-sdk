@@ -9,13 +9,13 @@ import {
   LogLevel,
   ConsoleLogger,
   DefaultMessagingSession,
-  MessagingSessionConfiguration
+  MessagingSessionConfiguration,
 } from 'amazon-chime-sdk-js';
 
 import { getMessagingSessionEndpoint, createMemberArn } from '../api/ChimeAPI';
 
 class MessagingService {
-  constructor () {
+  constructor() {
     this._session;
     this.sessionId = uuid();
     this._logger = new ConsoleLogger('SDK Chat Demo', LogLevel.INFO);
@@ -26,21 +26,21 @@ class MessagingService {
     messagingSessionDidStart: () => {
       console.log('Messaging Connection started!');
     },
-    messagingSessionDidStartConnecting: reconnecting => {
+    messagingSessionDidStartConnecting: (reconnecting) => {
       console.log('Messaging Connection connecting');
     },
-    messagingSessionDidStop: event => {
+    messagingSessionDidStop: (event) => {
       console.log('Messaging Connection received DidStop event');
     },
-    messagingSessionDidReceiveMessage: message => {
+    messagingSessionDidReceiveMessage: (message) => {
       console.log('Messaging Connection received message');
       this.publishMessageUpdate(message);
-    }
+    },
   };
 
-  setMessagingEndpoint (member) {
+  setMessagingEndpoint(member) {
     getMessagingSessionEndpoint()
-      .then(async response => {
+      .then(async (response) => {
         this._endpoint = response?.Endpoint?.Url;
 
         const sessionConfig = new MessagingSessionConfiguration(
@@ -59,16 +59,16 @@ class MessagingService {
         this._session.addObserver(this.messageObserver);
         this._session.start();
       })
-      .catch(err => {
+      .catch((err) => {
         console.error(err);
       });
   }
 
-  connect (member) {
+  connect(member) {
     this.setMessagingEndpoint(member);
   }
 
-  close () {
+  close() {
     try {
       this._session.stop();
     } catch (err) {
@@ -76,19 +76,19 @@ class MessagingService {
     }
   }
 
-  subscribeToMessageUpdate (callback) {
+  subscribeToMessageUpdate(callback) {
     console.log('Message listener subscribed!');
     this._messageUpdateCallbacks.push(callback);
   }
 
-  unsubscribeFromMessageUpdate (callback) {
+  unsubscribeFromMessageUpdate(callback) {
     const index = this._messageUpdateCallbacks.indexOf(callback);
     if (index !== -1) {
       this._messageUpdateCallbacks.splice(index, 1);
     }
   }
 
-  publishMessageUpdate (message) {
+  publishMessageUpdate(message) {
     console.log('Sending message update to listeners!');
     for (let i = 0; i < this._messageUpdateCallbacks.length; i += 1) {
       const callback = this._messageUpdateCallbacks[i];

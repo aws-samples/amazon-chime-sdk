@@ -2,10 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import React from 'react';
-import {
-  Grid,
-  Cell,
-} from 'amazon-chime-sdk-component-library-react';
+import { Grid, Cell } from 'amazon-chime-sdk-component-library-react';
 import Messages from './messages/Messages';
 import Input from './input/Input';
 import {
@@ -17,11 +14,7 @@ import { useAuthContext } from '../providers/AuthProvider';
 const MeetingChat = () => {
   const { member } = useAuthContext();
 
-  const {
-    messages,
-    messagesRef,
-    setMessages,
-  } = useChatMessagingState();
+  const { messages, messagesRef, setMessages } = useChatMessagingState();
 
   const {
     setChannelMessageToken,
@@ -31,7 +24,7 @@ const MeetingChat = () => {
   } = useChatChannelState();
 
   return (
-    <Grid style={{ overflowX: 'auto',overflowY: 'auto' }}>
+    <Grid style={{ overflowX: 'auto', overflowY: 'auto' }}>
       <Cell>
         <div className="messaging-container">
           <Messages

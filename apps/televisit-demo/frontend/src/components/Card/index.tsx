@@ -16,7 +16,7 @@ const Card: React.FC<CardProps> = ({
   header,
   title,
   description,
-  smallText
+  smallText,
 }: CardProps) => (
   <StyledCard>
     {header && <div className="ch-header">{header}</div>}

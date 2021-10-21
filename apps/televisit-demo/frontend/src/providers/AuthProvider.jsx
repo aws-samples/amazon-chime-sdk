@@ -25,7 +25,6 @@ const AuthProvider = ({ children }) => {
   // else lookup using ListAppInstanceUsers API), default to Cognito flow
   const [useCognitoIdp, setUseCognitoIdp] = useState(true);
 
-
   const userSignOut = async () => {
     try {
       await Auth.signOut();
@@ -89,54 +88,53 @@ const AuthProvider = ({ children }) => {
   const setAuthenticatedUserFromCognito = () => {
     setUseCognitoIdp(true);
     Auth.currentUserInfo()
-        .then(curUser => {
-          setMember({ username: curUser.username, userId: curUser.id });
-          if (curUser.attributes?.profile === 'none') {
-            updateUserAttributes(curUser.id);
-            // Once we set attribute let's have user relogin to refresh SigninHookFn trigger.
-            setIsAuthenticated(false);
+      .then((curUser) => {
+        setMember({ username: curUser.username, userId: curUser.id });
+        if (curUser.attributes?.profile === 'none') {
+          updateUserAttributes(curUser.id);
+          // Once we set attribute let's have user relogin to refresh SigninHookFn trigger.
+          setIsAuthenticated(false);
 
-            notificationDispatch({
-              type: 0,
-              payload: {
-                message:
-                    'Your account is activated! Please sign in again to confirm.',
-                severity: 'success',
-              },
-            });
-          } else {
-            setAnonymous(false);
-            setIsAuthenticated(true);
-          }
-        })
-        .catch((err) => {
-          console.log(`Failed to set authenticated user! ${err}`);
-        });
+          notificationDispatch({
+            type: 0,
+            payload: {
+              message:
+                'Your account is activated! Please sign in again to confirm.',
+              severity: 'success',
+            },
+          });
+        } else {
+          setAnonymous(false);
+          setIsAuthenticated(true);
+        }
+      })
+      .catch((err) => {
+        console.log(`Failed to set authenticated user! ${err}`);
+      });
     getAwsCredentialsFromCognito();
   };
 
   const userSignIn = (username, password) => {
     Auth.signIn({ username, password })
-        .then(setAuthenticatedUserFromCognito)
-        .catch((err) => {
-          console.log(err);
-          notificationDispatch({
-            type: 0,
-            payload: {
-              message: 'Your username and/or password is invalid!',
-              severity: 'error',
-            },
-          });
+      .then(setAuthenticatedUserFromCognito)
+      .catch((err) => {
+        console.log(err);
+        notificationDispatch({
+          type: 0,
+          payload: {
+            message: 'Your username and/or password is invalid!',
+            severity: 'error',
+          },
         });
+      });
   };
-
 
   const setAuthenticatedUserFromCredentialExchangeService = (response) => {
     setUseCognitoIdp(false);
-    setAnonymous(true)
+    setAnonymous(true);
     setMember({
       username: response.ChimeDisplayName,
-      userId: response.ChimeUserId
+      userId: response.ChimeUserId,
     });
     const stsCredentials = response.ChimeCredentials;
     updateUserAttributes(response.ChimeUserId);
@@ -144,41 +142,42 @@ const AuthProvider = ({ children }) => {
     AWS.config.credentials = {
       accessKeyId: stsCredentials.AccessKeyId,
       secretAccessKey: stsCredentials.SecretAccessKey,
-      sessionToken: stsCredentials.SessionToken
+      sessionToken: stsCredentials.SessionToken,
     };
 
     setIsAuthenticated(true);
   };
 
   // Credential Exchange Service Code.  Set Access Token on Authorization header using Bearer type.
-  const userExchangeTokenForAwsCreds = accessToken => {
+  const userExchangeTokenForAwsCreds = (accessToken) => {
     fetch(`${appConfig.apiGatewayInvokeUrl}creds`, {
       method: 'POST',
       credentials: 'include',
       headers: new Headers({
-        Authorization: `Bearer ${btoa(accessToken)}`
-      })
-    }).then(response => response.json())
-        .then(data => setAuthenticatedUserFromCredentialExchangeService(data))
-        .catch(err => {
-          console.log(err);
-          notificationDispatch({
-            type: 0,
-            payload: {
-              message: 'Your username and/or password is invalid!',
-              severity: 'error',
-            },
-          });
+        Authorization: `Bearer ${btoa(accessToken)}`,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => setAuthenticatedUserFromCredentialExchangeService(data))
+      .catch((err) => {
+        console.log(err);
+        notificationDispatch({
+          type: 0,
+          payload: {
+            message: 'Your username and/or password is invalid!',
+            severity: 'error',
+          },
         });
+      });
   };
 
   useEffect(() => {
     Auth.currentAuthenticatedUser()
-        .then(setAuthenticatedUserFromCognito)
-        .catch((err) => {
-          console.log(err);
-          setIsAuthenticated(false);
-        });
+      .then(setAuthenticatedUserFromCognito)
+      .catch((err) => {
+        console.log(err);
+        setIsAuthenticated(false);
+      });
   }, [Auth]);
 
   const authFulfiller = {
@@ -189,13 +188,13 @@ const AuthProvider = ({ children }) => {
     userSignOut,
     userSignUp,
     userSignIn,
-    userExchangeTokenForAwsCreds: userExchangeTokenForAwsCreds
+    userExchangeTokenForAwsCreds: userExchangeTokenForAwsCreds,
   };
 
   return (
-      <AuthContext.Provider value={authFulfiller}>
-        {children}
-      </AuthContext.Provider>
+    <AuthContext.Provider value={authFulfiller}>
+      {children}
+    </AuthContext.Provider>
   );
 };
 

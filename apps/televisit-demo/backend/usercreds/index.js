@@ -18,23 +18,27 @@ function validateAccessTokenOrCredsAndReturnUser(identityToken) {
   return {
     uuid: randomUserID,
     displayName: randomUserID,
-    metadata: null
+    metadata: null,
   };
 }
 
 // STEP 2: get AWS Creds by calling assumeRole with the user info returned
 // in step one.
 async function assumeRole(user) {
-  const assumedRoleResponse = await sts.assumeRole({
-    RoleArn: ANON_USER_ROLE_ARN, // Give anonymous permissions
-    RoleSessionName: `chime_${user.uuid}`,
-    DurationSeconds: '3600', // 1 hour, often want to set this to the duration of access token from IdP
-    Tags: [{
-      Key: 'UserUUID', // parameterizes IAM Role with users UUID
-      Value: user.uuid
-    }]
-  }).promise();
-  return assumedRoleResponse.Credentials;  // returns AWS Creds
+  const assumedRoleResponse = await sts
+    .assumeRole({
+      RoleArn: ANON_USER_ROLE_ARN, // Give anonymous permissions
+      RoleSessionName: `chime_${user.uuid}`,
+      DurationSeconds: '3600', // 1 hour, often want to set this to the duration of access token from IdP
+      Tags: [
+        {
+          Key: 'UserUUID', // parameterizes IAM Role with users UUID
+          Value: user.uuid,
+        },
+      ],
+    })
+    .promise();
+  return assumedRoleResponse.Credentials; // returns AWS Creds
 }
 
 // STEP 3: Create or get user in Chime (create is NOOP if already exists)
@@ -44,14 +48,14 @@ async function createOrGetChimeUserArn(user) {
       AppInstanceArn: APP_INSTANCE_ID,
       AppInstanceUserId: user.uuid,
       ClientRequestToken: uuidv4(),
-      Name: user.displayName
+      Name: user.displayName,
     })
     .promise();
   return createUserResponse.AppInstanceUserArn;
 }
 
 // MAIN, call above in order
-exports.handler = async event => {
+exports.handler = async (event) => {
   const method = event.httpMethod;
   const { path } = event;
   const authToken = event.headers.Authorization;
@@ -67,20 +71,20 @@ exports.handler = async event => {
           'Access-Control-Allow-Headers': 'Authorization',
           'Access-Control-Allow-Origin': '*',
           'Access-Control-Allow-Methods': 'POST, OPTIONS',
-          'Access-Control-Allow-Credentials': 'true'
+          'Access-Control-Allow-Credentials': 'true',
         },
         body: JSON.stringify({
           ChimeAppInstanceUserArn: userArn,
           ChimeUserId: user.uuid,
           ChimeCredentials: creds,
-          ChimeDisplayName: user.displayName
-        })
+          ChimeDisplayName: user.displayName,
+        }),
       };
     }
   } catch (err) {
     console.log(`ERROR: unexpected exception ${err}`);
- }
- 
+  }
+
   // Default response to not authorized
   return {
     statusCode: 401,
@@ -88,8 +92,8 @@ exports.handler = async event => {
       'Access-Control-Allow-Headers': 'Authorization',
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Credentials': 'true'
+      'Access-Control-Allow-Credentials': 'true',
     },
-    body: 'Not Authorized'
+    body: 'Not Authorized',
   };
 };

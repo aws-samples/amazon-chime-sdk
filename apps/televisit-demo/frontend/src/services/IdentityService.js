@@ -13,17 +13,17 @@ export class IdentityService {
    * @param {region}  region AWS region.
    * @param {userPoolId} userPoolId Cognito User Pool Id.
    */
-  constructor (region, userPoolId) {
+  constructor(region, userPoolId) {
     this._userPoolId = userPoolId;
     this._region = region;
   }
 
-  async getUsers (limit = 60) {
+  async getUsers(limit = 60) {
     try {
       const users = await this._identityClient
         .listUsers({
           Limit: limit,
-          UserPoolId: this._userPoolId
+          UserPoolId: this._userPoolId,
         })
         .promise();
 
@@ -33,13 +33,13 @@ export class IdentityService {
     }
   }
 
-  async searchByName (name) {
+  async searchByName(name) {
     try {
       const list = await this._identityClient
         .listUsers({
           Filter: `username ^= "${name}"`,
           Limit: 10,
-          UserPoolId: this._userPoolId
+          UserPoolId: this._userPoolId,
         })
         .promise();
 
@@ -49,13 +49,13 @@ export class IdentityService {
     }
   }
 
-  async setupClient () {
+  async setupClient() {
     const creds = await Auth.currentCredentials();
     if (!creds) return;
 
     this._identityClient = new AWS.CognitoIdentityServiceProvider({
       region: this._region,
-      credentials: Auth.essentialCredentials(creds)
+      credentials: Auth.essentialCredentials(creds),
     });
   }
 }

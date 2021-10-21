@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import {
   SpeakerSelection,
   SecondaryButton,
-  useAudioOutputs
+  useAudioOutputs,
 } from 'amazon-chime-sdk-component-library-react';
 
 import TestSound from '../../../utilities/TestSound';

@@ -46,9 +46,9 @@ export const VIDEO_INPUT_QUALITY = {
 };
 
 export const SDK_LOG_LEVELS = {
-  'debug': LogLevel.DEBUG,
-  'info': LogLevel.INFO,
-  'warn': LogLevel.WARN,
-  'error': LogLevel.ERROR,
-  'off': LogLevel.OFF,
-}
+  debug: LogLevel.DEBUG,
+  info: LogLevel.INFO,
+  warn: LogLevel.WARN,
+  error: LogLevel.ERROR,
+  off: LogLevel.OFF,
+};

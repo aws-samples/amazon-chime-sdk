@@ -3,7 +3,7 @@ import { Entity } from 'aws-sdk/clients/comprehendmedical';
 
 const detectEntities = async (
   text: string | undefined,
-  clientParams?: ComprehendMedical.Types.ClientConfiguration,
+  clientParams?: ComprehendMedical.Types.ClientConfiguration
 ): Promise<Entity[]> => {
   const comprehendMedical = new ComprehendMedical(clientParams);
 

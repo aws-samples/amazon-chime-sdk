@@ -9,7 +9,7 @@ const arnParser = (arn) => {
     'region',
     'namespace',
     'relativeId',
-    'relativeValue'
+    'relativeValue',
   ];
   return arn.split(':').reduce(function (aggregator, piece, index) {
     aggregator[arnMap[index]] = piece;

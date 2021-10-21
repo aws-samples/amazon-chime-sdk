@@ -18,7 +18,7 @@ exports.handler = async (event, context, callback) => {
   const chimeCreateAppInstanceUserParams = {
     AppInstanceArn: CHIME_APP_INSTANCE_ARN,
     AppInstanceUserId: userId,
-    Name: username
+    Name: username,
   };
 
   try {
@@ -30,7 +30,7 @@ exports.handler = async (event, context, callback) => {
     console.log(JSON.stringify(e));
     return {
       statusCode: 500,
-      body: "Server error while creating app instance"
+      body: 'Server error while creating app instance',
     };
   }
   // Return to Amazon Cognito

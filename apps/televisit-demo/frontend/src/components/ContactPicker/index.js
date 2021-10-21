@@ -16,26 +16,30 @@ export const MultiSelect = (props) => {
       option: (provided, state) => ({
         ...provided,
         transition: 'background-color .05s ease-in',
-        backgroundColor: state.isFocused ? `${theme.colors.primary.light}` : `${theme.colors.greys.white}`,
-        color: state.isFocused ? `${theme.colors.greys.white}` : `${theme.colors.greys.grey70}`,
+        backgroundColor: state.isFocused
+          ? `${theme.colors.primary.light}`
+          : `${theme.colors.greys.white}`,
+        color: state.isFocused
+          ? `${theme.colors.greys.white}`
+          : `${theme.colors.greys.grey70}`,
         padding: 16,
         '&:first-of-type': {
-          borderRadius: `${theme.radii.default} ${theme.radii.default} 0 0`
+          borderRadius: `${theme.radii.default} ${theme.radii.default} 0 0`,
         },
         '&:last-of-type': {
-          borderRadius: `0 0 ${theme.radii.default} ${theme.radii.default}`
+          borderRadius: `0 0 ${theme.radii.default} ${theme.radii.default}`,
         },
         '&:hover': {
           backgroundColor: `${theme.colors.primary.light}`,
-          color: `${theme.colors.greys.white}`
-        }
+          color: `${theme.colors.greys.white}`,
+        },
       }),
 
       menu: (provided) => ({
         ...provided,
         marginBottom: '2rem',
         boxShadow: 'none',
-        position: 'relative'
+        position: 'relative',
       }),
 
       control: (provided) => ({
@@ -49,28 +53,27 @@ export const MultiSelect = (props) => {
         fontSize: `${theme.fontSizes.text.fontSize}`,
         lineHeight: `${theme.fontSizes.text.lineHeight}`,
         '&:focus-within': {
-          boxShadow: `0 0 0 0.125rem ${theme.colors.primary.lightest}`
+          boxShadow: `0 0 0 0.125rem ${theme.colors.primary.lightest}`,
         },
         '&:hover': {
-          borderColor: 'none'
-        }
+          borderColor: 'none',
+        },
       }),
       menuList: () => ({
         padding: 0,
-        boxShadow: '0 1px 4px 0 rgba(0, 0, 0, 0.1)'
-
+        boxShadow: '0 1px 4px 0 rgba(0, 0, 0, 0.1)',
       }),
       multiValue: (provided) => ({
         ...provided,
         backgroundColor: `${theme.colors.primary.light}`,
         borderRadius: '1rem',
-        color: `${theme.colors.greys.white}`
+        color: `${theme.colors.greys.white}`,
       }),
       multiValueLabel: (provided) => ({
         ...provided,
         color: `${theme.colors.greys.white}`,
-        fontWeight: 'bolder'
-      })
+        fontWeight: 'bolder',
+      }),
     };
     return customStyles;
   };
@@ -92,7 +95,7 @@ export const MultiSelect = (props) => {
       closeMenuOnSelect={false}
       components={{
         DropdownIndicator: () => null,
-        IndicatorSeparator: () => null
+        IndicatorSeparator: () => null,
       }}
       defaultMenuIsOpen
       inputValue={inputValue}
@@ -101,7 +104,7 @@ export const MultiSelect = (props) => {
       onInputChange={onInputChange}
       hideSelectedOptions
       menuIsOpen
-      options={props.options.filter(o => o.label && o.value)}
+      options={props.options.filter((o) => o.label && o.value)}
       styles={getCustomStyles()}
       captureMenuScroll={false}
     />

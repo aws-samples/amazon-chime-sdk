@@ -4,7 +4,7 @@
 import React from 'react';
 import {
   VideoTileGrid,
-  UserActivityProvider
+  UserActivityProvider,
 } from 'amazon-chime-sdk-component-library-react';
 
 import { StyledLayout, StyledContent } from './Styled';
@@ -21,7 +21,12 @@ const MeetingView = () => {
 
   return (
     <UserActivityProvider>
-      <StyledLayout showNav={showNavbar} showRoster={showRoster} showChat={showChat} showTranscript={showTranscript}>
+      <StyledLayout
+        showNav={showNavbar}
+        showRoster={showRoster}
+        showChat={showChat}
+        showTranscript={showTranscript}
+      >
         <StyledContent>
           <MeetingMetrics />
           <VideoTileGrid

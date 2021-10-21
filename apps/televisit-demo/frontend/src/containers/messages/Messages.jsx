@@ -29,7 +29,10 @@ import {
 import insertDateHeaders from '../../utilities/insertDateHeaders';
 
 import './Messages.css';
-import { useChatChannelState, useChatMessagingState } from '../../providers/ChatMessagesProvider';
+import {
+  useChatChannelState,
+  useChatMessagingState,
+} from '../../providers/ChatMessagesProvider';
 
 const Messages = ({
   messages,
@@ -140,7 +143,7 @@ const Messages = ({
       </ModalBody>
     </Modal>
   );
-  
+
   const cancelEdit = (e) => {
     e.preventDefault();
     setShowDiscardModal(true);
@@ -197,9 +200,9 @@ const Messages = ({
       let metadata = JSON.parse(m.Metadata);
       if (metadata.isMeetingInfo) {
         return m;
-      };
+      }
     }
- 
+
     const variant =
       createMemberArn(userId) === m.senderId ? 'outgoing' : 'incoming';
     let actions = null;
