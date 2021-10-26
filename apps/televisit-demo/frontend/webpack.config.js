@@ -15,52 +15,52 @@ module.exports = {
       {
         test: /\.tsx?$/,
         use: 'ts-loader',
-        exclude: /node_modules/
+        exclude: /node_modules/,
       },
       {
         test: /\.css$/,
-        use: ['style-loader', 'css-loader']
+        use: ['style-loader', 'css-loader'],
       },
       {
         test: /\.jsx?$/,
         loader: 'babel-loader',
-        exclude: /node_modules/
-      }
-    ]
+        exclude: /node_modules/,
+      },
+    ],
   },
   resolve: {
     extensions: ['.jsx', '.tsx', '.ts', '.js'],
     fallback: {
       fs: false,
       tls: false,
-    }
+    },
   },
   output: {
     path: path.join(__dirname, 'dist'),
     filename: `${app}-bundle.js`,
     publicPath: '/',
     libraryTarget: 'var',
-    library: `app_${app}`
+    library: `app_${app}`,
   },
   plugins: [
     new HtmlWebpackPlugin({
       inlineSource: '.(js|css)$',
       template: __dirname + `/app/${app}.html`,
       filename: __dirname + `/dist/${app}.html`,
-      inject: 'head'
+      inject: 'head',
     }),
   ],
   devServer: {
     proxy: {
       '/': {
         target: 'http://localhost:8080',
-        bypass: function(req, _res, _proxyOptions) {
+        bypass: function (req, _res, _proxyOptions) {
           if (req.headers.accept.indexOf('html') !== -1) {
             console.log('Skipping proxy for browser request.');
             return `/${app}.html`;
           }
-        }
-      }
+        },
+      },
     },
     contentBase: path.join(__dirname, 'dist'),
     index: `${app}.html`,
@@ -71,6 +71,6 @@ module.exports = {
     port: 9000,
     https: true,
     historyApiFallback: true,
-    writeToDisk: true
-  }
+    writeToDisk: true,
+  },
 };

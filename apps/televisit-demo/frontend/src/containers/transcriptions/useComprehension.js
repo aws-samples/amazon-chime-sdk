@@ -12,13 +12,13 @@ import AWS from 'aws-sdk';
 const resultMap = new WeakMap();
 
 // React hook to take an array of transcript chunks and return a corresponding array of Comprehend results, one for each
-export default function useComprehension (transcriptChunks) {
+export default function useComprehension(transcriptChunks) {
   const [result, setResult] = useState([]);
   const clientParams = {
     region: 'us-east-1',
     accessKeyId: AWS.config.credentials.accessKeyId,
     secretAccessKey: AWS.config.credentials.secretAccessKey,
-    sessionToken: AWS.config.credentials.sessionToken
+    sessionToken: AWS.config.credentials.sessionToken,
   };
 
   useEffect(() => {
@@ -63,12 +63,18 @@ export default function useComprehension (transcriptChunks) {
         });
 
         inferRxNorm(chunk.text, clientParams).then((rawEntities) => {
-          const entities = addSelectedConceptCodeAndSortConcepts(rawEntities, 'RxNormConcepts');
+          const entities = addSelectedConceptCodeAndSortConcepts(
+            rawEntities,
+            'RxNormConcepts'
+          );
           addResult(chunk, entities);
         });
 
         inferICD10CM(chunk.text, clientParams).then((rawEntities) => {
-          const entities = addSelectedConceptCodeAndSortConcepts(rawEntities, 'ICD10CMConcepts');
+          const entities = addSelectedConceptCodeAndSortConcepts(
+            rawEntities,
+            'ICD10CMConcepts'
+          );
           addResult(chunk, entities);
         });
       }
@@ -84,5 +90,9 @@ const addSelectedConceptCodeAndSortConcepts = (rawEntities, conceptAttribute) =>
 
     const sortedConcepts = sortByScoreDescending(entity[conceptAttribute]);
 
-    return { ...entity, [conceptAttribute]: sortedConcepts, selectedConceptCode: sortedConcepts[0].Code };
+    return {
+      ...entity,
+      [conceptAttribute]: sortedConcepts,
+      selectedConceptCode: sortedConcepts[0].Code,
+    };
   });

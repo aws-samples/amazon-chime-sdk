@@ -24,14 +24,14 @@ class AttachmentService {
    * @param {object} fileObj File to be put in bucket
    * @returns {Promise} promise resolves to object on success
    */
-  static async upload (fileObj) {
+  static async upload(fileObj) {
     try {
       const response = await Storage.put(
         `${this.userUploadDir}/${fileObj.name}`,
         fileObj,
         {
           contentType: fileObj.type,
-          level: this.userLevel
+          level: this.userLevel,
         }
       );
 
@@ -48,10 +48,10 @@ class AttachmentService {
    * @param {string} userId - userId of the user who shared the attachment.
    * @return {Promise}- A promise resolves to either a presigned url or the object
    */
-  static download (fileKey, userId) {
+  static download(fileKey, userId) {
     return Storage.get(fileKey, {
       level: this.userLevel,
-      identityId: userId
+      identityId: userId,
     });
   }
 
@@ -60,7 +60,7 @@ class AttachmentService {
    * @param {string} fileKey - key of the object
    * @return - Promise resolves upon successful removal of the object
    */
-  static delete (fileKey) {
+  static delete(fileKey) {
     return Storage.remove(fileKey, { level: this.userLevel });
   }
 }

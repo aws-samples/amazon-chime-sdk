@@ -17,7 +17,7 @@ const configureAmplify = () => {
       // OPTIONAL - Amazon Cognito User Pool ID
       userPoolId: appConfig.cognitoUserPoolId,
       // OPTIONAL - Amazon Cognito Web Client ID (26-char alphanumeric string)
-      userPoolWebClientId: appConfig.cognitoAppClientId
+      userPoolWebClientId: appConfig.cognitoAppClientId,
     },
     Storage: {
       // REQUIRED - S3 bucket name for chat attachments
@@ -25,8 +25,8 @@ const configureAmplify = () => {
       // REQUIRED - Amazon S3 Region
       region: appConfig.region,
       // REQUIRED Amazon Cognito Identity Pool ID
-      identityPoolId: appConfig.cognitoIdentityPoolId
-    }
+      identityPoolId: appConfig.cognitoIdentityPoolId,
+    },
   });
 };
 

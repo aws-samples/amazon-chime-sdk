@@ -5,7 +5,6 @@ import React, { useContext, useState } from 'react';
 const AppStateContext = React.createContext();
 
 export const AppStateProvider = ({ children }) => {
-
   const setAppMeetingInfo = (meetingId, name) => {
     setMeeting(meetingId);
     setLocalName(name);
@@ -44,7 +43,7 @@ export const AppStateProvider = ({ children }) => {
     localUserName,
     theme,
     toggleTheme,
-    setAppMeetingInfo
+    setAppMeetingInfo,
   };
 
   return (

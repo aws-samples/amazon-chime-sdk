@@ -7,7 +7,7 @@ import {
   PreviewVideo,
   QualitySelection,
   CameraSelection,
-  Label
+  Label,
 } from 'amazon-chime-sdk-component-library-react';
 
 import { title, StyledInputGroup } from '../Styled';

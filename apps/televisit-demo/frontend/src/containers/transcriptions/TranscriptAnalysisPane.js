@@ -5,52 +5,62 @@ import useComprehension from './useComprehension';
 import generateSOAPSummary from './soapSummary';
 import SOAPReviewPane from './SOAPReviewPane';
 
-import {
-  Heading,
-  Grid,
-  Cell
-} from 'amazon-chime-sdk-component-library-react';
+import { Heading, Grid, Cell } from 'amazon-chime-sdk-component-library-react';
 import { useTheme } from 'styled-components';
 
-export default function TranscriptAnalysisPane ({
+export default function TranscriptAnalysisPane({
   transcriptChunks,
   partialTranscript,
   inProgress,
-  enableEditing
+  enableEditing,
 }) {
   const currentTheme = useTheme();
-  const [comprehendResults, setComprehendResults] = useComprehension(transcriptChunks || []);
+  const [comprehendResults, setComprehendResults] = useComprehension(
+    transcriptChunks || []
+  );
   const [comprehendCustomEntities, setComprehendCustomEntities] = useState([]);
-  const [soapSummary, setSOAPSummary] = useState(() => generateSOAPSummary([].concat(...comprehendResults)));
+  const [soapSummary, setSOAPSummary] = useState(() =>
+    generateSOAPSummary([].concat(...comprehendResults))
+  );
 
   useEffect(() => {
-    setSOAPSummary(generateSOAPSummary([].concat(...[...comprehendResults, ...comprehendCustomEntities])));
+    setSOAPSummary(
+      generateSOAPSummary(
+        [].concat(...[...comprehendResults, ...comprehendCustomEntities])
+      )
+    );
   }, [comprehendResults, comprehendCustomEntities]);
 
-  function updateSOAPSummary (e) {
+  function updateSOAPSummary(e) {
     setSOAPSummary(e.target.value);
   }
 
   const onComprehendResultDelete = (r) => {
     r.isCustomEntity
       ? setComprehendCustomEntities((prevEntities) =>
-        prevEntities.map((prevEntity) => {
-          const index = prevEntity.findIndex((entity) => entity.id === r.id);
+          prevEntities.map((prevEntity) => {
+            const index = prevEntity.findIndex((entity) => entity.id === r.id);
 
-          if (index === -1) return prevEntity;
+            if (index === -1) return prevEntity;
 
-          return [...prevEntity.slice(0, index), ...prevEntity.slice(index + 1)];
-        })
-      )
+            return [
+              ...prevEntity.slice(0, index),
+              ...prevEntity.slice(index + 1),
+            ];
+          })
+        )
       : setComprehendResults((prevResults) =>
-        prevResults.map((prevResult) => {
-          const index = prevResult.findIndex((result) => result.id === r.id);
+          prevResults.map((prevResult) => {
+            const index = prevResult.findIndex((result) => result.id === r.id);
 
-          if (index === -1) return prevResult;
+            if (index === -1) return prevResult;
 
-          return [...prevResult.slice(0, index), ...prevResult.slice(index + 1)];
-        })
-      );
+            return [
+              ...prevResult.slice(0, index),
+              ...prevResult.slice(index + 1),
+            ];
+          })
+        );
   };
 
   const onComprehendResultAddition = (val, category) => {
@@ -62,7 +72,7 @@ export default function TranscriptAnalysisPane ({
         Traits: [],
         Attributes: [],
         Type: '',
-        isCustomEntity: true
+        isCustomEntity: true,
       };
       return [[newCustomEntity], ...prevEntities];
     });
@@ -77,9 +87,13 @@ export default function TranscriptAnalysisPane ({
 
         const newEntity = {
           ...prevResult[index],
-          selectedConceptCode
+          selectedConceptCode,
         };
-        return [...prevResult.slice(0, index), newEntity, ...prevResult.slice(index + 1)];
+        return [
+          ...prevResult.slice(0, index),
+          newEntity,
+          ...prevResult.slice(index + 1),
+        ];
       })
     );
   };
@@ -103,7 +117,7 @@ export default function TranscriptAnalysisPane ({
             height: '2rem',
             textAlign: 'center',
             fontWeight: 'bold',
-            color: 'white'
+            color: 'white',
           }}
           className="app-heading"
         >
@@ -127,7 +141,7 @@ export default function TranscriptAnalysisPane ({
             height: '2rem',
             textAlign: 'center',
             fontWeight: 'bold',
-            color: 'white'
+            color: 'white',
           }}
           className="app-heading"
         >
@@ -141,10 +155,7 @@ export default function TranscriptAnalysisPane ({
           enableEditing={enableEditing}
         />
       </Cell>
-      <Cell
-        gridArea="soap"
-        style={{ overflowX: 'auto', overflowY: 'auto' }}
-      >
+      <Cell gridArea="soap" style={{ overflowX: 'auto', overflowY: 'auto' }}>
         <Heading
           level={6}
           style={{
@@ -152,7 +163,7 @@ export default function TranscriptAnalysisPane ({
             height: '2rem',
             textAlign: 'center',
             fontWeight: 'bold',
-            color: 'white'
+            color: 'white',
           }}
           className="app-heading"
         >

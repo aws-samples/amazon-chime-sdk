@@ -7,7 +7,7 @@ import {
   RosterHeader,
   RosterGroup,
   useRosterState,
-  RosterAttendee
+  RosterAttendee,
 } from 'amazon-chime-sdk-component-library-react';
 
 import { useNavigation } from '../providers/NavigationProvider';

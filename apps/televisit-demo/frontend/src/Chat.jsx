@@ -37,32 +37,32 @@ const Chat = () => (
           <MeetingProvider>
             <AuthProvider>
               <Authenticated />
-                <IdentityProvider>
-                  <NavigationProvider>
-                    <MessagingProvider>
-                      <UserPermissionProvider>
-                        <Switch>
-                          <Route exact path={routes.SIGNIN} component={Signin} />
-                          <Route path={routes.DEVICE}>
-                            <NoMeetingRedirect>
-                              <DeviceSetup />
-                            </NoMeetingRedirect>
-                          </Route>
-                          <Route path={routes.MEETING}>
-                            <NoMeetingRedirect>
-                              <Meeting />
-                            </NoMeetingRedirect>
-                          </Route>
-                          <Route path={routes.CHAT}>
-                            <Channels />
-                          </Route>
-                        </Switch>
-                      </UserPermissionProvider>
-                    </MessagingProvider>
-                  </NavigationProvider>
-                </IdentityProvider>
-              </AuthProvider>
-            </MeetingProvider>
+              <IdentityProvider>
+                <NavigationProvider>
+                  <MessagingProvider>
+                    <UserPermissionProvider>
+                      <Switch>
+                        <Route exact path={routes.SIGNIN} component={Signin} />
+                        <Route path={routes.DEVICE}>
+                          <NoMeetingRedirect>
+                            <DeviceSetup />
+                          </NoMeetingRedirect>
+                        </Route>
+                        <Route path={routes.MEETING}>
+                          <NoMeetingRedirect>
+                            <Meeting />
+                          </NoMeetingRedirect>
+                        </Route>
+                        <Route path={routes.CHAT}>
+                          <Channels />
+                        </Route>
+                      </Switch>
+                    </UserPermissionProvider>
+                  </MessagingProvider>
+                </NavigationProvider>
+              </IdentityProvider>
+            </AuthProvider>
+          </MeetingProvider>
         </NotificationProvider>
       </Theme>
     </AppStateProvider>

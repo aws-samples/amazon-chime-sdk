@@ -17,36 +17,46 @@ import {
 } from 'amazon-chime-sdk-component-library-react';
 import { useNavigation } from '../../providers/NavigationProvider';
 import { useAppState } from '../../providers/AppStateProvider';
-import { StartRecordMeetingModal, StopRecordMeetingModal } from '../../components/ChannelModals/RecordMeetingModal';
-import { startMeetingRecording, stopMeetingRecording } from '../../api/ChimeAPI';
+import {
+  StartRecordMeetingModal,
+  StopRecordMeetingModal,
+} from '../../components/ChannelModals/RecordMeetingModal';
+import {
+  startMeetingRecording,
+  stopMeetingRecording,
+} from '../../api/ChimeAPI';
 
 const Navigation = () => {
-  const { toggleRoster, toggleChat, toggleMetrics, toggleTranscript, closeNavbar } = useNavigation();
+  const {
+    toggleRoster,
+    toggleChat,
+    toggleMetrics,
+    toggleTranscript,
+    closeNavbar,
+  } = useNavigation();
   const { meetingId, theme, toggleTheme } = useAppState();
   const [isRecording, setIsRecording] = useState(false);
   const [mediaCapturePipeline, setMediaCapturePipeline] = useState('');
   const [showStartRecording, setShowStartRecording] = useState(false);
   const [showStopRecording, setShowStopRecording] = useState(false);
 
-  const startRecording = async (e:any) => {
+  const startRecording = async (e: any) => {
     e.preventDefault();
     setIsRecording(true);
     setShowStartRecording(false);
-    const RecordingInfo = await startMeetingRecording(
-      meetingId
-    );
+    const RecordingInfo = await startMeetingRecording(meetingId);
     if (RecordingInfo.MediaCapturePipeline) {
-      setMediaCapturePipeline(RecordingInfo.MediaCapturePipeline.MediaPipelineId);
+      setMediaCapturePipeline(
+        RecordingInfo.MediaCapturePipeline.MediaPipelineId
+      );
     }
   };
 
-  const stopRecording = async (e:any) => {
+  const stopRecording = async (e: any) => {
     e.preventDefault();
     setIsRecording(false);
     setShowStopRecording(false);
-    await stopMeetingRecording(
-      mediaCapturePipeline
-    );
+    await stopMeetingRecording(mediaCapturePipeline);
   };
 
   return (
@@ -57,11 +67,7 @@ const Navigation = () => {
         onClick={toggleRoster}
         label="Attendees"
       />
-      <NavbarItem
-        icon={<Chat />}
-        onClick={toggleChat}
-        label="Chat"
-      />
+      <NavbarItem icon={<Chat />} onClick={toggleChat} label="Chat" />
       <NavbarItem
         icon={<Eye />}
         onClick={toggleTheme}
@@ -72,32 +78,33 @@ const Navigation = () => {
         onClick={toggleTranscript}
         label="Transcription"
       />
-      <StartRecordMeetingModal 
-        isStartOpen={showStartRecording} 
+      <StartRecordMeetingModal
+        isStartOpen={showStartRecording}
         onClose={() => setShowStartRecording(false)}
         startRecording={startRecording}
       />
-      <StopRecordMeetingModal 
-        isStopOpen={showStopRecording} 
+      <StopRecordMeetingModal
+        isStopOpen={showStopRecording}
         onClose={() => setShowStopRecording(false)}
         stopRecording={stopRecording}
       />
-      {isRecording
-        ? <NavbarItem
-            icon={<Pause />}
-            onClick={()=>{
-              setShowStopRecording(true);
-            }}
-            label="Recording"
-          />
-        : <NavbarItem
-            icon={<Camera />}
-            onClick={()=>{
-              setShowStartRecording(true);
-            }}
-            label="Recording"
-          />
-      }
+      {isRecording ? (
+        <NavbarItem
+          icon={<Pause />}
+          onClick={() => {
+            setShowStopRecording(true);
+          }}
+          label="Recording"
+        />
+      ) : (
+        <NavbarItem
+          icon={<Camera />}
+          onClick={() => {
+            setShowStartRecording(true);
+          }}
+          label="Recording"
+        />
+      )}
       <NavbarItem
         icon={<Information />}
         onClick={toggleMetrics}

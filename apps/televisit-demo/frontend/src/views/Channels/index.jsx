@@ -27,12 +27,8 @@ const Channels = () => {
   const currentTheme = useTheme();
 
   const { member, userSignOut } = useAuthContext();
-  const {
-    messages,
-    messagesRef,
-    setMessages,
-    onReceiveMessage,
-  } = useChatMessagingState();
+  const { messages, messagesRef, setMessages, onReceiveMessage } =
+    useChatMessagingState();
   const notificationDispatch = useNotificationDispatch();
 
   const {

@@ -10,7 +10,7 @@ import {
   ModalBody,
   ModalHeader,
   ModalButton,
-  ModalButtonGroup
+  ModalButtonGroup,
 } from 'amazon-chime-sdk-component-library-react';
 
 import { endMeeting } from '../../api/ChimeAPI';
@@ -65,7 +65,7 @@ const EndMeetingControl: React.FC = () => {
                 label="Leave Meeting"
                 closesModal
               />,
-              <ModalButton variant="secondary" label="Cancel" closesModal />
+              <ModalButton variant="secondary" label="Cancel" closesModal />,
             ]}
           />
         </Modal>

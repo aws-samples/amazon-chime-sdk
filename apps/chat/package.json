@@ -13,7 +13,7 @@
     "amazon-chime-sdk-component-library-react": "^2.9.0",
     "amazon-chime-sdk-js": "^2.16.1",
     "aws-amplify": "^3.3.17",
-    "aws-sdk": "^2.883.0",
+    "aws-sdk": "^2.1011.0",
     "core-js": "^3.10.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",

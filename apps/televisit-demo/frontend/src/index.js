@@ -9,6 +9,6 @@ import configureAmplify from './services/servicesConfig';
 // Call services configuration
 configureAmplify();
 
-document.addEventListener('DOMContentLoaded', _event => {
+document.addEventListener('DOMContentLoaded', (_event) => {
   ReactDOM.render(<Chat />, document.getElementById('root'));
 });

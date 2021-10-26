@@ -13,7 +13,8 @@ h1.app-heading {
   flex-grow: 1;
 }
 
-.messaging-container, .placeholder {
+.messaging-container,
+.placeholder {
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -34,28 +35,28 @@ h1.app-heading {
   overflow-y: scroll;
 }
 
-.parent{
-    display: inline-grid;
-    width: 100%;
-    padding:10px 10px 10px 10px;
+.parent {
+  display: inline-grid;
+  width: 100%;
+  padding: 10px 10px 10px 10px;
 }
 
 .child {
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
-    max-width: 900px;
-    margin: 10px auto 40px;
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  max-width: 900px;
+  margin: 10px auto 40px;
 }
 
 .notification {
-    position: absolute;
-    width: 100vw;
-    top: 4rem;
+  position: absolute;
+  width: 100vw;
+  top: 4rem;
 }
 
 .notification div {
-    max-width: 50rem;
-    width: fit-content;
-    align-items: center;
+  max-width: 50rem;
+  width: fit-content;
+  align-items: center;
 }

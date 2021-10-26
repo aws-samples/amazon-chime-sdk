@@ -8,9 +8,9 @@
  * @param {string} uniqueSelector attribute key to select unique elements.
  */
 const mergeArrayOfObjects = (original, newdata, uniqueSelector = '') => {
-  newdata.forEach(dat => {
+  newdata.forEach((dat) => {
     const foundIndex = original.findIndex(
-      ori => ori[uniqueSelector] === dat[uniqueSelector]
+      (ori) => ori[uniqueSelector] === dat[uniqueSelector]
     );
     if (foundIndex >= 0) original.splice(foundIndex, 1, dat);
     else original.push(dat);

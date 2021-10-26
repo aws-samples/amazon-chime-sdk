@@ -18,7 +18,7 @@ const Authenticated = ({ children }) => {
       // Cleanup notifications
       notificationDispatch({
         type: 2, // REMOVE_ALL
-        payload: {}
+        payload: {},
       });
       history.push(routes.CHAT);
     } else {

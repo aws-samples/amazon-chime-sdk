@@ -25,45 +25,47 @@ const StartRecordMeetingModal = ({ isStartOpen, onClose, startRecording }) => {
   const { member } = useAuthContext();
 
   return (
-    isStartOpen && <Modal size="lg" onClose={onClose}>
-      <ModalHeader title="Start Meeting Recording" />
-      <ModalBody>
-        <form
-          onSubmit={(e) => startRecording(e)}
-          id="record-meeting-form"
-        >
-          <div className="ch-form-field-input">
-            <Label className="lbl">Moderator</Label>
-            <Label className="value">{member.username}</Label>
-          </div>
-          <div className="ch-form-field-input">
-            <Label className="lbl">Recording Options</Label>
-            <div className="value">
-              <RadioGroup
-                options={[
-                  { value: '1', label: 'Just Recording' },
-                  { value: '2', label: 'Recording and Transcription' },
-                  { value: '3', label: 'Recording, Transcription, and Comprehension' },
-                ]}
-                value={1}
-                onChange={(e) => onModeChange(e)}
-              />
+    isStartOpen && (
+      <Modal size="lg" onClose={onClose}>
+        <ModalHeader title="Start Meeting Recording" />
+        <ModalBody>
+          <form onSubmit={(e) => startRecording(e)} id="record-meeting-form">
+            <div className="ch-form-field-input">
+              <Label className="lbl">Moderator</Label>
+              <Label className="value">{member.username}</Label>
             </div>
-          </div>
-        </form>
-      </ModalBody>
-      <ModalButtonGroup
-        primaryButtons={[
-          <ModalButton
-            label="Start"
-            type="submit"
-            form="record-meeting-form"
-            variant="primary"
-          />,
-          <ModalButton label="Cancel" closesModal variant="secondary" />,
-        ]}
-      />
-    </Modal>
+            <div className="ch-form-field-input">
+              <Label className="lbl">Recording Options</Label>
+              <div className="value">
+                <RadioGroup
+                  options={[
+                    { value: '1', label: 'Just Recording' },
+                    { value: '2', label: 'Recording and Transcription' },
+                    {
+                      value: '3',
+                      label: 'Recording, Transcription, and Comprehension',
+                    },
+                  ]}
+                  value={1}
+                  onChange={(e) => onModeChange(e)}
+                />
+              </div>
+            </div>
+          </form>
+        </ModalBody>
+        <ModalButtonGroup
+          primaryButtons={[
+            <ModalButton
+              label="Start"
+              type="submit"
+              form="record-meeting-form"
+              variant="primary"
+            />,
+            <ModalButton label="Cancel" closesModal variant="secondary" />,
+          ]}
+        />
+      </Modal>
+    )
   );
 };
 
@@ -74,35 +76,31 @@ const StopRecordMeetingModal = ({ isStopOpen, onClose, stopRecording }) => {
   const { member } = useAuthContext();
 
   return (
-    isStopOpen && <Modal size="lg" onClose={onClose}>
-      <ModalHeader title="Stop Meeting Recording" />
-      <ModalBody>
-        <form
-          onSubmit={(e) => stopRecording(e)}
-          id="record-meeting-form"
-        >
-          <div className="ch-form-field-input">
-            <Label className="lbl">Moderator</Label>
-            <Label className="value">{member.username}</Label>
-          </div>
-        </form>
-      </ModalBody>
-      <ModalButtonGroup
-        primaryButtons={[
-          <ModalButton
-            label="Stop"
-            type="submit"
-            form="record-meeting-form"
-            variant="primary"
-          />,
-          <ModalButton label="Cancel" closesModal variant="secondary" />,
-        ]}
-      />
-    </Modal>
+    isStopOpen && (
+      <Modal size="lg" onClose={onClose}>
+        <ModalHeader title="Stop Meeting Recording" />
+        <ModalBody>
+          <form onSubmit={(e) => stopRecording(e)} id="record-meeting-form">
+            <div className="ch-form-field-input">
+              <Label className="lbl">Moderator</Label>
+              <Label className="value">{member.username}</Label>
+            </div>
+          </form>
+        </ModalBody>
+        <ModalButtonGroup
+          primaryButtons={[
+            <ModalButton
+              label="Stop"
+              type="submit"
+              form="record-meeting-form"
+              variant="primary"
+            />,
+            <ModalButton label="Cancel" closesModal variant="secondary" />,
+          ]}
+        />
+      </Modal>
+    )
   );
 };
 
-export {
-  StartRecordMeetingModal,
-  StopRecordMeetingModal
-};
+export { StartRecordMeetingModal, StopRecordMeetingModal };

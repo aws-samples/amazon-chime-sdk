@@ -3,10 +3,15 @@ import s from './TranscriptLine.module.css';
 import cs from 'clsx';
 
 import classMap from './transcriptHighlights';
-import { Editable, EditablePreview, EditableInput, Box } from '@chakra-ui/react';
+import {
+  Editable,
+  EditablePreview,
+  EditableInput,
+  Box,
+} from '@chakra-ui/react';
 
 // Reduces results down to a single set of non-overlapping ranges, each with a list of applicable results
-function combineSegments (results) {
+function combineSegments(results) {
   const markers = [];
 
   const addMarker = (where) => {
@@ -34,7 +39,9 @@ function combineSegments (results) {
     const matches = results.filter(
       (r) =>
         (r.BeginOffset <= start && r.EndOffset >= end) ||
-        (r.Attributes || []).some((a) => a.BeginOffset <= start && a.EndOffset >= end)
+        (r.Attributes || []).some(
+          (a) => a.BeginOffset <= start && a.EndOffset >= end
+        )
     );
 
     if (matches.length) ret.push({ start, end, matches });
@@ -45,7 +52,7 @@ function combineSegments (results) {
 
 // Takes text and a list of segments and returns an array of { text, matches } segments,
 // with applicable text and array of matching results for that segment
-function applySegmentsToWords (text, segments) {
+function applySegmentsToWords(text, segments) {
   const ranges = [];
 
   let last = 0;
@@ -54,13 +61,13 @@ function applySegmentsToWords (text, segments) {
     if (start > last) {
       ranges.push({
         text: text.slice(last, start),
-        matches: []
+        matches: [],
       });
     }
 
     ranges.push({
       text: text.slice(start, end),
-      matches
+      matches,
     });
 
     last = end;
@@ -69,14 +76,14 @@ function applySegmentsToWords (text, segments) {
   if (last < text.length) {
     ranges.push({
       text: text.slice(last),
-      matches: []
+      matches: [],
     });
   }
 
   return ranges;
 }
 
-export default function TranscriptLine ({
+export default function TranscriptLine({
   // The specific transcript chunk for this line
   chunk,
 
@@ -89,30 +96,44 @@ export default function TranscriptLine ({
   enableEditing,
 
   handleTranscriptChange,
-  onSpeakerChange
+  onSpeakerChange,
 }) {
-  const filteredResults = useMemo(() => results.filter((r) => enabledCategories.includes(r.Category)), [
-    results,
-    enabledCategories
-  ]);
-  const sortedResults = useMemo(() => filteredResults.sort((a, b) => a.BeginOffset - b.BeginOffset), [filteredResults]);
-  const splitSegments = useMemo(() => combineSegments(sortedResults), [sortedResults]);
-  const ranges = useMemo(() => applySegmentsToWords(chunk.text, splitSegments), [chunk, splitSegments]);
+  const filteredResults = useMemo(
+    () => results.filter((r) => enabledCategories.includes(r.Category)),
+    [results, enabledCategories]
+  );
+  const sortedResults = useMemo(
+    () => filteredResults.sort((a, b) => a.BeginOffset - b.BeginOffset),
+    [filteredResults]
+  );
+  const splitSegments = useMemo(
+    () => combineSegments(sortedResults),
+    [sortedResults]
+  );
+  const ranges = useMemo(
+    () => applySegmentsToWords(chunk.text, splitSegments),
+    [chunk, splitSegments]
+  );
 
   return (
     <React.Fragment>
       {enableEditing && (
         <Box mb={8}>
           {chunk.speaker && (
-            <Editable defaultValue={chunk.speaker} onSubmit={(nextSpeaker) => onSpeakerChange(nextSpeaker.trim())}>
-              <EditablePreview width='100%' />
+            <Editable
+              defaultValue={chunk.speaker}
+              onSubmit={(nextSpeaker) => onSpeakerChange(nextSpeaker.trim())}
+            >
+              <EditablePreview width="100%" />
               <EditableInput />
             </Editable>
           )}
 
           <Editable
             defaultValue={chunk.text}
-            onSubmit={(nextTranscriptLine) => handleTranscriptChange(nextTranscriptLine.trim())}
+            onSubmit={(nextTranscriptLine) =>
+              handleTranscriptChange(nextTranscriptLine.trim())
+            }
           >
             {({ isEditing, onEdit }) => (
               <>
@@ -121,7 +142,12 @@ export default function TranscriptLine ({
                 {!isEditing && (
                   <p className={s.base} onClick={onEdit}>
                     {ranges.map((r, i) => (
-                      <span key={i} className={cs(r.matches.map((x) => classMap[x.Category]))}>
+                      <span
+                        key={i}
+                        className={cs(
+                          r.matches.map((x) => classMap[x.Category])
+                        )}
+                      >
                         {r.text}
                       </span>
                     ))}
@@ -134,11 +160,14 @@ export default function TranscriptLine ({
       )}
 
       {!enableEditing && (
-        <Box as='p' className={s.base} mb={8}>
+        <Box as="p" className={s.base} mb={8}>
           {chunk.speaker && <span>{chunk.speaker}: </span>}
 
           {ranges.map((r, i) => (
-            <span key={i} className={cs(r.matches.map((x) => classMap[x.Category]))}>
+            <span
+              key={i}
+              className={cs(r.matches.map((x) => classMap[x.Category]))}
+            >
               {r.text}
             </span>
           ))}

@@ -26,10 +26,7 @@ export const JoinMeetingModal = ({
         <ModalHeader title={`${meetingInfo.inviter}`} />
       </div>
       <ModalBody>
-        <form
-          onSubmit={(e) => handleJoinMeeting(e)}
-          id="join-meeting-form"
-        />
+        <form onSubmit={(e) => handleJoinMeeting(e)} id="join-meeting-form" />
         <form
           onSubmit={(e) => handleMessageAll(e, meetingInfo.channelArn)}
           id="message-all-form"
@@ -49,7 +46,7 @@ export const JoinMeetingModal = ({
             form="message-all-form"
             type="submit"
             variant="primary"
-          />
+          />,
         ]}
       />
     </Modal>

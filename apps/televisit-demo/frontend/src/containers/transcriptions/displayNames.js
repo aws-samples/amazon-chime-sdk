@@ -1,4 +1,3 @@
-
 // Human-readable names for all the various codenames we have
 export const displayNames = {
   MEDICAL_CONDITION: 'Medical Condition',
@@ -35,7 +34,7 @@ export const displayNames = {
   NAME: 'Name',
   PHONE_OR_FAX: 'Phone/Fax',
   PROFESSION: 'Profession',
-  DATE: 'Date'
+  DATE: 'Date',
 };
 
 export default displayNames;
