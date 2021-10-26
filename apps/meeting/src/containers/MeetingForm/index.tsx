@@ -20,7 +20,7 @@ import {
 import { getErrorContext } from '../../providers/ErrorProvider';
 import routes from '../../constants/routes';
 import Card from '../../components/Card';
-import Spinner from '../../components/Spinner';
+import Spinner from '../../components/icons/Spinner';
 import DevicePermissionPrompt from '../DevicePermissionPrompt';
 import RegionSelection from './RegionSelection';
 import { fetchMeeting, createGetAttendeeCallback } from '../../utils/api';
@@ -42,7 +42,7 @@ const MeetingForm: React.FC = () => {
   const [nameErr, setNameErr] = useState(false);
   const [region, setRegion] = useState(appRegion);
   const [isLoading, setIsLoading] = useState(false);
-  const [isSpectatorModeSelected, setIsSpectatorModeSelected] = useState(false)
+  const [isSpectatorModeSelected, setIsSpectatorModeSelected] = useState(false);
   const { errorMessage, updateErrorMessage } = useContext(getErrorContext());
   const history = useHistory();
   const { setMeetingMode } = useAppState();
@@ -74,7 +74,10 @@ const MeetingForm: React.FC = () => {
       await meetingManager.join({
         meetingInfo: JoinInfo.Meeting,
         attendeeInfo: JoinInfo.Attendee,
-        deviceLabels: isSpectatorModeSelected === true ? DeviceLabels.None : DeviceLabels.AudioAndVideo,
+        deviceLabels:
+          isSpectatorModeSelected === true
+            ? DeviceLabels.None
+            : DeviceLabels.AudioAndVideo,
       });
 
       setAppMeetingInfo(id, attendeeName, region);
@@ -110,7 +113,7 @@ const MeetingForm: React.FC = () => {
         infoText="Anyone with access to the meeting ID can join"
         fieldProps={{
           name: 'meetingId',
-          placeholder: 'Enter Meeting Id'
+          placeholder: 'Enter Meeting Id',
         }}
         errorText="Please enter a valid meeting ID"
         error={meetingErr}
@@ -127,7 +130,7 @@ const MeetingForm: React.FC = () => {
         value={name}
         fieldProps={{
           name: 'name',
-          placeholder: 'Enter Your Name'
+          placeholder: 'Enter Your Name',
         }}
         errorText="Please enter a valid name"
         error={nameErr}
@@ -144,9 +147,9 @@ const MeetingForm: React.FC = () => {
         label="Join w/o Audio and Video"
         value=""
         checked={isSpectatorModeSelected}
-        onChange={(): void => (
+        onChange={(): void =>
           setIsSpectatorModeSelected(!isSpectatorModeSelected)
-        )}
+        }
       />
       <FormField
         field={Checkbox}

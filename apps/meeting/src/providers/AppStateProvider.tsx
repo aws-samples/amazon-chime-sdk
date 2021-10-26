@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT-0
 
 import React, { useContext, useState, ReactNode } from 'react';
-import { MeetingMode } from '../types';
+import { MeetingMode, Layout } from '../types';
 
 type Props = {
   children: ReactNode;
@@ -15,10 +15,12 @@ interface AppStateValue {
   region: string;
   isWebAudioEnabled: boolean;
   meetingMode: MeetingMode;
+  layout: Layout;
   toggleTheme: () => void;
   toggleWebAudio: () => void;
   setAppMeetingInfo: (meetingId: string, name: string, region: string) => void;
   setMeetingMode: (meetingMode: MeetingMode) => void;
+  setLayout: (layout: Layout) => void;
 }
 
 const AppStateContext = React.createContext<AppStateValue | null>(null);
@@ -40,6 +42,7 @@ export function AppStateProvider({ children }: Props) {
   const [meetingId, setMeeting] = useState(query.get('meetingId') || '');
   const [region, setRegion] = useState(query.get('region') || '');
   const [meetingMode, setMeetingMode] = useState(MeetingMode.Attendee);
+  const [layout, setLayout] = useState(Layout.Gallery);
   const [localUserName, setLocalName] = useState('');
   const [isWebAudioEnabled, setIsWebAudioEnabled] = useState(false);
   const [theme, setTheme] = useState(() => {
@@ -78,10 +81,12 @@ export function AppStateProvider({ children }: Props) {
     isWebAudioEnabled,
     region,
     meetingMode,
+    layout,
     toggleTheme,
     toggleWebAudio,
     setAppMeetingInfo,
     setMeetingMode,
+    setLayout,
   };
 
   return (

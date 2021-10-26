@@ -4,7 +4,7 @@
 import React from 'react';
 import {
   VideoTileGrid,
-  UserActivityProvider
+  UserActivityProvider,
 } from 'amazon-chime-sdk-component-library-react';
 
 import { StyledLayout, StyledContent } from './Styled';
@@ -14,27 +14,39 @@ import MeetingDetails from '../../containers/MeetingDetails';
 import MeetingControls from '../../containers/MeetingControls';
 import useMeetingEndRedirect from '../../hooks/useMeetingEndRedirect';
 import DynamicMeetingControls from '../../containers/DynamicMeetingControls';
-import { MeetingMode } from '../../types';
+import { MeetingMode, Layout } from '../../types';
+import { VideoTileGridProvider } from '../../providers/VideoTileGridProvider';
+import { useAppState } from '../../providers/AppStateProvider';
 
-const MeetingView = (props: { mode: MeetingMode, }) => {
+const MeetingView = (props: { mode: MeetingMode }) => {
   useMeetingEndRedirect();
   const { showNavbar, showRoster } = useNavigation();
+  const { mode } = props;
+  const { layout } = useAppState();
 
   return (
     <UserActivityProvider>
-      <StyledLayout showNav={showNavbar} showRoster={showRoster}>
-        <StyledContent>
-          <VideoTileGrid
-            className="videos"
-            noRemoteVideoView={<MeetingDetails />}
-          />
-          {props.mode === MeetingMode.Spectator ?
-            <DynamicMeetingControls /> :
-            <MeetingControls />
-          }
-        </StyledContent>
-        <NavigationControl />
-      </StyledLayout>
+      <VideoTileGridProvider>
+        <StyledLayout showNav={showNavbar} showRoster={showRoster}>
+          <StyledContent>
+            <VideoTileGrid
+              layout={
+                layout === Layout.Gallery
+                  ? 'standard'
+                  : 'featured'
+              }
+              className="videos"
+              noRemoteVideoView={<MeetingDetails />}
+            />
+            {mode === MeetingMode.Spectator ? (
+              <DynamicMeetingControls />
+            ) : (
+              <MeetingControls />
+            )}
+          </StyledContent>
+          <NavigationControl />
+        </StyledLayout>
+      </VideoTileGridProvider>
     </UserActivityProvider>
   );
 };
