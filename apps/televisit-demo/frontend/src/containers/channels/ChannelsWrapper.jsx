@@ -451,7 +451,7 @@ const ChannelsWrapper = () => {
     setChannelMessageToken(newMessages.NextToken);
     await sendChannelMessage(
       channelArn,
-      'Welcome to the Demo Waiting Room. Please let us know what you want to do while waiting for doctor to join. You have options as self evaluation, retireve lab results, get medications, schedule future appointments.',
+      'Welcome to the Demo Waiting Room. Please let us know what you want to do while waiting for doctor to join. You have options such as self checking or schedule future appointments.',
       'PERSISTENT',
       { userId: 'ModeratorBot', username: 'ModeratorBot' }
     );

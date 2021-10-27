@@ -24,7 +24,30 @@ npm install -g jq
 
 ### Run deployment script
 
-You can run deploy.sh script in this folder to automatically deploy both frontend and backend stacks.
+If you want to try the Chatbot interaction with Amazon Chime SDK chat, create a Amazon Lex V1 Bot in us-east-1 region by importing this [zip file](https://telemedicine-demo-using-chime-sdk.s3.amazonaws.com/ChimeSDKTelemedicineDemoBot_LEX_V1.zip). Build and Publish the chat bot with alias as ‘demo’.
+
+You can run deploy.sh script in this folder to automatically deploy both frontend and backend stacks. 
+
+```bash
+cd apps/televisit-demo
+./deploy.sh
+```
+
+If you see the following prompts during frontend CloudFormation deployment, you just need to input the Amazon S3 bucket name that hosts the HTML and bundled Javascript file in addition to default values for other parameters:
+```
+Setting default arguments for 'sam deploy'
+=========================================
+Stack Name [chime-sdk-televisit-frontend]: 
+AWS Region [us-east-1]: 
+Parameter S3BucketNameForWebSite []: frontenddeploy
+#Shows you resources changes to be deployed and require a 'Y' to initiate deploy
+Confirm changes before deploy [Y/n]: 
+#SAM needs permission to be able to create roles to connect to the resources in your template
+Allow SAM CLI IAM role creation [Y/n]: 
+Save arguments to configuration file [Y/n]: 
+SAM configuration file [samconfig.toml]: 
+SAM configuration environment [default]: 
+```
 
 Alternatively, you can deploy backend and frontend manually: first go to backend folder and follow the README to deploy the CFN stack using AWS SAM CLI; then go to frontend folder and follow the READMD to build and deploy frontend stack.
 
