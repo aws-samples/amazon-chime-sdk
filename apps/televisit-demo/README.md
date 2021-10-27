@@ -26,7 +26,14 @@ npm install -g jq
 
 If you want to try the Chatbot interaction with Amazon Chime SDK chat, create a Amazon Lex V1 Bot in us-east-1 region by importing this [zip file](https://telemedicine-demo-using-chime-sdk.s3.amazonaws.com/ChimeSDKTelemedicineDemoBot_LEX_V1.zip). Build and Publish the chat bot with alias as ‘demo’.
 
-You can run deploy.sh script in this folder to automatically deploy both frontend and backend stacks. If you see the following prompts during frontend CloudFormation deployment, you just need to input the Amazon S3 bucket name that hosts the HTML and bundled Javascript file in addition to default values for other parameters:
+You can run deploy.sh script in this folder to automatically deploy both frontend and backend stacks. 
+
+```bash
+cd apps/televisit-demo
+./deploy.sh
+```
+
+If you see the following prompts during frontend CloudFormation deployment, you just need to input the Amazon S3 bucket name that hosts the HTML and bundled Javascript file in addition to default values for other parameters:
 ```
 Setting default arguments for 'sam deploy'
 =========================================
