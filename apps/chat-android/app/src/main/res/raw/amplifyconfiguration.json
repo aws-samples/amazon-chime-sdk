@@ -12,16 +12,16 @@
                 "CredentialsProvider": {
                     "CognitoIdentity": {
                         "Default": {
-                            "PoolId": "",
-                            "Region": ""
+                            "PoolId": "cognitoIdentityPoolId",
+                            "Region": "us-east-1"
                         }
                     }
                 },
                 "CognitoUserPool": {
                     "Default": {
-                        "PoolId": "",
-                        "AppClientId": "",
-                        "Region": ""
+                        "PoolId": "cognitoUserPoolId",
+                        "AppClientId": "cognitoAppClientId",
+                        "Region": "us-east-1"
                     }
                 },
                 "Auth": {

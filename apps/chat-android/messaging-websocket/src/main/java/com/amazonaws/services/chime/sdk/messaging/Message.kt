@@ -6,7 +6,6 @@
 package com.amazonaws.services.chime.sdk.messaging
 
 data class Message(
-    val type: String,
-    val headers: Any,
-    val payload: String
+    val Headers: Map<String, String>,
+    val Payload: String
 )

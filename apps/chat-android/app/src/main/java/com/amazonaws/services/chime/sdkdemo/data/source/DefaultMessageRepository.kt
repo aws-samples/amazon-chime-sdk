@@ -8,7 +8,10 @@ package com.amazonaws.services.chime.sdkdemo.data.source
 import com.amazonaws.services.chime.sdk.messaging.session.ChimeUserCredentials
 import com.amazonaws.services.chime.sdkdemo.data.Result
 import com.amazonaws.services.chime.sdkdemo.data.source.service.AmazonChimeSDKService
+import com.amazonaws.services.chimesdkmessaging.model.ChannelMembershipPreferences
 import com.amazonaws.services.chimesdkmessaging.model.ListChannelMembershipsForAppInstanceUserResult
+import com.amazonaws.services.chimesdkmessaging.model.MessageAttributeValue
+import com.amazonaws.services.chimesdkmessaging.model.PushNotificationConfiguration
 
 class DefaultMessageRepository(
     private val amazonChimeSDKService: AmazonChimeSDKService
@@ -17,7 +20,29 @@ class DefaultMessageRepository(
 
     override suspend fun getMessagingEndpoint(): Result<String> = amazonChimeSDKService.getMessagingEndpoint()
 
-    override suspend fun sendMessage(content: String, channel: String, chimeBearer: String) = amazonChimeSDKService.sendMessage(content, channel, chimeBearer)
+    override suspend fun sendMessage(
+        content: String,
+        channelArn: String,
+        chimeBearer: String,
+        messageAttributes: Map<String, MessageAttributeValue>,
+        pushConfig: PushNotificationConfiguration
+    ) = amazonChimeSDKService.sendMessage(content, channelArn, chimeBearer, messageAttributes, pushConfig)
 
-    override suspend fun listChannels(appInstanceUserArn: String): Result<ListChannelMembershipsForAppInstanceUserResult> = amazonChimeSDKService.listChannels(appInstanceUserArn)
+    override suspend fun listChannelMembershipsForAppInstanceUser(chimeBearer: String): Result<ListChannelMembershipsForAppInstanceUserResult> =
+        amazonChimeSDKService.listChannelMembershipsForAppInstanceUser(chimeBearer)
+
+    override suspend fun listChannelMessages(channelArn: String, chimeBearer: String) =
+        amazonChimeSDKService.listChannelMessages(channelArn, chimeBearer)
+
+    override suspend fun describeChannel(channelArn: String, chimeBearer: String) =
+        amazonChimeSDKService.describeChannel(channelArn, chimeBearer)
+
+    override suspend fun putChannelMembershipPreferences(
+        channelArn: String,
+        chimeBearer: String,
+        preferences: ChannelMembershipPreferences
+    ) = amazonChimeSDKService.putChannelMembershipPreferences(channelArn, chimeBearer, preferences)
+
+    override suspend fun getChannelMembershipPreferences(channelArn: String, chimeBearer: String) =
+        amazonChimeSDKService.getChannelMembershipPreferences(channelArn, chimeBearer)
 }

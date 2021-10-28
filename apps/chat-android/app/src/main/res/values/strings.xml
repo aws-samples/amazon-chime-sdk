@@ -13,7 +13,13 @@
     <string name="exchange_token_service_title">Or you can get AWS credentials via Credential Exchange Service</string>
     <string name="button_exchange">Exchange Token for AWS Credentials</string>
     <string name="messages_title">Messages</string>
-    <string name="login_as">Login as: </string>
+    <string name="login_as">Logged in as: </string>
     <string name="enter_message">Enter message</string>
     <string name="send_message">Send Message</string>
+    <string name="channel_list">Channel List</string>
+    <string name="notification_settings">Notification Settings</string>
+    <string name="other_settings">Other Settings</string>
+    <string name="push_notifications">Push Notifications</string>
+    <string name="endpoints">Endpoint Configuration</string>
+    <string name="app_instance_settings">App Instance Settings</string>
 </resources>
