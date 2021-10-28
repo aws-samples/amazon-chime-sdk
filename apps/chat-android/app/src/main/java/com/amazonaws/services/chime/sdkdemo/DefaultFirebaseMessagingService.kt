@@ -24,9 +24,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 
-class DefaultFirebaseMessagingService() : FirebaseMessagingService() {
+class DefaultFirebaseMessagingService : FirebaseMessagingService() {
 
-    private val chimeSDKService = ServiceLocator.provideChimeService()
     private val userRepository = ServiceLocator.provideUserRepository()
     private val log = Logger.getLogger("DefaultFirebaseMessagingService")
 
@@ -79,16 +78,9 @@ class DefaultFirebaseMessagingService() : FirebaseMessagingService() {
         CoroutineScope(Dispatchers.IO).launch {
             userRepository.getCurrentUser()
                 .onSuccess {
-                    chimeSDKService.registerAppInstanceUserEndpoint(
-                        token,
-                        it.chimeAppInstanceUserArn
-                    )
-                        .onSuccess {
-                            log.info("Device registered with Chime Identity SDK")
-                        }
-                        .onFailure {
-                            log.info("Device failed to register with Chime Identity SDK with exception")
-                        }
+                    userRepository.registerAppInstanceUserEndpoint(token, it.chimeAppInstanceUserArn)
+                        .onSuccess { log.info("Device registered with Chime SDK Identity") }
+                        .onFailure { log.info("Failed to register with Chime SDK Identity")}
                 }
         }
     }
