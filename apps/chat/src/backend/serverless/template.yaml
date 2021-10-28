@@ -6,6 +6,26 @@ Parameters:
     Type: String
     Default: ChimeSDKMessagingDemo
     Description: Unique Name for Demo Resources
+  FCMServerKey:
+    Type: String
+    Default: ""
+    Description: FCM ServerKey for push notifications
+    NoEcho: true
+  APNSPublicCertificate:
+    Type: String
+    Description: APNS Public Certificate for push notifications
+    NoEcho: true
+  APNSPrivateKey:
+    Type: String
+    Description: APNS Private Key for push notifications
+    NoEcho: true
+Conditions:
+  FCMEnabled:
+    Fn::Not: [Fn::Equals: [Ref: FCMServerKey, '']]
+  APNSEnabled:
+    Fn::Not: [Fn::And: [Fn::Equals: [Ref: APNSPublicCertificate, ''], Fn::Equals: [Ref: APNSPrivateKey, '']]]
+  PushNotificationEnabled:
+    Fn::Or: [Fn::Not: [Fn::Equals: [Ref: FCMServerKey, '']], Fn::Not: [Fn::And: [Fn::Equals: [Ref: APNSPublicCertificate, ''], Fn::Equals: [Ref: APNSPrivateKey, '']]]]
 Resources:
   #Layer for the latest AWS SDK with Amazon Chime SDK for messaging
   AWSSDKChimeLayer:
@@ -169,28 +189,6 @@ Resources:
               - "x-amz-request-id"
               - "x-amz-id-2"
             MaxAge: "3000"
-
-  # Creates a role that allows Cognito to send SNS messages
-  SNSRole:
-    Type: "AWS::IAM::Role"
-    Properties:
-      AssumeRolePolicyDocument: 
-        Version: "2012-10-17"
-        Statement:
-          - Effect: "Allow"
-            Principal: 
-              Service: 
-                - "cognito-idp.amazonaws.com"
-            Action: 
-              - "sts:AssumeRole"
-      Policies:
-        - PolicyName: !Sub ${DemoName}-CognitoSNSPolicy
-          PolicyDocument: 
-            Version: "2012-10-17"
-            Statement: 
-              - Effect: "Allow"
-                Action: "sns:publish"
-                Resource: "*"
 
   #Creates a role to allow SignIn Lambda to execute
   LambdaExecuteRole:
@@ -405,7 +403,12 @@ Resources:
         - PolicyName: !Sub ${DemoName}-ChimeSDKDemoUserPolicy
           PolicyDocument: 
             Version: "2012-10-17"
-            Statement: 
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "mobiletargeting:GetApp"
+                Resource:
+                  - !GetAtt PinpointApplication.Arn
               - Effect: "Allow"
                 Action:
                   - "chime:GetMessagingSessionEndpoint"
@@ -425,6 +428,13 @@ Resources:
                   - "chime:CreateChannelModerator"
                   - "chime:ListChannelModerators"
                   - "chime:DescribeChannelModerator"
+                  - "chime:RegisterAppInstanceUserEndpoint"
+                  - 'chime:ListAppInstanceUserEndpoints'
+                  - 'chime:DescribeAppInstanceUserEndpoint'
+                  - 'chime:UpdateAppInstanceUserEndpoint'
+                  - 'chime:DeregisterAppInstanceUserEndpoint'
+                  - 'chime:PutChannelMembershipPreferences'
+                  - 'chime:GetChannelMembershipPreferences'
                   - "chime:CreateChannel"
                   - "chime:DescribeChannel"
                   - "chime:ListChannels"
@@ -549,6 +559,11 @@ Resources:
             Statement:
               - Effect: "Allow"
                 Action:
+                  - "mobiletargeting:GetApp"
+                Resource:
+                  - !GetAtt PinpointApplication.Arn
+              - Effect: "Allow"
+                Action:
                   - "chime:GetMessagingSessionEndpoint"
                 Resource: "*"
               - Effect: "Allow"
@@ -562,6 +577,13 @@ Resources:
                   - "chime:CreateChannelModerator"
                   - "chime:ListChannelModerators"
                   - "chime:DescribeChannelModerator"
+                  - "chime:RegisterAppInstanceUserEndpoint"
+                  - 'chime:ListAppInstanceUserEndpoints'
+                  - 'chime:DescribeAppInstanceUserEndpoint'
+                  - 'chime:UpdateAppInstanceUserEndpoint'
+                  - 'chime:DeregisterAppInstanceUserEndpoint'
+                  - 'chime:PutChannelMembershipPreferences'
+                  - 'chime:GetChannelMembershipPreferences'
                   - "chime:CreateChannel"
                   - "chime:DescribeChannel"
                   - "chime:ListChannels"
@@ -615,6 +637,11 @@ Resources:
             Statement:
               - Effect: "Allow"
                 Action:
+                  - "mobiletargeting:GetApp"
+                Resource:
+                  - !GetAtt PinpointApplication.Arn
+              - Effect: "Allow"
+                Action:
                   - "chime:GetMessagingSessionEndpoint"
                 Resource: "*"
               - Effect: "Allow"
@@ -628,6 +655,13 @@ Resources:
                   - "chime:CreateChannelModerator"
                   - "chime:ListChannelModerators"
                   - "chime:DescribeChannelModerator"
+                  - "chime:RegisterAppInstanceUserEndpoint"
+                  - 'chime:ListAppInstanceUserEndpoints'
+                  - 'chime:DescribeAppInstanceUserEndpoint'
+                  - 'chime:UpdateAppInstanceUserEndpoint'
+                  - 'chime:DeregisterAppInstanceUserEndpoint'
+                  - 'chime:PutChannelMembershipPreferences'
+                  - 'chime:GetChannelMembershipPreferences'
                   - "chime:CreateChannel"
                   - "chime:DescribeChannel"
                   - "chime:ListChannels"
@@ -1059,6 +1093,56 @@ Resources:
             body: ''
           };
         };
+
+  PinpointApplication:
+    Type: AWS::Pinpoint::App
+    Condition: PushNotificationEnabled
+    Properties:
+      Name: !Sub ${DemoName}-PushNotifications
+
+  PinpointFCMChannel:
+    Type: AWS::Pinpoint::GCMChannel
+    DependsOn: PinpointApplication
+    Condition: FCMEnabled
+    Properties:
+      ApiKey: !Ref FCMServerKey
+      ApplicationId: !Ref PinpointApplication
+      Enabled: true
+
+  PinpointAPNSSandboxChannel:
+    Type: AWS::Pinpoint::APNSSandboxChannel
+    DependsOn: PinpointApplication
+    Condition: APNSEnabled
+    Properties: 
+      ApplicationId: !Ref PinpointApplication
+      Certificate: !Ref APNSPublicCertificate
+      PrivateKey: !Ref APNSPrivateKey
+      Enabled: true
+
+  PushNotificationServiceRole:
+    Description: The role assumed by Amazon Chime SDK to send push notifications
+    Type: "AWS::IAM::Role"
+    Condition: PushNotificationEnabled
+    Properties:
+      RoleName: "ServiceRoleForAmazonChimePushNotification"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service: "messaging.chime.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Policies:
+        - PolicyName: !Sub ${DemoName}-PinpointAccessPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "mobiletargeting:SendMessages"
+                Resource:
+                  - !Join ['', [!GetAtt PinpointApplication.Arn, '/messages']]
          
 Outputs:
   cognitoUserPoolId:
@@ -1073,3 +1157,5 @@ Outputs:
     Value: !Ref ChatAttachmentsBucket
   apiGatewayInvokeUrl:
     Value: !Sub https://${ApiGatewayApi}.execute-api.us-east-1.amazonaws.com/Stage/
+  pinpointApplicationArn:
+    Value: !GetAtt PinpointApplication.Arn
