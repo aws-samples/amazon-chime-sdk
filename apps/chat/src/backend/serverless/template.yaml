@@ -406,11 +406,6 @@ Resources:
             Statement:
               - Effect: "Allow"
                 Action:
-                  - "mobiletargeting:GetApp"
-                Resource:
-                  - !GetAtt PinpointApplication.Arn
-              - Effect: "Allow"
-                Action:
                   - "chime:GetMessagingSessionEndpoint"
                 Resource: "*"
               - Effect: "Allow"
@@ -450,6 +445,26 @@ Resources:
                 Resource:
                   - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/user/${cognito-identity.amazonaws.com:sub}']]
                   - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/channel/*']]
+
+  PinpointAccessPolicy:
+    Type: "AWS::IAM::Policy"
+    Condition: PushNotificationEnabled
+    DependsOn: [CognitoAuthorizedRole, AuthLambdaUserRole, AuthLambdaAnonUserRole]
+    Properties:
+      Roles:
+        - !Ref CognitoAuthorizedRole
+        - !Ref AuthLambdaUserRole
+        - !Ref AuthLambdaAnonUserRole
+      PolicyName: !Sub ${DemoName}-PinpointAccessPolicy
+      PolicyDocument: 
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Action:
+              - "mobiletargeting:GetApp"
+            Resource:
+              - !GetAtt PinpointApplication.Arn
+
 
   # Assigns the roles to the Identity Pool
   IdentityPoolRoleMapping:
@@ -559,11 +574,6 @@ Resources:
             Statement:
               - Effect: "Allow"
                 Action:
-                  - "mobiletargeting:GetApp"
-                Resource:
-                  - !GetAtt PinpointApplication.Arn
-              - Effect: "Allow"
-                Action:
                   - "chime:GetMessagingSessionEndpoint"
                 Resource: "*"
               - Effect: "Allow"
@@ -635,11 +645,6 @@ Resources:
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
-              - Effect: "Allow"
-                Action:
-                  - "mobiletargeting:GetApp"
-                Resource:
-                  - !GetAtt PinpointApplication.Arn
               - Effect: "Allow"
                 Action:
                   - "chime:GetMessagingSessionEndpoint"
@@ -1158,4 +1163,5 @@ Outputs:
   apiGatewayInvokeUrl:
     Value: !Sub https://${ApiGatewayApi}.execute-api.us-east-1.amazonaws.com/Stage/
   pinpointApplicationArn:
+    Condition: PushNotificationEnabled
     Value: !GetAtt PinpointApplication.Arn
