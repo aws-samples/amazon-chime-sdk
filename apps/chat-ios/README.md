@@ -4,7 +4,7 @@
 
 This application is designed in a way that can be used as a starting point for your own application, or as a quick way to explore the features of the Amazon Chime SDK messaging. Please read blog posts below to start with various features.
 * [Build chat applications in iOS and Android with Amazon Chime SDK messaging](https://aws.amazon.com/blogs/business-productivity/build-chat-applications-in-ios-and-android-with-amazon-chime-sdk-messaging)
-* [Push Notifications for Android and iOS with Amazon Chime SDK messaging](https://aws-blogs-prod.amazon.com/business-productivity/push-notifications-for-android-and-ios-with-amazon-chime-sdk-messaging/)
+* [Push Notifications for Android and iOS with Amazon Chime SDK messaging](https://aws.amazon.com/blogs/business-productivity/push-notifications-for-android-and-ios-with-amazon-chime-sdk-messaging/)
 
 <p align="center">
 <img src="./media/awsChimeSDKMessagingDemo.png" alt="image" width="80%"/>
