@@ -9,7 +9,7 @@
     "@typescript-eslint/eslint-plugin": "^2.19.2",
     "@typescript-eslint/parser": "^2.19.2",
     "amazon-chime-sdk-component-library-react": "^2.11.1",
-    "amazon-chime-sdk-js": "^2.20.0",
+    "amazon-chime-sdk-js": "^2.21.1",
     "aws-sdk": "^2.731.0",
     "fs-extra": "^10.0.0",
     "react": "^17.0.1",
