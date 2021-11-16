@@ -16,9 +16,11 @@ import { Meeting, Home, DeviceSetup } from '../../views';
 import MeetingEventObserver from '../MeetingEventObserver';
 import meetingConfig from '../../meetingConfig';
 import { useAppState } from '../../providers/AppStateProvider';
+import { BlurValues } from '../../types';
 
 const MeetingProviderWrapper: React.FC = () => {
-  const { isWebAudioEnabled, isBackgroundBlurEnabled } = useAppState();
+  const { isWebAudioEnabled, blurOption } = useAppState();
+  const isBackgroundBlurEnabled = blurOption !== BlurValues.blurDisabled;
 
   const meetingConfigValue = {
     ...meetingConfig,
@@ -57,8 +59,13 @@ const MeetingProviderWrapper: React.FC = () => {
   };
 
   const getMeetingProviderWrapperWithBGBlur = (children: React.ReactNode) => {
+    let filterCPUUtilization = parseInt(blurOption,10);
+    if (!filterCPUUtilization) {
+      filterCPUUtilization = 40;
+    }
+    console.log(`Using ${filterCPUUtilization} CPU utilization for background blur`);
     return (
-      <BackgroundBlurProvider>
+      <BackgroundBlurProvider options={{filterCPUUtilization}} >
         {children}
       </BackgroundBlurProvider>
     );

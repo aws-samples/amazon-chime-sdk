@@ -14,7 +14,8 @@ import {
   Modal,
   ModalBody,
   ModalHeader,
-  DeviceLabels
+  DeviceLabels,
+  Select
 } from 'amazon-chime-sdk-component-library-react';
 
 import { getErrorContext } from '../../providers/ErrorProvider';
@@ -25,7 +26,14 @@ import DevicePermissionPrompt from '../DevicePermissionPrompt';
 import RegionSelection from './RegionSelection';
 import { fetchMeeting, createGetAttendeeCallback } from '../../utils/api';
 import { useAppState } from '../../providers/AppStateProvider';
-import { MeetingMode } from '../../types';
+import { MeetingMode, BlurValues } from '../../types';
+
+const BLUR_OPTIONS = [
+  { value: BlurValues.blurDisabled, label: "Disable Blur" }, 
+  { value: BlurValues.blur10Percent, label: "Blur CPU 10%" }, 
+  { value: BlurValues.blur20Percent, label: "Blur CPU 20%" }, 
+  { value: BlurValues.blur40Percent, label: "Blur CPU 40%" },
+];
 
 const MeetingForm: React.FC = () => {
   const meetingManager = useMeetingManager();
@@ -34,8 +42,8 @@ const MeetingForm: React.FC = () => {
     region: appRegion,
     meetingId: appMeetingId,
     isWebAudioEnabled,
-    isBackgroundBlurEnabled,
-    toggleBackgroundBlur,
+    blurOption: blurValue,
+    setBlurValue,
     toggleWebAudio,
     setMeetingMode
   } = useAppState();
@@ -161,12 +169,15 @@ const MeetingForm: React.FC = () => {
         onChange={toggleWebAudio}
         infoText="Enable Web Audio to use Voice Focus"
       />
+      {/* <BlurSelection/> */}
       <FormField
-        field={Checkbox}
-        label="Enable Background Blur"
-        value=""
-        checked={isBackgroundBlurEnabled}
-        onChange={toggleBackgroundBlur}
+        field={Select}
+        options={BLUR_OPTIONS}
+        onChange={(e: ChangeEvent<HTMLSelectElement>): void => {
+          setBlurValue(e.target.value);
+        }}
+        value={blurValue}
+        label="Blur"
       />
       <Flex
         container
