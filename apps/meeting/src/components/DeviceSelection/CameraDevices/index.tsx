@@ -7,7 +7,8 @@ import {
   PreviewVideo,
   QualitySelection,
   CameraSelection,
-  Label
+  Label,
+  BackgroundBlurCheckbox
 } from 'amazon-chime-sdk-component-library-react';
 
 import { title, StyledInputGroup } from '../Styled';
@@ -23,6 +24,9 @@ const CameraDevices = () => {
       </StyledInputGroup>
       <StyledInputGroup>
         <QualitySelection />
+      </StyledInputGroup>
+      <StyledInputGroup>
+        <BackgroundBlurCheckbox />
       </StyledInputGroup>
       <Label style={{ display: 'block', marginBottom: '.5rem' }}>
         Video preview
