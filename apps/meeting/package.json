@@ -8,7 +8,7 @@
     "@types/webpack-env": "^1.15.1",
     "@typescript-eslint/eslint-plugin": "^2.19.2",
     "@typescript-eslint/parser": "^2.19.2",
-    "amazon-chime-sdk-component-library-react": "file:amazon-chime-sdk-component-library-react-2.11.1.tgz",
+    "amazon-chime-sdk-component-library-react": "file:amazon-chime-sdk-component-library-react-github/amazon-chime-sdk-component-library-react-2.11.1.tgz",
     "amazon-chime-sdk-js": "^2.21.1",
     "aws-sdk": "^2.731.0",
     "fs-extra": "^10.0.0",
@@ -21,6 +21,7 @@
     "throttle-debounce": "^2.3.0"
   },
   "scripts": {
+    "preinstall": "node scripts/update-react-library.js",
     "lint": "eslint src --ext .ts,.tsx --fix",
     "build": "webpack --config ./webpack.config.js",
     "start:client": "webpack serve --config ./webpack.config.dev.js",
@@ -48,6 +49,7 @@
     "react-is": "^17.0.0",
     "regenerator-runtime": "^0.13.7",
     "resize-observer-polyfill": "^1.5.1",
+    "rimraf": "^3.0.2",
     "style-loader": "^3.2.1",
     "ts-loader": "^8.1.0",
     "typescript": "4.2.3",
