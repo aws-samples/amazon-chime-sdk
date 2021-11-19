@@ -57,25 +57,21 @@ const Navigation: React.FC = () => {
           disabled={!!sharingAttendeeId}
           label="Switch View"
         />
-        <NavbarItem
-          icon={<ZoomIn />}
-          onClick={zoomIn}
-          label="Zoom In"
-          style={{
-            display:
-              layout === Layout.Gallery ? 'flex' : 'none',
-          }}
-          disabled={!!sharingAttendeeId}
-        />
-        <NavbarItem
-          icon={<ZoomOut />}
-          onClick={zoomOut}
-          label="Zoom Out"
-          style={{
-            display:
-              layout === Layout.Gallery ? 'flex' : 'none',
-          }}
-        />
+        {layout === Layout.Gallery &&
+          <>
+            <NavbarItem
+              icon={<ZoomIn />}
+              onClick={zoomIn}
+              label="Zoom In"
+              disabled={!!sharingAttendeeId}
+            />
+            <NavbarItem
+              icon={<ZoomOut />}
+              onClick={zoomOut}
+              label="Zoom Out"
+            />
+          </>
+        }
       </Flex>
       <Flex marginTop="auto">
         <NavbarItem
