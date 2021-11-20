@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT-0
 
 import React, { useContext, useState, ReactNode } from 'react';
-import { MeetingMode, Layout } from '../types';
+import { MeetingMode, Layout, BlurValues } from '../types';
 
 type Props = {
   children: ReactNode;
@@ -14,12 +14,12 @@ interface AppStateValue {
   theme: string;
   region: string;
   isWebAudioEnabled: boolean;
-  isBackgroundBlurEnabled: boolean;
+  blurOption: string,
   meetingMode: MeetingMode;
   layout: Layout;
   toggleTheme: () => void;
   toggleWebAudio: () => void;
-  toggleBackgroundBlur: () => void;
+  setBlurValue: (blurValue: string) => void;
   setAppMeetingInfo: (meetingId: string, name: string, region: string) => void;
   setMeetingMode: (meetingMode: MeetingMode) => void;
   setLayout: (layout: Layout) => void;
@@ -37,6 +37,8 @@ export function useAppState(): AppStateValue {
   return state;
 }
 
+
+
 const query = new URLSearchParams(location.search);
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
@@ -47,7 +49,7 @@ export function AppStateProvider({ children }: Props) {
   const [layout, setLayout] = useState(Layout.Gallery);
   const [localUserName, setLocalName] = useState('');
   const [isWebAudioEnabled, setIsWebAudioEnabled] = useState(true);
-  const [isBackgroundBlurEnabled, setIsBackgroundBlurEnabled] = useState(true);
+  const [blurOption, setBlur] = useState(BlurValues.blurDisabled);
   const [theme, setTheme] = useState(() => {
     const storedTheme = localStorage.getItem('theme');
     return storedTheme || 'light';
@@ -67,8 +69,8 @@ export function AppStateProvider({ children }: Props) {
     setIsWebAudioEnabled(current => !current);
   }
 
-  const toggleBackgroundBlur = (): void  => {
-    setIsBackgroundBlurEnabled(current => !current);
+  const setBlurValue = (blurValue: string): void  => {
+    setBlur(blurValue);
   }
 
   const setAppMeetingInfo = (
@@ -86,13 +88,13 @@ export function AppStateProvider({ children }: Props) {
     localUserName,
     theme,
     isWebAudioEnabled,
-    isBackgroundBlurEnabled,
+    blurOption,
     region,
     meetingMode,
     layout,
     toggleTheme,
     toggleWebAudio,
-    toggleBackgroundBlur,
+    setBlurValue,
     setAppMeetingInfo,
     setMeetingMode,
     setLayout,
