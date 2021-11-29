@@ -11,7 +11,7 @@ information to effectively respond to your bug report or contribution.
 
 We welcome you to use the GitHub issue tracker to report bugs or suggest features.
 
-When filing an issue, please check existing open, or recently closed, issues to make sure somebody else hasn't already
+When filing an issue, please check existing open or recently closed issues to make sure somebody else has not already
 reported the issue. Please try to include as much information as you can. Details like these are incredibly useful:
 
 * A reproducible test case or series of steps
@@ -23,7 +23,6 @@ reported the issue. Please try to include as much information as you can. Detail
 ## Contributing via Pull Requests
 Contributions via pull requests are much appreciated. Before sending us a pull request, please ensure that:
 
-To send us a pull request, please:
 1. Fork the repository and make sure you are working against the latest source on the *meeting-dev* branch. We use *meeting-dev* branch for `apps/meeting` app to contribute all PRs. This app is used to test the changes releasing into the next [amazon-chime-sdk-component-library-react](https://github.com/aws/amazon-chime-sdk-component-library-react) release.
 2. Run the meeting demo locally first. The *meeting-dev* apps/meeting demo changes are unstable and contributors will need to create and install the `amazon-chime-sdk-component-library-react` tarball from its *master* branch to start the demo.
 
@@ -31,6 +30,8 @@ To send us a pull request, please:
     ```
     git clone https://github.com/aws/amazon-chime-sdk-component-library-react &&
     cd amazon-chime-sdk-component-library-react &&
+    npm install &&
+    npm run build &&
     npm pack
     ```
     This will create a tarball named: `amazon-chime-sdk-component-library-react-<latest-released-npm-version>.tgz`
@@ -74,7 +75,7 @@ opensource-codeofconduct@amazon.com with any additional questions or comments.
 
 
 ## Security issue notifications
-If you discover a potential security issue in this project we ask that you notify AWS/Amazon Security via our [vulnerability reporting page](http://aws.amazon.com/security/vulnerability-reporting/). Please do **not** create a public github issue.
+If you discover a potential security issue in this project please notify AWS/Amazon Security via our [vulnerability reporting page](http://aws.amazon.com/security/vulnerability-reporting/). Please do **not** create a public github issue.
 
 
 ## Licensing
