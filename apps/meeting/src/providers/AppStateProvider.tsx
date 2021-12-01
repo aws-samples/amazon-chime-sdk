@@ -15,13 +15,17 @@ interface AppStateValue {
   region: string;
   isWebAudioEnabled: boolean;
   blurOption: string,
+  isEchoReductionEnabled: boolean;
   meetingMode: MeetingMode;
   layout: Layout;
+  joinInfo: any;
   toggleTheme: () => void;
   toggleWebAudio: () => void;
   setBlurValue: (blurValue: string) => void;
+  toggleEchoReduction: () => void;
   setAppMeetingInfo: (meetingId: string, name: string, region: string) => void;
   setMeetingMode: (meetingMode: MeetingMode) => void;
+  setJoinInfo: (joinInfo: any) => void;
   setLayout: (layout: Layout) => void;
 }
 
@@ -46,10 +50,12 @@ export function AppStateProvider({ children }: Props) {
   const [meetingId, setMeeting] = useState(query.get('meetingId') || '');
   const [region, setRegion] = useState(query.get('region') || '');
   const [meetingMode, setMeetingMode] = useState(MeetingMode.Attendee);
+  const [joinInfo, setJoinInfo] = useState(null);
   const [layout, setLayout] = useState(Layout.Gallery);
   const [localUserName, setLocalName] = useState('');
   const [isWebAudioEnabled, setIsWebAudioEnabled] = useState(true);
   const [blurOption, setBlur] = useState(BlurValues.blurDisabled);
+  const [isEchoReductionEnabled, setIsEchoReductionEnabled] = useState(false);
   const [theme, setTheme] = useState(() => {
     const storedTheme = localStorage.getItem('theme');
     return storedTheme || 'light';
@@ -73,6 +79,10 @@ export function AppStateProvider({ children }: Props) {
     setBlur(blurValue);
   }
 
+  const toggleEchoReduction = (): void  => {
+    setIsEchoReductionEnabled(current => !current);
+  }
+
   const setAppMeetingInfo = (
     meetingId: string,
     name: string,
@@ -89,15 +99,19 @@ export function AppStateProvider({ children }: Props) {
     theme,
     isWebAudioEnabled,
     blurOption,
+    isEchoReductionEnabled,
     region,
     meetingMode,
     layout,
+    joinInfo,
     toggleTheme,
     toggleWebAudio,
     setBlurValue,
+    toggleEchoReduction,
     setAppMeetingInfo,
     setMeetingMode,
     setLayout,
+    setJoinInfo,
   };
 
   return (

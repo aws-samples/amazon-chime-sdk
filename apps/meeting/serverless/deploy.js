@@ -128,6 +128,7 @@ function ensureApp(appName = app) {
 function ensureTools() {
   spawnOrFail('aws', ['--version']);
   spawnOrFail('sam', ['--version']);
+  spawnOrFail('npm', ['install']);
 }
 
 parseArgs();
@@ -140,7 +141,7 @@ if (!fs.existsSync('build')) {
 
 console.log(`Using region ${region}, bucket ${bucket}, stack ${stack}, disable-printing-logs ${disablePrintingLogs}`);
 ensureBucket();
-
+spawnOrFail('npm', ['install'], {cwd: path.join(__dirname, 'src')});
 spawnOrFail('sam', [
   'package',
   '--s3-bucket',

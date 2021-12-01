@@ -1,10 +1,31 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-var AWS = require('aws-sdk');
+const AWS = require('aws-sdk');
 var ddb = new AWS.DynamoDB();
 const chime = new AWS.Chime({ region: 'us-east-1' });
 chime.endpoint = new AWS.Endpoint('https://service.chime.aws.amazon.com/console');
+
+// Create ans AWS SDK Chime object. Region 'us-east-1' is globally available.
+const chimeRegional = new AWS.ChimeSDKMeetings({ region: 'us-east-1' });
+const chimeRegionalEndpoint = 
+  process.env.REGIONAL_ENDPOINT || 
+  'https://meetings-chime.us-east-1.amazonaws.com';
+chimeRegional.endpoint = new AWS.Endpoint(chimeRegionalEndpoint);
+
+// return regional API just for Echo Reduction for now.
+function getClientForMeeting(meeting) {
+  if (
+    meeting && 
+    meeting.Meeting && 
+    meeting.Meeting.MeetingFeatures && 
+    meeting.Meeting.MeetingFeatures.Audio &&
+    meeting.Meeting.MeetingFeatures.Audio.EchoReduction === 'AVAILABLE'
+    ) {
+      return chimeRegional;
+    }
+  return chime;
+}
 
 const oneDayFromNow = Math.floor(Date.now() / 1000) + 60 * 60 * 24;
 
@@ -110,21 +131,32 @@ exports.createMeeting = async (event, context, callback) => {
   }
 
   let meetingInfo = await getMeeting(title);
+  let client = getClientForMeeting(meetingInfo);
   if (!meetingInfo) {
-    const request = {
+    let request = {
       ClientRequestToken: uuid(),
       MediaRegion: region,
       NotificationsConfiguration: getNotificationsConfig(),
+      ExternalMeetingId: title.substring(0, 64),
     };
+    if (event.queryStringParameters.ns_es === 'true') {
+      client = chimeRegional;
+      request.MeetingFeatures = {
+        Audio: {
+          // The EchoReduction parameter helps the user enable and use Amazon Echo Reduction.
+          EchoReduction: 'AVAILABLE'
+        }
+      };
+    } 
     console.info('Creating new meeting: ' + JSON.stringify(request));
-    meetingInfo = await chime.createMeeting(request).promise();
+    meetingInfo = await client.createMeeting(request).promise();
     await putMeeting(title, meetingInfo);
   }
 
   const joinInfo = {
     JoinInfo: {
       Title: title,
-      Meeting: meetingInfo.Meeting,
+      Meeting: meetingInfo?.Meeting,
     },
   };
 
@@ -151,19 +183,30 @@ exports.join = async (event, context, callback) => {
   }
 
   let meetingInfo = await getMeeting(title);
+  let client = getClientForMeeting(meetingInfo);
   if (!meetingInfo) {
-    const request = {
+    let request = {
       ClientRequestToken: uuid(),
       MediaRegion: region,
       NotificationsConfiguration: getNotificationsConfig(),
+      ExternalMeetingId: title.substring(0, 64),
     };
+    if (event.queryStringParameters.ns_es === 'true') {
+      client = chimeRegional;
+      request.MeetingFeatures = {
+        Audio: {
+          // The EchoReduction parameter helps the user enable and use Amazon Echo Reduction.
+          EchoReduction: 'AVAILABLE'
+        }
+      };
+    } 
     console.info('Creating new meeting before joining: ' + JSON.stringify(request));
-    meetingInfo = await chime.createMeeting(request).promise();
+    meetingInfo = await client.createMeeting(request).promise();
     await putMeeting(title, meetingInfo);
   }
 
   console.info('Adding new attendee');
-  const attendeeInfo = (await chime.createAttendee({
+  const attendeeInfo = (await client.createAttendee({
       MeetingId: meetingInfo.Meeting.MeetingId,
       ExternalUserId: uuid(),
     }).promise());
@@ -190,7 +233,8 @@ exports.end = async (event, context, callback) => {
   };
   const title = event.queryStringParameters.title;
   let meetingInfo = await getMeeting(title);
-  await chime.deleteMeeting({
+  const client = getClientForMeeting(meetingInfo);
+  await client.deleteMeeting({
     MeetingId: meetingInfo.Meeting.MeetingId,
   }).promise();
   callback(null, response);

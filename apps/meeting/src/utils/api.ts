@@ -20,11 +20,13 @@ export async function fetchMeeting(
   meetingId: string,
   name: string,
   region: string,
+  echoReductionCapability: boolean = false
 ): Promise<MeetingResponse> {
   const params = {
     title: encodeURIComponent(meetingId),
     name: encodeURIComponent(name),
     region: encodeURIComponent(region),
+    ns_es: String(echoReductionCapability),
   };
 
   const res = await fetch(BASE_URL + 'join?' + new URLSearchParams(params), {

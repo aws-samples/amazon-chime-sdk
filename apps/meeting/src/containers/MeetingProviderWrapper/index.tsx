@@ -15,6 +15,10 @@ import {
   VoiceFocusProvider,
 } from 'amazon-chime-sdk-component-library-react';
 
+import {
+  VoiceFocusModelName,
+} from 'amazon-chime-sdk-js';
+
 import routes from '../../constants/routes';
 import { NavigationProvider } from '../../providers/NavigationProvider';
 import NoMeetingRedirect from '../NoMeetingRedirect';
@@ -47,8 +51,9 @@ const MeetingProviderWithDeviceReplacement: React.FC = ({ children }) => {
 };
 
 const MeetingProviderWrapper: React.FC = () => {
-  const { isWebAudioEnabled, blurOption } = useAppState();
-  const isBackgroundBlurEnabled = blurOption !== BlurValues.blurDisabled;
+
+const { isWebAudioEnabled, blurOption, isEchoReductionEnabled, joinInfo } = useAppState();
+const isBackgroundBlurEnabled = blurOption !== BlurValues.blurDisabled;
 
   const meetingConfigValue = {
     ...meetingConfig,
@@ -78,9 +83,32 @@ const MeetingProviderWrapper: React.FC = () => {
     );
   };
 
+  function voiceFocusName(name: string | undefined): VoiceFocusModelName | undefined {
+    if (name && ['default', 'ns_es'].includes(name)) {
+      return name as VoiceFocusModelName;
+    }
+    return undefined;
+  }
+
+  function getVoiceFocusSpecName(): VoiceFocusModelName | undefined {
+    if (
+      isEchoReductionEnabled && 
+      joinInfo && 
+      joinInfo.Meeting?.MeetingFeatures?.Audio?.EchoReduction === 'AVAILABLE'
+      ) {
+      return voiceFocusName('ns_es');
+      }
+    return voiceFocusName('default');
+  }
+
+  const vfConfigValue = {
+    spec: {name: getVoiceFocusSpecName()},
+    createMeetingResponse: joinInfo,
+  };
+
   const getMeetingProviderWrapperWithVF = (children: React.ReactNode) => {
     return (
-      <VoiceFocusProvider>
+      <VoiceFocusProvider {...vfConfigValue}>
         <MeetingProviderWithDeviceReplacement>
           {children}
         </MeetingProviderWithDeviceReplacement>

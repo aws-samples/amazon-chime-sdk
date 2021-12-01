@@ -5,7 +5,7 @@
 const compression = require('compression');
 const fs = require('fs');
 const url = require('url');
-const uuid = require('uuid/v4');
+const { v4: uuidv4 } = require('uuid');
 const AWS = require('aws-sdk');
 /* eslint-enable */
 
@@ -15,16 +15,32 @@ let protocol = 'http';
 let options = {};
 
 const chime = new AWS.Chime({ region: 'us-east-1' });
-const alternateEndpoint = process.env.ENDPOINT;
-if (alternateEndpoint) {
-  console.log('Using endpoint: ' + alternateEndpoint);
-  chime.createMeeting({ ClientRequestToken: uuid() }, () => {});
-  AWS.NodeHttpClient.sslAgent.options.rejectUnauthorized = false;
-  chime.endpoint = new AWS.Endpoint(alternateEndpoint);
+// Create ans AWS SDK Chime object. Region 'us-east-1' is globally available.
+const chimeRegional = new AWS.ChimeSDKMeetings({ region: 'us-east-1' });
+const chimeRegionalEndpoint = process.env.REGIONAL_ENDPOINT || 'https://meetings-chime.us-east-1.amazonaws.com';
+
+if (chimeRegionalEndpoint) {
+  console.log('Using regional endpoint', chimeRegionalEndpoint);
+  chimeRegional.endpoint = new AWS.Endpoint(chimeRegionalEndpoint);
 } else {
+  console.log('Using global endpoint ');
   chime.endpoint = new AWS.Endpoint(
     'https://service.chime.aws.amazon.com/console'
   );
+}
+
+// return regional API just for Echo Reduction for now.
+function getClientForMeeting(meeting) {
+  if (
+    meeting &&
+    meeting.Meeting &&
+    meeting.Meeting.MeetingFeatures &&
+    meeting.Meeting.MeetingFeatures.Audio &&
+    meeting.Meeting.MeetingFeatures.Audio.EchoReduction === 'AVAILABLE'
+    ) {
+      return chimeRegional;
+    }
+  return chime;
 }
 
 const meetingCache = {};
@@ -60,13 +76,23 @@ const server = require(protocol).createServer(
         const name = query.name;
         const region = query.region || 'us-east-1';
 
+        let client = getClientForMeeting(meetingCache[title]);
         if (!meetingCache[title]) {
-          meetingCache[title] = await chime
-            .createMeeting({
-              ClientRequestToken: uuid(),
-              MediaRegion: region
-            })
-            .promise();
+          let request = {
+            ClientRequestToken: uuidv4(),
+            MediaRegion: region,
+            ExternalMeetingId: title.substring(0, 64),
+          };
+          if (query.ns_es === 'true') {
+            client = chimeRegional;
+            request.MeetingFeatures = {
+              Audio: {
+                // The EchoReduction parameter helps the user enable and use Amazon Echo Reduction.
+                EchoReduction: 'AVAILABLE'
+              } 
+            };
+          }
+          meetingCache[title] = await client.createMeeting(request).promise();
           attendeeCache[title] = {};
         }
         const joinInfo = {
@@ -74,10 +100,10 @@ const server = require(protocol).createServer(
             Title: title,
             Meeting: meetingCache[title].Meeting,
             Attendee: (
-              await chime
+              await client
                 .createAttendee({
                   MeetingId: meetingCache[title].Meeting.MeetingId,
-                  ExternalUserId: uuid()
+                  ExternalUserId: `${uuidv4().substring(0, 8)}#${query.name}`.substring(0, 64),
                 })
                 .promise()
             ).Attendee
@@ -114,7 +140,7 @@ const server = require(protocol).createServer(
         if (!meetingCache[title]) {
           meetingCache[title] = await chime
             .createMeeting({
-              ClientRequestToken: uuid()
+              ClientRequestToken: uuidv4()
               // NotificationsConfiguration: {
               //   SqsQueueArn: 'Paste your arn here',
               //   SnsTopicArn: 'Paste your arn here'
@@ -137,7 +163,8 @@ const server = require(protocol).createServer(
       } else if (request.method === 'POST' && request.url.startsWith('/end?')) {
         const query = url.parse(request.url, true).query;
         const title = query.title;
-        await chime
+        const client = getClientForMeeting(meetingCache[title]);
+        await client
           .deleteMeeting({
             MeetingId: meetingCache[title].Meeting.MeetingId
           })
