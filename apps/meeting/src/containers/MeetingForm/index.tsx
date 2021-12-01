@@ -39,11 +39,14 @@ const MeetingForm: React.FC = () => {
   const meetingManager = useMeetingManager();
   const {
     setAppMeetingInfo,
+    setJoinInfo,
     region: appRegion,
     meetingId: appMeetingId,
     isWebAudioEnabled,
     blurOption: blurValue,
     setBlurValue,
+    isEchoReductionEnabled,
+    toggleEchoReduction,
     toggleWebAudio,
     setMeetingMode
   } = useAppState();
@@ -79,7 +82,8 @@ const MeetingForm: React.FC = () => {
     meetingManager.getAttendee = createGetAttendeeCallback(id);
 
     try {
-      const { JoinInfo } = await fetchMeeting(id, attendeeName, region);
+      const { JoinInfo } = await fetchMeeting(id, attendeeName, region, isEchoReductionEnabled);
+      setJoinInfo(JoinInfo);
 
       await meetingManager.join({
         meetingInfo: JoinInfo.Meeting,
@@ -168,6 +172,14 @@ const MeetingForm: React.FC = () => {
         checked={isWebAudioEnabled}
         onChange={toggleWebAudio}
         infoText="Enable Web Audio to use Voice Focus"
+      />
+      <FormField
+        field={Checkbox}
+        label="Enable Echo Reduction"
+        value=""
+        checked={isEchoReductionEnabled}
+        onChange={toggleEchoReduction}
+        infoText="Enable Echo Reduction (new meetings only)"
       />
       {/* <BlurSelection/> */}
       <FormField
