@@ -43,15 +43,6 @@ const server = require(protocol).createServer(
     compression({})(request, response, () => {});
     try {
       if (
-        request.method === 'GET' &&
-        (request.url === '/' ||
-          request.url === '/v2/' ||
-          request.url.startsWith('/?'))
-      ) {
-        response.statusCode = 200;
-        response.setHeader('Content-Type', 'text/html');
-        response.end(fs.readFileSync(`dist/${app}.html`));
-      } else if (
         request.method === 'POST' &&
         request.url.startsWith('/join?')
       ) {
