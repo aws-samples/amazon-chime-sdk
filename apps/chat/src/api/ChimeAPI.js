@@ -13,6 +13,16 @@ export const BASE_URL = routes.SIGNIN;
 export const createMemberArn = userId =>
   `${appConfig.appInstanceArn}/user/${userId}`;
 
+export const Persistence = {
+  PERSISTENT: 'PERSISTENT',
+  NON_PERSISTENT: 'NON_PERSISTENT',
+}
+
+export const MessageType = {
+  STANDARD: 'STANDARD',
+  CONTROL: 'CONTROL',
+}
+
 const appInstanceUserArnHeader = 'x-amz-chime-bearer';
 
 let chimeMessaging = null;
@@ -39,18 +49,12 @@ async function getMessagingSessionEndpoint() {
   const response = await request.promise();
   return response;
 }
-/**
- * Function to send channel message
- * @param {channelArn} string Channel Arn
- * @param {messageContent} string Message content
- * @param {member} string Chime channel member
- * @param {options{}} object Additional attributes for the request object.
- * @returns {object} sendMessage object;
- */
+
 async function sendChannelMessage(
   channelArn,
   messageContent,
   persistence,
+  type,
   member,
   options = null
 ) {
@@ -63,7 +67,7 @@ async function sendChannelMessage(
     ChannelArn: channelArn,
     Content: messageContent,
     Persistence: persistence, // Allowed types are PERSISTENT and NON_PERSISTENT
-    Type: 'STANDARD' // Allowed types are STANDARD and CONTROL
+    Type: type // Allowed types are STANDARD and CONTROL
   };
   if (options && options.Metadata) {
     params.Metadata = options.Metadata;

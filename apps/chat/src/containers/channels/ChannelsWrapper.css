@@ -20,6 +20,22 @@ button.create-channel-button {
   cursor: unset;
 }
 
+ul.ch-popover-menu {
+  backdrop-filter: none;
+}
+
+button.ch-sts-popover-toggle.ch-popover-toggle {
+  right: auto;
+  border-radius: inherit;
+  margin: inherit;
+  width: 100%;
+  height: 100%;
+}
+
+button.ch-sts-popover-toggle.ch-popover-toggle:hover {
+  background-color: #004ddb;
+}
+
 li.separator {
   margin: 0.5rem 0;
 }

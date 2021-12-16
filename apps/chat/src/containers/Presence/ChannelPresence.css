@@ -1,0 +1,28 @@
+.channel-members-list-header {
+   background-color: inherit;
+   text-align: center;
+   padding: 0.75rem;
+   margin-bottom: 0.5rem;
+   border-bottom: 0.5px solid #d4d5d8;
+   position: sticky;
+   z-index: 2;
+   top: 0;
+   right: 0;
+   left: 0;
+ }
+
+.channel-members-list-header-title {
+  padding-left: 1rem;
+}
+
+.channel-members-list-item {
+   padding: 0 8px 8px;
+}
+
+.channel-members-container {
+   background-color: #f0f1f2;
+   border-left: 1px solid #d4d5d8;
+   height: 100%;
+   overflow-y: scroll;
+   min-width: 12rem;
+}

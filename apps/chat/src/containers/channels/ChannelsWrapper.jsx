@@ -5,12 +5,11 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable import/no-unresolved */
 /* eslint-disable react/prop-types */
-import React, { useState, useEffect } from 'react';
-
-import { v4 as uuid } from 'uuid';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   PopOverItem,
   PopOverSeparator,
+  PopOverSubMenu,
   IconButton,
   Dots,
   useNotificationDispatch,
@@ -18,9 +17,10 @@ import {
   ChannelList,
   ChannelItem,
 } from 'amazon-chime-sdk-component-library-react';
-import { useTheme } from 'styled-components';
 import { useHistory } from 'react-router-dom';
 import {
+  Persistence,
+  MessageType,
   associateChannelFlow,
   createMemberArn,
   createChannelMembership,
@@ -42,9 +42,8 @@ import {
   createAttendee,
   endMeeting,
   createGetAttendeeCallback,
-  listChannelFlows,
   describeChannelFlow,
-  disassociateChannelFlow
+  disassociateChannelFlow,
 } from '../../api/ChimeAPI';
 import appConfig from '../../Config';
 
@@ -59,6 +58,15 @@ import { useAuthContext } from '../../providers/AuthProvider';
 import ModalManager from './ModalManager';
 import routes from '../../constants/routes';
 
+import {
+  PresenceAutoStatus,
+  PresenceMode,
+  PresenceStatusPrefix,
+  PUBLISH_INTERVAL,
+  toPresenceMap,
+  toPresenceMessage,
+} from "../../utilities/presence";
+
 import './ChannelsWrapper.css';
 
 const ChannelsWrapper = () => {
@@ -69,14 +77,15 @@ const ChannelsWrapper = () => {
   const [selectedMember, setSelectedMember] = useState({}); // TODO change to an empty array when using batch api
   const [activeChannelModerators, setActiveChannelModerators] = useState([]);
   const [banList, setBanList] = useState([]);
-  const theme = useTheme();
-  const userPermission = useUserPermission();
   const { userId } = useAuthContext().member;
-  const member = useAuthContext().member;
+  const { member, isAuthenticated } = useAuthContext();
+  const userPermission = useUserPermission();
+  const isAuthenticatedRef = useRef(isAuthenticated);
   const messagingUserArn = `${appConfig.appInstanceArn}/user/${userId}`;
   const {
     activeChannelRef,
     channelList,
+    channelListRef,
     setChannelList,
     setActiveChannel,
     activeChannel,
@@ -93,6 +102,10 @@ const ChannelsWrapper = () => {
   } = useChatChannelState();
   const { setMessages } = useChatMessagingState();
   const { setAppMeetingInfo } = useAppState();
+
+  useEffect(() => {
+    isAuthenticatedRef.current = isAuthenticated;
+  });
 
   // get all channels
   useEffect(() => {
@@ -112,6 +125,7 @@ const ChannelsWrapper = () => {
       setChannelList(
         mergeArrayOfObjects(userChannelList, publicChannels, 'ChannelArn')
       );
+      await publishStatusToAllChannels();
     };
     fetchChannels();
   }, [userId]);
@@ -119,9 +133,19 @@ const ChannelsWrapper = () => {
   // get channel memberships
   useEffect(() => {
     if (activeChannel.ChannelArn) {
+      activeChannelRef.current = activeChannel;
       fetchMemberships();
+      publishStatusToAllChannels();
     }
   }, [activeChannel.ChannelArn]);
+
+  // track channel presence
+  useEffect(() => {
+    if (channelList.length > 0) {
+      channelListRef.current = channelList;
+      startPublishStatusWithInterval();
+    }
+  }, [channelList]);
 
   // get meeting id
   useEffect(() => {
@@ -129,6 +153,51 @@ const ChannelsWrapper = () => {
       setModal('JoinMeeting');
     }
   }, [meetingInfo]);
+
+  function startPublishStatusWithInterval(){
+    let publishTimeout;
+    (async function publishStatusWithInterval() {
+      if (!isAuthenticatedRef.current) {
+        clearTimeout(publishTimeout);
+        return;
+      }
+      await publishStatusToAllChannels();
+      publishTimeout = setTimeout(publishStatusWithInterval, PUBLISH_INTERVAL);
+    })();
+  }
+
+  function computeAutoStatusForAChannel(channel) {
+    const persistedPresence = JSON.parse(channel.Metadata || '{}').Presence;
+    const isCustomStatus = persistedPresence && persistedPresence.filter(p => p.u === userId)[0];
+    if (isCustomStatus) {
+      return null;
+    }
+
+    if (location.pathname.includes(routes.MEETING)) {
+      return PresenceAutoStatus.Busy;
+    } else if (channel.ChannelArn === activeChannelRef.current.ChannelArn) {
+      return PresenceAutoStatus.Online;
+    } else {
+      return PresenceAutoStatus.Idle;
+    }
+  }
+
+  async function publishStatusToAllChannels () {
+    const servicePromises = [];
+    for (const channel of channelListRef.current) {
+      const status = computeAutoStatusForAChannel(channel);
+      if (status) {
+        servicePromises.push(sendChannelMessage(
+            channel.ChannelArn,
+            toPresenceMessage(PresenceMode.Auto, status, true),
+            Persistence.NON_PERSISTENT,
+            MessageType.CONTROL,
+            member,
+        ));
+      }
+    }
+   return await Promise.all(servicePromises);
+  }
 
   const getBanList = async () => {
     const banListResponse = await listChannelBans(
@@ -311,13 +380,57 @@ const ChannelsWrapper = () => {
     await sendChannelMessage(
       activeChannel.ChannelArn,
       JSON.stringify(meetingInfoMessage),
-      'NON_PERSISTENT',
+      Persistence.NON_PERSISTENT,
+      MessageType.STANDARD,
       member,
       options
     );
-    
+
     setAppMeetingInfo(meetingId, member.username);
     history.push(routes.DEVICE);
+  };
+
+  const setCustomStatus = async (e, status) => {
+    e.preventDefault();
+    await changeStatus(PresenceMode.Custom, status);
+  }
+
+  const changeStatus = async (type, status) => {
+    await sendChannelMessage(
+        activeChannel.ChannelArn,
+        toPresenceMessage(type, status, true),
+        Persistence.NON_PERSISTENT,
+        MessageType.CONTROL,
+        member,
+    );
+
+    const isAutomatic = type === PresenceMode.Auto;
+    const persistedPresenceMap = toPresenceMap(activeChannel.Metadata);
+    const customPresenceExists = persistedPresenceMap && persistedPresenceMap[userId];
+    if (!isAutomatic || customPresenceExists) {
+      if (!activeChannel.ChannelFlowArn) {
+        dispatch({
+          type: 0,
+          payload: {
+            message: 'Error, enable presence channel flow first.',
+            severity: 'error',
+          },
+        });
+        return;
+      }
+
+      // persist presence using standard message and channel flows
+      const options = {};
+      options.Metadata = JSON.stringify({IsPresenceInfo: true, Status: toPresenceMessage(type, status, false)});
+      await sendChannelMessage(
+          activeChannel.ChannelArn,
+          `changed status to ${status}`,
+          Persistence.PERSISTENT,
+          MessageType.STANDARD,
+          member,
+          options
+      );
+    }
   };
 
   const joinChannel = async (e) => {
@@ -649,6 +762,32 @@ const ChannelsWrapper = () => {
   }, [activeChannel]);
 
   const loadUserActions = (role, channel) => {
+      const map = channel.Metadata && JSON.parse(channel.Metadata).Presence && Object.fromEntries(JSON.parse(channel.Metadata).Presence?.map((entry) => [entry.u, entry.s]));
+      const status = map && map[member.userId] || PresenceStatusPrefix.Auto;
+
+    const presenceStatusOption = (
+        <PopOverSubMenu className={'ch-sts-popover-toggle'} as='button' key="presence_status" text={"Change status"}>
+          <PopOverItem
+              as='button'
+              onClick={() => changeStatus(PresenceMode.Auto, 'Online')}
+              checked={status.startsWith(PresenceStatusPrefix.Auto)}
+              children={<span>Automatic</span>}
+          />
+          <PopOverItem
+              as='button'
+              onClick={() => changeStatus(PresenceMode.Wfh, 'Working from Home')}
+              checked={status.startsWith(PresenceStatusPrefix.Wfh)}
+              children={<span>Working from Home</span>}
+          />
+          <PopOverItem
+              as='button'
+              onClick={() => setModal('CustomStatus')}
+              checked={status.startsWith(PresenceStatusPrefix.Custom)}
+              children={<span>Custom {status.startsWith(PresenceStatusPrefix.Custom) ? '(' + status.substr(status.indexOf('|') + 1) + ')' : ''}</span>}
+          />
+        </PopOverSubMenu>
+    );
+
     const joinChannelOption = (
       <PopOverItem key="join_channel" as="button" onClick={joinChannel}>
         <span>Join Channel</span>
@@ -771,35 +910,41 @@ const ChannelsWrapper = () => {
       leaveChannelOption,
     ];
     const moderatorActions = [
+      presenceStatusOption,
+      <PopOverSeparator key="separator1" className="separator" />,
       viewDetailsOption,
       editChannelOption,
-      <PopOverSeparator key="separator1" className="separator" />,
+      <PopOverSeparator key="separator2" className="separator" />,
       addMembersOption,
       manageMembersOption,
       banOrAllowOption,
-      <PopOverSeparator key="separator2" className="separator" />,
-      manageChannelFlowOption,
       <PopOverSeparator key="separator3" className="separator" />,
-      startMeetingOption,
+      manageChannelFlowOption,
       <PopOverSeparator key="separator4" className="separator" />,
+      startMeetingOption,
+      <PopOverSeparator key="separator5" className="separator" />,
       leaveChannelOption,
       deleteChannelOption,
     ];
     const restrictedMemberActions = [
-      viewDetailsOption,
+      presenceStatusOption,
       <PopOverSeparator key="separator1" className="separator" />,
-      viewMembersOption,
+      viewDetailsOption,
       <PopOverSeparator key="separator2" className="separator" />,
-      startMeetingOption,
+      viewMembersOption,
       <PopOverSeparator key="separator3" className="separator" />,
+      startMeetingOption,
+      <PopOverSeparator key="separator4" className="separator" />,
       leaveChannelOption,
     ];
     const unrestrictedMemberActions = [
-      viewDetailsOption,
+      presenceStatusOption,
       <PopOverSeparator key="separator1" className="separator" />,
+      viewDetailsOption,
+      <PopOverSeparator key="separator2" className="separator" />,
       viewMembersOption,
       addMembersOption,
-      <PopOverSeparator key="separator2" className="separator" />,
+      <PopOverSeparator key="separator3" className="separator" />,
       leaveChannelOption,
     ];
     const noMeetingModeratorActions = [
@@ -887,6 +1032,7 @@ const ChannelsWrapper = () => {
         banUser={banUser}
         unbanUser={unbanUser}
         activeChannelFlow={activeChannelFlow}
+        setCustomStatus={setCustomStatus}
       />
       <div className="channel-list-wrapper">
         <div className="channel-list-header">

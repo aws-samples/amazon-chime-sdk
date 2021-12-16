@@ -37,6 +37,23 @@
   visibility: visible;
 }
 
+.channel-content-container-grid {
+  display: grid;
+}
+
+.toggles {
+  backdrop-filter: none;
+}
+
+.channel-content-container {
+  grid-template-columns: 3fr 1fr;
+  height: 100%;
+  backdrop-filter: none;
+
+}
+
 .messaging-container {
   background-color: #f0f1f2;
+  height: 100%;
+  overflow-y: scroll;
 }
