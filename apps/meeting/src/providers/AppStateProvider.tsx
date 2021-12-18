@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: MIT-0
 
 import React, { useContext, useState, ReactNode } from 'react';
+import { logger } from '../meetingConfig';
+import { VideoPriorityBasedPolicy } from 'amazon-chime-sdk-js';
 import { MeetingMode, Layout, BlurValues } from '../types';
 
 type Props = {
@@ -14,15 +16,21 @@ interface AppStateValue {
   theme: string;
   region: string;
   isWebAudioEnabled: boolean;
-  blurOption: string,
+  blurOption: string;
   meetingMode: MeetingMode;
+  enableSimulcast: boolean;
+  priorityBasedPolicy: VideoPriorityBasedPolicy | undefined;
   layout: Layout;
   toggleTheme: () => void;
   toggleWebAudio: () => void;
+  toggleSimulcast: () => void;
+  togglePriorityBasedPolicy: () => void;
   setBlurValue: (blurValue: string) => void;
-  setAppMeetingInfo: (meetingId: string, name: string, region: string) => void;
   setMeetingMode: (meetingMode: MeetingMode) => void;
   setLayout: (layout: Layout) => void;
+  setMeetingId: (meetingId: string) => void;
+  setLocalUserName: (name: string) => void;
+  setRegion: (region: string) => void;
 }
 
 const AppStateContext = React.createContext<AppStateValue | null>(null);
@@ -43,12 +51,14 @@ const query = new URLSearchParams(location.search);
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export function AppStateProvider({ children }: Props) {
-  const [meetingId, setMeeting] = useState(query.get('meetingId') || '');
+  const [meetingId, setMeetingId] = useState(query.get('meetingId') || '');
   const [region, setRegion] = useState(query.get('region') || '');
   const [meetingMode, setMeetingMode] = useState(MeetingMode.Attendee);
   const [layout, setLayout] = useState(Layout.Gallery);
-  const [localUserName, setLocalName] = useState('');
+  const [localUserName, setLocalUserName] = useState('');
   const [isWebAudioEnabled, setIsWebAudioEnabled] = useState(true);
+  const [priorityBasedPolicy, setPriorityBasedPolicy] = useState<VideoPriorityBasedPolicy| undefined>(undefined);
+  const [enableSimulcast, setEnableSimulcast] = useState(false);
   const [blurOption, setBlur] = useState(BlurValues.blurDisabled);
   const [theme, setTheme] = useState(() => {
     const storedTheme = localStorage.getItem('theme');
@@ -69,19 +79,21 @@ export function AppStateProvider({ children }: Props) {
     setIsWebAudioEnabled(current => !current);
   }
 
+  const toggleSimulcast = (): void => {
+    setEnableSimulcast(current => !current);
+  }
+
+  const togglePriorityBasedPolicy = (): void => {
+    if (priorityBasedPolicy) {
+      setPriorityBasedPolicy(undefined);
+    } else {
+      setPriorityBasedPolicy(new VideoPriorityBasedPolicy(logger));
+    }
+  }
+
   const setBlurValue = (blurValue: string): void  => {
     setBlur(blurValue);
   }
-
-  const setAppMeetingInfo = (
-    meetingId: string,
-    name: string,
-    region: string
-  ): void => {
-    setRegion(region);
-    setMeeting(meetingId);
-    setLocalName(name);
-  };
 
   const providerValue = {
     meetingId,
@@ -92,12 +104,18 @@ export function AppStateProvider({ children }: Props) {
     region,
     meetingMode,
     layout,
+    enableSimulcast,
+    priorityBasedPolicy,
     toggleTheme,
     toggleWebAudio,
+    togglePriorityBasedPolicy,
+    toggleSimulcast,
     setBlurValue,
-    setAppMeetingInfo,
     setMeetingMode,
     setLayout,
+    setMeetingId,
+    setLocalUserName,
+    setRegion
   };
 
   return (

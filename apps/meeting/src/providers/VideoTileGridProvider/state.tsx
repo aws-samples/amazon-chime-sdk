@@ -1,5 +1,5 @@
 import { RosterAttendeeType } from 'amazon-chime-sdk-component-library-react';
-import { VideoSource } from 'amazon-chime-sdk-js';
+import {VideoPriorityBasedPolicy, VideoSource} from 'amazon-chime-sdk-js';
 import { Layout } from '../../types';
 import { isContentShare, updateDownlinkPreferences } from './Utils';
 
@@ -28,6 +28,7 @@ export type State = {
   gridState: GridState;
   attendeeStates: { [attendeeId: string]: AttendeeState };
   videoSourceState: VideoSourceState;
+  priorityBasedPolicy: VideoPriorityBasedPolicy | undefined;
 };
 
 export const initialState: State = {
@@ -44,6 +45,7 @@ export const initialState: State = {
     hasLocalVideo: false,
     hasLocalContentSharing: false,
   },
+  priorityBasedPolicy: undefined
 };
 
 export type RosterType = {
@@ -65,6 +67,14 @@ export enum VideoTileGridAction {
   UnpauseVideoTile,
   ZoomIn,
   ZoomOut,
+  SetPriorityBasedPolicy,
+}
+
+type SetPriorityBasedPolicy = {
+  type: VideoTileGridAction.SetPriorityBasedPolicy;
+  payload: {
+    policy: VideoPriorityBasedPolicy | undefined;
+  };
 }
 
 type UpdateVideoSources = {
@@ -131,6 +141,7 @@ type ZoomOut = {
 };
 
 export type Action =
+  | SetPriorityBasedPolicy
   | UpdateVideoSources
   | UpdateLayout
   | UpdateAttendeeStates
@@ -142,7 +153,7 @@ export type Action =
   | ZoomOut;
 
 export function reducer(state: State, { type, payload }: Action): State {
-  const { gridState, attendeeStates, videoSourceState } = state;
+  const { gridState, attendeeStates, videoSourceState, priorityBasedPolicy } = state;
 
   switch (type) {
     case VideoTileGridAction.UpdateAttendeeStates: {
@@ -250,7 +261,7 @@ export function reducer(state: State, { type, payload }: Action): State {
       }
 
       videoSourceState.cameraSources = cameraSources;
-      updateDownlinkPreferences(gridState, videoSourceState, attendeeStates);
+      updateDownlinkPreferences(gridState, videoSourceState, attendeeStates, priorityBasedPolicy);
 
       return {
         ...state,
@@ -274,7 +285,7 @@ export function reducer(state: State, { type, payload }: Action): State {
       }
 
       videoSourceState.activeSpeakersWithCameraSource = activeSpeakersWithCameraSource;
-      updateDownlinkPreferences(gridState, videoSourceState, attendeeStates);
+      updateDownlinkPreferences(gridState, videoSourceState, attendeeStates, priorityBasedPolicy);
 
       return {
         ...state,
@@ -298,7 +309,7 @@ export function reducer(state: State, { type, payload }: Action): State {
         attendeeStates[localAttendeeId].videoEnabled = isVideoEnabled;
       }
 
-      updateDownlinkPreferences(gridState, videoSourceState, attendeeStates);
+      updateDownlinkPreferences(gridState, videoSourceState, attendeeStates, priorityBasedPolicy);
 
       return {
         ...state,
@@ -310,7 +321,7 @@ export function reducer(state: State, { type, payload }: Action): State {
     case VideoTileGridAction.UpdateLayout: {
       const { layout } = payload;
       gridState.layout = layout;
-      updateDownlinkPreferences(gridState, videoSourceState, attendeeStates);
+      updateDownlinkPreferences(gridState, videoSourceState, attendeeStates, priorityBasedPolicy);
 
       return {
         ...state,
@@ -349,7 +360,7 @@ export function reducer(state: State, { type, payload }: Action): State {
 
       if (numberOfTiles > threshold) {
         gridState.isZoomed = true;
-        updateDownlinkPreferences(gridState, videoSourceState, attendeeStates);
+        updateDownlinkPreferences(gridState, videoSourceState, attendeeStates, priorityBasedPolicy);
       }
 
       return {
@@ -361,12 +372,21 @@ export function reducer(state: State, { type, payload }: Action): State {
     case VideoTileGridAction.ZoomOut: {
       if (gridState.isZoomed) {
         gridState.isZoomed = false;
-        updateDownlinkPreferences(gridState, videoSourceState, attendeeStates);
+        updateDownlinkPreferences(gridState, videoSourceState, attendeeStates, priorityBasedPolicy);
       }
 
       return {
         ...state,
       };
+    }
+
+    case VideoTileGridAction.SetPriorityBasedPolicy: {
+      const { policy } = payload as { policy: VideoPriorityBasedPolicy | undefined};
+
+      return {
+        ...state,
+        ...{ priorityBasedPolicy: policy }
+      }
     }
 
     default:

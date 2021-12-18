@@ -26,7 +26,7 @@ import { useVideoTileGridControl } from '../../providers/VideoTileGridProvider';
 
 const Navigation: React.FC = () => {
   const { toggleRoster, closeNavbar } = useNavigation();
-  const { theme, toggleTheme, layout, setLayout } = useAppState();
+  const { theme, toggleTheme, layout, setLayout, priorityBasedPolicy } = useAppState();
   const { sharingAttendeeId } = useContentShareState();
   const { zoomIn, zoomOut } = useVideoTileGridControl();
 
@@ -57,7 +57,7 @@ const Navigation: React.FC = () => {
           disabled={!!sharingAttendeeId}
           label="Switch View"
         />
-        {layout === Layout.Gallery &&
+        {layout === Layout.Gallery && priorityBasedPolicy &&
           <>
             <NavbarItem
               icon={<ZoomIn />}

@@ -1,67 +1,73 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import React, { useState, useContext, ChangeEvent } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, {ChangeEvent, useContext, useState} from 'react';
+import {useHistory} from 'react-router-dom';
 import {
-  Input,
   Checkbox,
+  DeviceLabels,
   Flex,
-  Heading,
   FormField,
-  PrimaryButton,
-  useMeetingManager,
+  Heading,
+  Input,
   Modal,
   ModalBody,
   ModalHeader,
-  DeviceLabels,
-  Select
+  PrimaryButton,
+  Select,
+  useMeetingManager
 } from 'amazon-chime-sdk-component-library-react';
+import { DefaultBrowserBehavior } from 'amazon-chime-sdk-js';
 
-import { getErrorContext } from '../../providers/ErrorProvider';
+import {getErrorContext} from '../../providers/ErrorProvider';
 import routes from '../../constants/routes';
 import Card from '../../components/Card';
 import Spinner from '../../components/icons/Spinner';
 import DevicePermissionPrompt from '../DevicePermissionPrompt';
 import RegionSelection from './RegionSelection';
-import { fetchMeeting, createGetAttendeeCallback } from '../../utils/api';
-import { useAppState } from '../../providers/AppStateProvider';
-import { MeetingMode, BlurValues } from '../../types';
+import {createGetAttendeeCallback, fetchMeeting} from '../../utils/api';
+import {useAppState} from '../../providers/AppStateProvider';
+import {BlurValues, MeetingMode} from '../../types';
+import meetingConfig from '../../meetingConfig';
 
 const BLUR_OPTIONS = [
-  { value: BlurValues.blurDisabled, label: "Disable Blur" }, 
-  { value: BlurValues.blur10Percent, label: "Blur CPU 10%" }, 
-  { value: BlurValues.blur20Percent, label: "Blur CPU 20%" }, 
+  { value: BlurValues.blurDisabled, label: "Disable Blur" },
+  { value: BlurValues.blur10Percent, label: "Blur CPU 10%" },
+  { value: BlurValues.blur20Percent, label: "Blur CPU 20%" },
   { value: BlurValues.blur40Percent, label: "Blur CPU 40%" },
 ];
 
 const MeetingForm: React.FC = () => {
   const meetingManager = useMeetingManager();
   const {
-    setAppMeetingInfo,
-    region: appRegion,
-    meetingId: appMeetingId,
+    region,
+    meetingId,
+    localUserName,
+    meetingMode,
+    enableSimulcast,
+    priorityBasedPolicy,
     isWebAudioEnabled,
     blurOption: blurValue,
     setBlurValue,
     toggleWebAudio,
-    setMeetingMode
+    toggleSimulcast,
+    togglePriorityBasedPolicy,
+    setMeetingMode,
+    setMeetingId,
+    setLocalUserName,
+    setRegion
   } = useAppState();
-  const [meetingId, setMeetingId] = useState(appMeetingId);
   const [meetingErr, setMeetingErr] = useState(false);
-  const [name, setName] = useState('');
   const [nameErr, setNameErr] = useState(false);
-  const [region, setRegion] = useState(appRegion);
   const [isLoading, setIsLoading] = useState(false);
-  const [isSpectatorModeSelected, setIsSpectatorModeSelected] = useState(false);
   const { errorMessage, updateErrorMessage } = useContext(getErrorContext());
   const history = useHistory();
+  const browserBehavior = new DefaultBrowserBehavior();
 
   const handleJoinMeeting = async (e: React.FormEvent) => {
     e.preventDefault();
-
     const id = meetingId.trim().toLocaleLowerCase();
-    const attendeeName = name.trim();
+    const attendeeName = localUserName.trim();
 
     if (!id || !attendeeName) {
       if (!attendeeName) {
@@ -85,14 +91,15 @@ const MeetingForm: React.FC = () => {
         meetingInfo: JoinInfo.Meeting,
         attendeeInfo: JoinInfo.Attendee,
         deviceLabels:
-          isSpectatorModeSelected === true
+          meetingMode === MeetingMode.Spectator
             ? DeviceLabels.None
             : DeviceLabels.AudioAndVideo,
+        meetingManagerConfig: {
+          ...meetingConfig,
+          simulcastEnabled: enableSimulcast
+        }
       });
-
-      setAppMeetingInfo(id, attendeeName, region);
-      if (isSpectatorModeSelected === true) {
-        setMeetingMode(MeetingMode.Spectator);
+      if (meetingMode === MeetingMode.Spectator) {
         await meetingManager.start();
         history.push(`${routes.MEETING}/${meetingId}`);
       } else {
@@ -107,7 +114,7 @@ const MeetingForm: React.FC = () => {
   const closeError = (): void => {
     updateErrorMessage('');
     setMeetingId('');
-    setName('');
+    setLocalUserName('');
     setIsLoading(false);
   };
 
@@ -137,7 +144,7 @@ const MeetingForm: React.FC = () => {
       <FormField
         field={Input}
         label="Name"
-        value={name}
+        value={localUserName}
         fieldProps={{
           name: 'name',
           placeholder: 'Enter Your Name',
@@ -145,7 +152,7 @@ const MeetingForm: React.FC = () => {
         errorText="Please enter a valid name"
         error={nameErr}
         onChange={(e: ChangeEvent<HTMLInputElement>): void => {
-          setName(e.target.value);
+          setLocalUserName(e.target.value);
           if (nameErr) {
             setNameErr(false);
           }
@@ -156,10 +163,14 @@ const MeetingForm: React.FC = () => {
         field={Checkbox}
         label="Join w/o Audio and Video"
         value=""
-        checked={isSpectatorModeSelected}
-        onChange={(): void =>
-          setIsSpectatorModeSelected(!isSpectatorModeSelected)
-        }
+        checked={meetingMode === MeetingMode.Spectator}
+        onChange={(): void => {
+          if (meetingMode === MeetingMode.Spectator) {
+            setMeetingMode(MeetingMode.Attendee);
+          } else {
+            setMeetingMode(MeetingMode.Spectator);
+          }
+        }}
       />
       <FormField
         field={Checkbox}
@@ -169,7 +180,7 @@ const MeetingForm: React.FC = () => {
         onChange={toggleWebAudio}
         infoText="Enable Web Audio to use Voice Focus"
       />
-      {/* <BlurSelection/> */}
+      {/* BlurSelection */}
       <FormField
         field={Select}
         options={BLUR_OPTIONS}
@@ -179,6 +190,26 @@ const MeetingForm: React.FC = () => {
         value={blurValue}
         label="Blur"
       />
+      {/* Video uplink and downlink policies */}
+      { browserBehavior.isSimulcastSupported() &&
+        <FormField
+          field={Checkbox}
+          label="Enable Simulcast"
+          value=""
+          checked={enableSimulcast}
+          onChange={toggleSimulcast}
+        />
+      }
+
+      { browserBehavior.supportDownlinkBandwidthEstimation() &&
+        <FormField
+          field={Checkbox}
+          label="Use Priority-Based Downlink Policy"
+          value=""
+          checked={priorityBasedPolicy !== undefined}
+          onChange={togglePriorityBasedPolicy}
+        />
+      }
       <Flex
         container
         layout="fill-space-centered"
