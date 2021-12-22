@@ -64,10 +64,18 @@ This Lambda acts as a resolver for your APIs, meaning that AWS AppSync sends the
 $ amplify add function
 
 ? Select which capability you want to add: Lambda function (serverless function)
-? Provide an AWS Lambda function name: reactSampleLambda 
+? Provide an AWS Lambda function name: reactSampleLambda
 ? Choose the runtime that you want to use: NodeJS
 ? Choose the function template that you want to use: Hello World
-? Do you want to configure advanced settings? No
+
+Available advanced settings:
+- Resource access permissions
+- Scheduled recurring invocation
+- Lambda layers configuration
+- Environment variables configuration
+- Secret values configuration
+
+? Do you want to configure advanced settings? (y/N) No
 ? Do you want to edit the local lambda function now? Yes
 ```
 
@@ -79,29 +87,68 @@ Run the command below and answer the prompts as shown below::
   ```
   $ amplify add api
 
-  ? Please select from one of the below mentioned services: GraphQL
-  ? Provide API name: reactSampleApi
-  ? Choose the default authorization type for the API: API key
-  ? Enter a description for the API key:
-  ? After how many days from now the API key should expire (1-365): 7
-  ? Do you want to configure advanced settings for the GraphQL API No, I am done.
-  ? Do you have an annotated GraphQL schema? Yes
+? Select from one of the below mentioned services: GraphQL
+? Here is the GraphQL API that we will create. Select a setting to edit or continue Name: amplifydemo
+? Provide API name: reactSampleApi
+? Here is the GraphQL API that we will create. Select a setting to edit or continue Continue
+? Choose a schema template: Blank Schema
+
+⚠️  WARNING: your GraphQL API currently allows public create, read, update, and delete access to all models via an API Key. To configure PRODUCTION-READY authorization rules, review: https://docs.amplify.aws/cli/graphql/authorization-rules
+
+GraphQL schema compiled successfully.
+✔ Do you want to edit the schema now? (Y/n) · yes
   ```
 
-  When prompted for the schema.graphql “Do you have an annotated GraphQL schema?” - answer yes. Then, provide the file path to schema.graphql. (If you just cloned the repo and are running this command at the root level of this repo, you can just put `schema.graphql`).
+  When prompted for the schema.graphql “Do you want to edit the schema now?” - answer yes. Then, copy the content from amplify-demo/schema.graphql in this repo to `/<path-to-aplify-demo>/amplify/backend/api/reactSampleApi/schema.graphql`).
 
 #### 3. Create the cloud resources in your AWS account by running the following command. 
-This updates your cloud resources based on your current local environment’s Amplify configuration. Select all of the default options by pressing enter for each prompt. When asked if you’d like to continue, answer ‘yes'.
+This updates your cloud resources based on your current local environment’s Amplify configuration.
 
   ```
-  amplify push
+$ amplify push
+
+⠏ Fetching updates to backend environment: dev from the cloud.
+⚠️  WARNING: your GraphQL API currently allows public create, read, update, and delete access to all models via an API Key. To configure PRODUCTION-READY authorization rules, review: https://docs.amplify.aws/cli/graphql/authorization-rules
+
+GraphQL schema compiled successfully.
+
+Edit your schema at /<path-to-amplify-demo>/amplify/backend/api/reactSampleApi/schema.graphql or place .graphql files in a directory at /<path-to-amplify-demo>/amplify/backend/api/reactSampleApi/schema
+✔ Successfully pulled backend environment dev from the cloud.
+⠹ Building resource api/reactSampleApi
+⚠️  WARNING: your GraphQL API currently allows public create, read, update, and delete access to all models via an API Key. To configure PRODUCTION-READY authorization rules, review: https://docs.amplify.aws/cli/graphql/authorization-rules
+
+GraphQL schema compiled successfully.
+
+Edit your schema at /<path-to-amplify-demo>/amplify/backend/api/reactSampleApi/schema.graphql or place .graphql files in a directory at /<path-to-amplify-demo>/amplify/backend/api/reactSampleApi/schema
+
+    Current Environment: dev
+    
+┌──────────┬───────────────────┬───────────┬───────────────────┐
+│ Category │ Resource name     │ Operation │ Provider plugin   │
+├──────────┼───────────────────┼───────────┼───────────────────┤
+│ Function │ reactSampleLambda │ Create    │ awscloudformation │
+├──────────┼───────────────────┼───────────┼───────────────────┤
+│ Api      │ reactSampleApi    │ Create    │ awscloudformation │
+└──────────┴───────────────────┴───────────┴───────────────────┘
+? Are you sure you want to continue? (Y/n) y
+.
+.
+.
+? Do you want to generate code for your newly created GraphQL API Yes
+? Choose the code generation language target typescript
+? Enter the file name pattern of graphql queries, mutations and subscriptions src/graphql/**/*.ts
+? Do you want to generate/update all possible GraphQL operations - queries, mutations and subscriptions Yes
+? Enter maximum statement depth [increase from default if your schema is deeply nested] 2
+? Enter the file name for the generated code src/API.ts
   ```
+
+  This will end with success output providing generated GraphQL endpoint and API KEY.
 
 #### 4. Modify IAM Role policy to include Amazon Chime Full Access in order to allow your Lambda function to call Amazon Chime APIs, such as createMeeting and deleteMeeting:
-    1. Navigate to the AWS Console using the same account that you used to configure amplify. 
-    2. Navigate to IAM
-    3. Click on Roles in the side menu. 
-    4. Find the role created and click on the name of the Role -  reactSampleLambdaRole-XXX-{environment}
+    1. Goto your account under AWS CloudFormation stacks click "amplify-<your-demo-name>-dev-*".
+    2. Under "Resources" click on the Physical ID link against "functionreactSampleLambda" (function<name provided when you executed amplify add function>).
+    3. A nested stack will open and click again "Resources".
+    4. Click Physical ID link in front of "LambdaExecutionRole". This will take you to the lambda execution role in IAM.
     5. Click on the “Attach Policies” button
     6. Type in the search box: AmazonChimeFullAccess
     7. Click on the checkbox for: AmazonChimeFullAccess
