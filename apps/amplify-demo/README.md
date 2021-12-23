@@ -146,13 +146,13 @@ Edit your schema at /<path-to-amplify-demo>/amplify/backend/api/reactSampleApi/s
 
 #### 4. Modify IAM Role policy to include Amazon Chime Full Access in order to allow your Lambda function to call Amazon Chime APIs, such as createMeeting and deleteMeeting:
   1. Navigate to your account under AWS CloudFormation stacks and choose "amplify-<your-demo-name>-dev-*".
-  2. Under "Resources" Choose the Physical ID link against "functionreactSampleLambda" (function<name provided when you executed amplify add function>).
+  2. Under "Resources", choose the Physical ID link against "functionreactSampleLambda" (function<name provided when you executed amplify add function>).
   3. A nested stack will open and again choose "Resources".
   4. Choose the Physical ID link in front of "LambdaExecutionRole". This will take you to the lambda execution role in IAM.
-  5. Choose the “Attach Policies” button
-  6. Type in the search box: AmazonChimeFullAccess
-  7. Choose the checkbox for: AmazonChimeFullAccess
-  8. Choose “Attach Policy” at the bottom right of the screen
+  5. Choose the “Attach Policies” button.
+  6. Type in the search box: AmazonChimeFullAccess.
+  7. Choose the checkbox for: AmazonChimeFullAccess.
+  8. Choose “Attach Policy” at the bottom right of the screen.
 
 
 #### 5. From here, you can now run the meeting client locally. To do so, navigate to the repo’s root level directory and run this command:

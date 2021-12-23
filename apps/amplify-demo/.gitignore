@@ -1,15 +1,11 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-/node_modules
 /.pnp
 .pnp.js
 
 # testing
 /coverage
-
-# production
-/build
 
 # misc
 .vscode
@@ -29,24 +25,8 @@ src/react-app-env.d.ts
 src/graphql
 src/API.ts
 amplify/
-build/
-dist/
-node_modules/
-aws-exports.js
-awsconfiguration.json
-amplifyconfiguration.json
-amplify-build-config.json
-amplify-gradle-config.json
-amplifytools.xcconfig
-.secret-*
 
 #amplify-do-not-edit-begin
-amplify/\#current-cloud-backend
-amplify/.config/local-*
-amplify/logs
-amplify/mock-data
-amplify/backend/amplify-meta.json
-amplify/backend/.temp
 build/
 dist/
 node_modules/
