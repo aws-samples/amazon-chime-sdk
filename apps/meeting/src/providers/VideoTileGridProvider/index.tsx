@@ -15,7 +15,6 @@ import {
   VideoSource,
 } from 'amazon-chime-sdk-js';
 import React, { createContext, useContext, useEffect, useReducer } from 'react';
-import { priorityBasedPolicy } from '../../meetingConfig';
 import { Layout } from '../../types';
 import { useAppState } from '../AppStateProvider';
 import {
@@ -30,6 +29,7 @@ const VideoTileGridStateContext = createContext<State | undefined>(undefined);
 const VideoTileGridControlContext = createContext<Controls | undefined>(undefined);
 
 const VideoTileGridProvider: React.FC = ({ children }) => {
+  const { priorityBasedPolicy } = useAppState();
   const meetingManager = useMeetingManager();
   const audioVideo = useAudioVideo();
   const activeSpeakers = useActiveSpeakersState();
@@ -108,7 +108,10 @@ const VideoTileGridProvider: React.FC = ({ children }) => {
     };
 
     priorityBasedPolicy.addObserver(observer);
-
+    dispatch( {
+      type: VideoTileGridAction.SetPriorityBasedPolicy,
+      payload: { policy: priorityBasedPolicy }
+    });
     return (): void => priorityBasedPolicy.removeObserver(observer);
   }, [audioVideo]);
 

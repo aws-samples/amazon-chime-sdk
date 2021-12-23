@@ -1,5 +1,10 @@
-import { DefaultModality, TargetDisplaySize, VideoPreference, VideoPreferences } from 'amazon-chime-sdk-js';
-import { priorityBasedPolicy } from '../../meetingConfig';
+import {
+  DefaultModality,
+  TargetDisplaySize,
+  VideoPreference,
+  VideoPreferences,
+  VideoPriorityBasedPolicy
+} from 'amazon-chime-sdk-js';
 import { Layout } from '../../types';
 import { AttendeeState, GridState, VideoSourceState } from './state';
 
@@ -96,8 +101,13 @@ export const calculateVideoSourcesToBeRendered = (
 export const updateDownlinkPreferences = (
   gridState: GridState,
   videoSourceState: VideoSourceState,
-  attendeeStates: { [attendeeId: string]: AttendeeState }
+  attendeeStates: { [attendeeId: string]: AttendeeState },
+  priorityBasedPolicy: VideoPriorityBasedPolicy | undefined
 ): void => {
+
+  if (!priorityBasedPolicy) {
+    return;
+  }
   const { layout, threshold } = gridState;
   const { hasLocalVideo } = videoSourceState;
   const videoPreferences = VideoPreferences.prepare();
