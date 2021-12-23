@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT-0
 
 import Chime from 'aws-sdk/clients/chime';
-import { Observable } from 'lib0/observable.js';
+import { Observable } from 'lib0/observable';
 import { v4 as uuid } from 'uuid';
 
 interface ChannelMessage {
