@@ -1,8 +1,8 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import { fetchMeeting } from "../../utils/api";
-import { AMAZON_CHIME_VOICE_CONNECTOR_PHONE_NUMDER } from "../../constants";
+import { fetchMeeting } from '../../utils/api';
+import { AMAZON_CHIME_VOICE_CONNECTOR_PHONE_NUMDER } from '../../constants';
 
 export class SIPMeetingManager {
   private region: string;
@@ -10,7 +10,7 @@ export class SIPMeetingManager {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private meetingData: any = null;
 
-  constructor(region = "us-east-1") {
+  constructor(region = 'us-east-1') {
     this.region = region;
   }
 

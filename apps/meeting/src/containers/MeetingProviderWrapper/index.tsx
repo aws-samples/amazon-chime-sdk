@@ -1,28 +1,28 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import React from "react";
-import { Route, Switch } from "react-router-dom";
+import React from 'react';
+import { Route, Switch } from 'react-router-dom';
 import {
   AudioTransformDevice,
   Device,
   VoiceFocusTransformDevice,
-} from "amazon-chime-sdk-js";
+} from 'amazon-chime-sdk-js';
 import {
   BackgroundBlurProvider,
   MeetingProvider,
   useVoiceFocus,
   VoiceFocusProvider,
-} from "amazon-chime-sdk-component-library-react";
+} from 'amazon-chime-sdk-component-library-react';
 
-import routes from "../../constants/routes";
-import { NavigationProvider } from "../../providers/NavigationProvider";
-import NoMeetingRedirect from "../NoMeetingRedirect";
-import { Meeting, Home, DeviceSetup } from "../../views";
-import MeetingEventObserver from "../MeetingEventObserver";
-import meetingConfig from "../../meetingConfig";
-import { useAppState } from "../../providers/AppStateProvider";
-import { BlurValues } from "../../types";
+import routes from '../../constants/routes';
+import { NavigationProvider } from '../../providers/NavigationProvider';
+import NoMeetingRedirect from '../NoMeetingRedirect';
+import { Meeting, Home, DeviceSetup } from '../../views';
+import MeetingEventObserver from '../MeetingEventObserver';
+import meetingConfig from '../../meetingConfig';
+import { useAppState } from '../../providers/AppStateProvider';
+import { BlurValues } from '../../types';
 
 const MeetingProviderWithDeviceReplacement: React.FC = ({ children }) => {
   const { addVoiceFocus } = useVoiceFocus();

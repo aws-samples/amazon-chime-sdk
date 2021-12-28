@@ -1,18 +1,18 @@
 // Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import React from "react";
+import React from 'react';
 
 import {
   useMediaStreamMetrics,
   useAudioVideo,
   PopOverHeader,
   useMeetingManager
-} from "amazon-chime-sdk-component-library-react";
+} from 'amazon-chime-sdk-component-library-react';
 
-import { MediaStatsList } from "../../components/MediaStatsList";
-import MetricItem from "../../components/MediaStatsList/MetricItem";
-import { StyledMediaMetricsWrapper } from "../../components/MediaStatsList/Styled";
+import { MediaStatsList } from '../../components/MediaStatsList';
+import MetricItem from '../../components/MediaStatsList/MetricItem';
+import { StyledMediaMetricsWrapper } from '../../components/MediaStatsList/Styled';
 
 export const LocalMediaStreamMetrics: React.FC = () => {
   const audioVideo = useAudioVideo();
@@ -48,18 +48,18 @@ export const LocalMediaStreamMetrics: React.FC = () => {
     <StyledMediaMetricsWrapper>
       {isLocalAudioActive && (
         <>
-          <PopOverHeader title={"Audio statistics"} />
+          <PopOverHeader title={'Audio statistics'} />
           <MediaStatsList>
-            <MetricItem metricName="" metricValues={["Up", "Down"]} />
+            <MetricItem metricName="" metricValues={['Up', 'Down']} />
             <MetricItem
               metricName="1s Loss"
               metricValues={[
                 audioPacketsSentFractionLossPercent !== null
                   ? audioPacketsSentFractionLossPercent.toString()
-                  : "",
+                  : '',
                 audioPacketsReceivedFractionLossPercent !== null
                   ? audioPacketsReceivedFractionLossPercent.toString()
-                  : ""
+                  : ''
               ]}
             />
           </MediaStatsList>
@@ -67,7 +67,7 @@ export const LocalMediaStreamMetrics: React.FC = () => {
       )}
       {isLocalVideoActive && (
         <>
-          <PopOverHeader title={"Video statistics"} />
+          <PopOverHeader title={'Video statistics'} />
           <MediaStatsList>
             <MetricItem
               metricName="Bit rate (kbps)"
@@ -76,7 +76,7 @@ export const LocalMediaStreamMetrics: React.FC = () => {
                   ? Math.trunc(
                     localVideoStreamMetrics[ssrc].videoUpstreamBitrate / 1000
                   ).toString()
-                  : "";
+                  : '';
               })}
             />
             <MetricItem
@@ -86,7 +86,7 @@ export const LocalMediaStreamMetrics: React.FC = () => {
                   ? localVideoStreamMetrics[
                     ssrc
                   ].videoUpstreamPacketsSent.toString()
-                  : "";
+                  : '';
               })}
             />
             <MetricItem
@@ -97,7 +97,7 @@ export const LocalMediaStreamMetrics: React.FC = () => {
                   ? localVideoStreamMetrics[
                     ssrc
                   ].videoUpstreamFramesEncodedPerSecond.toString()
-                  : "";
+                  : '';
               })}
             />
             <MetricItem
@@ -107,7 +107,7 @@ export const LocalMediaStreamMetrics: React.FC = () => {
                   ? localVideoStreamMetrics[
                     ssrc
                   ].videoUpstreamFrameHeight.toString()
-                  : "";
+                  : '';
               })}
             />
             <MetricItem
@@ -117,7 +117,7 @@ export const LocalMediaStreamMetrics: React.FC = () => {
                   ? localVideoStreamMetrics[
                     ssrc
                   ].videoUpstreamFrameWidth.toString()
-                  : "";
+                  : '';
               })}
             />
             <MetricItem
@@ -128,7 +128,7 @@ export const LocalMediaStreamMetrics: React.FC = () => {
                   ? localVideoStreamMetrics[
                     ssrc
                   ].videoUpstreamGoogFrameHeight.toString()
-                  : "";
+                  : '';
               })}
             />
             <MetricItem
@@ -138,7 +138,7 @@ export const LocalMediaStreamMetrics: React.FC = () => {
                   ? localVideoStreamMetrics[
                     ssrc
                   ].videoUpstreamGoogFrameWidth.toString()
-                  : "";
+                  : '';
               })}
             />
           </MediaStatsList>
@@ -146,18 +146,18 @@ export const LocalMediaStreamMetrics: React.FC = () => {
       )}
       {hasBandwidthInfo && (
         <>
-          <PopOverHeader title={"Bandwidth statistics"} />
+          <PopOverHeader title={'Bandwidth statistics'} />
           <MediaStatsList>
-            <MetricItem metricName="" metricValues={["Outgoing", "Incoming"]} />
+            <MetricItem metricName="" metricValues={['Outgoing', 'Incoming']} />
             <MetricItem
               metricName="Bandwidth (kbps)"
               metricValues={[
                 availableOutgoingBandwidth !== null
                   ? availableOutgoingBandwidth.toString()
-                  : "",
+                  : '',
                 availableIncomingBandwidth !== null
                   ? availableIncomingBandwidth.toString()
-                  : ""
+                  : ''
               ]}
             />
           </MediaStatsList>

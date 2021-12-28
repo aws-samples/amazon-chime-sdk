@@ -1,8 +1,8 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import React from "react";
-import styled from "styled-components";
+import React from 'react';
+import styled from 'styled-components';
 
 const Track = styled.div`
   width: 100%;
@@ -28,6 +28,6 @@ const ActivityBar = React.forwardRef((props, ref: any) => (
   </Track>
 ));
 
-ActivityBar.displayName = "ActivityBar";
+ActivityBar.displayName = 'ActivityBar';
 
 export default ActivityBar;

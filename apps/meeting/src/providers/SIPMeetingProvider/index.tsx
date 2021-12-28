@@ -1,9 +1,9 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import React, { ReactNode, useContext, useState } from "react";
+import React, { ReactNode, useContext, useState } from 'react';
 
-import { SIPMeetingManager } from "./SIPMeetingManager";
+import { SIPMeetingManager } from './SIPMeetingManager';
 
 const SIPMeetingContext = React.createContext<SIPMeetingManager | null>(null);
 
@@ -26,7 +26,7 @@ export const useSIPMeetingManager = (): SIPMeetingManager => {
 
   if (!sipMeetingManager) {
     throw new Error(
-      "useSIPMeetingManager must be used within SIPMeetingProvider"
+      'useSIPMeetingManager must be used within SIPMeetingProvider'
     );
   }
 

@@ -1,8 +1,8 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import React from "react";
-import { StyledSpinner } from "./Styled";
+import React from 'react';
+import { StyledSpinner } from './Styled';
 
 const Spinner: React.FC = () => {
   return (

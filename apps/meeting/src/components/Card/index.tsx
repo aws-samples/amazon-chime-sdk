@@ -1,14 +1,14 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import React from "react";
+import React from 'react';
 
-import { SmallText, StyledCard } from "./Styled";
+import { SmallText, StyledCard } from './Styled';
 
 interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   header?: string;
   title: string;
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   description: any;
   smallText?: string;
 }

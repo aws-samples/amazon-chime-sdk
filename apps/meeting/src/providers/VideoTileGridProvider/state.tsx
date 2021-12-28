@@ -1,7 +1,7 @@
-import { RosterAttendeeType } from "amazon-chime-sdk-component-library-react";
-import {VideoPriorityBasedPolicy, VideoSource} from "amazon-chime-sdk-js";
-import { Layout } from "../../types";
-import { isContentShare, updateDownlinkPreferences } from "./Utils";
+import { RosterAttendeeType } from 'amazon-chime-sdk-component-library-react';
+import {VideoPriorityBasedPolicy, VideoSource} from 'amazon-chime-sdk-js';
+import { Layout } from '../../types';
+import { isContentShare, updateDownlinkPreferences } from './Utils';
 
 export interface GridState {
   layout: Layout;
@@ -132,13 +132,13 @@ type UnpauseVideoTile = {
 
 type ZoomIn = {
   type: VideoTileGridAction.ZoomIn;
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   payload?: any;
 };
 
 type ZoomOut = {
   type: VideoTileGridAction.ZoomOut;
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   payload?: any;
 };
 
@@ -170,7 +170,7 @@ export function reducer(state: State, { type, payload }: Action): State {
 
     // Add attendee that joined the meeting
     for (const attendeeId in roster) {
-      const name = roster[attendeeId]?.name || "";
+      const name = roster[attendeeId]?.name || '';
 
       if (attendeeId in attendeeStates) {
         attendeeStates[attendeeId].name = name;
@@ -226,13 +226,13 @@ export function reducer(state: State, { type, payload }: Action): State {
         if (isContentShare(attendeeId)) {
           attendeeStates[attendeeId] = {
             attendeeId,
-            name: "content share",
+            name: 'content share',
             bandwidthConstrained: false,
           } as AttendeeState;
         } else {
           attendeeStates[attendeeId] = {
             attendeeId,
-            name: "",
+            name: '',
             bandwidthConstrained: false,
           } as AttendeeState;
         }
@@ -392,6 +392,6 @@ export function reducer(state: State, { type, payload }: Action): State {
   }
 
   default:
-    throw new Error("Incorrect type in VideoTileGridProvider");
+    throw new Error('Incorrect type in VideoTileGridProvider');
   }
 }

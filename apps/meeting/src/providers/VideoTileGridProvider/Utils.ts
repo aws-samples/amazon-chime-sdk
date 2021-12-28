@@ -4,16 +4,16 @@ import {
   VideoPreference,
   VideoPreferences,
   VideoPriorityBasedPolicy
-} from "amazon-chime-sdk-js";
-import { Layout } from "../../types";
-import { AttendeeState, GridState, VideoSourceState } from "./state";
+} from 'amazon-chime-sdk-js';
+import { Layout } from '../../types';
+import { AttendeeState, GridState, VideoSourceState } from './state';
 
 type VideoSourceWithType = { attendeeId: string; type: VideoSourceType };
 
 enum VideoSourceType {
-  CONTENT_SHARE = "contentShare",
-  ACTIVE_SPEAKER = "activeSpeaker",
-  OTHER = "other",
+  CONTENT_SHARE = 'contentShare',
+  ACTIVE_SPEAKER = 'activeSpeaker',
+  OTHER = 'other',
 }
 
 export const isContentShare = (sourceId: string): boolean =>
