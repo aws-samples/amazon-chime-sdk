@@ -1,7 +1,7 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import { LogLevel, } from 'amazon-chime-sdk-js';
+import { LogLevel } from 'amazon-chime-sdk-js';
 
 export const AMAZON_CHIME_VOICE_CONNECTOR_PHONE_NUMDER = '+17035550122';
 

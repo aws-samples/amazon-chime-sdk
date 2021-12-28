@@ -11,7 +11,7 @@ import {
 
 import MediaStatsList from '../../components/MediaStatsList/index';
 import MetricItem from '../../components/MediaStatsList/MetricItem';
-import { StyledMediaMetricsWrapper, } from '../../components/MediaStatsList/Styled';
+import { StyledMediaMetricsWrapper } from '../../components/MediaStatsList/Styled';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function isValidMetric(metric: any) {
@@ -23,9 +23,9 @@ interface Props {
   attendeeId: string;
 }
 
-export const VideoStreamMetrics: React.FC<Props> = ({ attendeeId, }) => {
+export const VideoStreamMetrics: React.FC<Props> = ({ attendeeId }) => {
   const audioVideo = useAudioVideo();
-  const { videoStreamMetrics, } = useMediaStreamMetrics();
+  const { videoStreamMetrics } = useMediaStreamMetrics();
   const streamMetric = videoStreamMetrics[attendeeId];
   const ssrcArray = streamMetric ? Object.keys(streamMetric) : [];
   const showMetric =

@@ -1,10 +1,10 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import React, { useContext, useState, ReactNode, } from 'react';
-import { logger, } from '../meetingConfig';
-import { VideoPriorityBasedPolicy, } from 'amazon-chime-sdk-js';
-import { MeetingMode, Layout, BlurValues, } from '../types';
+import React, { useContext, useState, ReactNode } from 'react';
+import { logger } from '../meetingConfig';
+import { VideoPriorityBasedPolicy } from 'amazon-chime-sdk-js';
+import { MeetingMode, Layout, BlurValues } from '../types';
 
 type Props = {
   children: ReactNode;
@@ -50,17 +50,17 @@ export function useAppState(): AppStateValue {
 const query = new URLSearchParams(location.search);
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-export function AppStateProvider({ children, }: Props) {
-  const [meetingId, setMeetingId,] = useState(query.get('meetingId') || '');
-  const [region, setRegion,] = useState(query.get('region') || '');
-  const [meetingMode, setMeetingMode,] = useState(MeetingMode.Attendee);
-  const [layout, setLayout,] = useState(Layout.Gallery);
-  const [localUserName, setLocalUserName,] = useState('');
-  const [isWebAudioEnabled, setIsWebAudioEnabled,] = useState(true);
-  const [priorityBasedPolicy, setPriorityBasedPolicy,] = useState<VideoPriorityBasedPolicy| undefined>(undefined);
-  const [enableSimulcast, setEnableSimulcast,] = useState(false);
-  const [blurOption, setBlur,] = useState(BlurValues.blurDisabled);
-  const [theme, setTheme,] = useState(() => {
+export function AppStateProvider({ children }: Props) {
+  const [meetingId, setMeetingId] = useState(query.get('meetingId') || '');
+  const [region, setRegion] = useState(query.get('region') || '');
+  const [meetingMode, setMeetingMode] = useState(MeetingMode.Attendee);
+  const [layout, setLayout] = useState(Layout.Gallery);
+  const [localUserName, setLocalUserName] = useState('');
+  const [isWebAudioEnabled, setIsWebAudioEnabled] = useState(true);
+  const [priorityBasedPolicy, setPriorityBasedPolicy] = useState<VideoPriorityBasedPolicy| undefined>(undefined);
+  const [enableSimulcast, setEnableSimulcast] = useState(false);
+  const [blurOption, setBlur] = useState(BlurValues.blurDisabled);
+  const [theme, setTheme] = useState(() => {
     const storedTheme = localStorage.getItem('theme');
     return storedTheme || 'light';
   });

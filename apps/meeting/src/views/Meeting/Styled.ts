@@ -18,7 +18,7 @@ export const StyledLayout = styled.main<Props>`
     grid-area: content;
   }
 
-  ${({ showNav, showRoster, }) => {
+  ${({ showNav, showRoster }) => {
     if (showNav && showRoster) {
       return `
         grid-template-columns: auto auto 1fr;

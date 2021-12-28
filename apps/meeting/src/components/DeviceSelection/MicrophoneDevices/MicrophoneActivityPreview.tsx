@@ -2,15 +2,15 @@
 // SPDX-License-Identifier: MIT-0
 
 import React from 'react';
-import { Label, } from 'amazon-chime-sdk-component-library-react';
+import { Label } from 'amazon-chime-sdk-component-library-react';
 
-import { StyledPreviewGroup, } from '../Styled';
+import { StyledPreviewGroup } from '../Styled';
 import MicrophoneActivityPreviewBar from './MicrophoneActivityPreviewBar';
 
 const MicrophoneActivityPreview = () => {
   return (
     <StyledPreviewGroup>
-      <Label style={{ display: 'block', marginBottom: '.5rem', }}>
+      <Label style={{ display: 'block', marginBottom: '.5rem' }}>
         Microphone activity
       </Label>
       <MicrophoneActivityPreviewBar />

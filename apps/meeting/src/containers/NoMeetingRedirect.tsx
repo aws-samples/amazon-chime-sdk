@@ -1,8 +1,8 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import React, { useEffect, } from 'react';
-import { useHistory, } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import {
   useMeetingManager,
   useNotificationDispatch,
@@ -12,7 +12,7 @@ import {
 
 import routes from '../constants/routes';
 
-const NoMeetingRedirect: React.FC = ({ children, }) => {
+const NoMeetingRedirect: React.FC = ({ children }) => {
   const history = useHistory();
   const dispatch = useNotificationDispatch();
   const meetingManager = useMeetingManager();

@@ -5,8 +5,8 @@ import {
   VideoPreferences,
   VideoPriorityBasedPolicy,
 } from 'amazon-chime-sdk-js';
-import { Layout, } from '../../types';
-import { AttendeeState, GridState, VideoSourceState, } from './state';
+import { Layout } from '../../types';
+import { AttendeeState, GridState, VideoSourceState } from './state';
 
 type VideoSourceWithType = { attendeeId: string; type: VideoSourceType };
 
@@ -24,7 +24,7 @@ export const calculateVideoSourcesToBeRendered = (
   videoSourceState: VideoSourceState,
   attendeeStates: { [attendeeId: string]: AttendeeState }
 ): VideoSourceWithType[] => {
-  const { layout, isZoomed, threshold, } = gridState;
+  const { layout, isZoomed, threshold } = gridState;
   const {
     activeSpeakersWithCameraSource,
     cameraSources,
@@ -37,7 +37,7 @@ export const calculateVideoSourcesToBeRendered = (
   // First, add content share
   for (const attendeeId of Object.keys(attendeeStates)) {
     if (isContentShare(attendeeId) && attendeeStates[attendeeId].videoEnabled) {
-      videoSources.push({ attendeeId, type: VideoSourceType.CONTENT_SHARE, });
+      videoSources.push({ attendeeId, type: VideoSourceType.CONTENT_SHARE });
     }
   }
 
@@ -92,7 +92,7 @@ export const calculateVideoSourcesToBeRendered = (
   videoSources.push(
     ...commonSources
       .slice(0, numberOfAvailableTiles)
-      .map(attendeeId => ({ attendeeId, type: VideoSourceType.OTHER, }))
+      .map(attendeeId => ({ attendeeId, type: VideoSourceType.OTHER }))
   );
 
   return videoSources;
@@ -108,8 +108,8 @@ export const updateDownlinkPreferences = (
   if (!priorityBasedPolicy) {
     return;
   }
-  const { layout, threshold, } = gridState;
-  const { hasLocalVideo, } = videoSourceState;
+  const { layout, threshold } = gridState;
+  const { hasLocalVideo } = videoSourceState;
   const videoPreferences = VideoPreferences.prepare();
   let targetDisplaySize: TargetDisplaySize;
 
@@ -129,7 +129,7 @@ export const updateDownlinkPreferences = (
   }
 
   for (const videoSource of videoSourcesToBeRendered) {
-    const { attendeeId, type, } = videoSource;
+    const { attendeeId, type } = videoSource;
 
     switch (type) {
     case VideoSourceType.CONTENT_SHARE:

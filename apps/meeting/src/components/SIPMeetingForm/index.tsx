@@ -1,7 +1,7 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import React, { ChangeEvent, FormEvent, } from 'react';
+import React, { ChangeEvent, FormEvent } from 'react';
 import {
   Flex,
   Input,
@@ -56,7 +56,7 @@ export default function SIPMeetingForm({
       <Flex
         container
         layout="fill-space-centered"
-        style={{ marginTop: '2.5rem', }}
+        style={{ marginTop: '2.5rem' }}
       >
         <PrimaryButton label="Get SIP URI" onClick={handleSubmit} />
       </Flex>

@@ -1,8 +1,8 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import { useEffect, } from 'react';
-import { useHistory, } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 
 import {
   MeetingStatus,
@@ -32,7 +32,7 @@ const useMeetingEndRedirect = () => {
       });
       history.push(routes.HOME);
     }
-  }, [meetingStatus,]);
+  }, [meetingStatus]);
 };
 
 export default useMeetingEndRedirect;

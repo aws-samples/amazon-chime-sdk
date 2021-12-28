@@ -16,16 +16,16 @@ import {
 } from 'amazon-chime-sdk-component-library-react';
 
 import EndMeetingControl from '../EndMeetingControl';
-import { useNavigation, } from '../../providers/NavigationProvider';
-import { StyledControls, } from './Styled';
-import { useAppState, } from '../../providers/AppStateProvider';
-import { BlurValues, } from '../../types';
+import { useNavigation } from '../../providers/NavigationProvider';
+import { StyledControls } from './Styled';
+import { useAppState } from '../../providers/AppStateProvider';
+import { BlurValues } from '../../types';
 
 
 const MeetingControls: React.FC = () => {
-  const { toggleNavbar, closeRoster, showRoster, } = useNavigation();
-  const { isUserActive, } = useUserActivityState();
-  const { isWebAudioEnabled, blurOption, } = useAppState();
+  const { toggleNavbar, closeRoster, showRoster } = useNavigation();
+  const { isUserActive } = useUserActivityState();
+  const { isWebAudioEnabled, blurOption } = useAppState();
   const isBackgroundBlurEnabled = blurOption !== BlurValues.blurDisabled;
 
   const handleToggle = (): void => {

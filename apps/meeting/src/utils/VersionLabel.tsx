@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: MIT-0
 
 import React from 'react';
-import { Versioning, } from 'amazon-chime-sdk-component-library-react';
-import { Versioning as SDKVersioning, } from 'amazon-chime-sdk-js';
+import { Versioning } from 'amazon-chime-sdk-component-library-react';
+import { Versioning as SDKVersioning } from 'amazon-chime-sdk-js';
 
 export const VersionLabel = () => {
   const versionTag = `${Versioning.sdkName}@${Versioning.sdkVersion}`;

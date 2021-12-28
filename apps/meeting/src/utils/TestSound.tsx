@@ -23,7 +23,7 @@ class TestSound {
     oscillatorNode.connect(gainNode);
     const destinationStream = audioContext.createMediaStreamDestination();
     gainNode.connect(destinationStream);
-    const { currentTime, } = audioContext;
+    const { currentTime } = audioContext;
     const startTime = currentTime + 0.1;
     gainNode.gain.linearRampToValueAtTime(0, startTime);
     gainNode.gain.linearRampToValueAtTime(maxGainValue, startTime + rampSec);
@@ -42,7 +42,7 @@ class TestSound {
       if ('setSinkId' in HTMLAudioElement.prototype) {
         try {
           // @ts-ignore
-          await audioMixController.bindAudioDevice({ deviceId: sinkId, });
+          await audioMixController.bindAudioDevice({ deviceId: sinkId });
         } catch (e) {
           console.error('Failed to bind audio device', e);
         }
