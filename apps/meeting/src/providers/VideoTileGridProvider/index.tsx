@@ -70,7 +70,7 @@ const VideoTileGridProvider: React.FC = ({ children }) => {
           type: VideoTileGridAction.UpdateVideoSources,
           payload: {
             videoSources,
-            localAttendeeId
+            localAttendeeId,
           },
         });
       },
@@ -110,7 +110,7 @@ const VideoTileGridProvider: React.FC = ({ children }) => {
     priorityBasedPolicy.addObserver(observer);
     dispatch( {
       type: VideoTileGridAction.SetPriorityBasedPolicy,
-      payload: { policy: priorityBasedPolicy }
+      payload: { policy: priorityBasedPolicy },
     });
     return (): void => priorityBasedPolicy.removeObserver(observer);
   }, [audioVideo]);

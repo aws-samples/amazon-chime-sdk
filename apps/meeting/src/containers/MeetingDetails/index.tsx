@@ -7,7 +7,7 @@ import {
   Flex,
   Heading,
   PrimaryButton,
-  useMeetingManager
+  useMeetingManager,
 } from 'amazon-chime-sdk-component-library-react';
 
 import { useAppState } from '../../providers/AppStateProvider';

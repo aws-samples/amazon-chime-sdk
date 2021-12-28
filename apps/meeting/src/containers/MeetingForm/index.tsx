@@ -15,7 +15,7 @@ import {
   ModalHeader,
   PrimaryButton,
   Select,
-  useMeetingManager
+  useMeetingManager,
 } from 'amazon-chime-sdk-component-library-react';
 import { DefaultBrowserBehavior } from 'amazon-chime-sdk-js';
 
@@ -31,10 +31,10 @@ import {BlurValues, MeetingMode} from '../../types';
 import meetingConfig from '../../meetingConfig';
 
 const BLUR_OPTIONS = [
-  { value: BlurValues.blurDisabled, label: "Disable Blur" },
-  { value: BlurValues.blur10Percent, label: "Blur CPU 10%" },
-  { value: BlurValues.blur20Percent, label: "Blur CPU 20%" },
-  { value: BlurValues.blur40Percent, label: "Blur CPU 40%" },
+  { value: BlurValues.blurDisabled, label: 'Disable Blur' },
+  { value: BlurValues.blur10Percent, label: 'Blur CPU 10%' },
+  { value: BlurValues.blur20Percent, label: 'Blur CPU 20%' },
+  { value: BlurValues.blur40Percent, label: 'Blur CPU 40%' },
 ];
 
 const MeetingForm: React.FC = () => {
@@ -55,7 +55,7 @@ const MeetingForm: React.FC = () => {
     setMeetingMode,
     setMeetingId,
     setLocalUserName,
-    setRegion
+    setRegion,
   } = useAppState();
   const [meetingErr, setMeetingErr] = useState(false);
   const [nameErr, setNameErr] = useState(false);
@@ -96,8 +96,8 @@ const MeetingForm: React.FC = () => {
             : DeviceLabels.AudioAndVideo,
         meetingManagerConfig: {
           ...meetingConfig,
-          simulcastEnabled: enableSimulcast
-        }
+          simulcastEnabled: enableSimulcast,
+        },
       });
       if (meetingMode === MeetingMode.Spectator) {
         await meetingManager.start();
@@ -107,7 +107,7 @@ const MeetingForm: React.FC = () => {
         history.push(routes.DEVICE);
       }
     } catch (error) {
-      updateErrorMessage(error.message);
+      updateErrorMessage((error as Error).message);
     }
   };
 

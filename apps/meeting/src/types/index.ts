@@ -46,8 +46,8 @@ export enum Layout {
 }
 
 export const BlurValues = {
-  blurDisabled: "0",
-  blur10Percent: "10",
-  blur20Percent: "20",
-  blur40Percent: "40",
-}
+  blurDisabled: '0',
+  blur10Percent: '10',
+  blur20Percent: '20',
+  blur40Percent: '40',
+};

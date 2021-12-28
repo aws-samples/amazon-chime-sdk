@@ -4,7 +4,7 @@
 import React from 'react';
 import {
   Heading,
-  MicSelection
+  MicSelection,
 } from 'amazon-chime-sdk-component-library-react';
 
 import { title } from '../Styled';

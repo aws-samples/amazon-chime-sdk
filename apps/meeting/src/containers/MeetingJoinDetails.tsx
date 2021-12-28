@@ -10,7 +10,7 @@ import {
   useMeetingManager,
   Modal,
   ModalBody,
-  ModalHeader
+  ModalHeader,
 } from 'amazon-chime-sdk-component-library-react';
 
 import routes from '../constants/routes';

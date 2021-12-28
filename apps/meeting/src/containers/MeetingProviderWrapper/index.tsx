@@ -29,7 +29,7 @@ const MeetingProviderWithDeviceReplacement: React.FC = ({ children }) => {
 
   const onDeviceReplacement = (
     nextDevice: string,
-    currentDevice: Device | AudioTransformDevice,
+    currentDevice: Device | AudioTransformDevice
   ): Promise<Device | VoiceFocusTransformDevice> => {
     if (currentDevice instanceof VoiceFocusTransformDevice) {
       return addVoiceFocus(nextDevice);
@@ -43,7 +43,7 @@ const MeetingProviderWithDeviceReplacement: React.FC = ({ children }) => {
     onDeviceReplacement,
   };
 
-  return <MeetingProvider {...meetingConfigValue}>{children}</MeetingProvider>
+  return <MeetingProvider {...meetingConfigValue}>{children}</MeetingProvider>;
 };
 
 const MeetingProviderWrapper: React.FC = () => {

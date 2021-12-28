@@ -6,7 +6,7 @@ import React, {
   useContext,
   useEffect,
   useRef,
-  ReactNode
+  ReactNode,
 } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useMeetingManager } from 'amazon-chime-sdk-component-library-react';
@@ -103,7 +103,7 @@ const NavigationProvider = ({ children }: Props) => {
     openRoster,
     closeRoster,
     openNavbar,
-    closeNavbar
+    closeNavbar,
   };
   return (
     <NavigationContext.Provider value={providerValue}>

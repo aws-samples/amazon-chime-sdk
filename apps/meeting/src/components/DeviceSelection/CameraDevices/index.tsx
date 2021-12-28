@@ -8,7 +8,7 @@ import {
   QualitySelection,
   CameraSelection,
   Label,
-  BackgroundBlurCheckbox
+  BackgroundBlurCheckbox,
 } from 'amazon-chime-sdk-component-library-react';
 
 import { title, StyledInputGroup } from '../Styled';
@@ -29,9 +29,9 @@ const CameraDevices = () => {
         <QualitySelection />
       </StyledInputGroup>
       { blurOption !== BlurValues.blurDisabled ?
-      <StyledInputGroup>
-        <BackgroundBlurCheckbox />
-      </StyledInputGroup> : ''
+        <StyledInputGroup>
+          <BackgroundBlurCheckbox />
+        </StyledInputGroup> : ''
       }
       <Label style={{ display: 'block', marginBottom: '.5rem' }}>
         Video preview

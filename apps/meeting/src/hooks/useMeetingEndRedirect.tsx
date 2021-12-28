@@ -9,7 +9,7 @@ import {
   useNotificationDispatch,
   Severity,
   ActionType,
-  useMeetingStatus
+  useMeetingStatus,
 } from 'amazon-chime-sdk-component-library-react';
 import routes from '../constants/routes';
 
@@ -27,8 +27,8 @@ const useMeetingEndRedirect = () => {
           severity: Severity.INFO,
           message: 'The meeting was ended by another attendee',
           autoClose: true,
-          replaceAll: true
-        }
+          replaceAll: true,
+        },
       });
       history.push(routes.HOME);
     }

@@ -8,7 +8,7 @@ import {
   ModalBody,
   ModalHeader,
   DevicePermissionStatus,
-  useDevicePermissionStatus
+  useDevicePermissionStatus,
 } from 'amazon-chime-sdk-component-library-react';
 
 import Card from '../components/Card';

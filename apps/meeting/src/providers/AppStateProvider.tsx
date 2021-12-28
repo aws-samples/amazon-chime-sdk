@@ -26,11 +26,11 @@ interface AppStateValue {
   toggleSimulcast: () => void;
   togglePriorityBasedPolicy: () => void;
   setBlurValue: (blurValue: string) => void;
-  setMeetingMode: (meetingMode: MeetingMode) => void;
-  setLayout: (layout: Layout) => void;
-  setMeetingId: (meetingId: string) => void;
-  setLocalUserName: (name: string) => void;
-  setRegion: (region: string) => void;
+  setMeetingMode: React.Dispatch<React.SetStateAction<MeetingMode>>;
+  setLayout: React.Dispatch<React.SetStateAction<Layout>>;
+  setMeetingId: React.Dispatch<React.SetStateAction<string>>;
+  setLocalUserName: React.Dispatch<React.SetStateAction<string>>;
+  setRegion: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const AppStateContext = React.createContext<AppStateValue | null>(null);
@@ -77,11 +77,11 @@ export function AppStateProvider({ children }: Props) {
 
   const toggleWebAudio = (): void  => {
     setIsWebAudioEnabled(current => !current);
-  }
+  };
 
   const toggleSimulcast = (): void => {
     setEnableSimulcast(current => !current);
-  }
+  };
 
   const togglePriorityBasedPolicy = (): void => {
     if (priorityBasedPolicy) {
@@ -89,11 +89,11 @@ export function AppStateProvider({ children }: Props) {
     } else {
       setPriorityBasedPolicy(new VideoPriorityBasedPolicy(logger));
     }
-  }
+  };
 
   const setBlurValue = (blurValue: string): void  => {
     setBlur(blurValue);
-  }
+  };
 
   const providerValue = {
     meetingId,
@@ -115,7 +115,7 @@ export function AppStateProvider({ children }: Props) {
     setLayout,
     setMeetingId,
     setLocalUserName,
-    setRegion
+    setRegion,
   };
 
   return (

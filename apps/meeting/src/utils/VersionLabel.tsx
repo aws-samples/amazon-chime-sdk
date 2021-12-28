@@ -16,7 +16,7 @@ export const VersionLabel = () => {
         bottom: 1,
         right: 1,
         color: '#989da5',
-        fontSize: '0.70rem'
+        fontSize: '0.70rem',
       }}
     >
       {versionTag} | {sdkVersionTag}

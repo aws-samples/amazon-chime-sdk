@@ -5,7 +5,7 @@ import React, { useState, useContext, FormEvent } from 'react';
 import {
   Modal,
   ModalBody,
-  ModalHeader
+  ModalHeader,
 } from 'amazon-chime-sdk-component-library-react';
 
 import Card from '../../components/Card';
