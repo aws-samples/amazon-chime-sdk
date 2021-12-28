@@ -1,13 +1,13 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import React, { ChangeEvent, FormEvent } from 'react';
+import React, { ChangeEvent, FormEvent, } from 'react';
 import {
   Flex,
   Input,
   Heading,
   FormField,
-  PrimaryButton
+  PrimaryButton,
 } from 'amazon-chime-sdk-component-library-react';
 
 type SIPMeetingFormProps = {
@@ -23,7 +23,7 @@ export default function SIPMeetingForm({
   voiceConnectorId,
   onChangeMeetingId,
   onChangeVoiceConnectorId,
-  handleSubmit
+  handleSubmit,
 }: SIPMeetingFormProps) {
   return (
     <form>
@@ -36,7 +36,7 @@ export default function SIPMeetingForm({
         value={meetingId}
         fieldProps={{
           name: 'meetingId',
-          placeholder: 'Enter Meeting Id'
+          placeholder: 'Enter Meeting Id',
         }}
         onChange={onChangeMeetingId}
       />
@@ -47,7 +47,7 @@ export default function SIPMeetingForm({
         value={voiceConnectorId}
         fieldProps={{
           name: 'voiceConnectorId',
-          placeholder: 'Enter Voice Connector Id'
+          placeholder: 'Enter Voice Connector Id',
         }}
         infoText="You will need a SIP client in order to join the meeting."
         onChange={onChangeVoiceConnectorId}
@@ -56,7 +56,7 @@ export default function SIPMeetingForm({
       <Flex
         container
         layout="fill-space-centered"
-        style={{ marginTop: '2.5rem' }}
+        style={{ marginTop: '2.5rem', }}
       >
         <PrimaryButton label="Get SIP URI" onClick={handleSubmit} />
       </Flex>

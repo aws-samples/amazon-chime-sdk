@@ -5,7 +5,7 @@ import React from 'react';
 
 import {
   RosterAttendee,
-  useAttendeeStatus
+  useAttendeeStatus,
 } from 'amazon-chime-sdk-component-library-react';
 import VideoStreamMetrics from '../containers/VideoStreamMetrics';
 
@@ -14,8 +14,8 @@ interface Props {
   attendeeId: string;
 }
 
-const RosterAttendeeWrapper: React.FC<Props> = ({ attendeeId }) => {
-  const { videoEnabled } = useAttendeeStatus(attendeeId);
+const RosterAttendeeWrapper: React.FC<Props> = ({ attendeeId, }) => {
+  const { videoEnabled, } = useAttendeeStatus(attendeeId);
   return (
     <RosterAttendee
       attendeeId={attendeeId}

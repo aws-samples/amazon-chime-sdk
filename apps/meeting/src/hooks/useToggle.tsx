@@ -1,7 +1,7 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import { useState } from 'react';
+import { useState, } from 'react';
 
 type UseToggleFunc = {
   isActive: boolean;
@@ -9,7 +9,7 @@ type UseToggleFunc = {
 };
 
 export default function useToggle(initialState: boolean): UseToggleFunc {
-  const [isActive, setIsActive] = useState(initialState);
+  const [isActive, setIsActive,] = useState(initialState);
 
   function toggle(): void {
     setIsActive(!isActive);
@@ -17,6 +17,6 @@ export default function useToggle(initialState: boolean): UseToggleFunc {
 
   return {
     isActive,
-    toggle
+    toggle,
   };
 }

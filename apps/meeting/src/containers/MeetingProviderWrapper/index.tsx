@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT-0
 
 import React from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, } from 'react-router-dom';
 import {
   AudioTransformDevice,
   Device,
@@ -16,20 +16,20 @@ import {
 } from 'amazon-chime-sdk-component-library-react';
 
 import routes from '../../constants/routes';
-import { NavigationProvider } from '../../providers/NavigationProvider';
+import { NavigationProvider, } from '../../providers/NavigationProvider';
 import NoMeetingRedirect from '../NoMeetingRedirect';
-import { Meeting, Home, DeviceSetup } from '../../views';
+import { Meeting, Home, DeviceSetup, } from '../../views';
 import MeetingEventObserver from '../MeetingEventObserver';
 import meetingConfig from '../../meetingConfig';
-import { useAppState } from '../../providers/AppStateProvider';
-import { BlurValues } from '../../types';
+import { useAppState, } from '../../providers/AppStateProvider';
+import { BlurValues, } from '../../types';
 
-const MeetingProviderWithDeviceReplacement: React.FC = ({ children }) => {
-  const { addVoiceFocus } = useVoiceFocus();
+const MeetingProviderWithDeviceReplacement: React.FC = ({ children, }) => {
+  const { addVoiceFocus, } = useVoiceFocus();
 
   const onDeviceReplacement = (
     nextDevice: string,
-    currentDevice: Device | AudioTransformDevice,
+    currentDevice: Device | AudioTransformDevice
   ): Promise<Device | VoiceFocusTransformDevice> => {
     if (currentDevice instanceof VoiceFocusTransformDevice) {
       return addVoiceFocus(nextDevice);
@@ -47,7 +47,7 @@ const MeetingProviderWithDeviceReplacement: React.FC = ({ children }) => {
 };
 
 const MeetingProviderWrapper: React.FC = () => {
-  const { isWebAudioEnabled, blurOption } = useAppState();
+  const { isWebAudioEnabled, blurOption, } = useAppState();
   const isBackgroundBlurEnabled = blurOption !== BlurValues.blurDisabled;
 
   const meetingConfigValue = {
@@ -95,7 +95,7 @@ const MeetingProviderWrapper: React.FC = () => {
     }
     console.log(`Using ${filterCPUUtilization} CPU utilization for background blur`);
     return (
-      <BackgroundBlurProvider options={{filterCPUUtilization}} >
+      <BackgroundBlurProvider options={{filterCPUUtilization,}} >
         {children}
       </BackgroundBlurProvider>
     );
@@ -131,7 +131,7 @@ const MeetingProviderWrapper: React.FC = () => {
 };
 
 const MeetingModeSelector: React.FC = () => {
-  const { meetingMode } = useAppState();
+  const { meetingMode, } = useAppState();
 
   return <Meeting mode={meetingMode} />;
 };

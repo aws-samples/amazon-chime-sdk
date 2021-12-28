@@ -4,17 +4,17 @@
 import React from 'react';
 import {
   Flex,
-  SecondaryButton
+  SecondaryButton,
 } from 'amazon-chime-sdk-component-library-react';
 
 import MeetingForm from '../MeetingForm';
 import SIPMeeting from '../SIPMeeting';
 import useToggle from '../../hooks/useToggle';
 import SIPMeetingProvider from '../../providers/SIPMeetingProvider';
-import { StyledDiv, StyledWrapper } from './Styled';
+import { StyledDiv, StyledWrapper, } from './Styled';
 
 const MeetingFormSelector: React.FC = () => {
-  const { isActive, toggle } = useToggle(false);
+  const { isActive, toggle, } = useToggle(false);
   const formToShow = isActive ? (
     <SIPMeetingProvider>
       <SIPMeeting />
@@ -27,7 +27,7 @@ const MeetingFormSelector: React.FC = () => {
   return (
     <StyledWrapper>
       <StyledDiv>{formToShow}</StyledDiv>
-      <Flex container layout="fill-space-centered" style={{ padding: '2rem' }}>
+      <Flex container layout="fill-space-centered" style={{ padding: '2rem', }}>
         <SecondaryButton label={buttonText} onClick={toggle} />
       </Flex>
     </StyledWrapper>

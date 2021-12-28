@@ -6,10 +6,10 @@ import React, {
   useContext,
   useEffect,
   useRef,
-  ReactNode
+  ReactNode,
 } from 'react';
-import { useLocation } from 'react-router-dom';
-import { useMeetingManager } from 'amazon-chime-sdk-component-library-react';
+import { useLocation, } from 'react-router-dom';
+import { useMeetingManager, } from 'amazon-chime-sdk-component-library-react';
 
 import routes from '../constants/routes';
 
@@ -34,9 +34,9 @@ const NavigationContext = React.createContext<NavigationContextType | null>(
 
 const isDesktop = () => window.innerWidth > 768;
 
-const NavigationProvider = ({ children }: Props) => {
-  const [showNavbar, setShowNavbar] = useState(() => isDesktop());
-  const [showRoster, setShowRoster] = useState(() => isDesktop());
+const NavigationProvider = ({ children, }: Props) => {
+  const [showNavbar, setShowNavbar,] = useState(() => isDesktop());
+  const [showRoster, setShowRoster,] = useState(() => isDesktop());
   const isDesktopView = useRef(isDesktop());
 
   const location = useLocation();
@@ -48,7 +48,7 @@ const NavigationProvider = ({ children }: Props) => {
         meetingManager.leave();
       };
     }
-  }, [location.pathname]);
+  }, [location.pathname,]);
 
   useEffect(() => {
     const handler = () => {
@@ -103,7 +103,7 @@ const NavigationProvider = ({ children }: Props) => {
     openRoster,
     closeRoster,
     openNavbar,
-    closeNavbar
+    closeNavbar,
   };
   return (
     <NavigationContext.Provider value={providerValue}>
@@ -120,4 +120,4 @@ const useNavigation = (): NavigationContextType => {
   return context;
 };
 
-export { NavigationProvider, useNavigation };
+export { NavigationProvider, useNavigation, };

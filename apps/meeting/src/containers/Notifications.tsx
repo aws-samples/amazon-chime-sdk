@@ -4,11 +4,11 @@
 import React from 'react';
 import {
   useNotificationState,
-  NotificationGroup
+  NotificationGroup,
 } from 'amazon-chime-sdk-component-library-react';
 
 const Notifications = () => {
-  const { notifications } = useNotificationState();
+  const { notifications, } = useNotificationState();
 
   return notifications.length ? <NotificationGroup /> : null;
 };

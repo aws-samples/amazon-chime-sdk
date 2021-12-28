@@ -38,9 +38,17 @@
             "error",
             "always"
         ],
+        "comma-dangle": [
+            "error",
+            {
+                "arrays": "always",
+                "objects": "always",
+                "imports": "always",
+                "exports": "always"
+            }
+        ],
         // For allowing ts-ignore.
         "@typescript-eslint/ban-ts-comment": "off",
-
         // Need to disable the base rule and then the typescript one.
         "no-unused-vars": "off",
         "@typescript-eslint/no-unused-vars": "off"

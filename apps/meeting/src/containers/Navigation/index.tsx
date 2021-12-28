@@ -16,19 +16,19 @@ import {
   useContentShareState,
 } from 'amazon-chime-sdk-component-library-react';
 
-import { useNavigation } from '../../providers/NavigationProvider';
-import { useAppState } from '../../providers/AppStateProvider';
-import { LocalMediaStreamMetrics } from '../LocalMediaStreamMetrics';
-import { Layout } from '../../types';
+import { useNavigation, } from '../../providers/NavigationProvider';
+import { useAppState, } from '../../providers/AppStateProvider';
+import { LocalMediaStreamMetrics, } from '../LocalMediaStreamMetrics';
+import { Layout, } from '../../types';
 import GalleryLayout from '../../components/icons/GalleryLayout';
 import FeaturedLayout from '../../components/icons/FeaturedLayout';
-import { useVideoTileGridControl } from '../../providers/VideoTileGridProvider';
+import { useVideoTileGridControl, } from '../../providers/VideoTileGridProvider';
 
 const Navigation: React.FC = () => {
-  const { toggleRoster, closeNavbar } = useNavigation();
-  const { theme, toggleTheme, layout, setLayout, priorityBasedPolicy } = useAppState();
-  const { sharingAttendeeId } = useContentShareState();
-  const { zoomIn, zoomOut } = useVideoTileGridControl();
+  const { toggleRoster, closeNavbar, } = useNavigation();
+  const { theme, toggleTheme, layout, setLayout, priorityBasedPolicy, } = useAppState();
+  const { sharingAttendeeId, } = useContentShareState();
+  const { zoomIn, zoomOut, } = useVideoTileGridControl();
 
   return (
     <Navbar className="nav" flexDirection="column" container>

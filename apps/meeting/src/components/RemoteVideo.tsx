@@ -9,13 +9,13 @@ type Props = {
   videoEleRef: (instance: HTMLVideoElement | null) => void;
 };
 
-const RemoteVideo: React.FC<Props> = ({ videoEleRef, enabled }) => (
+const RemoteVideo: React.FC<Props> = ({ videoEleRef, enabled, }) => (
   <video
     style={{
       display: enabled ? 'block' : 'none',
       objectFit: 'cover',
       height: '100%',
-      width: '100%'
+      width: '100%',
     }}
     ref={videoEleRef}
   />

@@ -1,7 +1,7 @@
-import { RosterAttendeeType } from 'amazon-chime-sdk-component-library-react';
-import {VideoPriorityBasedPolicy, VideoSource} from 'amazon-chime-sdk-js';
-import { Layout } from '../../types';
-import { isContentShare, updateDownlinkPreferences } from './Utils';
+import { RosterAttendeeType, } from 'amazon-chime-sdk-component-library-react';
+import {VideoPriorityBasedPolicy, VideoSource,} from 'amazon-chime-sdk-js';
+import { Layout, } from '../../types';
+import { isContentShare, updateDownlinkPreferences, } from './Utils';
 
 export interface GridState {
   layout: Layout;
@@ -45,7 +45,7 @@ export const initialState: State = {
     hasLocalVideo: false,
     hasLocalContentSharing: false,
   },
-  priorityBasedPolicy: undefined
+  priorityBasedPolicy: undefined,
 };
 
 export type RosterType = {
@@ -154,12 +154,12 @@ export type Action =
   | ZoomIn
   | ZoomOut;
 
-export function reducer(state: State, { type, payload }: Action): State {
-  const { gridState, attendeeStates, videoSourceState, priorityBasedPolicy } = state;
+export function reducer(state: State, { type, payload, }: Action): State {
+  const { gridState, attendeeStates, videoSourceState, priorityBasedPolicy, } = state;
 
   switch (type) {
   case VideoTileGridAction.UpdateAttendeeStates: {
-    const { roster } = payload;
+    const { roster, } = payload;
 
     // Remove attendee that left the meeting
     for (const attendeeId in attendeeStates) {
@@ -198,7 +198,7 @@ export function reducer(state: State, { type, payload }: Action): State {
   }
 
   case VideoTileGridAction.UpdateVideoSources: {
-    const { videoSources, localAttendeeId } = payload as { videoSources: VideoSource[]; localAttendeeId: string | null };
+    const { videoSources, localAttendeeId, } = payload as { videoSources: VideoSource[]; localAttendeeId: string | null };
     const cameraSources: string[] = [];
     const videoSourceIdSet = new Set(
       videoSources.map(videoSource => videoSource.attendee.attendeeId)
@@ -273,9 +273,9 @@ export function reducer(state: State, { type, payload }: Action): State {
   }
 
   case VideoTileGridAction.UpdateActiveSpeakers: {
-    const { activeSpeakers } = payload;
+    const { activeSpeakers, } = payload;
     const activeSpeakersWithCameraSource = [];
-    const { cameraSources } = videoSourceState;
+    const { cameraSources, } = videoSourceState;
 
     for (const attendeeId of activeSpeakers) {
       if (
@@ -321,7 +321,7 @@ export function reducer(state: State, { type, payload }: Action): State {
   }
 
   case VideoTileGridAction.UpdateLayout: {
-    const { layout } = payload;
+    const { layout, } = payload;
     gridState.layout = layout;
     updateDownlinkPreferences(gridState, videoSourceState, attendeeStates, priorityBasedPolicy);
 
@@ -332,7 +332,7 @@ export function reducer(state: State, { type, payload }: Action): State {
   }
 
   case VideoTileGridAction.PauseVideoTile: {
-    const { attendeeId } = payload;
+    const { attendeeId, } = payload;
     if (attendeeId in attendeeStates) {
       attendeeStates[attendeeId].bandwidthConstrained = true;
     }
@@ -344,7 +344,7 @@ export function reducer(state: State, { type, payload }: Action): State {
   }
 
   case VideoTileGridAction.UnpauseVideoTile: {
-    const { attendeeId } = payload;
+    const { attendeeId, } = payload;
     if (attendeeId in attendeeStates) {
       attendeeStates[attendeeId].bandwidthConstrained = false;
     }
@@ -356,8 +356,8 @@ export function reducer(state: State, { type, payload }: Action): State {
   }
 
   case VideoTileGridAction.ZoomIn: {
-    const { threshold } = gridState;
-    const { cameraSources, hasLocalVideo } = videoSourceState;
+    const { threshold, } = gridState;
+    const { cameraSources, hasLocalVideo, } = videoSourceState;
     const numberOfTiles = cameraSources.length + (hasLocalVideo ? 1 : 0);
 
     if (numberOfTiles > threshold) {
@@ -383,11 +383,11 @@ export function reducer(state: State, { type, payload }: Action): State {
   }
 
   case VideoTileGridAction.SetPriorityBasedPolicy: {
-    const { policy } = payload as { policy: VideoPriorityBasedPolicy | undefined};
+    const { policy, } = payload as { policy: VideoPriorityBasedPolicy | undefined};
 
     return {
       ...state,
-      ...{ priorityBasedPolicy: policy }
+      ...{ priorityBasedPolicy: policy, },
     };
   }
 

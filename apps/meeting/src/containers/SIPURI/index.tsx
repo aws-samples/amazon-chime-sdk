@@ -1,18 +1,18 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import React, { useState, useRef, RefObject } from 'react';
-import { PrimaryButton } from 'amazon-chime-sdk-component-library-react';
+import React, { useState, useRef, RefObject, } from 'react';
+import { PrimaryButton, } from 'amazon-chime-sdk-component-library-react';
 
-import { StyledDiv } from './Styled';
+import { StyledDiv, } from './Styled';
 
 interface SIPProps {
   sipURI: string;
 }
 
-const SIPURI: React.FC<SIPProps> = ({ sipURI }: SIPProps) => {
+const SIPURI: React.FC<SIPProps> = ({ sipURI, }: SIPProps) => {
   const sipUriEl: RefObject<HTMLParagraphElement> = useRef<HTMLParagraphElement>(null);
-  const [isCopied, setIsCopied] = useState(false);
+  const [isCopied, setIsCopied,] = useState(false);
 
   const copySIPURI = (): void => {
     const selection = window.getSelection();

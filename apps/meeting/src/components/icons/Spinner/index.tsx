@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT-0
 
 import React from 'react';
-import { StyledSpinner } from './Styled';
+import { StyledSpinner, } from './Styled';
 
 const Spinner: React.FC = () => {
   return (

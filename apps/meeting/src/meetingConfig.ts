@@ -5,7 +5,7 @@ import {
   ConsoleLogger,
   LogLevel,
 } from 'amazon-chime-sdk-js';
-import { SDK_LOG_LEVELS } from './constants';
+import { SDK_LOG_LEVELS, } from './constants';
 
 const urlParams = new URLSearchParams(window.location.search);
 const queryLogLevel = urlParams.get('logLevel') || 'warn';

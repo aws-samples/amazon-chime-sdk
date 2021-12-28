@@ -3,7 +3,7 @@
 
 import React from 'react';
 
-import { StyledWrapper, StyledAudioGroup, StyledVideoGroup } from './Styled';
+import { StyledWrapper, StyledAudioGroup, StyledVideoGroup, } from './Styled';
 import MicrophoneDevices from './MicrophoneDevices';
 import SpeakerDevices from './SpeakerDevices';
 import CameraDevices from './CameraDevices';

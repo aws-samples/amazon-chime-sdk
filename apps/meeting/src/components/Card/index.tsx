@@ -3,7 +3,7 @@
 
 import React from 'react';
 
-import { SmallText, StyledCard } from './Styled';
+import { SmallText, StyledCard, } from './Styled';
 
 interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   header?: string;
@@ -17,7 +17,7 @@ const Card: React.FC<CardProps> = ({
   header,
   title,
   description,
-  smallText
+  smallText,
 }: CardProps) => (
   <StyledCard>
     {header && <div className="ch-header">{header}</div>}

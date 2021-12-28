@@ -8,15 +8,15 @@ import {
   QualitySelection,
   CameraSelection,
   Label,
-  BackgroundBlurCheckbox
+  BackgroundBlurCheckbox,
 } from 'amazon-chime-sdk-component-library-react';
 
-import { title, StyledInputGroup } from '../Styled';
-import { useAppState } from '../../../providers/AppStateProvider';
-import { BlurValues } from '../../../types';
+import { title, StyledInputGroup, } from '../Styled';
+import { useAppState, } from '../../../providers/AppStateProvider';
+import { BlurValues, } from '../../../types';
 
 const CameraDevices = () => {
-  const { blurOption } = useAppState();
+  const { blurOption, } = useAppState();
   return (
     <div>
       <Heading tag="h2" level={6} css={title}>
@@ -33,7 +33,7 @@ const CameraDevices = () => {
           <BackgroundBlurCheckbox />
         </StyledInputGroup> : ''
       }
-      <Label style={{ display: 'block', marginBottom: '.5rem' }}>
+      <Label style={{ display: 'block', marginBottom: '.5rem', }}>
         Video preview
       </Label>
       <PreviewVideo />

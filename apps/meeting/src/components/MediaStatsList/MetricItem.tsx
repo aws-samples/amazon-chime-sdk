@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT-0
 
 import React from 'react';
-import { StyledItemMetricName, StyledItemMetricValue } from './Styled';
+import { StyledItemMetricName, StyledItemMetricValue, } from './Styled';
 
 export interface MetricItemProps {
   metricName: string;
@@ -11,7 +11,7 @@ export interface MetricItemProps {
 
 export const MetricItem: React.FC<MetricItemProps> = ({
   metricName,
-  metricValues
+  metricValues,
 }) => {
   const showMetricItem = metricValues[0] && metricValues[0] !== '';
   return (

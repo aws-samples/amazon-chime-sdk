@@ -1,7 +1,7 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import React, { useState, ReactNode } from 'react';
+import React, { useState, ReactNode, } from 'react';
 
 type Props = {
   children: ReactNode;
@@ -10,15 +10,15 @@ type Props = {
 const context = React.createContext({
   errorMessage: '',
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  updateErrorMessage: (_errorMessage: string) => {}
+  updateErrorMessage: (_errorMessage: string) => {},
 });
 
 export function getErrorContext() {
   return context;
 }
 
-export default function ErrorProvider({ children }: Props) {
-  const [errorMessage, setErrorMessage] = useState('');
+export default function ErrorProvider({ children, }: Props) {
+  const [errorMessage, setErrorMessage,] = useState('');
   const ErrorContext = getErrorContext();
 
   const updateErrorMessage = (message: string): void => {
@@ -27,7 +27,7 @@ export default function ErrorProvider({ children }: Props) {
 
   const providerValue = {
     errorMessage,
-    updateErrorMessage
+    updateErrorMessage,
   };
   return (
     <ErrorContext.Provider value={providerValue}>

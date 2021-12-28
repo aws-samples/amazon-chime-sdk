@@ -7,12 +7,12 @@ import {
   useMediaStreamMetrics,
   useAudioVideo,
   PopOverHeader,
-  useMeetingManager
+  useMeetingManager,
 } from 'amazon-chime-sdk-component-library-react';
 
-import { MediaStatsList } from '../../components/MediaStatsList';
+import { MediaStatsList, } from '../../components/MediaStatsList';
 import MetricItem from '../../components/MediaStatsList/MetricItem';
-import { StyledMediaMetricsWrapper } from '../../components/MediaStatsList/Styled';
+import { StyledMediaMetricsWrapper, } from '../../components/MediaStatsList/Styled';
 
 export const LocalMediaStreamMetrics: React.FC = () => {
   const audioVideo = useAudioVideo();
@@ -24,7 +24,7 @@ export const LocalMediaStreamMetrics: React.FC = () => {
     audioPacketsReceivedFractionLossPercent,
     availableIncomingBandwidth,
     availableOutgoingBandwidth,
-    videoStreamMetrics
+    videoStreamMetrics,
   } = useMediaStreamMetrics();
 
   const isLocalAudioActive =
@@ -50,7 +50,7 @@ export const LocalMediaStreamMetrics: React.FC = () => {
         <>
           <PopOverHeader title={'Audio statistics'} />
           <MediaStatsList>
-            <MetricItem metricName="" metricValues={['Up', 'Down']} />
+            <MetricItem metricName="" metricValues={['Up', 'Down',]} />
             <MetricItem
               metricName="1s Loss"
               metricValues={[
@@ -59,7 +59,7 @@ export const LocalMediaStreamMetrics: React.FC = () => {
                   : '',
                 audioPacketsReceivedFractionLossPercent !== null
                   ? audioPacketsReceivedFractionLossPercent.toString()
-                  : ''
+                  : '',
               ]}
             />
           </MediaStatsList>
@@ -148,7 +148,7 @@ export const LocalMediaStreamMetrics: React.FC = () => {
         <>
           <PopOverHeader title={'Bandwidth statistics'} />
           <MediaStatsList>
-            <MetricItem metricName="" metricValues={['Outgoing', 'Incoming']} />
+            <MetricItem metricName="" metricValues={['Outgoing', 'Incoming',]} />
             <MetricItem
               metricName="Bandwidth (kbps)"
               metricValues={[
@@ -157,7 +157,7 @@ export const LocalMediaStreamMetrics: React.FC = () => {
                   : '',
                 availableIncomingBandwidth !== null
                   ? availableIncomingBandwidth.toString()
-                  : ''
+                  : '',
               ]}
             />
           </MediaStatsList>
