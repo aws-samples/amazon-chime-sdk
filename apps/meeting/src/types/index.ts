@@ -50,4 +50,4 @@ export const BlurValues = {
   blur10Percent: "10",
   blur20Percent: "20",
   blur40Percent: "40",
-}
+};

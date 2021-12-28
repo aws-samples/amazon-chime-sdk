@@ -1,7 +1,7 @@
-import { RosterAttendeeType } from 'amazon-chime-sdk-component-library-react';
-import {VideoPriorityBasedPolicy, VideoSource} from 'amazon-chime-sdk-js';
-import { Layout } from '../../types';
-import { isContentShare, updateDownlinkPreferences } from './Utils';
+import { RosterAttendeeType } from "amazon-chime-sdk-component-library-react";
+import {VideoPriorityBasedPolicy, VideoSource} from "amazon-chime-sdk-js";
+import { Layout } from "../../types";
+import { isContentShare, updateDownlinkPreferences } from "./Utils";
 
 export interface GridState {
   layout: Layout;
@@ -132,11 +132,13 @@ type UnpauseVideoTile = {
 
 type ZoomIn = {
   type: VideoTileGridAction.ZoomIn;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
   payload?: any;
 };
 
 type ZoomOut = {
   type: VideoTileGridAction.ZoomOut;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
   payload?: any;
 };
 
@@ -156,240 +158,240 @@ export function reducer(state: State, { type, payload }: Action): State {
   const { gridState, attendeeStates, videoSourceState, priorityBasedPolicy } = state;
 
   switch (type) {
-    case VideoTileGridAction.UpdateAttendeeStates: {
-      const { roster } = payload;
+  case VideoTileGridAction.UpdateAttendeeStates: {
+    const { roster } = payload;
 
-      // Remove attendee that left the meeting
-      for (const attendeeId in attendeeStates) {
-        if (!isContentShare(attendeeId) && !(attendeeId in roster)) {
-          delete attendeeStates[attendeeId];
-        }
+    // Remove attendee that left the meeting
+    for (const attendeeId in attendeeStates) {
+      if (!isContentShare(attendeeId) && !(attendeeId in roster)) {
+        delete attendeeStates[attendeeId];
+      }
+    }
+
+    // Add attendee that joined the meeting
+    for (const attendeeId in roster) {
+      const name = roster[attendeeId]?.name || "";
+
+      if (attendeeId in attendeeStates) {
+        attendeeStates[attendeeId].name = name;
+      } else {
+        attendeeStates[attendeeId] = {
+          attendeeId,
+          name,
+          videoEnabled: false,
+          bandwidthConstrained: false,
+        } as AttendeeState;
+      }
+    }
+
+    // Ensure the state of `videoEnabled` in the racing condition of UpdateAttendeeStates and UpdateVideoSources
+    for (const attendeeId of videoSourceState.cameraSources) {
+      if (attendeeId in attendeeStates) {
+        attendeeStates[attendeeId].videoEnabled = true;
+      }
+    }
+
+    return {
+      ...state,
+      attendeeStates,
+    };
+  }
+
+  case VideoTileGridAction.UpdateVideoSources: {
+    const { videoSources, localAttendeeId } = payload as { videoSources: VideoSource[]; localAttendeeId: string | null };
+    const cameraSources: string[] = [];
+    const videoSourceIdSet = new Set(
+      videoSources.map(videoSource => videoSource.attendee.attendeeId)
+    );
+
+    for (const attendeeId in attendeeStates) {
+      // Reset the `videoEnabled` for all remote attendees
+      if (!localAttendeeId || attendeeId !== localAttendeeId) {
+        attendeeStates[attendeeId].videoEnabled = false;
       }
 
-      // Add attendee that joined the meeting
-      for (const attendeeId in roster) {
-        const name = roster[attendeeId]?.name || '';
+      // Remove content share from attendeeStates,
+      // if content share is not in video sources
+      if (
+        isContentShare(attendeeId) &&
+          !videoSourceIdSet.has(attendeeId)
+      ) {
+        delete attendeeStates[attendeeId];
+      }
+    }
 
-        if (attendeeId in attendeeStates) {
-          attendeeStates[attendeeId].name = name;
+    // Update the `videoEnabled` according to `videoSources`
+    for (const attendeeId of videoSourceIdSet) {
+      if (!(attendeeId in attendeeStates)) {
+        if (isContentShare(attendeeId)) {
+          attendeeStates[attendeeId] = {
+            attendeeId,
+            name: "content share",
+            bandwidthConstrained: false,
+          } as AttendeeState;
         } else {
           attendeeStates[attendeeId] = {
             attendeeId,
-            name,
-            videoEnabled: false,
+            name: "",
             bandwidthConstrained: false,
           } as AttendeeState;
         }
       }
 
-      // Ensure the state of `videoEnabled` in the racing condition of UpdateAttendeeStates and UpdateVideoSources
-      for (const attendeeId of videoSourceState.cameraSources) {
-        if (attendeeId in attendeeStates) {
-          attendeeStates[attendeeId].videoEnabled = true;
-        }
-      }
-
-      return {
-        ...state,
-        attendeeStates,
-      };
+      attendeeStates[attendeeId].videoEnabled = true;
     }
 
-    case VideoTileGridAction.UpdateVideoSources: {
-      const { videoSources, localAttendeeId } = payload as { videoSources: VideoSource[]; localAttendeeId: string | null };
-      const cameraSources: string[] = [];
-      const videoSourceIdSet = new Set(
-        videoSources.map(videoSource => videoSource.attendee.attendeeId)
-      );
+    // Populate the `cameraSources` based on the order of `attendeeStates`
+    for (const attendeeId in attendeeStates) {
+      const attendee = attendeeStates[attendeeId];
 
-      for (const attendeeId in attendeeStates) {
-        // Reset the `videoEnabled` for all remote attendees
-        if (!localAttendeeId || attendeeId !== localAttendeeId) {
-          attendeeStates[attendeeId].videoEnabled = false;
-        }
-
-        // Remove content share from attendeeStates,
-        // if content share is not in video sources
-        if (
-          isContentShare(attendeeId) &&
-          !videoSourceIdSet.has(attendeeId)
-        ) {
-          delete attendeeStates[attendeeId];
-        }
-      }
-
-      // Update the `videoEnabled` according to `videoSources`
-      for (const attendeeId of videoSourceIdSet) {
-        if (!(attendeeId in attendeeStates)) {
-          if (isContentShare(attendeeId)) {
-            attendeeStates[attendeeId] = {
-              attendeeId,
-              name: 'content share',
-              bandwidthConstrained: false,
-            } as AttendeeState;
-          } else {
-            attendeeStates[attendeeId] = {
-              attendeeId,
-              name: '',
-              bandwidthConstrained: false,
-            } as AttendeeState;
-          }
-        }
-
-        attendeeStates[attendeeId].videoEnabled = true;
-      }
-
-      // Populate the `cameraSources` based on the order of `attendeeStates`
-      for (const attendeeId in attendeeStates) {
-        const attendee = attendeeStates[attendeeId];
-
-        if (
-          attendee.videoEnabled &&
+      if (
+        attendee.videoEnabled &&
           !isContentShare(attendee.attendeeId) &&
           attendee.attendeeId !== localAttendeeId
-        ) {
-          cameraSources.push(attendee.attendeeId);
-        }
+      ) {
+        cameraSources.push(attendee.attendeeId);
       }
-
-      // Remove the attendee from `activeSpeakersWithCameraSource`,
-      // if this attendee close the camera while still active
-      for (const attendeeId in videoSourceState.activeSpeakersWithCameraSource) {
-        if (!attendeeStates[attendeeId]?.videoEnabled) {
-          videoSourceState.activeSpeakersWithCameraSource.filter(id => id !== attendeeId);
-        }
-      }
-
-      videoSourceState.cameraSources = cameraSources;
-      updateDownlinkPreferences(gridState, videoSourceState, attendeeStates, priorityBasedPolicy);
-
-      return {
-        ...state,
-        attendeeStates,
-        videoSourceState,
-      };
     }
 
-    case VideoTileGridAction.UpdateActiveSpeakers: {
-      const { activeSpeakers } = payload;
-      const activeSpeakersWithCameraSource = [];
-      const { cameraSources } = videoSourceState;
+    // Remove the attendee from `activeSpeakersWithCameraSource`,
+    // if this attendee close the camera while still active
+    for (const attendeeId in videoSourceState.activeSpeakersWithCameraSource) {
+      if (!attendeeStates[attendeeId]?.videoEnabled) {
+        videoSourceState.activeSpeakersWithCameraSource.filter(id => id !== attendeeId);
+      }
+    }
 
-      for (const attendeeId of activeSpeakers) {
-        if (
-          attendeeStates[attendeeId]?.videoEnabled &&
+    videoSourceState.cameraSources = cameraSources;
+    updateDownlinkPreferences(gridState, videoSourceState, attendeeStates, priorityBasedPolicy);
+
+    return {
+      ...state,
+      attendeeStates,
+      videoSourceState,
+    };
+  }
+
+  case VideoTileGridAction.UpdateActiveSpeakers: {
+    const { activeSpeakers } = payload;
+    const activeSpeakersWithCameraSource = [];
+    const { cameraSources } = videoSourceState;
+
+    for (const attendeeId of activeSpeakers) {
+      if (
+        attendeeStates[attendeeId]?.videoEnabled &&
           cameraSources.includes(attendeeId)
-        ) {
-          activeSpeakersWithCameraSource.push(attendeeId);
-        }
+      ) {
+        activeSpeakersWithCameraSource.push(attendeeId);
       }
+    }
 
-      videoSourceState.activeSpeakersWithCameraSource = activeSpeakersWithCameraSource;
+    videoSourceState.activeSpeakersWithCameraSource = activeSpeakersWithCameraSource;
+    updateDownlinkPreferences(gridState, videoSourceState, attendeeStates, priorityBasedPolicy);
+
+    return {
+      ...state,
+      videoSourceState,
+    };
+  }
+
+  case VideoTileGridAction.UpdateLocalSourceState: {
+    const {
+      isVideoEnabled,
+      localAttendeeId,
+      isLocalUserSharing,
+      sharingAttendeeId,
+    } = payload;
+
+    videoSourceState.hasLocalVideo = isVideoEnabled;
+    videoSourceState.hasLocalContentSharing = isLocalUserSharing;
+    videoSourceState.contentShareId = sharingAttendeeId;
+
+    if (localAttendeeId && localAttendeeId in attendeeStates) {
+      attendeeStates[localAttendeeId].videoEnabled = isVideoEnabled;
+    }
+
+    updateDownlinkPreferences(gridState, videoSourceState, attendeeStates, priorityBasedPolicy);
+
+    return {
+      ...state,
+      attendeeStates,
+      videoSourceState,
+    };
+  }
+
+  case VideoTileGridAction.UpdateLayout: {
+    const { layout } = payload;
+    gridState.layout = layout;
+    updateDownlinkPreferences(gridState, videoSourceState, attendeeStates, priorityBasedPolicy);
+
+    return {
+      ...state,
+      gridState,
+    };
+  }
+
+  case VideoTileGridAction.PauseVideoTile: {
+    const { attendeeId } = payload;
+    if (attendeeId in attendeeStates) {
+      attendeeStates[attendeeId].bandwidthConstrained = true;
+    }
+
+    return {
+      ...state,
+      attendeeStates,
+    };
+  }
+
+  case VideoTileGridAction.UnpauseVideoTile: {
+    const { attendeeId } = payload;
+    if (attendeeId in attendeeStates) {
+      attendeeStates[attendeeId].bandwidthConstrained = false;
+    }
+
+    return {
+      ...state,
+      attendeeStates,
+    };
+  }
+
+  case VideoTileGridAction.ZoomIn: {
+    const { threshold } = gridState;
+    const { cameraSources, hasLocalVideo } = videoSourceState;
+    const numberOfTiles = cameraSources.length + (hasLocalVideo ? 1 : 0);
+
+    if (numberOfTiles > threshold) {
+      gridState.isZoomed = true;
       updateDownlinkPreferences(gridState, videoSourceState, attendeeStates, priorityBasedPolicy);
-
-      return {
-        ...state,
-        videoSourceState,
-      };
     }
 
-    case VideoTileGridAction.UpdateLocalSourceState: {
-      const {
-        isVideoEnabled,
-        localAttendeeId,
-        isLocalUserSharing,
-        sharingAttendeeId,
-      } = payload;
+    return {
+      ...state,
+      gridState,
+    };
+  }
 
-      videoSourceState.hasLocalVideo = isVideoEnabled;
-      videoSourceState.hasLocalContentSharing = isLocalUserSharing;
-      videoSourceState.contentShareId = sharingAttendeeId;
-
-      if (localAttendeeId && localAttendeeId in attendeeStates) {
-        attendeeStates[localAttendeeId].videoEnabled = isVideoEnabled;
-      }
-
+  case VideoTileGridAction.ZoomOut: {
+    if (gridState.isZoomed) {
+      gridState.isZoomed = false;
       updateDownlinkPreferences(gridState, videoSourceState, attendeeStates, priorityBasedPolicy);
-
-      return {
-        ...state,
-        attendeeStates,
-        videoSourceState,
-      };
     }
 
-    case VideoTileGridAction.UpdateLayout: {
-      const { layout } = payload;
-      gridState.layout = layout;
-      updateDownlinkPreferences(gridState, videoSourceState, attendeeStates, priorityBasedPolicy);
+    return {
+      ...state,
+    };
+  }
 
-      return {
-        ...state,
-        gridState,
-      };
-    }
+  case VideoTileGridAction.SetPriorityBasedPolicy: {
+    const { policy } = payload as { policy: VideoPriorityBasedPolicy | undefined};
 
-    case VideoTileGridAction.PauseVideoTile: {
-      const { attendeeId } = payload;
-      if (attendeeId in attendeeStates) {
-        attendeeStates[attendeeId].bandwidthConstrained = true;
-      }
+    return {
+      ...state,
+      ...{ priorityBasedPolicy: policy }
+    };
+  }
 
-      return {
-        ...state,
-        attendeeStates,
-      };
-    }
-
-    case VideoTileGridAction.UnpauseVideoTile: {
-      const { attendeeId } = payload;
-      if (attendeeId in attendeeStates) {
-        attendeeStates[attendeeId].bandwidthConstrained = false;
-      }
-
-      return {
-        ...state,
-        attendeeStates,
-      };
-    }
-
-    case VideoTileGridAction.ZoomIn: {
-      const { threshold } = gridState;
-      const { cameraSources, hasLocalVideo } = videoSourceState;
-      const numberOfTiles = cameraSources.length + (hasLocalVideo ? 1 : 0);
-
-      if (numberOfTiles > threshold) {
-        gridState.isZoomed = true;
-        updateDownlinkPreferences(gridState, videoSourceState, attendeeStates, priorityBasedPolicy);
-      }
-
-      return {
-        ...state,
-        gridState,
-      };
-    }
-
-    case VideoTileGridAction.ZoomOut: {
-      if (gridState.isZoomed) {
-        gridState.isZoomed = false;
-        updateDownlinkPreferences(gridState, videoSourceState, attendeeStates, priorityBasedPolicy);
-      }
-
-      return {
-        ...state,
-      };
-    }
-
-    case VideoTileGridAction.SetPriorityBasedPolicy: {
-      const { policy } = payload as { policy: VideoPriorityBasedPolicy | undefined};
-
-      return {
-        ...state,
-        ...{ priorityBasedPolicy: policy }
-      }
-    }
-
-    default:
-      throw new Error('Incorrect type in VideoTileGridProvider');
+  default:
+    throw new Error("Incorrect type in VideoTileGridProvider");
   }
 }

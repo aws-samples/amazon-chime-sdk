@@ -1,7 +1,7 @@
 // Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const StyledList = styled.dl`
   font-size: 0.75rem;

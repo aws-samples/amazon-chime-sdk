@@ -1,8 +1,8 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
 import {
   PrimaryButton,
   Flex,
@@ -11,17 +11,17 @@ import {
   Modal,
   ModalBody,
   ModalHeader
-} from 'amazon-chime-sdk-component-library-react';
+} from "amazon-chime-sdk-component-library-react";
 
-import routes from '../constants/routes';
-import Card from '../components/Card';
-import { useAppState } from '../providers/AppStateProvider';
+import routes from "../constants/routes";
+import Card from "../components/Card";
+import { useAppState } from "../providers/AppStateProvider";
 
 const MeetingJoinDetails = () => {
   const meetingManager = useMeetingManager();
   const history = useHistory();
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const { meetingId, localUserName } = useAppState();
 
   const handleJoinMeeting = async () => {
@@ -41,15 +41,15 @@ const MeetingJoinDetails = () => {
     <>
       <Flex container alignItems="center" flexDirection="column">
         <PrimaryButton
-          label={isLoading ? 'Loading...' : 'Join meeting'}
+          label={isLoading ? "Loading..." : "Join meeting"}
           onClick={handleJoinMeeting}
         />
-        <Label style={{ margin: '.75rem 0 0 0' }}>
+        <Label style={{ margin: ".75rem 0 0 0" }}>
           Joining meeting <b>{meetingId}</b> as <b>{localUserName}</b>
         </Label>
       </Flex>
       {error && (
-        <Modal size="md" onClose={(): void => setError('')}>
+        <Modal size="md" onClose={(): void => setError("")}>
           <ModalHeader title={`Meeting ID: ${meetingId}`} />
           <ModalBody>
             <Card

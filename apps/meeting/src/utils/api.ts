@@ -1,7 +1,7 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import routes from '../constants/routes';
+import routes from "../constants/routes";
 
 export const BASE_URL = routes.HOME;
 
@@ -27,8 +27,8 @@ export async function fetchMeeting(
     region: encodeURIComponent(region),
   };
 
-  const res = await fetch(BASE_URL + 'join?' + new URLSearchParams(params), {
-    method: 'POST',
+  const res = await fetch(BASE_URL + "join?" + new URLSearchParams(params), {
+    method: "POST",
   });
 
   const data = await res.json();
@@ -49,12 +49,12 @@ export async function getAttendee(
     attendee: encodeURIComponent(chimeAttendeeId),
   };
 
-  const res = await fetch(BASE_URL + 'attendee?' + new URLSearchParams(params), {
-    method: 'GET',
+  const res = await fetch(BASE_URL + "attendee?" + new URLSearchParams(params), {
+    method: "GET",
   });
 
   if (!res.ok) {
-    throw new Error('Invalid server response');
+    throw new Error("Invalid server response");
   }
 
   const data = await res.json();
@@ -69,12 +69,12 @@ export async function endMeeting(meetingId: string): Promise<void> {
     title: encodeURIComponent(meetingId),
   };
 
-  const res = await fetch(BASE_URL + 'end?' + new URLSearchParams(params), {
-    method: 'POST',
+  const res = await fetch(BASE_URL + "end?" + new URLSearchParams(params), {
+    method: "POST",
   });
 
   if (!res.ok) {
-    throw new Error('Server error ending meeting');
+    throw new Error("Server error ending meeting");
   }
 }
 

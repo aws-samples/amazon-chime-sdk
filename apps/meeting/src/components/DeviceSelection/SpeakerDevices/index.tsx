@@ -1,14 +1,14 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   SpeakerSelection,
   SecondaryButton,
   useAudioOutputs
-} from 'amazon-chime-sdk-component-library-react';
+} from "amazon-chime-sdk-component-library-react";
 
-import TestSound from '../../../utils/TestSound';
+import TestSound from "../../../utils/TestSound";
 
 const SpeakerDevices = () => {
   const { selectedDevice } = useAudioOutputs();

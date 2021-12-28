@@ -1,7 +1,7 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import React from 'react';
+import React from "react";
 
 import {
   Navbar,
@@ -14,15 +14,15 @@ import {
   ZoomIn,
   ZoomOut,
   useContentShareState,
-} from 'amazon-chime-sdk-component-library-react';
+} from "amazon-chime-sdk-component-library-react";
 
-import { useNavigation } from '../../providers/NavigationProvider';
-import { useAppState } from '../../providers/AppStateProvider';
-import { LocalMediaStreamMetrics } from '../LocalMediaStreamMetrics';
-import { Layout } from '../../types';
-import GalleryLayout from '../../components/icons/GalleryLayout';
-import FeaturedLayout from '../../components/icons/FeaturedLayout';
-import { useVideoTileGridControl } from '../../providers/VideoTileGridProvider';
+import { useNavigation } from "../../providers/NavigationProvider";
+import { useAppState } from "../../providers/AppStateProvider";
+import { LocalMediaStreamMetrics } from "../LocalMediaStreamMetrics";
+import { Layout } from "../../types";
+import GalleryLayout from "../../components/icons/GalleryLayout";
+import FeaturedLayout from "../../components/icons/FeaturedLayout";
+import { useVideoTileGridControl } from "../../providers/VideoTileGridProvider";
 
 const Navigation: React.FC = () => {
   const { toggleRoster, closeNavbar } = useNavigation();
@@ -77,7 +77,7 @@ const Navigation: React.FC = () => {
         <NavbarItem
           icon={<Eye />}
           onClick={toggleTheme}
-          label={theme === 'light' ? 'Dark mode' : 'Light mode'}
+          label={theme === "light" ? "Dark mode" : "Light mode"}
         />
         <NavbarItem
           icon={<SignalStrength />}

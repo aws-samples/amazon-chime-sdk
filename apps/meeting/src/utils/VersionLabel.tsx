@@ -1,9 +1,9 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import React from 'react';
-import { Versioning } from 'amazon-chime-sdk-component-library-react';
-import { Versioning as SDKVersioning } from 'amazon-chime-sdk-js';
+import React from "react";
+import { Versioning } from "amazon-chime-sdk-component-library-react";
+import { Versioning as SDKVersioning } from "amazon-chime-sdk-js";
 
 export const VersionLabel = () => {
   const versionTag = `${Versioning.sdkName}@${Versioning.sdkVersion}`;
@@ -12,11 +12,11 @@ export const VersionLabel = () => {
   return (
     <span
       style={{
-        position: 'absolute',
+        position: "absolute",
         bottom: 1,
         right: 1,
-        color: '#989da5',
-        fontSize: '0.70rem'
+        color: "#989da5",
+        fontSize: "0.70rem"
       }}
     >
       {versionTag} | {sdkVersionTag}

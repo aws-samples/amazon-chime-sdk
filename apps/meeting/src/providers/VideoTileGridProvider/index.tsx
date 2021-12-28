@@ -8,22 +8,22 @@ import {
   useLocalVideo,
   useMeetingManager,
   useRosterState,
-} from 'amazon-chime-sdk-component-library-react';
+} from "amazon-chime-sdk-component-library-react";
 import {
   AudioVideoObserver,
   VideoDownlinkObserver,
   VideoSource,
-} from 'amazon-chime-sdk-js';
-import React, { createContext, useContext, useEffect, useReducer } from 'react';
-import { Layout } from '../../types';
-import { useAppState } from '../AppStateProvider';
+} from "amazon-chime-sdk-js";
+import React, { createContext, useContext, useEffect, useReducer } from "react";
+import { Layout } from "../../types";
+import { useAppState } from "../AppStateProvider";
 import {
   Controls,
   initialState,
   reducer,
   State,
   VideoTileGridAction,
-} from './state';
+} from "./state";
 
 const VideoTileGridStateContext = createContext<State | undefined>(undefined);
 const VideoTileGridControlContext = createContext<Controls | undefined>(undefined);
@@ -180,7 +180,7 @@ const useVideoTileGridState = (): State => {
 
   if (!state) {
     throw new Error(
-      'useVideoTileGridState must be used within a VideoTileGridProvider'
+      "useVideoTileGridState must be used within a VideoTileGridProvider"
     );
   }
 
@@ -191,7 +191,7 @@ const useVideoTileGridControl = (): Controls => {
 
   if (!context) {
     throw new Error(
-      'useVideoTileGridControl must be used within VideoTileGridProvider'
+      "useVideoTileGridControl must be used within VideoTileGridProvider"
     );
   }
   return context;

@@ -1,8 +1,8 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import React, {ChangeEvent, useContext, useState} from 'react';
-import {useHistory} from 'react-router-dom';
+import React, {ChangeEvent, useContext, useState} from "react";
+import {useHistory} from "react-router-dom";
 import {
   Checkbox,
   DeviceLabels,
@@ -16,19 +16,19 @@ import {
   PrimaryButton,
   Select,
   useMeetingManager
-} from 'amazon-chime-sdk-component-library-react';
-import { DefaultBrowserBehavior } from 'amazon-chime-sdk-js';
+} from "amazon-chime-sdk-component-library-react";
+import { DefaultBrowserBehavior } from "amazon-chime-sdk-js";
 
-import {getErrorContext} from '../../providers/ErrorProvider';
-import routes from '../../constants/routes';
-import Card from '../../components/Card';
-import Spinner from '../../components/icons/Spinner';
-import DevicePermissionPrompt from '../DevicePermissionPrompt';
-import RegionSelection from './RegionSelection';
-import {createGetAttendeeCallback, fetchMeeting} from '../../utils/api';
-import {useAppState} from '../../providers/AppStateProvider';
-import {BlurValues, MeetingMode} from '../../types';
-import meetingConfig from '../../meetingConfig';
+import {getErrorContext} from "../../providers/ErrorProvider";
+import routes from "../../constants/routes";
+import Card from "../../components/Card";
+import Spinner from "../../components/icons/Spinner";
+import DevicePermissionPrompt from "../DevicePermissionPrompt";
+import RegionSelection from "./RegionSelection";
+import {createGetAttendeeCallback, fetchMeeting} from "../../utils/api";
+import {useAppState} from "../../providers/AppStateProvider";
+import {BlurValues, MeetingMode} from "../../types";
+import meetingConfig from "../../meetingConfig";
 
 const BLUR_OPTIONS = [
   { value: BlurValues.blurDisabled, label: "Disable Blur" },
@@ -107,14 +107,14 @@ const MeetingForm: React.FC = () => {
         history.push(routes.DEVICE);
       }
     } catch (error) {
-      updateErrorMessage(error.message);
+      updateErrorMessage((error as Error).message);
     }
   };
 
   const closeError = (): void => {
-    updateErrorMessage('');
-    setMeetingId('');
-    setLocalUserName('');
+    updateErrorMessage("");
+    setMeetingId("");
+    setLocalUserName("");
     setIsLoading(false);
   };
 
@@ -129,8 +129,8 @@ const MeetingForm: React.FC = () => {
         value={meetingId}
         infoText="Anyone with access to the meeting ID can join"
         fieldProps={{
-          name: 'meetingId',
-          placeholder: 'Enter Meeting Id',
+          name: "meetingId",
+          placeholder: "Enter Meeting Id",
         }}
         errorText="Please enter a valid meeting ID"
         error={meetingErr}
@@ -146,8 +146,8 @@ const MeetingForm: React.FC = () => {
         label="Name"
         value={localUserName}
         fieldProps={{
-          name: 'name',
-          placeholder: 'Enter Your Name',
+          name: "name",
+          placeholder: "Enter Your Name",
         }}
         errorText="Please enter a valid name"
         error={nameErr}
@@ -213,7 +213,7 @@ const MeetingForm: React.FC = () => {
       <Flex
         container
         layout="fill-space-centered"
-        style={{ marginTop: '2.5rem' }}
+        style={{ marginTop: "2.5rem" }}
       >
         {isLoading ? (
           <Spinner />

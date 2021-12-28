@@ -1,7 +1,7 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import React from 'react';
+import React from "react";
 
 import {
   Modal,
@@ -9,9 +9,9 @@ import {
   ModalHeader,
   DevicePermissionStatus,
   useDevicePermissionStatus
-} from 'amazon-chime-sdk-component-library-react';
+} from "amazon-chime-sdk-component-library-react";
 
-import Card from '../components/Card';
+import Card from "../components/Card";
 
 // Show permission prompt when the user is granting the browser permissions
 // Show nothing if permission is already granted or component loads on initial render
@@ -21,7 +21,7 @@ const DevicePermissionPrompt = () => {
   return permission === DevicePermissionStatus.IN_PROGRESS ? (
     <Modal
       size="md"
-      onClose={(): void => console.log('Permission prompt closed')}
+      onClose={(): void => console.log("Permission prompt closed")}
       rootId="device-permission-modal-root"
     >
       <ModalHeader
