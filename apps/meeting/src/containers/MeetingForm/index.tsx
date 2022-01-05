@@ -96,6 +96,7 @@ const MeetingForm: React.FC = () => {
             : DeviceLabels.AudioAndVideo,
         meetingManagerConfig: {
           ...meetingConfig,
+          enableWebAudio: isWebAudioEnabled,
           simulcastEnabled: enableSimulcast,
         },
       });
