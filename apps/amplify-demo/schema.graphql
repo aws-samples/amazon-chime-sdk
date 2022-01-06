@@ -1,11 +1,15 @@
-type Meeting @model(mutations: {create: "createMeetingGraphQL", delete: "deleteMeetingGraphQL"}, subscriptions: null) @key(fields: ["title"]){
+# This "input" configures a global authorization rule to enable public access to
+# all models in this schema. Learn more about authorization rules here: https://docs.amplify.aws/cli/graphql/authorization-rules
+input AMPLIFY { globalAuthRule: AuthRule = { allow: public } } # FOR TESTING ONLY!
+
+type Meeting @model(mutations: {create: "createMeetingGraphQL", delete: "deleteMeetingGraphQL"}, subscriptions: null) {
   meetingId: String!
-  title: String!
+  title: String! @primaryKey
   data: String!
 }
 
-type Attendee @model(mutations: {create: "createAttendeeGraphQL", delete: "deleteAttendeeGraphQL"}, subscriptions: null) @key(fields: ["attendeeId"]){
-  attendeeId: String!
+type Attendee @model(mutations: {create: "createAttendeeGraphQL", delete: "deleteAttendeeGraphQL"}, subscriptions: null) {
+  attendeeId: String! @primaryKey
   name: String!
 }
 
