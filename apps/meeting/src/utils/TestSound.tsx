@@ -3,7 +3,7 @@
 
 import {
   DefaultAudioMixController,
-  TimeoutScheduler
+  TimeoutScheduler,
 } from 'amazon-chime-sdk-js';
 
 class TestSound {

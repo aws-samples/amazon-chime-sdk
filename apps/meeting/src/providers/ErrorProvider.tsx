@@ -9,7 +9,8 @@ type Props = {
 
 const context = React.createContext({
   errorMessage: '',
-  updateErrorMessage: (_: string) => {}
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  updateErrorMessage: (_errorMessage: string) => {},
 });
 
 export function getErrorContext() {
@@ -26,7 +27,7 @@ export default function ErrorProvider({ children }: Props) {
 
   const providerValue = {
     errorMessage,
-    updateErrorMessage
+    updateErrorMessage,
   };
   return (
     <ErrorContext.Provider value={providerValue}>

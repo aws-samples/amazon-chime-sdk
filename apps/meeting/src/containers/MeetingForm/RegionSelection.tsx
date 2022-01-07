@@ -9,11 +9,11 @@ import getFormattedOptionsForSelect from '../../utils/select-options-format';
 
 const regionalOptions = [
   { value: '', label: 'Select a region' },
-  ...getFormattedOptionsForSelect(AVAILABLE_AWS_REGIONS)
+  ...getFormattedOptionsForSelect(AVAILABLE_AWS_REGIONS),
 ];
 
 interface Props {
-  setRegion: any;
+  setRegion:  React.Dispatch<React.SetStateAction<string>>;
   region: string;
 }
 
@@ -27,8 +27,8 @@ const RegionSelection: React.FC<Props> = ({ setRegion, region }) => {
       }
 
       try {
-        const res = await fetch(`https://nearest-media-region.l.chime.aws`, {
-          method: 'GET'
+        const res = await fetch('https://nearest-media-region.l.chime.aws', {
+          method: 'GET',
         });
 
         if (!res.ok) {
@@ -42,7 +42,7 @@ const RegionSelection: React.FC<Props> = ({ setRegion, region }) => {
           setRegion((region: string) => region || nearestRegion);
         }
       } catch (e) {
-        console.error('Could not fetch nearest region: ', e.message);
+        console.error('Could not fetch nearest region: ', (e as Error).message);
       }
     }
 

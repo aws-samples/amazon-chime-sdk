@@ -5,7 +5,7 @@
 const compression = require('compression');
 const fs = require('fs');
 const url = require('url');
-const uuid = require('uuid/v4');
+const { v4: uuidv4 } = require('uuid');
 const AWS = require('aws-sdk');
 /* eslint-enable */
 
@@ -18,7 +18,7 @@ const chime = new AWS.Chime({ region: 'us-east-1' });
 const alternateEndpoint = process.env.ENDPOINT;
 if (alternateEndpoint) {
   console.log('Using endpoint: ' + alternateEndpoint);
-  chime.createMeeting({ ClientRequestToken: uuid() }, () => {});
+  chime.createMeeting({ ClientRequestToken: uuidv4() }, () => {});
   AWS.NodeHttpClient.sslAgent.options.rejectUnauthorized = false;
   chime.endpoint = new AWS.Endpoint(alternateEndpoint);
 } else {
@@ -43,15 +43,6 @@ const server = require(protocol).createServer(
     compression({})(request, response, () => {});
     try {
       if (
-        request.method === 'GET' &&
-        (request.url === '/' ||
-          request.url === '/v2/' ||
-          request.url.startsWith('/?'))
-      ) {
-        response.statusCode = 200;
-        response.setHeader('Content-Type', 'text/html');
-        response.end(fs.readFileSync(`dist/${app}.html`));
-      } else if (
         request.method === 'POST' &&
         request.url.startsWith('/join?')
       ) {
@@ -63,7 +54,7 @@ const server = require(protocol).createServer(
         if (!meetingCache[title]) {
           meetingCache[title] = await chime
             .createMeeting({
-              ClientRequestToken: uuid(),
+              ClientRequestToken: uuidv4(),
               MediaRegion: region
             })
             .promise();
@@ -77,7 +68,7 @@ const server = require(protocol).createServer(
               await chime
                 .createAttendee({
                   MeetingId: meetingCache[title].Meeting.MeetingId,
-                  ExternalUserId: uuid()
+                  ExternalUserId: uuidv4()
                 })
                 .promise()
             ).Attendee
@@ -114,7 +105,7 @@ const server = require(protocol).createServer(
         if (!meetingCache[title]) {
           meetingCache[title] = await chime
             .createMeeting({
-              ClientRequestToken: uuid()
+              ClientRequestToken: uuidv4()
               // NotificationsConfiguration: {
               //   SqsQueueArn: 'Paste your arn here',
               //   SnsTopicArn: 'Paste your arn here'

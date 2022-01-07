@@ -11,7 +11,7 @@ export interface MetricItemProps {
 
 export const MetricItem: React.FC<MetricItemProps> = ({
   metricName,
-  metricValues
+  metricValues,
 }) => {
   const showMetricItem = metricValues[0] && metricValues[0] !== '';
   return (
@@ -20,7 +20,7 @@ export const MetricItem: React.FC<MetricItemProps> = ({
         <>
           <StyledItemMetricName>{metricName}</StyledItemMetricName>
           {metricValues.map(metricValue => {
-            return <StyledItemMetricValue>{metricValue}</StyledItemMetricValue>;
+            return <StyledItemMetricValue key={metricValue}>{metricValue}</StyledItemMetricValue>;
           })}
         </>
       )}

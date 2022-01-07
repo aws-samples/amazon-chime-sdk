@@ -7,6 +7,7 @@ import { AMAZON_CHIME_VOICE_CONNECTOR_PHONE_NUMDER } from '../../constants';
 export class SIPMeetingManager {
   private region: string;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private meetingData: any = null;
 
   constructor(region = 'us-east-1') {
@@ -26,7 +27,7 @@ export class SIPMeetingManager {
       const joinToken = this.meetingData.JoinInfo.Attendee.JoinToken;
       return `sip:${AMAZON_CHIME_VOICE_CONNECTOR_PHONE_NUMDER}@${voiceConnectorId};transport=tls;X-joinToken=${joinToken}`;
     } catch (error) {
-      throw new Error(error);
+      throw new Error((error as Error).message);
     }
   };
 }

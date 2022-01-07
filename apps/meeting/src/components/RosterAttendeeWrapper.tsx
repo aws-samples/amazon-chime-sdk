@@ -5,7 +5,7 @@ import React from 'react';
 
 import {
   RosterAttendee,
-  useAttendeeStatus
+  useAttendeeStatus,
 } from 'amazon-chime-sdk-component-library-react';
 import VideoStreamMetrics from '../containers/VideoStreamMetrics';
 

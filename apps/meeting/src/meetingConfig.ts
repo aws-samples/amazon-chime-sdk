@@ -4,7 +4,6 @@
 import {
   ConsoleLogger,
   LogLevel,
-  VideoPriorityBasedPolicy
 } from 'amazon-chime-sdk-js';
 import { SDK_LOG_LEVELS } from './constants';
 
@@ -27,15 +26,13 @@ const postLogConfig = {
   logLevel: SDK_LOG_LEVELS.info,
 };
 
-const logger = new ConsoleLogger('SDK', LogLevel.INFO);
-export const priorityBasedPolicy = new VideoPriorityBasedPolicy(logger);
+export const logger = new ConsoleLogger('SDK', LogLevel.INFO);
 
 const config = {
   logLevel,
   simulcastEnabled: false,
   postLogConfig,
   logger,
-  videoDownlinkBandwidthPolicy: priorityBasedPolicy,
 };
 
 export default config;
