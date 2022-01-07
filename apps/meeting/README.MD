@@ -41,3 +41,7 @@ node ./deploy.js -r us-east-1 -b <YOUR-S3-BUCKET-NAME> -s <YOUR-CLOUDFORMATION-S
 ```
 
 The script will create an S3 bucket and CloudFormation stack with Lambda and API Gateway resources required to run the demo. After the script finishes, it will output a URL that can be opened in a browser.
+
+## Contributing
+
+Please check the CONTRIBUTING.md file in `apps/meeting` for more information. Please do not open PRs against the "main" branch for this demo. "main" branch is the stable branch and "meeting-dev" branch is used for contributing.

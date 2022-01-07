@@ -13,12 +13,12 @@ import {
   MessagingSessionObserver,
 } from 'amazon-chime-sdk-js';
 import * as Y from 'yjs';
-import { Observable } from 'lib0/observable.js';
-import * as encoding from 'lib0/encoding.js';
-import * as decoding from 'lib0/decoding.js';
-import * as syncProtocol from 'y-protocols/sync.js';
-import * as mutex from 'lib0/mutex.js';
-import * as awarenessProtocol from 'y-protocols/awareness.js';
+import { Observable } from 'lib0/observable';
+import * as encoding from 'lib0/encoding';
+import * as decoding from 'lib0/decoding';
+import * as syncProtocol from 'y-protocols/sync';
+import * as mutex from 'lib0/mutex';
+import * as awarenessProtocol from 'y-protocols/awareness';
 import { v4 as uuid } from 'uuid';
 import debounce from 'lodash/debounce';
 
