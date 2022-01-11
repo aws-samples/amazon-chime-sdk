@@ -4,7 +4,8 @@
 import React, { useContext, useState, ReactNode } from 'react';
 import { logger } from '../meetingConfig';
 import { VideoPriorityBasedPolicy } from 'amazon-chime-sdk-js';
-import { MeetingMode, Layout, BlurValues } from '../types';
+import { MeetingMode, Layout, BlurValues} from '../types';
+import { JoinMeetingInfo} from '../utils/api';
 
 type Props = {
   children: ReactNode;
@@ -17,16 +18,20 @@ interface AppStateValue {
   region: string;
   isWebAudioEnabled: boolean;
   blurOption: string;
+  isEchoReductionEnabled: boolean;
   meetingMode: MeetingMode;
   enableSimulcast: boolean;
   priorityBasedPolicy: VideoPriorityBasedPolicy | undefined;
   layout: Layout;
+  joinInfo: JoinMeetingInfo | undefined;
   toggleTheme: () => void;
   toggleWebAudio: () => void;
   toggleSimulcast: () => void;
   togglePriorityBasedPolicy: () => void;
   setBlurValue: (blurValue: string) => void;
+  toggleEchoReduction: () => void;
   setMeetingMode: React.Dispatch<React.SetStateAction<MeetingMode>>;
+  setJoinInfo: (joinInfo: JoinMeetingInfo | undefined) => void;
   setLayout: React.Dispatch<React.SetStateAction<Layout>>;
   setMeetingId: React.Dispatch<React.SetStateAction<string>>;
   setLocalUserName: React.Dispatch<React.SetStateAction<string>>;
@@ -54,12 +59,14 @@ export function AppStateProvider({ children }: Props) {
   const [meetingId, setMeetingId] = useState(query.get('meetingId') || '');
   const [region, setRegion] = useState(query.get('region') || '');
   const [meetingMode, setMeetingMode] = useState(MeetingMode.Attendee);
+  const [joinInfo, setJoinInfo] = useState<JoinMeetingInfo | undefined>(undefined);
   const [layout, setLayout] = useState(Layout.Gallery);
   const [localUserName, setLocalUserName] = useState('');
   const [isWebAudioEnabled, setIsWebAudioEnabled] = useState(true);
   const [priorityBasedPolicy, setPriorityBasedPolicy] = useState<VideoPriorityBasedPolicy| undefined>(undefined);
   const [enableSimulcast, setEnableSimulcast] = useState(false);
   const [blurOption, setBlur] = useState(BlurValues.blurDisabled);
+  const [isEchoReductionEnabled, setIsEchoReductionEnabled] = useState(false);
   const [theme, setTheme] = useState(() => {
     const storedTheme = localStorage.getItem('theme');
     return storedTheme || 'light';
@@ -95,15 +102,21 @@ export function AppStateProvider({ children }: Props) {
     setBlur(blurValue);
   };
 
+  const toggleEchoReduction = (): void  => {
+    setIsEchoReductionEnabled(current => !current);
+  };
+
   const providerValue = {
     meetingId,
     localUserName,
     theme,
     isWebAudioEnabled,
     blurOption,
+    isEchoReductionEnabled,
     region,
     meetingMode,
     layout,
+    joinInfo,
     enableSimulcast,
     priorityBasedPolicy,
     toggleTheme,
@@ -111,8 +124,10 @@ export function AppStateProvider({ children }: Props) {
     togglePriorityBasedPolicy,
     toggleSimulcast,
     setBlurValue,
+    toggleEchoReduction,
     setMeetingMode,
     setLayout,
+    setJoinInfo,
     setMeetingId,
     setLocalUserName,
     setRegion,

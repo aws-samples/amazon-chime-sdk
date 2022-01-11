@@ -16,6 +16,13 @@ let options = {};
 
 const chime = new AWS.Chime({ region: 'us-east-1' });
 const alternateEndpoint = process.env.ENDPOINT;
+
+// Optional features like Echo Reduction is only available on Regional Meetings API
+// https://docs.aws.amazon.com/chime/latest/APIReference/API_Operations_Amazon_Chime_SDK_Meetings.html
+const chimeRegional = new AWS.ChimeSDKMeetings({ region: 'us-east-1' });
+const chimeRegionalEndpoint = process.env.REGIONAL_ENDPOINT || 'https://meetings-chime.us-east-1.amazonaws.com';
+chimeRegional.endpoint = new AWS.Endpoint(chimeRegionalEndpoint);
+
 if (alternateEndpoint) {
   console.log('Using endpoint: ' + alternateEndpoint);
   chime.createMeeting({ ClientRequestToken: uuidv4() }, () => {});
@@ -25,6 +32,20 @@ if (alternateEndpoint) {
   chime.endpoint = new AWS.Endpoint(
     'https://service.chime.aws.amazon.com/console'
   );
+}
+
+// return regional API just for Echo Reduction for now.
+function getClientForMeeting(meeting, echoReduction = 'false') {
+  if ( echoReduction === 'true' || (
+    meeting &&
+    meeting.Meeting &&
+    meeting.Meeting.MeetingFeatures &&
+    meeting.Meeting.MeetingFeatures.Audio &&
+    meeting.Meeting.MeetingFeatures.Audio.EchoReduction === 'AVAILABLE')
+  ) {
+      return chimeRegional;
+    }
+  return chime;
 }
 
 const meetingCache = {};
@@ -51,13 +72,22 @@ const server = require(protocol).createServer(
         const name = query.name;
         const region = query.region || 'us-east-1';
 
+        let client = getClientForMeeting(meetingCache[title], query.ns_es);
         if (!meetingCache[title]) {
-          meetingCache[title] = await chime
-            .createMeeting({
-              ClientRequestToken: uuidv4(),
-              MediaRegion: region
-            })
-            .promise();
+          let request = {
+            ClientRequestToken: uuidv4(),
+            MediaRegion: region,
+            ExternalMeetingId: title.substring(0, 64),
+          };
+          if (query.ns_es === 'true') {
+            request.MeetingFeatures = {
+              Audio: {
+                // The EchoReduction parameter helps the user enable and use Amazon Echo Reduction.
+                EchoReduction: 'AVAILABLE'
+              } 
+            };
+          }
+          meetingCache[title] = await client.createMeeting(request).promise();
           attendeeCache[title] = {};
         }
         const joinInfo = {
@@ -65,7 +95,7 @@ const server = require(protocol).createServer(
             Title: title,
             Meeting: meetingCache[title].Meeting,
             Attendee: (
-              await chime
+              await client
                 .createAttendee({
                   MeetingId: meetingCache[title].Meeting.MeetingId,
                   ExternalUserId: uuidv4()
@@ -128,7 +158,8 @@ const server = require(protocol).createServer(
       } else if (request.method === 'POST' && request.url.startsWith('/end?')) {
         const query = url.parse(request.url, true).query;
         const title = query.title;
-        await chime
+        const client = getClientForMeeting(meetingCache[title]);
+        await client
           .deleteMeeting({
             MeetingId: meetingCache[title].Meeting.MeetingId
           })

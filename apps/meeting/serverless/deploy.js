@@ -128,6 +128,7 @@ function ensureApp(appName = app) {
 function ensureTools() {
   spawnOrFail('aws', ['--version']);
   spawnOrFail('sam', ['--version']);
+  spawnOrFail('npm', ['install']);
 }
 
 parseArgs();

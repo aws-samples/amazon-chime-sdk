@@ -48,6 +48,9 @@ const MeetingForm: React.FC = () => {
     priorityBasedPolicy,
     isWebAudioEnabled,
     blurOption: blurValue,
+    setJoinInfo,
+    isEchoReductionEnabled,
+    toggleEchoReduction,
     setBlurValue,
     toggleWebAudio,
     toggleSimulcast,
@@ -85,11 +88,12 @@ const MeetingForm: React.FC = () => {
     meetingManager.getAttendee = createGetAttendeeCallback(id);
 
     try {
-      const { JoinInfo } = await fetchMeeting(id, attendeeName, region);
+      const { JoinInfo } = await fetchMeeting(id, attendeeName, region, isEchoReductionEnabled);
+      setJoinInfo(JoinInfo);
 
       await meetingManager.join({
-        meetingInfo: JoinInfo.Meeting,
-        attendeeInfo: JoinInfo.Attendee,
+        meetingInfo: JoinInfo?.Meeting,
+        attendeeInfo: JoinInfo?.Attendee,
         deviceLabels:
           meetingMode === MeetingMode.Spectator
             ? DeviceLabels.None
@@ -181,6 +185,17 @@ const MeetingForm: React.FC = () => {
         onChange={toggleWebAudio}
         infoText="Enable Web Audio to use Voice Focus"
       />
+      {/* Amazon Chime Echo Reduction is a premium feature, please refer to the Pricing page for details.*/}
+      { isWebAudioEnabled &&
+        <FormField
+          field={Checkbox}
+          label="Enable Echo Reduction"
+          value=""
+          checked={isEchoReductionEnabled}
+          onChange={toggleEchoReduction}
+          infoText="Enable Echo Reduction (new meetings only)"
+        />
+      }
       {/* BlurSelection */}
       <FormField
         field={Select}
