@@ -13,6 +13,8 @@ import {
   Label,
 } from 'amazon-chime-sdk-component-library-react';
 
+import debounce from 'lodash/debounce';
+
 import {
   Persistence,
   MessageType,
@@ -21,7 +23,8 @@ import {
 } from '../../api/ChimeAPI';
 import formatBytes from '../../utilities/formatBytes';
 import AttachmentService from '../../services/AttachmentService';
-import { useChatMessagingState } from '../../providers/ChatMessagesProvider';
+import { useChatMessagingState, useChatChannelState, } from '../../providers/ChatMessagesProvider';
+import { useAuthContext, } from '../../providers/AuthProvider';
 
 import './Input.css';
 
@@ -33,8 +36,6 @@ const uploadObjDefaults = {
   key: '',
 };
 
-import { useAuthContext } from '../../providers/AuthProvider';
-
 const Input = ({ activeChannelArn, member, hasMembership }) => {
   const [text, setText] = useState('');
   const inputRef = useRef();
@@ -42,6 +43,7 @@ const Input = ({ activeChannelArn, member, hasMembership }) => {
   const [uploadObj, setUploadObj] = useState(uploadObjDefaults);
   const notificationDispatch = useNotificationDispatch();
   const { messages, setMessages } = useChatMessagingState();
+  const { activeChannel, } = useChatChannelState();
 
   const { isAnonymous } = useAuthContext();
 
@@ -67,6 +69,24 @@ const Input = ({ activeChannelArn, member, hasMembership }) => {
       inputRef.current.focus();
     }
   }, [activeChannelArn]);
+
+  const eventHandler = async () => {
+    const content = JSON.stringify({Typing: 'Indicator'});
+    await sendChannelMessage(
+        activeChannel.ChannelArn,
+        content,
+        'NON_PERSISTENT',
+        'CONTROL',
+        member,
+    );
+  };
+  const eventHandlerWithDebounce = React.useCallback(debounce(eventHandler, 500), []);
+
+  useEffect(() => {
+    if (text) {
+      eventHandlerWithDebounce();
+    }
+  }, [text]);
 
   const onChange = (e) => {
     setText(e.target.value);
