@@ -19,7 +19,7 @@ interface GetAttendeeResponse {
 export async function fetchMeeting(
   meetingId: string,
   name: string,
-  region: string,
+  region: string
 ): Promise<MeetingResponse> {
   const params = {
     title: encodeURIComponent(meetingId),

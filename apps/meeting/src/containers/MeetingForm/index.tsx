@@ -27,14 +27,14 @@ import DevicePermissionPrompt from '../DevicePermissionPrompt';
 import RegionSelection from './RegionSelection';
 import {createGetAttendeeCallback, fetchMeeting} from '../../utils/api';
 import {useAppState} from '../../providers/AppStateProvider';
-import {BlurValues, MeetingMode} from '../../types';
+import {MeetingMode, VideoFilters} from '../../types';
 import meetingConfig from '../../meetingConfig';
 
-const BLUR_OPTIONS = [
-  { value: BlurValues.blurDisabled, label: 'Disable Blur' },
-  { value: BlurValues.blur10Percent, label: 'Blur CPU 10%' },
-  { value: BlurValues.blur20Percent, label: 'Blur CPU 20%' },
-  { value: BlurValues.blur40Percent, label: 'Blur CPU 40%' },
+const VIDEO_TRANSFORM_FILTER_OPTIONS = [
+  { value:VideoFilters.FilterDisabled, label: 'Disable Video Filter' }, 
+  { value:VideoFilters.Filter10Percent, label: 'Video Filter CPU 10%' }, 
+  { value:VideoFilters.Filter20Percent, label: 'Video Filter CPU 20%' }, 
+  { value:VideoFilters.Filter40Percent, label: 'Video Filter CPU 40%' },
 ];
 
 const MeetingForm: React.FC = () => {
@@ -48,6 +48,7 @@ const MeetingForm: React.FC = () => {
     priorityBasedPolicy,
     isWebAudioEnabled,
     blurOption: blurValue,
+    videoTransformCpuUtilization: videoTransformCpuUtilization,
     setBlurValue,
     toggleWebAudio,
     toggleSimulcast,
@@ -56,6 +57,7 @@ const MeetingForm: React.FC = () => {
     setMeetingId,
     setLocalUserName,
     setRegion,
+    setCpuUtilization,
   } = useAppState();
   const [meetingErr, setMeetingErr] = useState(false);
   const [nameErr, setNameErr] = useState(false);
@@ -181,15 +183,15 @@ const MeetingForm: React.FC = () => {
         onChange={toggleWebAudio}
         infoText="Enable Web Audio to use Voice Focus"
       />
-      {/* BlurSelection */}
+      {/* Background Video Transform Selections */}
       <FormField
         field={Select}
-        options={BLUR_OPTIONS}
+        options={VIDEO_TRANSFORM_FILTER_OPTIONS}
         onChange={(e: ChangeEvent<HTMLSelectElement>): void => {
-          setBlurValue(e.target.value);
+          setCpuUtilization(e.target.value);
         }}
-        value={blurValue}
-        label="Blur"
+        value={videoTransformCpuUtilization}
+        label="Background Filters CPU Utilization"
       />
       {/* Video uplink and downlink policies */}
       { browserBehavior.isSimulcastSupported() &&

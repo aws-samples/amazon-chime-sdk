@@ -51,3 +51,16 @@ export const BlurValues = {
   blur20Percent: '20',
   blur40Percent: '40',
 };
+
+export const VideoFilters = {
+  FilterDisabled: '0',
+  Filter10Percent: '10',
+  Filter20Percent: '20',
+  Filter40Percent: '40',
+};
+
+export const VIDEO_TRANSFORM_OPTIONS = {
+  none: 'None',
+  blur: 'Background Blur',
+  replacement: 'Background Replacement',
+};

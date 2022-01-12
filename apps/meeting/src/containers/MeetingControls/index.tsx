@@ -6,7 +6,6 @@ import {
   ControlBar,
   AudioInputVFControl,
   AudioInputControl,
-  VideoInputBackgroundBlurControl,
   ContentShareControl,
   AudioOutputControl,
   ControlBarButton,
@@ -19,14 +18,14 @@ import EndMeetingControl from '../EndMeetingControl';
 import { useNavigation } from '../../providers/NavigationProvider';
 import { StyledControls } from './Styled';
 import { useAppState } from '../../providers/AppStateProvider';
-import { BlurValues } from '../../types';
-
+import { VideoFilters } from '../../types';
+import VideoInputTransformControl from '../../components/MeetingControls/VideoInputTransformControl';
 
 const MeetingControls: React.FC = () => {
   const { toggleNavbar, closeRoster, showRoster } = useNavigation();
   const { isUserActive } = useUserActivityState();
-  const { isWebAudioEnabled, blurOption } = useAppState();
-  const isBackgroundBlurEnabled = blurOption !== BlurValues.blurDisabled;
+  const { isWebAudioEnabled, videoTransformCpuUtilization } = useAppState();
+  const videoTransformsEnabled = videoTransformCpuUtilization !=VideoFilters.FilterDisabled;
 
   const handleToggle = (): void => {
     if (showRoster) {
@@ -49,7 +48,7 @@ const MeetingControls: React.FC = () => {
           label="Menu"
         />
         { isWebAudioEnabled ? <AudioInputVFControl /> :  <AudioInputControl /> }
-        { isBackgroundBlurEnabled ? <VideoInputBackgroundBlurControl/> : <VideoInputControl/> }
+        { videoTransformsEnabled ? <VideoInputTransformControl /> : <VideoInputControl/> }
         <ContentShareControl />
         <AudioOutputControl />
         <EndMeetingControl />

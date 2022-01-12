@@ -8,15 +8,16 @@ import {
   QualitySelection,
   CameraSelection,
   Label,
-  BackgroundBlurCheckbox,
 } from 'amazon-chime-sdk-component-library-react';
 
 import { title, StyledInputGroup } from '../Styled';
 import { useAppState } from '../../../providers/AppStateProvider';
-import { BlurValues } from '../../../types';
+import { VideoFilters } from '../../../types';
+import { VideoTransformDropdown } from '../CameraDevices/VideoTransformDropdown';
 
 const CameraDevices = () => {
-  const { blurOption } = useAppState();
+  const { videoTransformCpuUtilization } = useAppState();
+  const videoTransformsEnabled = videoTransformCpuUtilization !=VideoFilters.FilterDisabled;
   return (
     <div>
       <Heading tag="h2" level={6} css={title}>
@@ -28,9 +29,9 @@ const CameraDevices = () => {
       <StyledInputGroup>
         <QualitySelection />
       </StyledInputGroup>
-      { blurOption !== BlurValues.blurDisabled ?
+      { videoTransformsEnabled ?
         <StyledInputGroup>
-          <BackgroundBlurCheckbox />
+          <VideoTransformDropdown />
         </StyledInputGroup> : ''
       }
       <Label style={{ display: 'block', marginBottom: '.5rem' }}>
