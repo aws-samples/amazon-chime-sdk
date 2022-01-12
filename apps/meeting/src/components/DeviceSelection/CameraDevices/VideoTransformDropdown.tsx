@@ -33,9 +33,13 @@ export const VideoTransformDropdown: React.FC<Props> = ({
     meetingManager.selectedVideoInputTransformDevice
   );
 
+  interface optionsType{
+    label:string,
+    value:string
+  }
+  
   // Available background filter options
-  // @ts-ignore
-  const options: {}[] = [
+  const options: optionsType[] = [
     {
       label: VIDEO_TRANSFORM_OPTIONS.none,
       value: VIDEO_TRANSFORM_OPTIONS.none,

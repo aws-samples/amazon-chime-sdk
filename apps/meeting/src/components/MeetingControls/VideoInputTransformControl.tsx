@@ -7,7 +7,7 @@ import {
   VideoTransformDevice,
 } from 'amazon-chime-sdk-js';
 import React, { ReactNode, useEffect, useState } from 'react';
-// @ts-ignore
+
 import isEqual from 'lodash.isequal';
 
 import { useBackgroundBlur } from 'amazon-chime-sdk-component-library-react';
@@ -144,7 +144,6 @@ const VideoInputTransformControl: React.FC<Props> = ({
       <PopOverItem
         key={option.deviceId}
         // @ts-ignore
-        children={<><span>{option.label}</span></>}
         checked={isOptionActive(selectedDevice, option.deviceId)}
         onClick={async (): Promise<void> => {
           // If background blur/replacement is on, then re-use the same video transform pipeline, but replace the inner device
@@ -164,42 +163,43 @@ const VideoInputTransformControl: React.FC<Props> = ({
             await meetingManager.selectVideoInputDevice(option.deviceId);
           }
         }}
-      />
+      >
+        <><span>{option.label}</span></>
+      </PopOverItem>
+
     ));
     if (isBackgroundBlurSupported) {
       const videoTransformOptions: ReactNode = (
         <PopOverItem
           key="backgroundBlurFilter"
-          children={
-            <>
-              {isLoading && <Spinner width="1.5rem" height="1.5rem" />}
-              {backgroundBlurLabel}
-            </>
-          }
           checked={activeTransform == VIDEO_TRANSFORM_OPTIONS.blur}
           disabled={isLoading}
           onClick={toggleBackgroundBlur}
-        />
+        >
+          <>
+            {isLoading && <Spinner width="1.5rem" height="1.5rem" />}
+            {backgroundBlurLabel}
+          </>
+        </PopOverItem>
       );
-      deviceOptions.push(<PopOverSeparator key="separator" />);
+      deviceOptions.push(<PopOverSeparator key="separator1" />);
       deviceOptions.push(videoTransformOptions);
     }
     if (isBackgroundReplacementSupported) {
       const videoTransformOptions: ReactNode = (
         <PopOverItem
           key="backgroundReplacementFilter"
-          children={
-            <>
-              {isLoading && <Spinner width="1.5rem" height="1.5rem" />}
-              {backgroundReplacementLabel}
-            </>
-          }
           checked={activeTransform == VIDEO_TRANSFORM_OPTIONS.replacement}
           disabled={isLoading}
           onClick={toggleBackgroundReplacement}
-        />
+        >
+          <>
+            {isLoading && <Spinner width="1.5rem" height="1.5rem" />}
+            {backgroundReplacementLabel}
+          </>
+        </PopOverItem>
       );
-      deviceOptions.push(<PopOverSeparator key="separator" />);
+      deviceOptions.push(<PopOverSeparator key="separator2" />);
       deviceOptions.push(videoTransformOptions);
     }
 
@@ -220,8 +220,9 @@ const VideoInputTransformControl: React.FC<Props> = ({
       icon={<Camera disabled={!isVideoEnabled} />}
       onClick={toggleVideo}
       label={label}
-      children={dropdownWithVideoTransformOptions}
-    />
+    >
+      {dropdownWithVideoTransformOptions}
+    </ControlBarButton>
   );
 };
 

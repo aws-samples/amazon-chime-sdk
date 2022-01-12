@@ -45,12 +45,6 @@ export enum Layout {
   Featured,
 }
 
-export const BlurValues = {
-  blurDisabled: '0',
-  blur10Percent: '10',
-  blur20Percent: '20',
-  blur40Percent: '40',
-};
 
 export const VideoFilters = {
   FilterDisabled: '0',

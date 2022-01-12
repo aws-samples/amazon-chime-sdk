@@ -4,7 +4,7 @@
 import React, { useContext, useState, ReactNode, useEffect } from 'react';
 import { logger } from '../meetingConfig';
 import { VideoPriorityBasedPolicy } from 'amazon-chime-sdk-js';
-import { MeetingMode, Layout, BlurValues, VideoFilters } from '../types';
+import { MeetingMode, Layout, VideoFilters } from '../types';
 
 type Props = {
   children: ReactNode;
@@ -16,7 +16,6 @@ interface AppStateValue {
   theme: string;
   region: string;
   isWebAudioEnabled: boolean;
-  blurOption: string;
   videoTransformCpuUtilization: string;
   imageBlob: Blob | undefined;
   meetingMode: MeetingMode;
@@ -27,14 +26,13 @@ interface AppStateValue {
   toggleWebAudio: () => void;
   toggleSimulcast: () => void;
   togglePriorityBasedPolicy: () => void;
-  setBlurValue: (blurValue: string) => void;
   setCpuUtilization: (videoTransformCpuUtilization: string) => void;
   setMeetingMode: React.Dispatch<React.SetStateAction<MeetingMode>>;
   setLayout: React.Dispatch<React.SetStateAction<Layout>>;
   setMeetingId: React.Dispatch<React.SetStateAction<string>>;
   setLocalUserName: React.Dispatch<React.SetStateAction<string>>;
   setRegion: React.Dispatch<React.SetStateAction<string>>;
-  setBlob: (imageBlob: any) => void;
+  setBlob: (imageBlob: Blob) => void;
 }
 
 const AppStateContext = React.createContext<AppStateValue | null>(null);
@@ -63,7 +61,6 @@ export function AppStateProvider({ children }: Props) {
   const [isWebAudioEnabled, setIsWebAudioEnabled] = useState(true);
   const [priorityBasedPolicy, setPriorityBasedPolicy] = useState<VideoPriorityBasedPolicy| undefined>(undefined);
   const [enableSimulcast, setEnableSimulcast] = useState(false);
-  const [blurOption, setBlur] = useState(BlurValues.blurDisabled);
   const [theme, setTheme] = useState(() => {
     const storedTheme = localStorage.getItem('theme');
     return storedTheme || 'light';
@@ -121,16 +118,11 @@ export function AppStateProvider({ children }: Props) {
     }
   };
 
-  const setBlurValue = (blurValue: string): void  => {
-    setBlur(blurValue);
-  };
-
   const setCpuUtilization = (filterValue: string): void => {
     setCpuPercentage(filterValue);
   };
 
-  const setBlob = (imageBlob: any): void => {
-    console.log('blob was changed');
+  const setBlob = (imageBlob: Blob): void => {
     setImageBlob(imageBlob);
   };
 
@@ -139,7 +131,6 @@ export function AppStateProvider({ children }: Props) {
     localUserName,
     theme,
     isWebAudioEnabled,
-    blurOption,
     videoTransformCpuUtilization,
     imageBlob,
     region,
@@ -151,7 +142,6 @@ export function AppStateProvider({ children }: Props) {
     toggleWebAudio,
     togglePriorityBasedPolicy,
     toggleSimulcast,
-    setBlurValue,
     setCpuUtilization,
     setMeetingMode,
     setLayout,
