@@ -18,14 +18,14 @@ import EndMeetingControl from '../EndMeetingControl';
 import { useNavigation } from '../../providers/NavigationProvider';
 import { StyledControls } from './Styled';
 import { useAppState } from '../../providers/AppStateProvider';
-import { VideoFilters } from '../../types';
+import { VideoFiltersCpuUtilization } from '../../types';
 import VideoInputTransformControl from '../../components/MeetingControls/VideoInputTransformControl';
 
 const MeetingControls: React.FC = () => {
   const { toggleNavbar, closeRoster, showRoster } = useNavigation();
   const { isUserActive } = useUserActivityState();
   const { isWebAudioEnabled, videoTransformCpuUtilization } = useAppState();
-  const videoTransformsEnabled = videoTransformCpuUtilization !=VideoFilters.FilterDisabled;
+  const videoTransformsEnabled = videoTransformCpuUtilization != VideoFiltersCpuUtilization.Disabled;
 
   const handleToggle = (): void => {
     if (showRoster) {

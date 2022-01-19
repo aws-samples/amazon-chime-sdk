@@ -12,12 +12,12 @@ import {
 
 import { title, StyledInputGroup } from '../Styled';
 import { useAppState } from '../../../providers/AppStateProvider';
-import { VideoFilters } from '../../../types';
+import { VideoFiltersCpuUtilization } from '../../../types';
 import { VideoTransformDropdown } from '../CameraDevices/VideoTransformDropdown';
 
 const CameraDevices = () => {
   const { videoTransformCpuUtilization } = useAppState();
-  const videoTransformsEnabled = videoTransformCpuUtilization !=VideoFilters.FilterDisabled;
+  const videoTransformsEnabled = videoTransformCpuUtilization != VideoFiltersCpuUtilization.Disabled;
   return (
     <div>
       <Heading tag="h2" level={6} css={title}>

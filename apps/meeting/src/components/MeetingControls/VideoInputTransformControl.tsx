@@ -32,10 +32,9 @@ interface Props {
   label?: string;
   /** The label that will be shown for the background blur button, it defaults to 'Enable Background Blur'. */
   backgroundBlurLabel?: string;
-  /** The label that will be shown for the background replacement button, it defaults to 'Enabled Background Replacement'. */
+  /** The label that will be shown for the background replacement button, it defaults to 'Enable Background Replacement'. */
   backgroundReplacementLabel?: string;
 }
-
 
 const VideoInputTransformControl: React.FC<Props> = ({
   label = 'Video',
@@ -62,15 +61,19 @@ const VideoInputTransformControl: React.FC<Props> = ({
     };
   }, []);
 
+  // Reset the video input to intrinsic if current video input is a transform device because this component does not know if blur or replacement was selected.
+  // This depends on how the demo is set up.
+  // TODO: use a hook in the appState to track whether blur or replacement was selected before this component mounts.
   async function resetDeviceToIntrinsic() {
     let current = activeVideoDevice;
     if (isVideoTransformDevice(current)) {
       const intrinsicDevice = await current.intrinsicDevice();
       current = intrinsicDevice;
+      await meetingManager.selectVideoInputDevice(current);
     }
-    await meetingManager.selectVideoInputDevice(current);
   }
 
+  // Toggle background blur on/off.
   async function toggleBackgroundBlur() {
     let current = activeVideoDevice;
     
@@ -80,18 +83,18 @@ const VideoInputTransformControl: React.FC<Props> = ({
     setIsLoading(true);
 
     if (!isVideoTransformDevice(current)) {
-      // Enable video transform on the non-transformed device
+      // Enable video transform on the default device.
       current = await createBackgroundBlurDevice(current) as VideoTransformDevice;
       meetingManager.logger?.info('Video filter turned on - selecting video transform device: ' + JSON.stringify(current));
     } else {
-      // Switch back to intrinsicDevice
+      // Switch back to intrinsicDevice.
       const intrinsicDevice = await current.intrinsicDevice();
-      // Stop existing VideoTransformDevice
+      // Stop existing VideoTransformDevice.
       await current.stop();
 
       current = intrinsicDevice;
       
-      // Switch to background blur device if old selection was background replacement
+      // Switch to background blur device if old selection was background replacement otherwise switch to default intrinsic device.
       if (activeTransform == VIDEO_TRANSFORM_OPTIONS.replacement) {
         current = await createBackgroundBlurDevice(current) as VideoTransformDevice;
         meetingManager.logger?.info('Video filter was turned on - video transform device: ' + JSON.stringify(current));
@@ -99,8 +102,10 @@ const VideoInputTransformControl: React.FC<Props> = ({
         meetingManager.logger?.info('Video filter was turned off - selecting inner device: ' + JSON.stringify(current));
       }
     }
+    // Use the new created video device as input.
     await meetingManager.selectVideoInputDevice(current);
 
+    // Update the current selected transform.
     setActiveTransform(activeTransform => activeTransform == VIDEO_TRANSFORM_OPTIONS.blur ? VIDEO_TRANSFORM_OPTIONS.none : VIDEO_TRANSFORM_OPTIONS.blur);
     setIsLoading(false);
   }
@@ -114,18 +119,18 @@ const VideoInputTransformControl: React.FC<Props> = ({
     setIsLoading(true);
 
     if (!isVideoTransformDevice(current)) {
-      // Enable video transform on the non-transformed device
+      // Enable video transform on the non-transformed device.
       current = await createBackgroundReplacementDevice(current) as VideoTransformDevice;
       meetingManager.logger?.info('Video filter turned on - selecting video transform device: ' + JSON.stringify(current));
     } else {
-      // Switch back to intrinsicDevic
+      // Switch back to intrinsicDevic.
       const intrinsicDevice = await current.intrinsicDevice();
-      // Stop existing VideoTransformDevice
+      // Stop existing VideoTransformDevice.
       await current.stop();
       
       current = intrinsicDevice;
       
-      // Switch to background replacement device if old selection was background blur
+      // Switch to background replacement device if old selection was background blur otherwise switch to default intrinsic device.
       if (activeTransform == VIDEO_TRANSFORM_OPTIONS.blur) {
         current = await createBackgroundReplacementDevice(current) as VideoTransformDevice;
         meetingManager.logger?.info('Video filter turned on - selecting video transform device: ' + JSON.stringify(current));
@@ -133,8 +138,10 @@ const VideoInputTransformControl: React.FC<Props> = ({
         meetingManager.logger?.info('Video filter was turned off - selecting inner device: ' + JSON.stringify(current));
       }
     }
-
+    // Use the new created video device as input.
     await meetingManager.selectVideoInputDevice(current);
+    
+    // Update the current selected transform.
     setActiveTransform(activeTransform => activeTransform == VIDEO_TRANSFORM_OPTIONS.replacement ? VIDEO_TRANSFORM_OPTIONS.none : VIDEO_TRANSFORM_OPTIONS.replacement);
     setIsLoading(false);
   }
@@ -168,6 +175,7 @@ const VideoInputTransformControl: React.FC<Props> = ({
       </PopOverItem>
 
     ));
+    // Add 'Enable Background Blur' to the selection dropwdown as an option if it's offered/supported.
     if (isBackgroundBlurSupported) {
       const videoTransformOptions: ReactNode = (
         <PopOverItem
@@ -185,6 +193,7 @@ const VideoInputTransformControl: React.FC<Props> = ({
       deviceOptions.push(<PopOverSeparator key="separator1" />);
       deviceOptions.push(videoTransformOptions);
     }
+    // Add 'Enable Background Replacement' to the selection dropwdown as an option if it's offered/supported.
     if (isBackgroundReplacementSupported) {
       const videoTransformOptions: ReactNode = (
         <PopOverItem

@@ -27,14 +27,14 @@ import DevicePermissionPrompt from '../DevicePermissionPrompt';
 import RegionSelection from './RegionSelection';
 import {createGetAttendeeCallback, fetchMeeting} from '../../utils/api';
 import {useAppState} from '../../providers/AppStateProvider';
-import {MeetingMode, VideoFilters} from '../../types';
+import {MeetingMode, VideoFiltersCpuUtilization} from '../../types';
 import meetingConfig from '../../meetingConfig';
 
 const VIDEO_TRANSFORM_FILTER_OPTIONS = [
-  { value:VideoFilters.FilterDisabled, label: 'Disable Video Filter' }, 
-  { value:VideoFilters.Filter10Percent, label: 'Video Filter CPU 10%' }, 
-  { value:VideoFilters.Filter20Percent, label: 'Video Filter CPU 20%' }, 
-  { value:VideoFilters.Filter40Percent, label: 'Video Filter CPU 40%' },
+  { value:VideoFiltersCpuUtilization.Disabled, label: 'Disable Video Filter' }, 
+  { value:VideoFiltersCpuUtilization.CPU10Percent, label: 'Video Filter CPU 10%' }, 
+  { value:VideoFiltersCpuUtilization.CPU20Percent, label: 'Video Filter CPU 20%' }, 
+  { value:VideoFiltersCpuUtilization.CPU40Percent, label: 'Video Filter CPU 40%' },
 ];
 
 const MeetingForm: React.FC = () => {

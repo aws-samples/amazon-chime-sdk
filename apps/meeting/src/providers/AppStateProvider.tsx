@@ -4,7 +4,7 @@
 import React, { useContext, useState, ReactNode, useEffect } from 'react';
 import { logger } from '../meetingConfig';
 import { VideoPriorityBasedPolicy } from 'amazon-chime-sdk-js';
-import { MeetingMode, Layout, VideoFilters } from '../types';
+import { MeetingMode, Layout, VideoFiltersCpuUtilization } from '../types';
 
 type Props = {
   children: ReactNode;
@@ -65,7 +65,7 @@ export function AppStateProvider({ children }: Props) {
     const storedTheme = localStorage.getItem('theme');
     return storedTheme || 'light';
   });
-  const [videoTransformCpuUtilization, setCpuPercentage] = useState(VideoFilters.Filter40Percent);
+  const [videoTransformCpuUtilization, setCpuPercentage] = useState(VideoFiltersCpuUtilization.CPU40Percent);
   const [imageBlob, setImageBlob] = useState<Blob | undefined>(undefined);
   
   useEffect(() => {

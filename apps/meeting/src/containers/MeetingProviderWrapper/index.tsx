@@ -23,7 +23,7 @@ import { Meeting, Home, DeviceSetup } from '../../views';
 import MeetingEventObserver from '../MeetingEventObserver';
 import meetingConfig from '../../meetingConfig';
 import { useAppState } from '../../providers/AppStateProvider';
-import { VideoFilters } from '../../types';
+import { VideoFiltersCpuUtilization } from '../../types';
 
 const MeetingProviderWithDeviceReplacement: React.FC = ({ children }) => {
   const { addVoiceFocus } = useVoiceFocus();
@@ -49,7 +49,7 @@ const MeetingProviderWithDeviceReplacement: React.FC = ({ children }) => {
 
 const MeetingProviderWrapper: React.FC = () => {
   const { isWebAudioEnabled, videoTransformCpuUtilization, imageBlob } = useAppState();
-  const isFilterEnabled = videoTransformCpuUtilization !== VideoFilters.FilterDisabled;
+  const isFilterEnabled = videoTransformCpuUtilization !== VideoFiltersCpuUtilization.Disabled;
 
   const meetingConfigValue = {
     ...meetingConfig,
