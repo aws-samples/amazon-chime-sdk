@@ -75,14 +75,14 @@ export function AppStateProvider({ children }: Props) {
       canvas.width = 500; 
       canvas.height = 500;
       const ctx = canvas.getContext('2d');
-      if(ctx != null){
+      if(ctx !== null){
         const grd = ctx.createLinearGradient(0, 0, 250, 0);
         grd.addColorStop(0, '#000428');
         grd.addColorStop(1, '#004e92');
         ctx.fillStyle = grd;
         ctx.fillRect(0, 0, 500, 500);
         canvas.toBlob(function(blob){
-          if(blob != null){
+          if(blob !== null){
             console.log('loaded canvas', canvas, blob);
             setImageBlob(blob);
           }
