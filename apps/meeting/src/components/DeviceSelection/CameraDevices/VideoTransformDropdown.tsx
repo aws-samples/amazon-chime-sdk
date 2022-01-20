@@ -44,11 +44,11 @@ export const VideoTransformDropdown: React.FC<Props> = ({
     },
     {
       label: VideoTransformOptions.Blur,
-      value: isBackgroundBlurSupported === undefined || isBackgroundBlurSupported == false ? 'Background Blur not supported' : VideoTransformOptions.Blur,
+      value: isBackgroundBlurSupported === undefined || isBackgroundBlurSupported === false ? 'Background Blur not supported' : VideoTransformOptions.Blur,
     },
     {
       label: VideoTransformOptions.Replacement,
-      value: isBackgroundReplacementSupported === undefined || isBackgroundReplacementSupported == false ? 'Background Replacement not supported' : VideoTransformOptions.Replacement, 
+      value: isBackgroundReplacementSupported === undefined || isBackgroundReplacementSupported === false ? 'Background Replacement not supported' : VideoTransformOptions.Replacement, 
     },
   ];
 
@@ -77,9 +77,9 @@ export const VideoTransformDropdown: React.FC<Props> = ({
       }
       // If the new selection is `Background Blur` then create a blur device. Else if the new selected transform is replacement then create
       // a replacement device. Otherwise, the user selected `None` therefore do nothing because currentDevice is the intrinisc from the above logic.
-      if (selectedTransform == VideoTransformOptions.Blur && isBackgroundBlurSupported) {
+      if (selectedTransform === VideoTransformOptions.Blur && isBackgroundBlurSupported) {
         currentDevice = await createBackgroundBlurDevice(activeVideoDevice as Device);
-      } else if (selectedTransform == VideoTransformOptions.Replacement && isBackgroundReplacementSupported) {
+      } else if (selectedTransform === VideoTransformOptions.Replacement && isBackgroundReplacementSupported) {
         currentDevice = await createBackgroundReplacementDevice(activeVideoDevice as Device);
       }
       // Select the newly created device from the above logic as the video input device.
