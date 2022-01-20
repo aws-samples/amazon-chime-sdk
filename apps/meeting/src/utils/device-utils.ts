@@ -1,6 +1,5 @@
 import { DefaultDeviceController, Device } from 'amazon-chime-sdk-js';
 
-
 export const videoInputSelectionToDevice = (deviceId: string): Device => {
   if (deviceId === 'blue') {
     return DefaultDeviceController.synthesizeVideoDevice('blue');

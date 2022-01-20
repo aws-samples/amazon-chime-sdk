@@ -25,7 +25,7 @@ const MeetingControls: React.FC = () => {
   const { toggleNavbar, closeRoster, showRoster } = useNavigation();
   const { isUserActive } = useUserActivityState();
   const { isWebAudioEnabled, videoTransformCpuUtilization } = useAppState();
-  const videoTransformsEnabled = videoTransformCpuUtilization != VideoFiltersCpuUtilization.Disabled;
+  const videoTransformsEnabled = videoTransformCpuUtilization !== VideoFiltersCpuUtilization.Disabled;
 
   const handleToggle = (): void => {
     if (showRoster) {

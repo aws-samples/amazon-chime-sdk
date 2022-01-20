@@ -115,7 +115,7 @@ const MeetingProviderWrapper: React.FC = () => {
   const getMeetingProviderWithFeatures = (): React.ReactNode => {
     let children = getMeetingProviderWrapper();
 
-    if(isFilterEnabled){
+    if (isFilterEnabled) {
       children = getWrapperWithVideoFilter(children);
     }
     if (isWebAudioEnabled) {

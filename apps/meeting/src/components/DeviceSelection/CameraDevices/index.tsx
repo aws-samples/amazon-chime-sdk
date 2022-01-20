@@ -17,7 +17,7 @@ import { VideoTransformDropdown } from '../CameraDevices/VideoTransformDropdown'
 
 const CameraDevices = () => {
   const { videoTransformCpuUtilization } = useAppState();
-  const videoTransformsEnabled = videoTransformCpuUtilization != VideoFiltersCpuUtilization.Disabled;
+  const videoTransformsEnabled = videoTransformCpuUtilization !== VideoFiltersCpuUtilization.Disabled;
   return (
     <div>
       <Heading tag="h2" level={6} css={title}>

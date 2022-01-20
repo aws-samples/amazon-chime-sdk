@@ -31,10 +31,10 @@ import {MeetingMode, VideoFiltersCpuUtilization} from '../../types';
 import meetingConfig from '../../meetingConfig';
 
 const VIDEO_TRANSFORM_FILTER_OPTIONS = [
-  { value:VideoFiltersCpuUtilization.Disabled, label: 'Disable Video Filter' }, 
-  { value:VideoFiltersCpuUtilization.CPU10Percent, label: 'Video Filter CPU 10%' }, 
-  { value:VideoFiltersCpuUtilization.CPU20Percent, label: 'Video Filter CPU 20%' }, 
-  { value:VideoFiltersCpuUtilization.CPU40Percent, label: 'Video Filter CPU 40%' },
+  { value: VideoFiltersCpuUtilization.Disabled, label: 'Disable Video Filter' }, 
+  { value: VideoFiltersCpuUtilization.CPU10Percent, label: 'Video Filter CPU 10%' }, 
+  { value: VideoFiltersCpuUtilization.CPU20Percent, label: 'Video Filter CPU 20%' }, 
+  { value: VideoFiltersCpuUtilization.CPU40Percent, label: 'Video Filter CPU 40%' },
 ];
 
 const MeetingForm: React.FC = () => {
