@@ -64,7 +64,7 @@ export const VideoTransformDropdown: React.FC<Props> = ({
     const selectedTransform = e.target.value;
     let currentDevice = activeVideoDevice;
 
-    if (isLoading || currentDevice == null) {
+    if (isLoading || currentDevice === null) {
       return;
     }
     try {
