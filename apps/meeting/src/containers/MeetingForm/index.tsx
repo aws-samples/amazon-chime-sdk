@@ -46,11 +46,13 @@ const MeetingForm: React.FC = () => {
     meetingMode,
     enableSimulcast,
     priorityBasedPolicy,
+    keepLastFrameWhenPaused,
     isWebAudioEnabled,
     videoTransformCpuUtilization: videoTransformCpuUtilization,
     toggleWebAudio,
     toggleSimulcast,
     togglePriorityBasedPolicy,
+    toggleKeepLastFrameWhenPaused,
     setMeetingMode,
     setMeetingId,
     setLocalUserName,
@@ -98,6 +100,8 @@ const MeetingForm: React.FC = () => {
           ...meetingConfig,
           enableWebAudio: isWebAudioEnabled,
           simulcastEnabled: enableSimulcast,
+          videoDownlinkBandwidthPolicy: priorityBasedPolicy,
+          keepLastFrameWhenPaused: keepLastFrameWhenPaused,
         },
       });
       if (meetingMode === MeetingMode.Spectator) {
@@ -211,6 +215,13 @@ const MeetingForm: React.FC = () => {
           onChange={togglePriorityBasedPolicy}
         />
       }
+      <FormField
+        field={Checkbox}
+        label="Keep Last Frame When Paused"
+        value=""
+        checked={keepLastFrameWhenPaused}
+        onChange={toggleKeepLastFrameWhenPaused}
+      />
       <Flex
         container
         layout="fill-space-centered"
