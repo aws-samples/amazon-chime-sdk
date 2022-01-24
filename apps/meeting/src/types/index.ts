@@ -45,9 +45,22 @@ export enum Layout {
   Featured,
 }
 
-export const BlurValues = {
-  blurDisabled: '0',
-  blur10Percent: '10',
-  blur20Percent: '20',
-  blur40Percent: '40',
+// Different CPU Utilizations percentage options for initializing background blur and replacement processors
+export const VideoFiltersCpuUtilization = {
+  Disabled: '0',
+  CPU10Percent: '10',
+  CPU20Percent: '20',
+  CPU40Percent: '40',
 };
+
+// Video Transform Options 
+export const VideoTransformOptions = {
+  None: 'None',
+  Blur: 'Background Blur',
+  Replacement: 'Background Replacement',
+};
+
+export type VideoTransformDropdownOptionType = {
+  label: string,
+  value: string,
+}

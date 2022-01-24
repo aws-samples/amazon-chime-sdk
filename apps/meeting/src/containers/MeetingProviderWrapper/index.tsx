@@ -10,6 +10,7 @@ import {
 } from 'amazon-chime-sdk-js';
 import {
   BackgroundBlurProvider,
+  BackgroundReplacementProvider,
   MeetingProvider,
   useVoiceFocus,
   VoiceFocusProvider,
@@ -22,7 +23,7 @@ import { Meeting, Home, DeviceSetup } from '../../views';
 import MeetingEventObserver from '../MeetingEventObserver';
 import meetingConfig from '../../meetingConfig';
 import { useAppState } from '../../providers/AppStateProvider';
-import { BlurValues } from '../../types';
+import { VideoFiltersCpuUtilization } from '../../types';
 
 const MeetingProviderWithDeviceReplacement: React.FC = ({ children }) => {
   const { addVoiceFocus } = useVoiceFocus();
@@ -47,8 +48,8 @@ const MeetingProviderWithDeviceReplacement: React.FC = ({ children }) => {
 };
 
 const MeetingProviderWrapper: React.FC = () => {
-  const { isWebAudioEnabled, blurOption } = useAppState();
-  const isBackgroundBlurEnabled = blurOption !== BlurValues.blurDisabled;
+  const { isWebAudioEnabled, videoTransformCpuUtilization, imageBlob } = useAppState();
+  const isFilterEnabled = videoTransformCpuUtilization !== VideoFiltersCpuUtilization.Disabled;
 
   const meetingConfigValue = {
     ...meetingConfig,
@@ -88,15 +89,17 @@ const MeetingProviderWrapper: React.FC = () => {
     );
   };
 
-  const getMeetingProviderWrapperWithBGBlur = (children: React.ReactNode) => {
-    let filterCPUUtilization = parseInt(blurOption,10);
+  const getWrapperWithVideoFilter = (children: React.ReactNode) => {
+    let filterCPUUtilization = parseInt(videoTransformCpuUtilization,10);
     if (!filterCPUUtilization) {
       filterCPUUtilization = 40;
     }
-    console.log(`Using ${filterCPUUtilization} CPU utilization for background blur`);
+    console.log(`Using ${filterCPUUtilization} background blur and replacement`);
     return (
       <BackgroundBlurProvider options={{filterCPUUtilization}} >
-        {children}
+        <BackgroundReplacementProvider options={{imageBlob, filterCPUUtilization}} >
+          {children}
+        </BackgroundReplacementProvider>
       </BackgroundBlurProvider>
     );
   };
@@ -112,8 +115,8 @@ const MeetingProviderWrapper: React.FC = () => {
   const getMeetingProviderWithFeatures = (): React.ReactNode => {
     let children = getMeetingProviderWrapper();
 
-    if (isBackgroundBlurEnabled) {
-      children = getMeetingProviderWrapperWithBGBlur(children);
+    if (isFilterEnabled) {
+      children = getWrapperWithVideoFilter(children);
     }
     if (isWebAudioEnabled) {
       children = getMeetingProviderWrapperWithVF(children);
@@ -125,7 +128,7 @@ const MeetingProviderWrapper: React.FC = () => {
 
   return (
     <>
-      {getMeetingProviderWithFeatures()}
+      {imageBlob === undefined ? <div>Loading Assets</div> :getMeetingProviderWithFeatures()}
     </>
   );
 };
