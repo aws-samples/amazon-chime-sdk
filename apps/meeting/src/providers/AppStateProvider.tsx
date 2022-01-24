@@ -21,11 +21,13 @@ interface AppStateValue {
   meetingMode: MeetingMode;
   enableSimulcast: boolean;
   priorityBasedPolicy: VideoPriorityBasedPolicy | undefined;
+  keepLastFrameWhenPaused: boolean;
   layout: Layout;
   toggleTheme: () => void;
   toggleWebAudio: () => void;
   toggleSimulcast: () => void;
   togglePriorityBasedPolicy: () => void;
+  toggleKeepLastFrameWhenPaused: () => void;
   setCpuUtilization: (videoTransformCpuUtilization: string) => void;
   setMeetingMode: React.Dispatch<React.SetStateAction<MeetingMode>>;
   setLayout: React.Dispatch<React.SetStateAction<Layout>>;
@@ -61,6 +63,7 @@ export function AppStateProvider({ children }: Props) {
   const [isWebAudioEnabled, setIsWebAudioEnabled] = useState(true);
   const [priorityBasedPolicy, setPriorityBasedPolicy] = useState<VideoPriorityBasedPolicy| undefined>(undefined);
   const [enableSimulcast, setEnableSimulcast] = useState(false);
+  const [keepLastFrameWhenPaused, setKeepLastFrameWhenPaused] = useState(false);
   const [theme, setTheme] = useState(() => {
     const storedTheme = localStorage.getItem('theme');
     return storedTheme || 'light';
@@ -118,6 +121,10 @@ export function AppStateProvider({ children }: Props) {
     }
   };
 
+  const toggleKeepLastFrameWhenPaused = (): void => {
+    setKeepLastFrameWhenPaused(current => !current);
+  };
+
   const setCpuUtilization = (filterValue: string): void => {
     setCpuPercentage(filterValue);
   };
@@ -138,9 +145,11 @@ export function AppStateProvider({ children }: Props) {
     layout,
     enableSimulcast,
     priorityBasedPolicy,
+    keepLastFrameWhenPaused,
     toggleTheme,
     toggleWebAudio,
     togglePriorityBasedPolicy,
+    toggleKeepLastFrameWhenPaused,
     toggleSimulcast,
     setCpuUtilization,
     setMeetingMode,
