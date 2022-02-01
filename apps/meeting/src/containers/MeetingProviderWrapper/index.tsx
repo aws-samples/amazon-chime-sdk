@@ -6,6 +6,7 @@ import { Route, Switch } from 'react-router-dom';
 import {
   AudioTransformDevice,
   Device,
+  VoiceFocusModelName,
   VoiceFocusTransformDevice,
 } from 'amazon-chime-sdk-js';
 import {
@@ -48,7 +49,9 @@ const MeetingProviderWithDeviceReplacement: React.FC = ({ children }) => {
 };
 
 const MeetingProviderWrapper: React.FC = () => {
-  const { isWebAudioEnabled, videoTransformCpuUtilization, imageBlob } = useAppState();
+
+  const { isWebAudioEnabled, videoTransformCpuUtilization, imageBlob, joinInfo } = useAppState();
+
   const isFilterEnabled = videoTransformCpuUtilization !== VideoFiltersCpuUtilization.Disabled;
 
   const meetingConfigValue = {
@@ -79,9 +82,31 @@ const MeetingProviderWrapper: React.FC = () => {
     );
   };
 
+  function voiceFocusName(name: string): VoiceFocusModelName {
+    if (name && ['default', 'ns_es'].includes(name)) {
+      return name as VoiceFocusModelName;
+    }
+    return 'default';
+  }
+
+  function getVoiceFocusSpecName(): VoiceFocusModelName {
+    if (
+      joinInfo && 
+      joinInfo.Meeting?.MeetingFeatures?.Audio?.EchoReduction === 'AVAILABLE'
+    ) {
+      return voiceFocusName('ns_es');
+    }
+    return voiceFocusName('default');
+  }
+
+  const vfConfigValue = {
+    spec: {name: getVoiceFocusSpecName()},
+    createMeetingResponse: joinInfo,
+  };
+
   const getMeetingProviderWrapperWithVF = (children: React.ReactNode) => {
     return (
-      <VoiceFocusProvider>
+      <VoiceFocusProvider {...vfConfigValue}>
         <MeetingProviderWithDeviceReplacement>
           {children}
         </MeetingProviderWithDeviceReplacement>

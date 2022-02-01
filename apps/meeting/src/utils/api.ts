@@ -5,11 +5,21 @@ import routes from '../constants/routes';
 
 export const BASE_URL = routes.HOME;
 
+export type MeetingFeatures = {
+  Audio: {[key: string]: string};
+}
+
+export type CreateMeetingResponse = {
+  MeetingFeatures: MeetingFeatures;
+}
+
+export type JoinMeetingInfo = {
+  Meeting: CreateMeetingResponse;
+  Attendee: string;
+}
+
 interface MeetingResponse {
-  JoinInfo: {
-    Attendee: string;
-    Meeting: string;
-  };
+  JoinInfo: JoinMeetingInfo;
 }
 
 interface GetAttendeeResponse {
@@ -20,11 +30,13 @@ export async function fetchMeeting(
   meetingId: string,
   name: string,
   region: string,
+  echoReductionCapability = false
 ): Promise<MeetingResponse> {
   const params = {
     title: encodeURIComponent(meetingId),
     name: encodeURIComponent(name),
     region: encodeURIComponent(region),
+    ns_es: String(echoReductionCapability),
   };
 
   const res = await fetch(BASE_URL + 'join?' + new URLSearchParams(params), {
