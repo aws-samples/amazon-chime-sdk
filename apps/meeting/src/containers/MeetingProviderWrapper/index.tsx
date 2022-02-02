@@ -56,6 +56,11 @@ const MeetingProviderWrapper: React.FC = () => {
     enableWebAudio: isWebAudioEnabled,
   };
 
+  const [count, updateCount] = React.useState(10);
+  console.warn('MeetingProviderWrapper::rendering::count=', count);
+  const forceUpdate = React.useCallback(() => updateCount(count + 1), [count]);
+  (window as any).forceUpdate = forceUpdate;
+
   const getMeetingProviderWrapper = () => {
     return (
       <>
@@ -96,7 +101,7 @@ const MeetingProviderWrapper: React.FC = () => {
     }
     console.log(`Using ${filterCPUUtilization} background blur and replacement`);
     return (
-      <BackgroundBlurProvider options={{filterCPUUtilization}} >
+      <BackgroundBlurProvider options={{blurStrength: 20}} >
         <BackgroundReplacementProvider options={{imageBlob, filterCPUUtilization}} >
           {children}
         </BackgroundReplacementProvider>
