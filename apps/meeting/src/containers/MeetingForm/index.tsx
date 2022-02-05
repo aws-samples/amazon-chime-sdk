@@ -46,11 +46,16 @@ const MeetingForm: React.FC = () => {
     meetingMode,
     enableSimulcast,
     priorityBasedPolicy,
+    keepLastFrameWhenPaused,
     isWebAudioEnabled,
     videoTransformCpuUtilization: videoTransformCpuUtilization,
+    setJoinInfo,
+    isEchoReductionEnabled,
+    toggleEchoReduction,
     toggleWebAudio,
     toggleSimulcast,
     togglePriorityBasedPolicy,
+    toggleKeepLastFrameWhenPaused,
     setMeetingMode,
     setMeetingId,
     setLocalUserName,
@@ -85,11 +90,12 @@ const MeetingForm: React.FC = () => {
     meetingManager.getAttendee = createGetAttendeeCallback(id);
 
     try {
-      const { JoinInfo } = await fetchMeeting(id, attendeeName, region);
+      const { JoinInfo } = await fetchMeeting(id, attendeeName, region, isEchoReductionEnabled);
+      setJoinInfo(JoinInfo);
 
       await meetingManager.join({
-        meetingInfo: JoinInfo.Meeting,
-        attendeeInfo: JoinInfo.Attendee,
+        meetingInfo: JoinInfo?.Meeting,
+        attendeeInfo: JoinInfo?.Attendee,
         deviceLabels:
           meetingMode === MeetingMode.Spectator
             ? DeviceLabels.None
@@ -98,6 +104,8 @@ const MeetingForm: React.FC = () => {
           ...meetingConfig,
           enableWebAudio: isWebAudioEnabled,
           simulcastEnabled: enableSimulcast,
+          videoDownlinkBandwidthPolicy: priorityBasedPolicy,
+          keepLastFrameWhenPaused: keepLastFrameWhenPaused,
         },
       });
       if (meetingMode === MeetingMode.Spectator) {
@@ -181,6 +189,18 @@ const MeetingForm: React.FC = () => {
         onChange={toggleWebAudio}
         infoText="Enable Web Audio to use Voice Focus"
       />
+      {/* Amazon Chime Echo Reduction is a premium feature, please refer to the Pricing page for details.*/}
+      { isWebAudioEnabled &&
+        <FormField
+          field={Checkbox}
+          label="Enable Echo Reduction"
+          value=""
+          checked={isEchoReductionEnabled}
+          onChange={toggleEchoReduction}
+          infoText="Enable Echo Reduction (new meetings only)"
+        />
+      }
+      {/* BlurSelection */}
       {/* Background Video Transform Selections */}
       <FormField
         field={Select}
@@ -211,6 +231,13 @@ const MeetingForm: React.FC = () => {
           onChange={togglePriorityBasedPolicy}
         />
       }
+      <FormField
+        field={Checkbox}
+        label="Keep Last Frame When Paused"
+        value=""
+        checked={keepLastFrameWhenPaused}
+        onChange={toggleKeepLastFrameWhenPaused}
+      />
       <Flex
         container
         layout="fill-space-centered"
