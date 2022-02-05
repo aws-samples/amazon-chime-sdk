@@ -35,6 +35,13 @@ export const VideoTransformDropdown: React.FC<Props> = ({
   const [activeVideoDevice, setDevice] = useState<Device | VideoTransformDevice | null>(
     meetingManager.selectedVideoInputTransformDevice
   );
+
+  // useEffect to listen on selected video input device if changed by other components
+  useEffect(() => {
+    if(!isVideoTransformDevice(meetingManager.selectedVideoInputTransformDevice) && transformOption !== VideoTransformOptions.None){
+      setTransformOption(VideoTransformOptions.None);
+    }
+  },[meetingManager.selectedVideoInputTransformDevice]);
   
   // Available background filter options based off if Background Blur and Replacement ware offered/supported.
   const options: VideoTransformDropdownOptionType[] = [
@@ -78,9 +85,9 @@ export const VideoTransformDropdown: React.FC<Props> = ({
       // If the new selection is `Background Blur` then create a blur device. Else if the new selected transform is replacement then create
       // a replacement device. Otherwise, the user selected `None` therefore do nothing because currentDevice is the intrinisc from the above logic.
       if (selectedTransform === VideoTransformOptions.Blur && isBackgroundBlurSupported) {
-        currentDevice = await createBackgroundBlurDevice(activeVideoDevice as Device);
+        currentDevice = await createBackgroundBlurDevice(currentDevice as Device);
       } else if (selectedTransform === VideoTransformOptions.Replacement && isBackgroundReplacementSupported) {
-        currentDevice = await createBackgroundReplacementDevice(activeVideoDevice as Device);
+        currentDevice = await createBackgroundReplacementDevice(currentDevice as Device);
       }
       // Select the newly created device from the above logic as the video input device.
       await meetingManager.selectVideoInputDevice(currentDevice);
