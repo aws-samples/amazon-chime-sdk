@@ -13,6 +13,7 @@ import ChannelsWrapper from '../../containers/channels/ChannelsWrapper';
 import ChannelPresence from "../../containers/Presence/ChannelPresence";
 import Messages from '../../containers/messages/Messages';
 import Input from '../../containers/input/Input';
+import TypingIndicator from "../../containers/TypingIndicator";
 import { useChatChannelState, useChatMessagingState, } from '../../providers/ChatMessagesProvider';
 import { useAuthContext } from '../../providers/AuthProvider';
 import { PresenceAutoStatus, PresenceMode, toPresenceMap, toPresenceMessage, } from "../../utilities/presence";
@@ -68,8 +69,8 @@ const Channels = () => {
     });
   };
 
-  function handleLogout() {
-    return async () => {
+  async function publishOfflineStatus() {
+    if (activeChannel && activeChannel.ChannelArn) {
       const presenceMap = toPresenceMap(activeChannel.Metadata);
       const customPresenceExists = presenceMap && presenceMap[member.userId];
       if (!customPresenceExists) {
@@ -81,6 +82,12 @@ const Channels = () => {
             member,
         );
       }
+    }
+  }
+
+  function handleLogout() {
+    return async () => {
+      await publishOfflineStatus();
       userSignOut();
     };
   }
@@ -156,6 +163,7 @@ const Channels = () => {
                   channelName={activeChannel.Name}
                   userId={member.userId}
                 />
+                <TypingIndicator/>
                 <Input
                   style={{
                     borderTop: `solid 1px ${currentTheme.colors.greys.grey40}`,

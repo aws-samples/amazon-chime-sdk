@@ -49,6 +49,7 @@ const MessagingProvider = ({ children }) => {
   const [activeChannelMembershipsWithPresence, setActiveChannelMembershipsWithPresence] = useState([]);
   const activeChannelRef = useRef(activeChannel.ChannelArn);
   const [channelList, setChannelList] = useState([]);
+  const [typingIndicator, setTypingIndicator] = useState(null);
   const [unreadChannels, setUnreadChannels] = useState([]);
   const unreadChannelsListRef = useRef(unreadChannels);
   const hasMembership =
@@ -245,7 +246,21 @@ const MessagingProvider = ({ children }) => {
             const meetingInfo = JSON.parse(record.Content);
             setMeetingInfo(meetingInfo);
             break;
-          };
+          }
+        }
+
+        // Process typing indicator control message
+        if (record.Content && record.Content.match(/Typing/)) {
+          if (record.Sender.Arn !== createMemberArn(member.userId)) {
+            if (activeChannelRef.current.ChannelArn === record?.ChannelArn) {
+              const indicator = {
+                SenderName: record.Sender.Name,
+                LastUpdatedTimestamp: record.LastUpdatedTimestamp
+              }
+              setTypingIndicator(indicator);
+            }
+            break;
+          }
         }
 
         // Process channel presence status control message
@@ -415,6 +430,8 @@ const MessagingProvider = ({ children }) => {
     setChannelList,
     setUnreadChannels,
     setMeetingInfo,
+    typingIndicator,
+    setTypingIndicator,
   };
   return (
     <ChatMessagingServiceContext.Provider value={messagingService}>
