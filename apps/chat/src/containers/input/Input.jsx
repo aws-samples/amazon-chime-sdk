@@ -14,13 +14,16 @@ import {
 } from 'amazon-chime-sdk-component-library-react';
 
 import {
+  Persistence,
+  MessageType,
   sendChannelMessage,
   getChannelMessage,
 } from '../../api/ChimeAPI';
 import formatBytes from '../../utilities/formatBytes';
-import './Input.css';
 import AttachmentService from '../../services/AttachmentService';
 import { useChatMessagingState } from '../../providers/ChatMessagesProvider';
+
+import './Input.css';
 
 const uploadObjDefaults = {
   name: '',
@@ -100,7 +103,8 @@ const Input = ({ activeChannelArn, member, hasMembership }) => {
         sendMessageResponse = await sendChannelMessage(
           activeChannelArn,
           text || ' ',
-          'PERSISTENT',
+          Persistence.PERSISTENT,
+          MessageType.STANDARD,
           member,
           options
         );
@@ -115,7 +119,7 @@ const Input = ({ activeChannelArn, member, hasMembership }) => {
         throw new Error(`Failed uploading... ${err}`);
       }
     } else {
-      sendMessageResponse = await sendChannelMessage(activeChannelArn, text, 'PERSISTENT', member);
+      sendMessageResponse = await sendChannelMessage(activeChannelArn, text, Persistence.PERSISTENT, MessageType.STANDARD, member);
     }
     resetState();
     if (sendMessageResponse.response.Status == 'PENDING') {

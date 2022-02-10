@@ -14,6 +14,7 @@ import {
   BanModal,
   JoinMeetingModal,
   ManageChannelFlowModal,
+  SetCustomStatusModal,
 } from '../../components/ChannelModals';
 
 const ModalManager = ({
@@ -39,6 +40,7 @@ const ModalManager = ({
   banUser,
   unbanUser,
   activeChannelFlow,
+  setCustomStatus,
 }) => {
   if (!modal) {
     return null;
@@ -138,6 +140,13 @@ const ModalManager = ({
           channel={activeChannel}
           handleChannelDeletion={handleChannelDeletion}
         />
+      );
+    case 'CustomStatus':
+      return (
+          <SetCustomStatusModal
+              onClose={() => setModal('')}
+              setCustomStatus={setCustomStatus}
+          />
       );
     case 'JoinMeeting':
       return (

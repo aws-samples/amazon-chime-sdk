@@ -1,0 +1,38 @@
+#custom-status-form {
+  display: flex;
+  flex-direction: column;
+  margin-top: 1rem;
+}
+
+.custom-status-form-field-input {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  margin: auto auto 10pt;
+}
+
+.custom-status-form-field-input-div {
+  min-width: 50%;
+}
+
+.custom-status-form-field-input .lbl {
+  display: flex;
+  padding: 1rem 0;
+  flex-direction: column;
+  margin-top: 0.5rem;
+  min-width: 10%;
+}
+
+.custom-status-form-field-input .value {
+  display: flex;
+  width: 100%;
+  margin: auto 0;
+  padding-top: 1rem;
+  padding-left: 0;
+  flex-direction: column;
+}
+
+.custom-status-form-field-input .max-length-lbl {
+  display: flex;
+  font-size: 9pt;
+}
