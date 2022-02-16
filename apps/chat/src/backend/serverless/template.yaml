@@ -75,7 +75,7 @@ Resources:
           CHIME_APP_INSTANCE_ADMIN_ID: !Sub ${AppInstanceAdminId}
       Handler: "index.handler"
       Code:
-          S3Bucket: aws-blog-business-productivity-chime-sdk.s3.amazonaws.com
+          S3Bucket: aws-blog-business-productivity-chime-sdk
           S3Key: presence-demo-assets/custom-presence-channel-processor.zip
       MemorySize: 128
       Role: !GetAtt PresenceProcessorLambdaRole.Arn
