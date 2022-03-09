@@ -10,7 +10,9 @@ exports.lambdaHandler = async (event, context, callback) => {
 
     case 'HANGUP':
       console.log('HANGUP');
-      const hangupId = callIdToHangup(event.CallDetails.Participants);
+      const hangupId = participants.filter(
+        ({ Status }) => Status === 'Connected',
+      )?.[0]?.CallId;
       if (hangupId) {
         hangupAction.Parameters.CallId = hangupId;
         actions = [hangupAction];
@@ -288,13 +290,3 @@ const resumeCallRecordingAction = {
     CallId: '', //required - Allowed values – A valid call ID
   },
 };
-function callIdToHangup(participants) {
-  var hangupId = participants.filter(function (participant) {
-    return participant.Status == 'Connected';
-  });
-  if (typeof hangupId[0] == 'undefined') {
-    return false;
-  } else {
-    return hangupId[0].CallId;
-  }
-}
