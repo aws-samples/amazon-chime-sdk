@@ -10,7 +10,7 @@ exports.lambdaHandler = async (event, context, callback) => {
 
     case 'HANGUP':
       console.log('HANGUP');
-      const hangupId = participants.filter(
+      const hangupId = event.CallDetails.Participants.filter(
         ({ Status }) => Status === 'Connected',
       )?.[0]?.CallId;
       if (hangupId) {
