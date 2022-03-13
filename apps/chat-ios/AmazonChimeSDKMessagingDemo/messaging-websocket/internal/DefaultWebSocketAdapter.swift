@@ -41,7 +41,7 @@ public class DefaultWebSocketAdapter: WebSocketAdapter, WebSocketDelegate {
                 print("DefaultWebSocketAdapter websocket is disconnected: \(reason) with code: \(code)")
                 observer?.onClose(status: MessagingSessionStatus(code: Int(code), reason: reason))
             case .text(let string):
-                print("DefaultWebSocketAdapter text received: \(string)")
+                print("DefaultWebSocketAdapter text received")
                 observer?.onMessage(message: string)
             case .binary(let data):
                 print("DefaultWebSocketAdapter binary received: \(data.count)")

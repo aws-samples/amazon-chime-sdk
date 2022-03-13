@@ -1,6 +1,6 @@
 # README - React Meeting Demo
 
-This is the SDK react meeting demo app. It shows how to use the Amazon Chime SDK and Chime SDK UI Component Library to build a react meeting app. Since it incorporates Amazon Voice Focus feature, please make sure your device meets the minimum requirement based on [Browser compatibility](https://github.com/aws/amazon-chime-sdk-js/blob/master/guides/09_Amazon_Voice_Focus.md#browser-compatibility).
+This is the SDK react meeting demo app. It shows how to use the Amazon Chime SDK and Chime SDK UI Component Library to build a react meeting app. Since it incorporates Amazon Voice Focus feature, please make sure your device meets the minimum requirement based on [Browser compatibility](https://github.com/aws/amazon-chime-sdk-js/blob/master/guides/09_Amazon_Voice_Focus.md#browser-compatibility). If you want to use premium feature like Amazon Chime Echo Reduction, the aws-sdk version is required to be at least 2.1034.0.
 
 ## To run the demo app locally:
 
@@ -41,3 +41,7 @@ node ./deploy.js -r us-east-1 -b <YOUR-S3-BUCKET-NAME> -s <YOUR-CLOUDFORMATION-S
 ```
 
 The script will create an S3 bucket and CloudFormation stack with Lambda and API Gateway resources required to run the demo. After the script finishes, it will output a URL that can be opened in a browser.
+
+## Contributing
+
+Please check the CONTRIBUTING.md file in `apps/meeting` for more information. Please do not open PRs against the "main" branch for this demo. "main" branch is the stable branch and "meeting-dev" branch is used for contributing.

@@ -6,26 +6,24 @@
 // SPDX-License-Identifier: MIT-0
 
 import React from 'react';
-import {
-  Heading,
-  Grid,
-  Cell,
-  useNotificationDispatch,
-} from 'amazon-chime-sdk-component-library-react';
+import { Cell, Grid, Heading, useNotificationDispatch, } from 'amazon-chime-sdk-component-library-react';
 import { useTheme } from 'styled-components';
+
 import ChannelsWrapper from '../../containers/channels/ChannelsWrapper';
+import ChannelPresence from "../../containers/Presence/ChannelPresence";
 import Messages from '../../containers/messages/Messages';
 import Input from '../../containers/input/Input';
-import './style.css';
-import {
-  useChatChannelState,
-  useChatMessagingState,
-} from '../../providers/ChatMessagesProvider';
+import TypingIndicator from "../../containers/TypingIndicator";
+import { useChatChannelState, useChatMessagingState, } from '../../providers/ChatMessagesProvider';
 import { useAuthContext } from '../../providers/AuthProvider';
+import { PresenceAutoStatus, PresenceMode, toPresenceMap, toPresenceMessage, } from "../../utilities/presence";
+import { MessageType, Persistence, sendChannelMessage, } from "../../api/ChimeAPI";
+
+import './style.css';
 
 const Channels = () => {
   const currentTheme = useTheme();
-
+  const { activeChannelMemberships } = useChatChannelState();
   const { member, userSignOut } = useAuthContext();
   const {
     messages,
@@ -71,6 +69,31 @@ const Channels = () => {
     });
   };
 
+  async function publishOfflineStatus() {
+    if (activeChannel && activeChannel.ChannelArn) {
+      const presenceMap = toPresenceMap(activeChannel.Metadata);
+      const customPresenceExists = presenceMap && presenceMap[member.userId];
+      if (!customPresenceExists) {
+        await sendChannelMessage(
+            activeChannel.ChannelArn,
+            toPresenceMessage(PresenceMode.Auto, PresenceAutoStatus.Offline, true),
+            Persistence.NON_PERSISTENT,
+            MessageType.CONTROL,
+            member,
+        );
+      }
+    }
+  }
+
+  function handleLogout() {
+    return async () => {
+      await publishOfflineStatus();
+      userSignOut();
+    };
+  }
+
+  const showChannelMembers = () => !(activeChannel && JSON.parse(activeChannel.Metadata || '{}').isMeeting) && activeChannelMemberships.length > 1;
+
   return (
     <Grid
       gridTemplateColumns="1fr 10fr"
@@ -78,7 +101,7 @@ const Channels = () => {
       style={{ width: '100vw', height: '100vh' }}
       gridTemplateAreas='
       "heading heading"
-      "side main"      
+      "side main"
       '
     >
       <Cell gridArea="heading">
@@ -102,7 +125,7 @@ const Channels = () => {
               </span>
             </a>
 
-            <a href="#" onClick={userSignOut}>
+            <a href="#" onClick={handleLogout()}>
               Log out
             </a>
           </div>
@@ -124,29 +147,37 @@ const Channels = () => {
         {/* MAIN CHAT CONTENT WINDOW */}
         {activeChannel.ChannelArn ? (
           <>
-            <div className="messaging-container">
-              <Messages
-                messages={messages}
-                messagesRef={messagesRef}
-                setMessages={setMessages}
-                currentMember={member}
-                onReceiveMessage={onReceiveMessage}
-                setChannelList={setChannelList}
-                channelList={channelList}
-                channelArn={activeChannelRef.current.ChannelArn}
-                setChannelMessageToken={setChannelMessageToken}
-                activeChannelRef={activeChannelRef}
-                channelName={activeChannel.Name}
-                userId={member.userId}
-              />
-              <Input
-                style={{
-                  borderTop: `solid 1px ${currentTheme.colors.greys.grey40}`,
-                }}
-                activeChannelArn={activeChannel.ChannelArn}
-                member={member}
-                hasMembership={hasMembership}
-              />
+            <div className={"channel-content-container " + (showChannelMembers() ? "channel-content-container-grid" : "")}>
+              <div className="messaging-container">
+                <Messages
+                  messages={messages}
+                  messagesRef={messagesRef}
+                  setMessages={setMessages}
+                  currentMember={member}
+                  onReceiveMessage={onReceiveMessage}
+                  setChannelList={setChannelList}
+                  channelList={channelList}
+                  channelArn={activeChannelRef.current.ChannelArn}
+                  setChannelMessageToken={setChannelMessageToken}
+                  activeChannelRef={activeChannelRef}
+                  channelName={activeChannel.Name}
+                  userId={member.userId}
+                />
+                <TypingIndicator/>
+                <Input
+                  style={{
+                    borderTop: `solid 1px ${currentTheme.colors.greys.grey40}`,
+                  }}
+                  activeChannelArn={activeChannel.ChannelArn}
+                  member={member}
+                  hasMembership={hasMembership}
+                />
+              </div>
+              {showChannelMembers() &&
+              <div className="channel-members-container">
+                <ChannelPresence/>
+              </div>
+              }
             </div>
           </>
         ) : (

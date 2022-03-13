@@ -15,7 +15,7 @@ const RemoteVideo: React.FC<Props> = ({ videoEleRef, enabled }) => (
       display: enabled ? 'block' : 'none',
       objectFit: 'cover',
       height: '100%',
-      width: '100%'
+      width: '100%',
     }}
     ref={videoEleRef}
   />

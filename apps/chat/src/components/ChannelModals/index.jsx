@@ -12,3 +12,4 @@ export { ViewChannelDetailsModal } from './ViewChannelDetailsModal';
 export { ViewMembersModal } from './ViewMembersModal';
 export { EditChannelModal } from './EditChannelModal';
 export { BanModal } from './BanModal';
+export { SetCustomStatusModal } from './SetCustomStatusModal';

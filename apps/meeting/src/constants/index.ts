@@ -51,4 +51,4 @@ export const SDK_LOG_LEVELS = {
   'warn': LogLevel.WARN,
   'error': LogLevel.ERROR,
   'off': LogLevel.OFF,
-}
+};

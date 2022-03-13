@@ -7,12 +7,17 @@ import {
   PreviewVideo,
   QualitySelection,
   CameraSelection,
-  Label
+  Label,
 } from 'amazon-chime-sdk-component-library-react';
 
 import { title, StyledInputGroup } from '../Styled';
+import { useAppState } from '../../../providers/AppStateProvider';
+import { VideoFiltersCpuUtilization } from '../../../types';
+import { VideoTransformDropdown } from '../CameraDevices/VideoTransformDropdown';
 
 const CameraDevices = () => {
+  const { videoTransformCpuUtilization } = useAppState();
+  const videoTransformsEnabled = videoTransformCpuUtilization !== VideoFiltersCpuUtilization.Disabled;
   return (
     <div>
       <Heading tag="h2" level={6} css={title}>
@@ -24,6 +29,11 @@ const CameraDevices = () => {
       <StyledInputGroup>
         <QualitySelection />
       </StyledInputGroup>
+      { videoTransformsEnabled ?
+        <StyledInputGroup>
+          <VideoTransformDropdown />
+        </StyledInputGroup> : ''
+      }
       <Label style={{ display: 'block', marginBottom: '.5rem' }}>
         Video preview
       </Label>

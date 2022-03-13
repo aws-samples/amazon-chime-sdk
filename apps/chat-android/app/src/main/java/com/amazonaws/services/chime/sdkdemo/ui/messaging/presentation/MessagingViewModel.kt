@@ -5,6 +5,7 @@
 
 package com.amazonaws.services.chime.sdkdemo.ui.messaging.presentation
 
+import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
@@ -19,10 +20,11 @@ import com.amazonaws.services.chime.sdk.messaging.session.MessagingSessionConfig
 import com.amazonaws.services.chime.sdk.messaging.session.MessagingSessionObserver
 import com.amazonaws.services.chime.sdk.messaging.session.MessagingSessionStatus
 import com.amazonaws.services.chime.sdk.messaging.utils.logger.ConsoleLogger
+import com.amazonaws.services.chime.sdkdemo.common.APP_INSTANCE_USER_NOT_FOUND
 import com.amazonaws.services.chime.sdkdemo.common.MESSAGING_SERVICE_REGION
+import com.amazonaws.services.chime.sdkdemo.common.PASSWORD_KEY
 import com.amazonaws.services.chime.sdkdemo.common.SESSION_ID
-import com.amazonaws.services.chime.sdkdemo.common.extensions.formatTo
-import com.amazonaws.services.chime.sdkdemo.common.extensions.toDate
+import com.amazonaws.services.chime.sdkdemo.common.USERNAME_KEY
 import com.amazonaws.services.chime.sdkdemo.data.ChannelMessage
 import com.amazonaws.services.chime.sdkdemo.data.User
 import com.amazonaws.services.chime.sdkdemo.data.onFailure
@@ -33,8 +35,14 @@ import com.amazonaws.services.chime.sdkdemo.ui.base.Error
 import com.amazonaws.services.chime.sdkdemo.ui.base.Loading
 import com.amazonaws.services.chime.sdkdemo.ui.base.Success
 import com.amazonaws.services.chime.sdkdemo.ui.base.ViewState
+import com.amazonaws.services.chimesdkmessaging.model.ListChannelMessagesResult
+import com.amazonaws.services.chimesdkmessaging.model.MessageAttributeValue
+import com.amazonaws.services.chimesdkmessaging.model.PushNotificationConfiguration
+import com.google.gson.FieldNamingPolicy
+import com.google.gson.GsonBuilder
+import java.util.logging.Logger
+import kotlin.collections.set
 import kotlinx.coroutines.launch
-import org.json.JSONObject
 
 class MessagingViewModel(
     private val userRepository: UserRepository,
@@ -42,6 +50,8 @@ class MessagingViewModel(
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel(), MessagingSessionObserver {
     val messageEditing = MutableLiveData<String>()
+    private val gson = GsonBuilder().setFieldNamingStrategy(FieldNamingPolicy.UPPER_CAMEL_CASE).create()
+    private val log = Logger.getLogger("MessagingViewModel")
 
     private val _items: MutableLiveData<List<ChannelMessage>> = MutableLiveData(mutableListOf())
     val items: LiveData<List<ChannelMessage>> = _items
@@ -51,77 +61,96 @@ class MessagingViewModel(
 
     lateinit var currentUser: User
     lateinit var currentUserCredentials: ChimeUserCredentials
+    lateinit var sharedPrefs: SharedPreferences
 
-    private val logger = ConsoleLogger()
-    private val TAG = "MessagingViewModel"
     private var sessionId = MutableLiveData<String>()
     private var session: MessagingSession? = null
-    private var channelArn = ""
+    private val mentionRegex = Regex("(?<!\\w)@\\S+")
 
-    fun startMessagingSession() {
-        _viewState.value = Loading()
-        sessionId = savedStateHandle.getLiveData<String>(SESSION_ID)
+    lateinit var channelArn: String
+    var channelName: MutableLiveData<String> = MutableLiveData("")
 
-        if (this::currentUser.isInitialized && this::currentUserCredentials.isInitialized) {
-            logger.info(TAG, "startMessagingSession with lambda validated user")
-            viewModelScope.launch {
-                setEndpoint(currentUserCredentials)
+    suspend fun initialize() {
+        if (!this::currentUser.isInitialized || !this::currentUserCredentials.isInitialized) {
+            val currentUsername = sharedPrefs.getString(USERNAME_KEY, "")
+            val currentPassword = sharedPrefs.getString(PASSWORD_KEY, "")
+
+            if (currentPassword.isNullOrEmpty() || currentUsername.isNullOrEmpty()) {
+                _viewState.value = Error(java.lang.RuntimeException(APP_INSTANCE_USER_NOT_FOUND))
+                return
             }
-        } else {
-            logger.info(TAG, "startMessagingSession with Cognito Pools User")
-            viewModelScope.launch {
-                userRepository.getCurrentUser()
-                    .onSuccess {
-                        currentUser = it
-                        fetchCredentials()
+
+            userRepository.signIn(currentUsername, currentPassword)
+                .onFailure {
+                    _viewState.value = Error(it)
+                    return@onFailure
+                }
+
+            userRepository.getCurrentUser()
+                .onSuccess { user ->
+                    currentUser = user
+
+                    userRepository.getAWSCredentials().onSuccess {
+                        var creds = ChimeUserCredentials(
+                            it.awsAccessKeyId,
+                            it.awsSecretKey,
+                            if (it is AWSSessionCredentials) it.sessionToken else null
+                        )
+                        currentUserCredentials = creds
+                        userRepository.initialize(creds)
+                        messageRepository.initialize(creds)
                     }
-                    .onFailure { _viewState.value = Error(it) }
-            }
-        }
-    }
-
-    private fun fetchCredentials() {
-        viewModelScope.launch {
-            userRepository.getAWSCredentials()
-                .onSuccess {
-                    setEndpoint(ChimeUserCredentials(
-                        it.awsAccessKeyId,
-                        it.awsSecretKey,
-                        if (it is AWSSessionCredentials) it.sessionToken else null
-                    ))
                 }
                 .onFailure { _viewState.value = Error(it) }
+        } else {
+            userRepository.initialize(currentUserCredentials)
+            messageRepository.initialize(currentUserCredentials)
         }
     }
 
-    private fun setEndpoint(chimeUserCredentials: ChimeUserCredentials) {
-        messageRepository.initialize(chimeUserCredentials)
+    fun startMessagingSession(channelArnParam: String?) {
+        _viewState.value = Loading()
+        sessionId = savedStateHandle.getLiveData(SESSION_ID)
+
+        if (channelArnParam == null) {
+            _viewState.value = Error(RuntimeException("Channel has not been selected yet."))
+        } else {
+            channelArn = channelArnParam
+
+            if (!this::currentUser.isInitialized || !this::currentUserCredentials.isInitialized) {
+                viewModelScope.launch {
+                    initialize()
+                    initiateWebSocketConnection(currentUserCredentials)
+                }
+            } else {
+                viewModelScope.launch {
+                    initiateWebSocketConnection(currentUserCredentials)
+                }
+            }
+        }
+    }
+
+    private fun initiateWebSocketConnection(chimeUserCredentials: ChimeUserCredentials) {
         viewModelScope.launch {
             messageRepository.getMessagingEndpoint()
                 .onSuccess {
                     connect(chimeUserCredentials, it)
-                    setDefaultChannel()
+                    loadChannelMessages()
                 }
                 .onFailure { _viewState.value = Error(it) }
         }
     }
 
-    /**
-     * When the messaaging session starts, it fetches a list of channels the AppInstanceUser is a part of.
-     * It sets the channelArn to the first channel of the list so that messages will be sent to it by default.
-     * The channelArn will be updated to the channel in which the most recent message is sent
-     */
-    private fun setDefaultChannel() {
+    private fun loadChannelMessages() {
         viewModelScope.launch {
-            messageRepository.listChannels(currentUser.chimeAppInstanceUserArn)
+            messageRepository.describeChannel(channelArn, currentUser.chimeAppInstanceUserArn)
                 .onSuccess {
-                    if (!it.channelMemberships.isEmpty()) {
-                        val channel = it.channelMemberships.get(0).channelSummary.channelArn
-                        channelArn = channel
-                        logger.info(TAG, "setDefaultChannel() set default channelArn to $channel")
-                    } else {
-                        _viewState.value = Error(Error("The user has not been subscribed to any channel yet"))
-                    }
+                    channelName.postValue(it.channel.name)
+                    messageRepository.listChannelMessages(channelArn, currentUser.chimeAppInstanceUserArn)
+                        .onSuccess {
+                            processChannelMessages(it)
+                        }
+                        .onFailure { _viewState.value = Error(it) }
                 }
                 .onFailure { _viewState.value = Error(it) }
         }
@@ -147,7 +176,7 @@ class MessagingViewModel(
             }
         session = DefaultMessagingSession(
             sessionConfiguration,
-            logger
+            ConsoleLogger()
         )
         session?.addMessagingSessionObserver(this)
         session?.start()
@@ -158,61 +187,87 @@ class MessagingViewModel(
         if (text.isNullOrBlank()) return
         if (channelArn.isNotBlank()) {
             viewModelScope.launch {
-                messageRepository.sendMessage(text, channelArn, currentUser.chimeAppInstanceUserArn)
+                val extractedMentions = mentionRegex.find(text)
+                val matchedValues = extractedMentions?.groupValues
+                val messageAttributes = HashMap<String, MessageAttributeValue>()
+                if (matchedValues != null) {
+                    messageAttributes["mention"] = MessageAttributeValue().withStringValues(matchedValues)
+                }
+                val pushConfig = PushNotificationConfiguration()
+                    .withTitle("${channelName.value}")
+                    .withBody("${currentUser.chimeDisplayName}: $text")
+                    .withType("DEFAULT")
+                messageRepository.sendMessage(text, channelArn, currentUser.chimeAppInstanceUserArn, messageAttributes, pushConfig)
             }
         } else {
-            logger.info(TAG, "channel is not assigned")
+            log.info("channel is not assigned")
         }
     }
 
     override fun onMessagingSessionStarted() {
-        logger.info(TAG, "Session started")
+        log.info("Session started")
         _viewState.value = Success()
     }
 
     override fun onMessagingSessionConnecting(reconnecting: Boolean) {
-        logger.info(TAG, "Start connecting")
+        log.info("Start connecting")
     }
 
     override fun onMessagingSessionStopped(status: MessagingSessionStatus) {
-        logger.info(TAG, "Closed: ${status.code} ${status.reason}")
+        log.info("Closed: ${status.code} ${status.reason}")
     }
 
     override fun onMessagingSessionReceivedMessage(message: Message) {
-        logger.info(TAG, "Message received: $message")
-        when (message.type) {
+        log.info("Message received: $message")
+        when (val eventType = message.Headers["x-amz-chime-event-type"]) {
             // Channel messages
             "CREATE_CHANNEL_MESSAGE", "REDACT_CHANNEL_MESSAGE",
             "UPDATE_CHANNEL_MESSAGE", "DELETE_CHANNEL_MESSAGE" ->
-                processChannelMessage(message)
+                processWebsocketChannelMessage(message)
             else ->
-                logger.info(TAG, "Unexpected message type, ignoring")
+                log.info("Unexpected message type $eventType, ignoring")
         }
     }
 
-    private fun processChannelMessage(message: Message) {
-        val payload = JSONObject(JSONObject(message.payload).getString("Payload"))
-        val messageId = payload.getString("MessageId")
-        val sender = payload.getJSONObject("Sender")
-        val senderName = sender.getString("Name")
-        val senderArn = sender.getString("Arn")
-        val displayTime = payload.getString("CreatedTimestamp").toDate()?.formatTo("HH:mm") ?: ""
-        val content = payload.getString("Content")
-        val channel = payload.getString("ChannelArn")
+    private fun processWebsocketChannelMessage(message: Message) {
+        val payload = message.Payload
+        val channelMessage = gson.fromJson(payload, com.amazonaws.services.chimesdkmessaging.model.ChannelMessage::class.java)
 
-        val newItem = ChannelMessage(messageId, senderName, senderArn == currentUser.chimeAppInstanceUserArn, displayTime, content)
+        val channel = channelMessage.channelArn
+        if (channel.equals(channelArn)) {
+            val messageId = channelMessage.messageId
+            val senderName = channelMessage.sender.name
+            val senderArn = channelMessage.sender.arn
+            val displayTime = channelMessage.createdTimestamp
+            val content = channelMessage.content
+            val newItem = ChannelMessage(messageId, senderName, senderArn == currentUser.chimeAppInstanceUserArn, displayTime, content)
 
-        _items.value = _items.value?.plus(listOf(newItem))
-        // This will track the last active channel and send next message there
-        // Will remove after proper channel management
-        channelArn = channel
+            _items.value = _items.value?.plus(newItem)
+        } else {
+            log.info("Message for inactive channel $channel, ignoring")
+        }
+    }
+
+    private fun processChannelMessages(listChannelMessagesResult: ListChannelMessagesResult) {
+        val messageList = arrayListOf<ChannelMessage>()
+        for (message in listChannelMessagesResult.channelMessages) {
+            val messageId = message.messageId
+            val senderName = message.sender.name
+            val senderArn = message.sender.arn
+            val displayTime = message.createdTimestamp
+            val content = message.content
+            val newItem = ChannelMessage(messageId, senderName, senderArn == currentUser.chimeAppInstanceUserArn, displayTime, content)
+            messageList.add(newItem)
+        }
+
+        // Sort messages by descending timestamp
+        val sortedItems = messageList.sortedBy { channelMessage -> channelMessage.displayTime }
+        _items.postValue(sortedItems)
     }
 
     override fun onCleared() {
         super.onCleared()
-        viewModelScope.launch {
-            userRepository.signOut()
-        }
+
         session?.stop()
         session?.removeMessagingSessionObserver(this)
     }

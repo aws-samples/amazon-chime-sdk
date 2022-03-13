@@ -23,6 +23,7 @@ class ChatMessageTableViewCell: UITableViewCell {
     }
 
     func updateCell(chatMessage: ChatMessage) {
+        reset()
         senderNameLabel.text = chatMessage.senderName
         senderNameLabel.accessibilityIdentifier = chatMessage.senderName
         contentLabel.text = chatMessage.content
@@ -37,6 +38,20 @@ class ChatMessageTableViewCell: UITableViewCell {
             senderNameLabel.textAlignment = .left
             displayTimeLabel.textAlignment = .left
             contentLabel.textAlignment = .left
+        }
+        
+        if chatMessage.displayAttachmentHolder {
+            let config = UIImage.SymbolConfiguration(scale: .small)
+            let imageHolder = UIImage(systemName: "paperclip", withConfiguration: config)
+            if chatMessage.isSelf {
+                attachmentPreviewImageRight.image = imageHolder
+                attachmentPreviewImageRight.contentMode = .center
+                attachmentPreviewImageLeft.isHidden = true
+            } else {
+                attachmentPreviewImageLeft.image = imageHolder
+                attachmentPreviewImageLeft.contentMode = .center
+                attachmentPreviewImageRight.isHidden = true
+            }
         }
 
         if let imageUrl = chatMessage.imageUrl {
@@ -53,6 +68,15 @@ class ChatMessageTableViewCell: UITableViewCell {
                 print("ChatMessageTableViewCell updateCell() loading image error: \(error)")
             }
         }
+    }
+    
+    private func reset() {
+        attachmentPreviewImageRight.image = nil
+        attachmentPreviewImageLeft.image = nil
+        attachmentPreviewImageLeft.isHidden = false
+        attachmentPreviewImageRight.isHidden = false
+        attachmentPreviewImageLeft.contentMode = .scaleAspectFit
+        attachmentPreviewImageRight.contentMode = .scaleAspectFit
     }
 
     required init?(coder: NSCoder) {

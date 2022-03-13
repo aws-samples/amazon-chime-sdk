@@ -27,7 +27,7 @@ object ServiceLocator {
 
     fun provideUserRepository(): UserRepository {
         synchronized(this) {
-            return userRepository ?: userRepository ?: DefaultUserRepository(authService)
+            return userRepository ?: userRepository ?: DefaultUserRepository(authService, chimeService)
         }
     }
 

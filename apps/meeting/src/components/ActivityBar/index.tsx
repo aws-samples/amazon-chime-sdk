@@ -21,10 +21,13 @@ const Progress = styled.div`
   will-change: transform;
 `;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const ActivityBar = React.forwardRef((props, ref: any) => (
   <Track>
     <Progress ref={ref} />
   </Track>
 ));
+
+ActivityBar.displayName = 'ActivityBar';
 
 export default ActivityBar;

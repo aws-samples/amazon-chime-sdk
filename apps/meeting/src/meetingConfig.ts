@@ -1,6 +1,10 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
+import {
+  ConsoleLogger,
+  LogLevel,
+} from 'amazon-chime-sdk-js';
 import { SDK_LOG_LEVELS } from './constants';
 
 const urlParams = new URLSearchParams(window.location.search);
@@ -22,9 +26,13 @@ const postLogConfig = {
   logLevel: SDK_LOG_LEVELS.info,
 };
 
+export const logger = new ConsoleLogger('SDK', LogLevel.INFO);
+
 const config = {
   logLevel,
-  postLogConfig
+  simulcastEnabled: false,
+  postLogConfig,
+  logger,
 };
 
 export default config;

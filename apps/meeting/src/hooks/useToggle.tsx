@@ -17,6 +17,6 @@ export default function useToggle(initialState: boolean): UseToggleFunc {
 
   return {
     isActive,
-    toggle
+    toggle,
   };
 }

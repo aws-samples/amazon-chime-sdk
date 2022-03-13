@@ -51,7 +51,7 @@
             android:layout_alignStart="@id/incomingMessage"
             android:layout_below="@id/incomingMessage"
             android:textColor="#B1B1B1"
-            android:text="@{message.displayTime}"
+            android:text="@{message.displayTime.toString()}"
             android:visibility="@{message.isLocal ? View.GONE : View.VISIBLE}"/>
 
         <TextView
@@ -75,7 +75,7 @@
             android:layout_alignEnd="@id/outgoingMessage"
             android:layout_below="@id/outgoingMessage"
             android:textColor="#B1B1B1"
-            android:text="@{message.displayTime}"
+            android:text="@{message.displayTime.toString()}"
             android:visibility="@{message.isLocal ? View.VISIBLE : View.GONE}"/>
     </RelativeLayout>
 </layout>

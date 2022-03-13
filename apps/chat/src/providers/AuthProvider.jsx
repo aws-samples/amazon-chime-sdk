@@ -31,7 +31,7 @@ const AuthProvider = ({ children }) => {
       await Auth.signOut();
       setIsAuthenticated(false);
     } catch (error) {
-      console.log(`error siging out ${error}`);
+      console.log(`error signing out ${error}`);
     }
   };
 

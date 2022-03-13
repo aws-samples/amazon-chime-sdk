@@ -10,7 +10,7 @@ import {
   ModalBody,
   ModalHeader,
   ModalButton,
-  ModalButtonGroup
+  ModalButtonGroup,
 } from 'amazon-chime-sdk-component-library-react';
 
 import { endMeeting } from '../../utils/api';
@@ -54,18 +54,20 @@ const EndMeetingControl: React.FC = () => {
           <ModalButtonGroup
             primaryButtons={[
               <ModalButton
+                key="end-meeting-for-all"
                 onClick={endMeetingForAll}
                 variant="primary"
                 label="End meeting for all"
                 closesModal
               />,
               <ModalButton
+                key="leave-meeting"
                 onClick={leaveMeeting}
                 variant="primary"
                 label="Leave Meeting"
                 closesModal
               />,
-              <ModalButton variant="secondary" label="Cancel" closesModal />
+              <ModalButton key="cancel-meeting-ending" variant="secondary" label="Cancel" closesModal />,
             ]}
           />
         </Modal>

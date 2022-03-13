@@ -7,7 +7,7 @@ import {
   useMediaStreamMetrics,
   useAudioVideo,
   PopOverHeader,
-  useMeetingManager
+  useMeetingManager,
 } from 'amazon-chime-sdk-component-library-react';
 
 import { MediaStatsList } from '../../components/MediaStatsList';
@@ -24,7 +24,7 @@ export const LocalMediaStreamMetrics: React.FC = () => {
     audioPacketsReceivedFractionLossPercent,
     availableIncomingBandwidth,
     availableOutgoingBandwidth,
-    videoStreamMetrics
+    videoStreamMetrics,
   } = useMediaStreamMetrics();
 
   const isLocalAudioActive =
@@ -59,7 +59,7 @@ export const LocalMediaStreamMetrics: React.FC = () => {
                   : '',
                 audioPacketsReceivedFractionLossPercent !== null
                   ? audioPacketsReceivedFractionLossPercent.toString()
-                  : ''
+                  : '',
               ]}
             />
           </MediaStatsList>
@@ -74,8 +74,8 @@ export const LocalMediaStreamMetrics: React.FC = () => {
               metricValues={ssrcArray.map(ssrc => {
                 return localVideoStreamMetrics[ssrc].videoUpstreamBitrate
                   ? Math.trunc(
-                      localVideoStreamMetrics[ssrc].videoUpstreamBitrate / 1000
-                    ).toString()
+                    localVideoStreamMetrics[ssrc].videoUpstreamBitrate / 1000
+                  ).toString()
                   : '';
               })}
             />
@@ -84,8 +84,8 @@ export const LocalMediaStreamMetrics: React.FC = () => {
               metricValues={ssrcArray.map(ssrc => {
                 return localVideoStreamMetrics[ssrc].videoUpstreamPacketsSent
                   ? localVideoStreamMetrics[
-                      ssrc
-                    ].videoUpstreamPacketsSent.toString()
+                    ssrc
+                  ].videoUpstreamPacketsSent.toString()
                   : '';
               })}
             />
@@ -95,8 +95,8 @@ export const LocalMediaStreamMetrics: React.FC = () => {
                 return localVideoStreamMetrics[ssrc]
                   .videoUpstreamFramesEncodedPerSecond
                   ? localVideoStreamMetrics[
-                      ssrc
-                    ].videoUpstreamFramesEncodedPerSecond.toString()
+                    ssrc
+                  ].videoUpstreamFramesEncodedPerSecond.toString()
                   : '';
               })}
             />
@@ -105,8 +105,8 @@ export const LocalMediaStreamMetrics: React.FC = () => {
               metricValues={ssrcArray.map(ssrc => {
                 return localVideoStreamMetrics[ssrc].videoUpstreamFrameHeight
                   ? localVideoStreamMetrics[
-                      ssrc
-                    ].videoUpstreamFrameHeight.toString()
+                    ssrc
+                  ].videoUpstreamFrameHeight.toString()
                   : '';
               })}
             />
@@ -115,8 +115,8 @@ export const LocalMediaStreamMetrics: React.FC = () => {
               metricValues={ssrcArray.map(ssrc => {
                 return localVideoStreamMetrics[ssrc].videoUpstreamFrameWidth
                   ? localVideoStreamMetrics[
-                      ssrc
-                    ].videoUpstreamFrameWidth.toString()
+                    ssrc
+                  ].videoUpstreamFrameWidth.toString()
                   : '';
               })}
             />
@@ -126,8 +126,8 @@ export const LocalMediaStreamMetrics: React.FC = () => {
                 return localVideoStreamMetrics[ssrc]
                   .videoUpstreamGoogFrameHeight
                   ? localVideoStreamMetrics[
-                      ssrc
-                    ].videoUpstreamGoogFrameHeight.toString()
+                    ssrc
+                  ].videoUpstreamGoogFrameHeight.toString()
                   : '';
               })}
             />
@@ -136,8 +136,8 @@ export const LocalMediaStreamMetrics: React.FC = () => {
               metricValues={ssrcArray.map(ssrc => {
                 return localVideoStreamMetrics[ssrc].videoUpstreamGoogFrameWidth
                   ? localVideoStreamMetrics[
-                      ssrc
-                    ].videoUpstreamGoogFrameWidth.toString()
+                    ssrc
+                  ].videoUpstreamGoogFrameWidth.toString()
                   : '';
               })}
             />
@@ -157,7 +157,7 @@ export const LocalMediaStreamMetrics: React.FC = () => {
                   : '',
                 availableIncomingBandwidth !== null
                   ? availableIncomingBandwidth.toString()
-                  : ''
+                  : '',
               ]}
             />
           </MediaStatsList>

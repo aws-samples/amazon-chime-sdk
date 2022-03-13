@@ -7,6 +7,6 @@ const MeetingEventObserver = () => {
   const meetingEvent = useMeetingEvent();
   console.log('Received meeting event in MeetingEventObserver', meetingEvent);
   return null;
-}
+};
 
 export default MeetingEventObserver;

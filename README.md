@@ -15,10 +15,12 @@ To provide feedback, please file an issue.
 ### Applications
 
 - [Automated Moderation and Sentiment Analysis of Chat with the Amazon Chime SDK](https://github.com/aws-samples/amazon-chime-sdk/tree/main/apps/moderated-chat-and-sentiment-analysis) - Creates a chat application with automated moderation, message effects, and sentiment analysis
-- [Chat with Amazon Chime SDK Messaging](https://github.com/aws-samples/amazon-chime-sdk/tree/main/apps/chat) - Creates a basic chat application
+- [Chat Web Demo App](https://github.com/aws-samples/amazon-chime-sdk/tree/main/apps/chat) - Creates a basic chat web application with Amazon Chime SDK Messaging
+- [Chat iOS Demo App](https://github.com/aws-samples/amazon-chime-sdk/tree/main/apps/chat-ios) - Creates a basic chat ios application using Swift with Amazon Chime SDK Messaging
+- [Chat Android Demo App](https://github.com/aws-samples/amazon-chime-sdk/tree/main/apps/chat-android) - Creates a basic chat android application using Kotlin with Amazon Chime SDK Messaging
 - [React meeting demo app](https://github.com/aws-samples/amazon-chime-sdk/tree/main/apps/meeting) - Demonstrates how to use the Amazon Chime SDK and Chime SDK UI Component Library to build a react meeting app.
 - [iOS WkWebView Sample](https://github.com/aws-samples/amazon-chime-sdk/tree/main/apps/iOS-WKWebView-sample) - Demonstrates how to join a WebRTC-based meeting application, like the [Amazon Chime JS SDK Serverless Demo](https://github.com/aws/amazon-chime-sdk-js/tree/master/demos/serverless), from within a WKWebView in iOS.
-- [Android WebView Sample](https://github.com/aws-samples/amazon-chime-sdk/tree/main/apps/Android-WebView-sample) - Demonstrates how to join a WebRTC-based meeting application, like the [Amazon Chime JS SDK Serverless Demo](https://github.com/aws/amazon-chime-sdk-js/tree/master/demos/serverless), from within a WebView in Android.
+- [Android WebView Sample](https://github.com/aws-samples/amazon-chime-sdk/tree/main/apps/android-webview-sample) - Demonstrates how to join a WebRTC-based meeting application, like the [Amazon Chime JS SDK Serverless Demo](https://github.com/aws/amazon-chime-sdk-js/tree/master/demos/serverless), from within a WebView in Android.
 
 ## Resources
 
@@ -27,6 +29,7 @@ To provide feedback, please file an issue.
 - [Amazon Chime SDK React Components](https://github.com/aws/amazon-chime-sdk-component-library-react)
 - [Amazon Chime SDK for iOS](https://github.com/aws/amazon-chime-sdk-ios)
 - [Amazon Chime SDK for Android](https://github.com/aws/amazon-chime-sdk-android)
+- [Amazon Chime SDK for Messaging](https://docs.aws.amazon.com/chime/latest/dg/using-the-messaging-sdk.html)
 - [Pricing](https://aws.amazon.com/chime/pricing/#Chime_SDK_)
 - [Supported Browsers](https://docs.aws.amazon.com/chime/latest/dg/meetings-sdk.html#mtg-browsers)
 - [Developer Guide](https://docs.aws.amazon.com/chime/latest/dg/meetings-sdk.html)

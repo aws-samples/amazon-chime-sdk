@@ -78,7 +78,6 @@ public class DefaultSigV4: SigV4 {
                            now + "\n" +
                            credentialScope + "\n" +
                            hashedCanonicalRequest
-        print("DefaultSigV4 signURL stringToSign: \(stringToSign)")
 
         let signingKey = getSignatureKey(key: credentials.secretAccessKey, date: today, regionName: region, serviceName: serviceName)
         let signature = hmac(data: stringToSign, key: signingKey).hexEncodedString()

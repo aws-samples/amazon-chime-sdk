@@ -6,13 +6,14 @@ import React from 'react';
 import {
   useMediaStreamMetrics,
   useAudioVideo,
-  PopOverHeader
+  PopOverHeader,
 } from 'amazon-chime-sdk-component-library-react';
 
 import MediaStatsList from '../../components/MediaStatsList/index';
 import MetricItem from '../../components/MediaStatsList/MetricItem';
 import { StyledMediaMetricsWrapper } from '../../components/MediaStatsList/Styled';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function isValidMetric(metric: any) {
   return typeof metric === 'number' && !Number.isNaN(metric);
 }
@@ -40,8 +41,8 @@ export const VideoStreamMetrics: React.FC<Props> = ({ attendeeId }) => {
               metricValues={ssrcArray.map(ssrc => {
                 return isValidMetric(streamMetric[ssrc].videoDownstreamBitrate)
                   ? Math.trunc(
-                      streamMetric[ssrc].videoDownstreamBitrate / 1000
-                    ).toString()
+                    streamMetric[ssrc].videoDownstreamBitrate / 1000
+                  ).toString()
                   : '';
               })}
             />
@@ -52,8 +53,8 @@ export const VideoStreamMetrics: React.FC<Props> = ({ attendeeId }) => {
                   streamMetric[ssrc].videoDownstreamPacketLossPercent
                 )
                   ? Math.trunc(
-                      streamMetric[ssrc].videoDownstreamPacketLossPercent
-                    ).toString()
+                    streamMetric[ssrc].videoDownstreamPacketLossPercent
+                  ).toString()
                   : '';
               })}
             />
@@ -64,8 +65,8 @@ export const VideoStreamMetrics: React.FC<Props> = ({ attendeeId }) => {
                   streamMetric[ssrc].videoDownstreamFramesDecodedPerSecond
                 )
                   ? streamMetric[
-                      ssrc
-                    ].videoDownstreamFramesDecodedPerSecond.toString()
+                    ssrc
+                  ].videoDownstreamFramesDecodedPerSecond.toString()
                   : '';
               })}
             />
@@ -114,8 +115,8 @@ export const VideoStreamMetrics: React.FC<Props> = ({ attendeeId }) => {
               metricValues={ssrcArray.map(ssrc => {
                 return isValidMetric(streamMetric[ssrc].videoUpstreamBitrate)
                   ? Math.trunc(
-                      streamMetric[ssrc].videoUpstreamBitrate / 1000
-                    ).toString()
+                    streamMetric[ssrc].videoUpstreamBitrate / 1000
+                  ).toString()
                   : '';
               })}
             />
@@ -136,8 +137,8 @@ export const VideoStreamMetrics: React.FC<Props> = ({ attendeeId }) => {
                   streamMetric[ssrc].videoUpstreamFramesEncodedPerSecond
                 )
                   ? streamMetric[
-                      ssrc
-                    ].videoUpstreamFramesEncodedPerSecond.toString()
+                    ssrc
+                  ].videoUpstreamFramesEncodedPerSecond.toString()
                   : '';
               })}
             />
