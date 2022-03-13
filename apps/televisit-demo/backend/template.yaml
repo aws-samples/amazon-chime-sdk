@@ -344,10 +344,17 @@ Resources:
     Type: 'AWS::S3::Bucket'
     Properties:
       AccessControl: LogDeliveryWrite
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: True
+        BlockPublicPolicy: True
+        IgnorePublicAcls: True
+        RestrictPublicBuckets: True
       BucketEncryption:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
               SSEAlgorithm: AES256
+      VersioningConfiguration:
+        Status: Enabled
 
   ChatAttachmentsBucketPolicy:
     Type: 'AWS::S3::BucketPolicy'
