@@ -17,7 +17,11 @@ import {
   Select,
   useMeetingManager,
 } from 'amazon-chime-sdk-component-library-react';
-import { DefaultBrowserBehavior } from 'amazon-chime-sdk-js';
+import { 
+  DefaultBrowserBehavior, 
+  DefaultEventController, 
+  MeetingSessionConfiguration,
+} from 'amazon-chime-sdk-js';
 
 import {getErrorContext} from '../../providers/ErrorProvider';
 import routes from '../../constants/routes';
@@ -92,7 +96,12 @@ const MeetingForm: React.FC = () => {
     try {
       const { JoinInfo } = await fetchMeeting(id, attendeeName, region, isEchoReductionEnabled);
       setJoinInfo(JoinInfo);
+      const meetingSessionConfiguration = new MeetingSessionConfiguration(
+        JoinInfo?.Meeting,
+        JoinInfo?.Attendee
+      );
 
+      const eventController = new DefaultEventController(meetingSessionConfiguration, meetingManager.createLogger(meetingSessionConfiguration));
       await meetingManager.join({
         meetingInfo: JoinInfo?.Meeting,
         attendeeInfo: JoinInfo?.Attendee,
@@ -100,6 +109,7 @@ const MeetingForm: React.FC = () => {
           meetingMode === MeetingMode.Spectator
             ? DeviceLabels.None
             : DeviceLabels.AudioAndVideo,
+        eventController: eventController,
         meetingManagerConfig: {
           ...meetingConfig,
           enableWebAudio: isWebAudioEnabled,

@@ -1,4 +1,4 @@
-# Amazon Chime SDK WKWebView Sample
+# Amazon Chime SDK Android Webview Sample
 
 ## Summary
 
@@ -8,7 +8,7 @@ This sample shows how to run a WebRTC based meeting application inside of an And
 - Android Studio 4.2.2+ installed on your machine
 
 ### Deploy a Chime SDK for Javascript Meeting Demo
-If you'd like to try joining a WebRTC meeting demo from within a Chromium WebView in Android, you first need a meeting demo running in a browser so that when you load the WKWebView it can navigate to this meeting demo URL. Follow the instructions for the [Amazon Chime JS SDK Serverless Meeting Demo](https://github.com/aws/amazon-chime-sdk-js/tree/master/demos/serverless) in order to deploy a meeting demo.
+If you'd like to try joining a WebRTC meeting demo from within a Chromium WebView in Android, you first need a meeting demo running in a browser so that when you load the webview it can navigate to this meeting demo URL. Follow the instructions for the [Amazon Chime JS SDK Serverless Meeting Demo](https://github.com/aws/amazon-chime-sdk-js/tree/master/demos/serverless) in order to deploy a meeting demo.
 
 After you've deployed a meeting demo URL, take note of the meeting demo URL that was outputted to your terminal or in the Outputs tab of your cloudformation stack as part of the last step of deploying the [Amazon Chime SDK for Javascript Serverless Meeting Demo](https://github.com/aws/amazon-chime-sdk-js/tree/master/demos/serverless). Take the meeting demo URL, and replace the variable `url` in `./app/java/AppConfig.kt` with the value of the meeting demo URL.
 
