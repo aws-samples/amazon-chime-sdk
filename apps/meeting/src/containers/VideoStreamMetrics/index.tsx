@@ -91,26 +91,6 @@ export const VideoStreamMetrics: React.FC<Props> = ({ attendeeId }) => {
               })}
             />
             <MetricItem
-              metricName="Frame Height"
-              metricValues={ssrcArray.map(ssrc => {
-                return isValidMetric(
-                  streamMetric[ssrc].videoDownstreamGoogFrameHeight
-                )
-                  ? streamMetric[ssrc].videoDownstreamGoogFrameHeight.toString()
-                  : '';
-              })}
-            />
-            <MetricItem
-              metricName="Frame Width"
-              metricValues={ssrcArray.map(ssrc => {
-                return isValidMetric(
-                  streamMetric[ssrc].videoDownstreamGoogFrameWidth
-                )
-                  ? streamMetric[ssrc].videoDownstreamGoogFrameWidth.toString()
-                  : '';
-              })}
-            />
-            <MetricItem
               metricName="Bit rate (kbps)"
               metricValues={ssrcArray.map(ssrc => {
                 return isValidMetric(streamMetric[ssrc].videoUpstreamBitrate)
@@ -157,26 +137,6 @@ export const VideoStreamMetrics: React.FC<Props> = ({ attendeeId }) => {
               metricValues={ssrcArray.map(ssrc => {
                 return isValidMetric(streamMetric[ssrc].videoUpstreamFrameWidth)
                   ? streamMetric[ssrc].videoUpstreamFrameWidth.toString()
-                  : '';
-              })}
-            />
-            <MetricItem
-              metricName="Frame Height"
-              metricValues={ssrcArray.map(ssrc => {
-                return isValidMetric(
-                  streamMetric[ssrc].videoUpstreamGoogFrameHeight
-                )
-                  ? streamMetric[ssrc].videoUpstreamGoogFrameHeight.toString()
-                  : '';
-              })}
-            />
-            <MetricItem
-              metricName="Frame Width"
-              metricValues={ssrcArray.map(ssrc => {
-                return isValidMetric(
-                  streamMetric[ssrc].videoUpstreamGoogFrameWidth
-                )
-                  ? streamMetric[ssrc].videoUpstreamGoogFrameWidth.toString()
                   : '';
               })}
             />
