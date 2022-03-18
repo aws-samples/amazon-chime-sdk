@@ -22,7 +22,6 @@ import { NavigationProvider } from '../../providers/NavigationProvider';
 import NoMeetingRedirect from '../NoMeetingRedirect';
 import { Meeting, Home, DeviceSetup } from '../../views';
 import MeetingEventObserver from '../MeetingEventObserver';
-import meetingConfig from '../../meetingConfig';
 import { useAppState } from '../../providers/AppStateProvider';
 import { VideoFiltersCpuUtilization } from '../../types';
 
@@ -40,8 +39,6 @@ const MeetingProviderWithDeviceReplacement: React.FC = ({ children }) => {
   };
 
   const meetingConfigValue = {
-    ...meetingConfig,
-    enableWebAudio: true,
     onDeviceReplacement,
   };
 
@@ -53,11 +50,6 @@ const MeetingProviderWrapper: React.FC = () => {
   const { isWebAudioEnabled, videoTransformCpuUtilization, imageBlob, joinInfo } = useAppState();
 
   const isFilterEnabled = videoTransformCpuUtilization !== VideoFiltersCpuUtilization.Disabled;
-
-  const meetingConfigValue = {
-    ...meetingConfig,
-    enableWebAudio: isWebAudioEnabled,
-  };
 
   const getMeetingProviderWrapper = () => {
     return (
@@ -131,7 +123,7 @@ const MeetingProviderWrapper: React.FC = () => {
 
   const getMeetingProvider = (children: React.ReactNode) => {
     return (
-      <MeetingProvider {...meetingConfigValue}>
+      <MeetingProvider>
         {children}
       </MeetingProvider>
     );
