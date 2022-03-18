@@ -17,7 +17,10 @@ import {
   Select,
   useMeetingManager,
 } from 'amazon-chime-sdk-component-library-react';
-import { DefaultBrowserBehavior } from 'amazon-chime-sdk-js';
+import {
+  DefaultBrowserBehavior,
+  MeetingSessionConfiguration,
+} from 'amazon-chime-sdk-js';
 
 import {getErrorContext} from '../../providers/ErrorProvider';
 import routes from '../../constants/routes';
@@ -92,22 +95,30 @@ const MeetingForm: React.FC = () => {
     try {
       const { JoinInfo } = await fetchMeeting(id, attendeeName, region, isEchoReductionEnabled);
       setJoinInfo(JoinInfo);
-
-      await meetingManager.join({
-        meetingInfo: JoinInfo?.Meeting,
-        attendeeInfo: JoinInfo?.Attendee,
+      const meetingSessionConfiguration = new MeetingSessionConfiguration(
+        JoinInfo?.Meeting,
+        JoinInfo?.Attendee
+      );
+      meetingSessionConfiguration.enableSimulcastForUnifiedPlanChromiumBasedBrowsers = enableSimulcast;
+      if(priorityBasedPolicy) {
+        meetingSessionConfiguration.videoDownlinkBandwidthPolicy = priorityBasedPolicy;
+      }
+      meetingSessionConfiguration.keepLastFrameWhenPaused = keepLastFrameWhenPaused;
+      const options = {
         deviceLabels:
           meetingMode === MeetingMode.Spectator
             ? DeviceLabels.None
             : DeviceLabels.AudioAndVideo,
-        meetingManagerConfig: {
-          ...meetingConfig,
-          enableWebAudio: isWebAudioEnabled,
-          simulcastEnabled: enableSimulcast,
-          videoDownlinkBandwidthPolicy: priorityBasedPolicy,
-          keepLastFrameWhenPaused: keepLastFrameWhenPaused,
-        },
-      });
+        enableWebAudio: isWebAudioEnabled,
+        logLevel: meetingConfig.logLevel,
+        postLoggerConfig: meetingConfig.postLogConfig,
+        logger: meetingConfig.logger,
+      };
+
+      await meetingManager.join(
+        meetingSessionConfiguration,
+        options
+      );
       if (meetingMode === MeetingMode.Spectator) {
         await meetingManager.start();
         history.push(`${routes.MEETING}/${meetingId}`);
