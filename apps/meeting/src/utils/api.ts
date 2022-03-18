@@ -11,6 +11,7 @@ export type MeetingFeatures = {
 
 export type CreateMeetingResponse = {
   MeetingFeatures: MeetingFeatures;
+  MediaRegion: string;
 }
 
 export type JoinMeetingInfo = {
