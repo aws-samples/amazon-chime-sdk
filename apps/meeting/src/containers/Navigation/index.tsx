@@ -14,7 +14,6 @@ import {
   ZoomIn,
   ZoomOut,
   useContentShareState,
-  Chat,
 } from 'amazon-chime-sdk-component-library-react';
 
 import { useNavigation } from '../../providers/NavigationProvider';
@@ -26,7 +25,7 @@ import FeaturedLayout from '../../components/icons/FeaturedLayout';
 import { useVideoTileGridControl } from '../../providers/VideoTileGridProvider';
 
 const Navigation: React.FC = () => {
-  const { toggleRoster, closeNavbar, toggleChat } = useNavigation();
+  const { toggleRoster, closeNavbar } = useNavigation();
   const { theme, toggleTheme, layout, setLayout, priorityBasedPolicy } = useAppState();
   const { sharingAttendeeId } = useContentShareState();
   const { zoomIn, zoomOut } = useVideoTileGridControl();
@@ -39,11 +38,6 @@ const Navigation: React.FC = () => {
           icon={<Attendees />}
           onClick={toggleRoster}
           label="Attendees"
-        />
-        <NavbarItem
-          icon={<Chat />}
-          onClick={toggleChat}
-          label="Chat"
         />
         <NavbarItem
           icon={
