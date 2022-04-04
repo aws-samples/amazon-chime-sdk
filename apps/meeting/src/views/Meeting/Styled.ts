@@ -6,7 +6,6 @@ import styled from 'styled-components';
 interface Props {
   showNav: boolean;
   showRoster: boolean;
-  showChat: boolean;
 }
 
 export const StyledLayout = styled.main<Props>`
@@ -19,18 +18,11 @@ export const StyledLayout = styled.main<Props>`
     grid-area: content;
   }
 
-  ${({ showNav, showRoster, showChat }) => {
-    if (showNav && (showRoster || showChat)) {
+  ${({ showNav, showRoster }) => {
+    if (showNav && showRoster) {
       return `
         grid-template-columns: auto auto 1fr;
-        grid-template-areas: 'nav side-panel content';
-      `;
-    }
-
-    if (showNav && (showRoster || showChat)) {
-      return `
-        grid-template-columns: auto auto 1fr;
-        grid-template-areas: 'nav side-panel content';
+        grid-template-areas: 'nav roster content';
       `;
     }
 
@@ -41,10 +33,10 @@ export const StyledLayout = styled.main<Props>`
       `;
     }
 
-    if (showRoster || showChat) {
+    if (showRoster) {
       return `
         grid-template-columns: auto 1fr;
-        grid-template-areas: 'side-panel content';
+        grid-template-areas: 'roster content';
       `;
     }
 
@@ -58,9 +50,8 @@ export const StyledLayout = styled.main<Props>`
     grid-area: nav;
   }
 
-  .roster,
-  .chat {
-    grid-area: side-panel;
+  .roster {
+    grid-area: roster;
     z-index: 2;
   }
 
@@ -79,8 +70,7 @@ export const StyledLayout = styled.main<Props>`
       position: fixed;
     }
 
-    .roster,
-    .chat {
+    .roster {
       grid-area: unset;
       position: fixed;
       top: 0;
@@ -92,8 +82,7 @@ export const StyledLayout = styled.main<Props>`
   }
 
   @media screen and (max-width: 460px) {
-    .roster,
-    .chat {
+    .roster {
       max-width: 100%;
     }
   }
