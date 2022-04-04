@@ -31,7 +31,7 @@ const pjson = require('../package.json');
 
 // No need to setup if we do not depend on submodule
 if (pjson.dependencies['amazon-chime-sdk-component-library-react'] !== 'file:../../amazon-chime-sdk-component-library-react') {
-  return;
+  process.exit(0);
 }
 
 process.chdir(path.join(__dirname, '../../../amazon-chime-sdk-component-library-react'));

@@ -1,6 +1,8 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
+import { Logger, POSTLogger } from 'amazon-chime-sdk-js';
+
 export type FormattedDeviceType = {
   deviceId: string;
   label: string;
@@ -53,7 +55,7 @@ export const VideoFiltersCpuUtilization = {
   CPU40Percent: '40',
 };
 
-// Video Transform Options 
+// Video Transform Options
 export const VideoTransformOptions = {
   None: 'None',
   Blur: 'Background Blur',
@@ -61,6 +63,12 @@ export const VideoTransformOptions = {
 };
 
 export type VideoTransformDropdownOptionType = {
-  label: string,
-  value: string,
-}
+  label: string;
+  value: string;
+};
+
+export type MeetingConfig = {
+  simulcastEnabled: boolean;
+  logger: Logger;
+  postLogger?: POSTLogger; // Keep track of POSTLogger to update meeting metadata while joining a meeting.
+};

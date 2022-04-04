@@ -9,6 +9,7 @@ import {
   ModalHeader,
   DevicePermissionStatus,
   useDevicePermissionStatus,
+  useLogger,
 } from 'amazon-chime-sdk-component-library-react';
 
 import Card from '../components/Card';
@@ -16,12 +17,13 @@ import Card from '../components/Card';
 // Show permission prompt when the user is granting the browser permissions
 // Show nothing if permission is already granted or component loads on initial render
 const DevicePermissionPrompt = () => {
+  const logger = useLogger();
   const permission = useDevicePermissionStatus();
 
   return permission === DevicePermissionStatus.IN_PROGRESS ? (
     <Modal
       size="md"
-      onClose={(): void => console.log('Permission prompt closed')}
+      onClose={(): void => logger.info('Permission prompt closed')}
       rootId="device-permission-modal-root"
     >
       <ModalHeader
