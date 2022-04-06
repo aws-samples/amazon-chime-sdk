@@ -28,9 +28,9 @@ export type Action = AddAction;
 export function reducer(state: State, action: Action): State {
   const { type, payload } = action;
   switch (type) {
-    case DataMessagesActionType.ADD:
-      return { messages: [...state.messages, payload] };
-    default:
-      throw new Error('Incorrect action in DataMessagesProvider reducer');
+  case DataMessagesActionType.ADD:
+    return { messages: [...state.messages, payload] };
+  default:
+    throw new Error('Incorrect action in DataMessagesProvider reducer');
   }
 }

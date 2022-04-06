@@ -21,7 +21,7 @@ export const StyledChat = styled.aside`
   }
 `;
 
-export const StyledTitle = styled.div<any>`
+export const StyledTitle = styled.div`
   grid-area: chat-header;
   position: relative;
   display: flex;
@@ -42,7 +42,7 @@ export const StyledTitle = styled.div<any>`
   }
 `;
 
-export const StyledChatInputContainer = styled.div<any>`
+export const StyledChatInputContainer = styled.div`
   grid-area: chat-input;
   display: flex;
   align-items: center;

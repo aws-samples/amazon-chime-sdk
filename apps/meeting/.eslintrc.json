@@ -7,6 +7,12 @@
     "browser": true,
     "es2021": true
   },
+  "settings": {
+    // Fixes Warning: React version not specified in eslint-plugin-react.
+    "react": {
+      "version": "detect"
+    }
+  },
   "extends": [
     "eslint:recommended",
     "plugin:react/recommended",
