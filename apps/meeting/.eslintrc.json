@@ -34,7 +34,11 @@
     // Follow most common indentation of 2 spaces.
     "indent": [
       "error",
-      2
+      2,
+      {
+        // 1 means 2 spaces here.
+        "SwitchCase": 1
+      }
     ],
     "linebreak-style": [
       "error",
