@@ -15,7 +15,7 @@ const NavigationControl = () => {
   const view = () => {
     if (showRoster && showChat) {
       return (
-        <Flex layout='stack'>
+        <Flex layout="stack" style={{ height: '100vh' }}>
           <MeetingRoster />
           <Chat />
         </Flex>
