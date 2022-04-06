@@ -14,6 +14,7 @@ export default function ChatInput() {
   // TODO: Due to mismatch in React versions installed in demo vs the one onKeyPress accepts in component library
   // there is a problem with KeyboardEvent type here.
   // For now use, any as type and cast internally to KeyboardEvent.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleKeyPress = (event: any) => {
     if ((event as KeyboardEvent).key === 'Enter') {
       sendMessage(message);

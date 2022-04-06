@@ -66,17 +66,24 @@ export const DataMessagesProvider: FC = ({ children }) => {
 
   const sendMessage = useCallback(
     (message: string) => {
-      if (!meetingManager || !audioVideo) {
+      if (
+        !meetingManager ||
+        !meetingManager.meetingSession ||
+        !meetingManager.meetingSession.configuration.credentials ||
+        !meetingManager.meetingSession.configuration.credentials.attendeeId ||
+        !audioVideo
+      ) {
         return;
       }
       const payload = { message, senderName: localUserName };
+      const senderAttendeeId = meetingManager.meetingSession.configuration.credentials.attendeeId;
       audioVideo.realtimeSendDataMessage(DATA_MESSAGE_TOPIC, payload, DATA_MESSAGE_LIFETIME_MS);
       handler(
         new DataMessage(
           Date.now(),
           DATA_MESSAGE_TOPIC,
           new TextEncoder().encode(message),
-          meetingManager.meetingSession?.configuration?.credentials?.attendeeId!,
+          senderAttendeeId,
           localUserName
         )
       );

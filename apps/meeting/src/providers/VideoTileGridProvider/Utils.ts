@@ -132,29 +132,29 @@ export const updateDownlinkPreferences = (
     const { attendeeId, type } = videoSource;
 
     switch (type) {
-    case VideoSourceType.CONTENT_SHARE:
-      videoPreferences.add(
-        new VideoPreference(attendeeId, 1, TargetDisplaySize.High)
-      );
-      break;
+      case VideoSourceType.CONTENT_SHARE:
+        videoPreferences.add(
+          new VideoPreference(attendeeId, 1, TargetDisplaySize.High)
+        );
+        break;
 
-    case VideoSourceType.ACTIVE_SPEAKER:
-      videoPreferences.add(
-        new VideoPreference(
-          attendeeId,
-          1,
-          layout === Layout.Featured
-            ? TargetDisplaySize.High
-            : targetDisplaySize
-        )
-      );
-      break;
+      case VideoSourceType.ACTIVE_SPEAKER:
+        videoPreferences.add(
+          new VideoPreference(
+            attendeeId,
+            1,
+            layout === Layout.Featured
+              ? TargetDisplaySize.High
+              : targetDisplaySize
+          )
+        );
+        break;
 
-    default:
-      videoPreferences.add(
-        new VideoPreference(attendeeId, 2, targetDisplaySize)
-      );
-      break;
+      default:
+        videoPreferences.add(
+          new VideoPreference(attendeeId, 2, targetDisplaySize)
+        );
+        break;
     }
   }
   priorityBasedPolicy.chooseRemoteVideoSources(videoPreferences.build());

@@ -6,7 +6,7 @@ import React from 'react';
 import MeetingRoster from '../MeetingRoster';
 import Navigation from '.';
 import { useNavigation } from '../../providers/NavigationProvider';
-import Chat from '../Chat'
+import Chat from '../Chat';
 import { Flex } from 'amazon-chime-sdk-component-library-react';
 
 const NavigationControl = () => {
@@ -15,11 +15,11 @@ const NavigationControl = () => {
   const view = () => {
     if (showRoster && showChat) {
       return (
-        <Flex layout='stack'>
+        <Flex layout="stack" style={{ height: '100vh' }}>
           <MeetingRoster />
           <Chat />
         </Flex>
-      )
+      );
     }
     if (showRoster) {
       return <MeetingRoster />;
