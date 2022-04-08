@@ -8,7 +8,7 @@ import {
 } from 'amazon-chime-sdk-js';
 import React, { ReactNode, useEffect, useState } from 'react';
 import isEqual from 'lodash.isequal';
-import { 
+import {
   useBackgroundBlur,
   useBackgroundReplacement,
   useVideoInputs,
@@ -20,10 +20,7 @@ import {
   PopOverItem,
   PopOverSeparator,
 } from 'amazon-chime-sdk-component-library-react';
-import {
-  isOptionActive,
-  videoInputSelectionToDevice,
-} from '../../utils/device-utils';
+import { isOptionActive } from '../../utils/device-utils';
 import { DeviceType } from '../../types';
 import useMemoCompare from '../../utils/use-memo-compare';
 import { VideoTransformOptions } from '../../types/index';
@@ -49,7 +46,7 @@ const VideoInputTransformControl: React.FC<Props> = ({
   const { isBackgroundReplacementSupported, createBackgroundReplacementDevice } = useBackgroundReplacement();
   const [isLoading, setIsLoading] = useState(false);
   const [dropdownWithVideoTransformOptions, setDropdownWithVideoTransformOptions] = useState<ReactNode[] | null>(null);
-  const [activeVideoDevice, setActiveVideoDevice] = useState<Device | VideoTransformDevice | null>(meetingManager.selectedVideoInputTransformDevice as Device);
+  const [activeVideoDevice, setActiveVideoDevice] = useState<Device | VideoTransformDevice | undefined>(meetingManager.selectedVideoInputTransformDevice as Device);
   const [activeVideoTransformOption, setActiveVideoTransformOption] = useState<string>(VideoTransformOptions.None);
 
   const videoDevices: DeviceType[] = useMemoCompare(devices, (prev: DeviceType[] | undefined, next: DeviceType[] | undefined): boolean => isEqual(prev, next));
@@ -58,7 +55,7 @@ const VideoInputTransformControl: React.FC<Props> = ({
     meetingManager.subscribeToSelectedVideoInputTransformDevice(setActiveVideoDevice);
     resetDeviceToIntrinsic();
     return () => {
-      meetingManager.unsubscribeFromSelectedVideoInputTranformDevice(setActiveVideoDevice);
+      meetingManager.unsubscribeFromSelectedVideoInputTransformDevice(setActiveVideoDevice);
     };
   }, []);
 
@@ -75,7 +72,7 @@ const VideoInputTransformControl: React.FC<Props> = ({
   // Toggle background blur on/off.
   async function toggleBackgroundBlur() {
     let current = activeVideoDevice;
-    if (isLoading) {
+    if (isLoading || current === undefined) {
       return;
     }
     try {
@@ -111,7 +108,7 @@ const VideoInputTransformControl: React.FC<Props> = ({
 
   async function toggleBackgroundReplacement() {
     let current = activeVideoDevice;
-    if (isLoading) {
+    if (isLoading || current === undefined) {
       return;
     }
     try {
@@ -156,7 +153,7 @@ const VideoInputTransformControl: React.FC<Props> = ({
           // If background blur/replacement is not on, then do a normal video selection
           if (isVideoTransformDevice(activeVideoDevice) && !isLoading) {
             setIsLoading(true);
-            const receivedDevice = videoInputSelectionToDevice(option.deviceId);
+            const receivedDevice = option.deviceId;
             if ('chooseNewInnerDevice' in activeVideoDevice) {
               // @ts-ignore
               const transformedDevice = activeVideoDevice.chooseNewInnerDevice(receivedDevice);

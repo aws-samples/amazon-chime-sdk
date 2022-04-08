@@ -30,7 +30,7 @@ const MeetingProviderWithDeviceReplacement: React.FC = ({ children }) => {
 
   const onDeviceReplacement = (
     nextDevice: string,
-    currentDevice: Device | AudioTransformDevice
+    currentDevice: Device | AudioTransformDevice | null
   ): Promise<Device | VoiceFocusTransformDevice> => {
     if (currentDevice instanceof VoiceFocusTransformDevice) {
       return addVoiceFocus(nextDevice);
@@ -83,7 +83,7 @@ const MeetingProviderWrapper: React.FC = () => {
 
   function getVoiceFocusSpecName(): VoiceFocusModelName {
     if (
-      joinInfo && 
+      joinInfo &&
       joinInfo.Meeting?.MeetingFeatures?.Audio?.EchoReduction === 'AVAILABLE'
     ) {
       return voiceFocusName('ns_es');
@@ -92,7 +92,7 @@ const MeetingProviderWrapper: React.FC = () => {
   }
 
   const vfConfigValue = {
-    spec: {name: getVoiceFocusSpecName()},
+    spec: { name: getVoiceFocusSpecName() },
     createMeetingResponse: joinInfo,
   };
 
@@ -107,14 +107,14 @@ const MeetingProviderWrapper: React.FC = () => {
   };
 
   const getWrapperWithVideoFilter = (children: React.ReactNode) => {
-    let filterCPUUtilization = parseInt(videoTransformCpuUtilization,10);
+    let filterCPUUtilization = parseInt(videoTransformCpuUtilization, 10);
     if (!filterCPUUtilization) {
       filterCPUUtilization = 40;
     }
     console.log(`Using ${filterCPUUtilization} background blur and replacement`);
     return (
-      <BackgroundBlurProvider options={{filterCPUUtilization}} >
-        <BackgroundReplacementProvider options={{imageBlob, filterCPUUtilization}} >
+      <BackgroundBlurProvider options={{ filterCPUUtilization }} >
+        <BackgroundReplacementProvider options={{ imageBlob, filterCPUUtilization }} >
           {children}
         </BackgroundReplacementProvider>
       </BackgroundBlurProvider>
@@ -145,7 +145,7 @@ const MeetingProviderWrapper: React.FC = () => {
 
   return (
     <>
-      {imageBlob === undefined ? <div>Loading Assets</div> :getMeetingProviderWithFeatures()}
+      {imageBlob === undefined ? <div>Loading Assets</div> : getMeetingProviderWithFeatures()}
     </>
   );
 };

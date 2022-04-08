@@ -25,14 +25,14 @@ export const VideoTransformDropdown: React.FC<Props> = ({
   label = 'Video Transform Dropdown',
 }) => {
   const [transformOption, setTransformOption] = useState(VideoTransformOptions.None);
-  // Both hooks are needed because this componnent uses both blur and replacement filters.
+  // Both hooks are needed because this component uses both blur and replacement filters.
   const { isBackgroundBlurSupported, createBackgroundBlurDevice } =  
     useBackgroundBlur();
   const { isBackgroundReplacementSupported, createBackgroundReplacementDevice } =  
     useBackgroundReplacement();
   const [isLoading, setIsLoading] = useState(false);
   const meetingManager = useMeetingManager();
-  const [activeVideoDevice, setDevice] = useState<Device | VideoTransformDevice | null>(
+  const [activeVideoDevice, setDevice] = useState<Device | VideoTransformDevice | undefined>(
     meetingManager.selectedVideoInputTransformDevice
   );
 
@@ -62,7 +62,7 @@ export const VideoTransformDropdown: React.FC<Props> = ({
   useEffect(() => {
     meetingManager.subscribeToSelectedVideoInputTransformDevice(setDevice);
     return () => {
-      meetingManager.unsubscribeFromSelectedVideoInputTranformDevice(setDevice);
+      meetingManager.unsubscribeFromSelectedVideoInputTransformDevice(setDevice);
     };
   }, []);
   
@@ -71,7 +71,7 @@ export const VideoTransformDropdown: React.FC<Props> = ({
     const selectedTransform = e.target.value;
     let currentDevice = activeVideoDevice;
 
-    if (isLoading || currentDevice === null) {
+    if (isLoading || currentDevice === undefined) {
       return;
     }
     try {
