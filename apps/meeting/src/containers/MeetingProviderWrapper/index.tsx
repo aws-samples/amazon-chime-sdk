@@ -4,7 +4,7 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import {
-  AudioTransformDevice,
+  AudioInputDevice,
   Device,
   VoiceFocusModelName,
   VoiceFocusTransformDevice,
@@ -30,7 +30,7 @@ const MeetingProviderWithDeviceReplacement: React.FC = ({ children }) => {
 
   const onDeviceReplacement = (
     nextDevice: string,
-    currentDevice: Device | AudioTransformDevice | null
+    currentDevice: AudioInputDevice
   ): Promise<Device | VoiceFocusTransformDevice> => {
     if (currentDevice instanceof VoiceFocusTransformDevice) {
       return addVoiceFocus(nextDevice);
