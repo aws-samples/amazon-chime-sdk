@@ -9,7 +9,7 @@ import {
   FormField,
   Select,
   useVideoInputs,
-  useSelectVideoInputDevice,
+  useMeetingManager,
 } from 'amazon-chime-sdk-component-library-react';
 import { VideoTransformOptions, VideoTransformDropdownOptionType } from '../../../types/index';
 
@@ -28,7 +28,7 @@ export const VideoTransformDropdown: React.FC<Props> = ({
   const { isBackgroundReplacementSupported, createBackgroundReplacementDevice } =
     useBackgroundReplacement();
   const [isLoading, setIsLoading] = useState(false);
-  const selectVideoInput = useSelectVideoInputDevice();
+  const meetingManager = useMeetingManager();
   const { selectedDevice } = useVideoInputs();
 
   // useEffect to listen on selected video input device if changed by other components
@@ -78,7 +78,7 @@ export const VideoTransformDropdown: React.FC<Props> = ({
         currentDevice = await createBackgroundReplacementDevice(currentDevice as Device);
       }
       // Select the newly created device from the above logic as the video input device.
-      await selectVideoInput(currentDevice);
+      await meetingManager.startVideoInputDevice(currentDevice);
       // Update the current selected transform.
       setTransformOption(selectedTransform);
     } catch (e) {

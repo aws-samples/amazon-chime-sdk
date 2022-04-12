@@ -7,8 +7,8 @@ import {
   Modal,
   ModalBody,
   ModalHeader,
-  DevicePermissionStatus,
-  useDevicePermissionStatus,
+  DeviceLabelTriggerStatus,
+  useDeviceLabelTriggerStatus,
   useLogger,
 } from 'amazon-chime-sdk-component-library-react';
 
@@ -18,9 +18,9 @@ import Card from '../components/Card';
 // Show nothing if permission is already granted or component loads on initial render
 const DevicePermissionPrompt = () => {
   const logger = useLogger();
-  const permission = useDevicePermissionStatus();
+  const status = useDeviceLabelTriggerStatus();
 
-  return permission === DevicePermissionStatus.IN_PROGRESS ? (
+  return status === DeviceLabelTriggerStatus.IN_PROGRESS ? (
     <Modal
       size="md"
       onClose={(): void => logger.info('Permission prompt closed')}

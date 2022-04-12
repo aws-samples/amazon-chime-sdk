@@ -1,7 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import { isVideoTransformDevice, VideoTransformDevice } from 'amazon-chime-sdk-js';
+import { isVideoTransformDevice, VideoInputDevice, VideoTransformDevice } from 'amazon-chime-sdk-js';
 import React, { ReactNode, useEffect, useState } from 'react';
 import isEqual from 'lodash.isequal';
 import {
@@ -14,7 +14,7 @@ import {
   Spinner,
   PopOverItem,
   PopOverSeparator,
-  useSelectVideoInputDevice,
+  useMeetingManager,
   isOptionActive,
   useLogger,
 } from 'amazon-chime-sdk-component-library-react';
@@ -36,7 +36,7 @@ const VideoInputTransformControl: React.FC<Props> = ({
   backgroundBlurLabel = 'Enable Background Blur',
   backgroundReplacementLabel = 'Enable Background Replacement',
 }) => {
-  const selectVideoInput = useSelectVideoInputDevice();
+  const meetingManager = useMeetingManager();
   const logger = useLogger();
   const { devices, selectedDevice } = useVideoInputs();
   const { isVideoEnabled, toggleVideo } = useLocalVideo();
@@ -45,11 +45,7 @@ const VideoInputTransformControl: React.FC<Props> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [dropdownWithVideoTransformOptions, setDropdownWithVideoTransformOptions] = useState<ReactNode[] | null>(null);
   const [activeVideoTransformOption, setActiveVideoTransformOption] = useState<string>(VideoTransformOptions.None);
-
-  const videoDevices: DeviceType[] = useMemoCompare(
-    devices,
-    (prev: DeviceType[] | undefined, next: DeviceType[] | undefined): boolean => isEqual(prev, next)
-  );
+  const videoDevices: DeviceType[] = useMemoCompare(devices, (prev: DeviceType[] | undefined, next: DeviceType[] | undefined): boolean => isEqual(prev, next));
 
   useEffect(() => {
     resetDeviceToIntrinsic();
@@ -62,7 +58,7 @@ const VideoInputTransformControl: React.FC<Props> = ({
     try {
       if (isVideoTransformDevice(selectedDevice)) {
         const intrinsicDevice = await selectedDevice.intrinsicDevice();
-        await selectVideoInput(intrinsicDevice);
+        await meetingManager.startVideoInputDevice(intrinsicDevice);
       }
     } catch (error) {
       logger.error('Failed to reset Device to intrinsic device');
@@ -79,7 +75,7 @@ const VideoInputTransformControl: React.FC<Props> = ({
       setIsLoading(true);
       if (!isVideoTransformDevice(current)) {
         // Enable video transform on the default device.
-        current = (await createBackgroundBlurDevice(current)) as VideoTransformDevice;
+        current = await createBackgroundBlurDevice(current) as VideoTransformDevice;
         logger.info(`Video filter turned on - selecting video transform device: ${JSON.stringify(current)}`);
       } else {
         // Switch back to intrinsicDevice.
@@ -89,20 +85,16 @@ const VideoInputTransformControl: React.FC<Props> = ({
         current = intrinsicDevice;
         // Switch to background blur device if old selection was background replacement otherwise switch to default intrinsic device.
         if (activeVideoTransformOption === VideoTransformOptions.Replacement) {
-          current = (await createBackgroundBlurDevice(current)) as VideoTransformDevice;
+          current = await createBackgroundBlurDevice(current) as VideoTransformDevice;
           logger.info(`Video filter was turned on - video transform device: ${JSON.stringify(current)}`);
         } else {
           logger.info(`Video filter was turned off - selecting inner device: ${JSON.stringify(current)}`);
         }
       }
       // Use the new created video device as input.
-      await selectVideoInput(current);
+      await meetingManager.startVideoInputDevice(current);
       // Update the current selected transform.
-      setActiveVideoTransformOption((activeVideoTransformOption) =>
-        activeVideoTransformOption === VideoTransformOptions.Blur
-          ? VideoTransformOptions.None
-          : VideoTransformOptions.Blur
-      );
+      setActiveVideoTransformOption(activeVideoTransformOption => activeVideoTransformOption === VideoTransformOptions.Blur ? VideoTransformOptions.None : VideoTransformOptions.Blur);
     } catch (e) {
       logger.error(`Error trying to toggle background blur ${e}`);
     } finally {
@@ -119,7 +111,7 @@ const VideoInputTransformControl: React.FC<Props> = ({
       setIsLoading(true);
       if (!isVideoTransformDevice(current)) {
         // Enable video transform on the non-transformed device.
-        current = (await createBackgroundReplacementDevice(current)) as VideoTransformDevice;
+        current = await createBackgroundReplacementDevice(current) as VideoTransformDevice;
         logger.info(`Video filter turned on - selecting video transform device: ${JSON.stringify(current)}`);
       } else {
         // Switch back to intrinsicDevice.
@@ -129,20 +121,16 @@ const VideoInputTransformControl: React.FC<Props> = ({
         current = intrinsicDevice;
         // Switch to background replacement device if old selection was background blur otherwise switch to default intrinsic device.
         if (activeVideoTransformOption === VideoTransformOptions.Blur) {
-          current = (await createBackgroundReplacementDevice(current)) as VideoTransformDevice;
+          current = await createBackgroundReplacementDevice(current) as VideoTransformDevice;
           logger.info(`Video filter turned on - selecting video transform device: ${JSON.stringify(current)}`);
         } else {
           logger.info(`Video filter was turned off - selecting inner device: ${JSON.stringify(current)}`);
         }
       }
       // Use the new created video device as input.
-      await selectVideoInput(current);
+      await meetingManager.startVideoInputDevice(current);
       // Update the current selected transform.
-      setActiveVideoTransformOption((activeVideoTransformOption) =>
-        activeVideoTransformOption === VideoTransformOptions.Replacement
-          ? VideoTransformOptions.None
-          : VideoTransformOptions.Replacement
-      );
+      setActiveVideoTransformOption(activeVideoTransformOption => activeVideoTransformOption === VideoTransformOptions.Replacement ? VideoTransformOptions.None : VideoTransformOptions.Replacement);
     } catch (e) {
       logger.error(`Error trying to toggle background replacement ${e}`);
     } finally {
@@ -155,19 +143,21 @@ const VideoInputTransformControl: React.FC<Props> = ({
       try {
         // If background blur/replacement is on, then re-use the same video transform pipeline, but replace the inner device
         // If background blur/replacement is not on, then do a normal video selection
+        let newDevice: VideoInputDevice = deviceId;
         if (isVideoTransformDevice(selectedDevice) && !isLoading) {
           setIsLoading(true);
-          const receivedDevice = deviceId;
           if ('chooseNewInnerDevice' in selectedDevice) {
             // @ts-ignore
-            const transformedDevice = selectedDevice.chooseNewInnerDevice(receivedDevice);
-            await selectVideoInput(transformedDevice);
+            newDevice = selectedDevice.chooseNewInnerDevice(deviceId);
           } else {
             logger.error('Transform device cannot choose new inner device');
+            return;
           }
-          setIsLoading(false);
+        }
+        if (isVideoEnabled) {
+          await meetingManager.startVideoInputDevice(newDevice);
         } else {
-          await selectVideoInput(deviceId);
+          meetingManager.selectVideoInputDevice(newDevice);
         }
       } catch (error) {
         logger.error('VideoInputTransformControl failed to select video input device');
@@ -232,17 +222,22 @@ const VideoInputTransformControl: React.FC<Props> = ({
   }, [
     createBackgroundBlurDevice,
     createBackgroundReplacementDevice,
-    selectVideoInput,
-    selectedDevice,
+    meetingManager,
+    meetingManager.startVideoInputDevice,
     videoDevices,
     isLoading,
+    isVideoEnabled,
     selectedDevice,
     isBackgroundBlurSupported,
     isBackgroundReplacementSupported,
   ]);
 
   return (
-    <ControlBarButton icon={<Camera disabled={!isVideoEnabled} />} onClick={toggleVideo} label={label}>
+    <ControlBarButton
+      icon={<Camera disabled={!isVideoEnabled} />}
+      onClick={toggleVideo}
+      label={label}
+    >
       {dropdownWithVideoTransformOptions}
     </ControlBarButton>
   );

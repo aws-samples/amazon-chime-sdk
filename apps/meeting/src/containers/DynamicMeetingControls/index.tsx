@@ -11,8 +11,8 @@ import {
   ControlBarButton,
   useUserActivityState,
   Dots,
-  useDevicePermissionStatus,
-  DevicePermissionStatus,
+  useDeviceLabelTriggerStatus,
+  DeviceLabelTriggerStatus,
   DeviceLabels,
 } from 'amazon-chime-sdk-component-library-react';
 
@@ -24,7 +24,7 @@ import DevicePermissionControl from '../DevicePermissionControl/DevicePermission
 const DynamicMeetingControls = () => {
   const { toggleNavbar, closeRoster, showRoster } = useNavigation();
   const { isUserActive } = useUserActivityState();
-  const permission = useDevicePermissionStatus();
+  const status = useDeviceLabelTriggerStatus();
 
   const handleToggle = () => {
     if (showRoster) {
@@ -47,7 +47,7 @@ const DynamicMeetingControls = () => {
           onClick={handleToggle}
           label="Menu"
         />
-        {permission === DevicePermissionStatus.GRANTED ?
+        {status === DeviceLabelTriggerStatus.GRANTED ?
           <>
             <AudioInputControl />
             <VideoInputControl />
