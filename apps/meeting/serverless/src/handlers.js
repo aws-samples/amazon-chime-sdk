@@ -325,7 +325,7 @@ exports.logs = async (event, context) => {
         const timestampIso = new Date(log.timestampMs).toISOString();
         let message = `${body.appName} ${timestampIso} [${log.sequenceNumber}] [${log.logLevel}]`;
         if (body.meetingId && body.attendeeId) {
-          message = `${message} [mid: ${body.meetingId.toString()}] [aid: ${body.attendeeId}]: ${log.message}`;
+          message = `${message} [meetingId: ${body.meetingId.toString()}] [attendeeId: ${body.attendeeId}]: ${log.message}`;
         } else {
           message = `${message}: ${log.message}`;
         }
