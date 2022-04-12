@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
-export const StyledChat = styled.aside`
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const StyledChat = styled.aside<any>`
   display: grid;
   grid-template-rows: auto 1fr auto;
   grid-template-areas:
@@ -21,7 +22,8 @@ export const StyledChat = styled.aside`
   }
 `;
 
-export const StyledTitle = styled.div`
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const StyledTitle = styled.div<any>`
   grid-area: chat-header;
   position: relative;
   display: flex;
