@@ -11,6 +11,7 @@ import {
   ModalHeader,
   ModalButton,
   ModalButtonGroup,
+  useLogger,
 } from 'amazon-chime-sdk-component-library-react';
 
 import { endMeeting } from '../../utils/api';
@@ -19,6 +20,7 @@ import { useAppState } from '../../providers/AppStateProvider';
 import routes from '../../constants/routes';
 
 const EndMeetingControl: React.FC = () => {
+  const logger = useLogger();
   const [showModal, setShowModal] = useState(false);
   const toggleModal = (): void => setShowModal(!showModal);
   const { meetingId } = useAppState();
@@ -35,7 +37,7 @@ const EndMeetingControl: React.FC = () => {
         history.push(routes.HOME);
       }
     } catch (e) {
-      console.log('Could not end meeting', e);
+      logger.error(`Could not end meeting: ${e}`);
     }
   };
 
