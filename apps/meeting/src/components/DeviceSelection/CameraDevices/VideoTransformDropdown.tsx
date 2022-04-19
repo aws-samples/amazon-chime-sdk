@@ -55,7 +55,7 @@ export const VideoTransformDropdown: React.FC<Props> = ({
   ];
 
   // Creates a device based on the selections (None, Blur, Replacement) and uses it as input.
-  async function selectTransform(e: ChangeEvent<HTMLSelectElement>) {
+  const selectTransform = async (e: ChangeEvent<HTMLSelectElement>) => {
     const selectedTransform = e.target.value;
     let currentDevice = selectedDevice;
 
@@ -86,7 +86,7 @@ export const VideoTransformDropdown: React.FC<Props> = ({
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   return (
     <FormField
