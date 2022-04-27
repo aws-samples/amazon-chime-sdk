@@ -80,6 +80,7 @@ const AuthProvider = ({ children }) => {
 
   function autoRefreshCognitoIAMCreds(creds) {
     creds.needsRefresh = function() {
+      console.log("Cognito needsRefresh: " + Date.now() + " " + creds.expiration)
       return Date.now() > creds.expiration
     }
 
@@ -160,10 +161,11 @@ const AuthProvider = ({ children }) => {
         stsCredentials.SessionToken);
 
 
-    let credentialReceiveTime = Date.now();
-    // In template.yaml the credential role for anon is set to expire in 15 mins
+    const credentialReceiveTime = Date.now();
+    // In template.yaml the credential role for anonymous is set to expire in 15 mins
     var FIFTEEN_MINS = 15 * 60 * 1000;
     AWS.config.credentials.needsRefresh = function() {
+      console.log("Check if credentials need refresh")
       return Date.now() - credentialReceiveTime > FIFTEEN_MINS
     }
 
