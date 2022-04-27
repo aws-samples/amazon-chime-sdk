@@ -78,12 +78,25 @@ const AuthProvider = ({ children }) => {
     }
   };
 
+  function autoRefreshCognitoIAMCreds(creds) {
+    creds.needsRefresh = function() {
+      return Date.now() > creds.expiration
+    }
+
+    creds.refresh = function(cb) {
+      console.log("Refresh Cognito IAM Creds")
+      getAwsCredentialsFromCognito().then(cb())
+    }
+  }
+
   const getAwsCredentialsFromCognito = async () => {
-    const creds = await Auth.currentCredentials();
-    const essentialCreds = await Auth.essentialCredentials(creds);
     AWS.config.region = appConfig.region;
-    AWS.config.credentials = essentialCreds;
-    return essentialCreds;
+
+    const creds = await Auth.currentUserCredentials();
+    autoRefreshCognitoIAMCreds(creds)
+    AWS.config.credentials = creds;
+
+    return creds;
   };
 
   const setAuthenticatedUserFromCognito = () => {
@@ -141,11 +154,26 @@ const AuthProvider = ({ children }) => {
     const stsCredentials = response.ChimeCredentials;
     updateUserAttributes(response.ChimeUserId);
     AWS.config.region = appConfig.region;
-    AWS.config.credentials = {
-      accessKeyId: stsCredentials.AccessKeyId,
-      secretAccessKey: stsCredentials.SecretAccessKey,
-      sessionToken: stsCredentials.SessionToken
-    };
+    AWS.config.credentials = new AWS.Credentials(
+        stsCredentials.AccessKeyId,
+        stsCredentials.SecretAccessKey,
+        stsCredentials.SessionToken);
+
+
+    let credentialReceiveTime = Date.now();
+    // In template.yaml the credential role for anon is set to expire in 15 mins
+    var FIFTEEN_MINS = 15 * 60 * 1000;
+    AWS.config.credentials.needsRefresh = function() {
+      return Date.now() - credentialReceiveTime > FIFTEEN_MINS
+    }
+
+    AWS.config.credentials.refresh = function(cb) {
+      console.error("Credentials expired via anonymous token used for Demo. TODO: implement refresh for actual production use case");
+      // TODO, implement this for specific use case.  In demo anonymous users are given a single one time
+      // use token that can not be refreshed.  An implementation here would likely call to your authorization
+      // service to get new credentials
+      cb();
+    }
 
     setIsAuthenticated(true);
   };
