@@ -78,10 +78,6 @@ const AuthProvider = ({ children }) => {
     }
   };
 
-  function autoRefreshCognitoIAMCreds(creds) {
-
-  }
-
   const getAwsCredentialsFromCognito = async () => {
     const creds = await Auth.currentUserCredentials();
     AWS.config.credentials = new AWS.Credentials(
@@ -90,12 +86,12 @@ const AuthProvider = ({ children }) => {
         creds.sessionToken);
 
     AWS.config.credentials.needsRefresh = function() {
-      return Date.now() > creds.expiration
+      return Date.now() > creds.expiration;
     }
 
     AWS.config.credentials.refresh = function(cb) {
-      console.log("Refresh Cognito IAM Creds")
-      getAwsCredentialsFromCognito().then(cb())
+      console.log("Refresh Cognito IAM Creds");
+      getAwsCredentialsFromCognito().then(cb());
     }
     AWS.config.region = appConfig.region;
     return creds;
@@ -164,9 +160,9 @@ const AuthProvider = ({ children }) => {
 
     const credentialReceiveTime = Date.now();
     // In template.yaml the credential role for anonymous is set to expire in 15 mins
-    var FIFTEEN_MINS = 15 * 60 * 1000;
+    var CREDENTIAL_ROLE_EXPIRY_DURATION = 15 * 60 * 1000;
     AWS.config.credentials.needsRefresh = function() {
-      return Date.now() - credentialReceiveTime > FIFTEEN_MINS
+      return Date.now() - credentialReceiveTime > CREDENTIAL_ROLE_EXPIRY_DURATION
     }
 
     AWS.config.credentials.refresh = function(cb) {
