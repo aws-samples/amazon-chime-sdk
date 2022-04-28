@@ -218,3 +218,5 @@ async function sendChannelMessage(
 3. Add channel flow to a channel by choosing the **Manage channel flow** option from the channel menu.
 4. Send Messages on the channel with profanity or PII and see sensitive content being redacted. More details in the [Use Channel Flows blog post](https://aws.amazon.com/blogs/business-productivity/use-channel-flows-to-remove-profanity-and-sensitive-content-from-messages-in-amazon-chime-sdk-messaging/).
 
+### Presence and Typing Indicators
+Follow the steps on the [presence and typing indicators](https://aws.amazon.com/blogs/business-productivity/build-presence-and-typing-indicators-with-amazon-chime-sdk-messaging/) blog post.
