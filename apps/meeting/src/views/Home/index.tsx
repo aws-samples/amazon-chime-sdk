@@ -3,13 +3,13 @@
 
 import React from 'react';
 
-import MeetingFormSelector from '../../containers/MeetingFormSelector';
 import { StyledLayout } from './Styled';
 import { VersionLabel } from '../../utils/VersionLabel';
+import MeetingForm from '../../containers/MeetingForm';
 
 const Home = () => (
   <StyledLayout>
-    <MeetingFormSelector />
+    <MeetingForm />
     <VersionLabel />
   </StyledLayout>
 );

@@ -19,7 +19,7 @@ const NoMeetingRedirect: React.FC = ({ children }) => {
 
   const payload: any = {
     severity: Severity.INFO,
-    message: 'No meeting found, please enter a valid meeting Id',
+    message: 'No meeting found, redirect to Home page',
     autoClose: true
   };
 

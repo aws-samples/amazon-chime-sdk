@@ -34,8 +34,3 @@ export type ContentShareControlContextType = {
   toggleContentShare: () => Promise<void>;
   togglePauseContentShare: () => void;
 };
-
-export enum MeetingMode {
-  Spectator,
-  Attendee,
-};
