@@ -1,10 +1,14 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   VideoTileGrid,
-  UserActivityProvider
+  UserActivityProvider,
+  MeetingStatus,
+  useLocalVideo,
+  useMeetingStatus,
+  useToggleLocalMute
 } from 'amazon-chime-sdk-component-library-react';
 
 import { StyledLayout, StyledContent } from './Styled';
@@ -17,6 +21,24 @@ import useMeetingEndRedirect from '../../hooks/useMeetingEndRedirect';
 const MeetingView = () => {
   useMeetingEndRedirect();
   const { showNavbar, showRoster } = useNavigation();
+  const { isVideoEnabled, toggleVideo } = useLocalVideo();
+  const { muted, toggleMute } = useToggleLocalMute();
+  const meetingStatus = useMeetingStatus();
+
+  useEffect(() => {
+    const toggle = async () => {
+      if (meetingStatus === MeetingStatus.Succeeded) {
+        if (!isVideoEnabled) {
+          await toggleVideo();
+        }
+        if (!muted) {
+          toggleMute();
+        }
+      }
+    };
+
+    toggle();
+  }, [meetingStatus]);
 
   return (
     <UserActivityProvider>
