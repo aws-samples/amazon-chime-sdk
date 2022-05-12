@@ -124,8 +124,8 @@ const MeetingForm: React.FC = () => {
         await meetingManager.start();
         history.push(`${routes.MEETING}/${meetingId}`);
       } else {
-        setMeetingMode(MeetingMode.Attendee);
-        history.push(routes.DEVICE);
+        await meetingManager.start();
+        history.push(`${routes.MEETING}/${meetingId}`);
       }
     } catch (error) {
       updateErrorMessage((error as Error).message);

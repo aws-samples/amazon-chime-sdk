@@ -1,8 +1,8 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import React from 'react';
-import { VideoTileGrid, UserActivityProvider } from 'amazon-chime-sdk-component-library-react';
+import React, { useEffect } from 'react';
+import { VideoTileGrid, UserActivityProvider, useLocalVideo, useToggleLocalMute } from 'amazon-chime-sdk-component-library-react';
 
 import { StyledLayout, StyledContent } from './Styled';
 import NavigationControl from '../../containers/Navigation/NavigationControl';
@@ -21,6 +21,21 @@ const MeetingView = (props: { mode: MeetingMode }) => {
   const { showNavbar, showRoster, showChat } = useNavigation();
   const { mode } = props;
   const { layout } = useAppState();
+  const { isVideoEnabled, toggleVideo } = useLocalVideo();
+  const { muted, toggleMute } = useToggleLocalMute();
+
+  useEffect(() => {
+    const toggle = async () => {
+      if (!isVideoEnabled) {
+        await toggleVideo();
+      }
+      if (!muted) {
+        toggleMute();
+      }
+    };
+
+    toggle();
+  }, [muted, toggleMute]);
 
   return (
     <UserActivityProvider>

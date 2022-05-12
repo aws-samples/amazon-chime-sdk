@@ -43,7 +43,7 @@ const EndMeetingControl: React.FC = () => {
 
   return (
     <>
-      <ControlBarButton icon={<Phone />} onClick={toggleModal} label="Leave" />
+      <ControlBarButton icon={<Phone />} onClick={leaveMeeting} label="Leave" />
       {showModal && (
         <Modal size="md" onClose={toggleModal} rootId="modal-root">
           <ModalHeader title="End Meeting" />
