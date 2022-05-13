@@ -7,15 +7,13 @@ import {
   Flex,
   Heading,
   PrimaryButton,
-  useMeetingManager,
 } from 'amazon-chime-sdk-component-library-react';
 
 import { useAppState } from '../../providers/AppStateProvider';
 import { StyledList } from './Styled';
 
 const MeetingDetails = () => {
-  const { meetingId, toggleTheme, theme } = useAppState();
-  const manager = useMeetingManager();
+  const { meetingId, toggleTheme, theme, region } = useAppState();
 
   return (
     <Flex container layout="fill-space-centered">
@@ -30,7 +28,7 @@ const MeetingDetails = () => {
           </div>
           <div>
             <dt>Hosted region</dt>
-            <dd>{manager.meetingRegion}</dd>
+            <dd>{region}</dd>
           </div>
         </StyledList>
         <PrimaryButton

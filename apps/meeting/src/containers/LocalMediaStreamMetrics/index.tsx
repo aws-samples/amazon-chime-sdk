@@ -120,27 +120,6 @@ export const LocalMediaStreamMetrics: React.FC = () => {
                   : '';
               })}
             />
-            <MetricItem
-              metricName="Frame Height"
-              metricValues={ssrcArray.map(ssrc => {
-                return localVideoStreamMetrics[ssrc]
-                  .videoUpstreamGoogFrameHeight
-                  ? localVideoStreamMetrics[
-                    ssrc
-                  ].videoUpstreamGoogFrameHeight.toString()
-                  : '';
-              })}
-            />
-            <MetricItem
-              metricName="Frame Width"
-              metricValues={ssrcArray.map(ssrc => {
-                return localVideoStreamMetrics[ssrc].videoUpstreamGoogFrameWidth
-                  ? localVideoStreamMetrics[
-                    ssrc
-                  ].videoUpstreamGoogFrameWidth.toString()
-                  : '';
-              })}
-            />
           </MediaStatsList>
         </>
       )}

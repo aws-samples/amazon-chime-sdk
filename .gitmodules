@@ -1,0 +1,3 @@
+[submodule "amazon-chime-sdk-component-library-react"]
+	path = amazon-chime-sdk-component-library-react
+	url = https://github.com/aws/amazon-chime-sdk-component-library-react.git

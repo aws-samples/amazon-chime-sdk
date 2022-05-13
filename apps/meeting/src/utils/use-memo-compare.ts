@@ -4,6 +4,7 @@
 import { useEffect, useRef } from 'react';
 
 function useMemoCompare<T>(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   next: any,
   compare: (prev: T | undefined, next: T | undefined) => boolean
 ) {
