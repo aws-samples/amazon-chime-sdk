@@ -21,6 +21,7 @@ import {
 import { DeviceType } from '../../types';
 import useMemoCompare from '../../utils/use-memo-compare';
 import { VideoTransformOptions } from '../../types/index';
+import { useAppState } from '../../providers/AppStateProvider';
 
 interface Props {
   /** The label that will be shown for video input control, it defaults to `Video`. */
@@ -33,8 +34,8 @@ interface Props {
 
 const VideoInputTransformControl: React.FC<Props> = ({
   label = 'Video',
-  backgroundBlurLabel = 'Enable Background Blur',
-  backgroundReplacementLabel = 'Enable Background Replacement',
+  backgroundBlurLabel = 'Background Blur',
+  backgroundReplacementLabel = 'Background Replacement',
 }) => {
   const meetingManager = useMeetingManager();
   const logger = useLogger();
@@ -44,27 +45,10 @@ const VideoInputTransformControl: React.FC<Props> = ({
   const { isBackgroundReplacementSupported, createBackgroundReplacementDevice } = useBackgroundReplacement();
   const [isLoading, setIsLoading] = useState(false);
   const [dropdownWithVideoTransformOptions, setDropdownWithVideoTransformOptions] = useState<ReactNode[] | null>(null);
-  const [activeVideoTransformOption, setActiveVideoTransformOption] = useState<string>(VideoTransformOptions.None);
+  const { activeVideoTransformOption, setActiveVideoTransformOption } = useAppState();
   const videoDevices: DeviceType[] = useMemoCompare(devices, (prev: DeviceType[] | undefined, next: DeviceType[] | undefined): boolean => isEqual(prev, next));
 
-  useEffect(() => {
-    resetDeviceToIntrinsic();
-  }, []);
-
-  // Reset the video input to intrinsic if current video input is a transform device because this component
-  // does not know if blur or replacement was selected. This depends on how the demo is set up.
-  // TODO: use a hook in the appState to track whether blur or replacement was selected before this component mounts,
-  // or maintain the state of `activeVideoTransformOption` in `MeetingManager`.
-  const resetDeviceToIntrinsic = async () => {
-    try {
-      if (isVideoTransformDevice(selectedDevice)) {
-        const intrinsicDevice = await selectedDevice.intrinsicDevice();
-        await meetingManager.selectVideoInputDevice(intrinsicDevice);
-      }
-    } catch (error) {
-      logger.error('Failed to reset Device to intrinsic device');
-    }
-  };
+  // TODO: When adding this component to SDK, we need to maintain the state of `activeVideoTransformOption` in `MeetingManager`.
 
   // Toggle background blur on/off.
   const toggleBackgroundBlur = async () => {

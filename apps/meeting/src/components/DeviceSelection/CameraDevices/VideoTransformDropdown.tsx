@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT-0
 
 import { Device, isVideoTransformDevice } from 'amazon-chime-sdk-js';
-import React, { ChangeEvent, useState, useEffect } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import {
   useBackgroundBlur,
   useBackgroundReplacement,
@@ -12,6 +12,7 @@ import {
   useMeetingManager,
 } from 'amazon-chime-sdk-component-library-react';
 import { VideoTransformOptions, VideoTransformDropdownOptionType } from '../../../types/index';
+import { useAppState } from '../../../providers/AppStateProvider';
 
 interface Props {
   /* Title for the dropdown, defaults to `Video Transform Dropdown` */
@@ -19,9 +20,9 @@ interface Props {
 }
 
 export const VideoTransformDropdown: React.FC<Props> = ({
-  label = 'Video Transform Dropdown',
+  label = 'Video Transform',
 }) => {
-  const [transformOption, setTransformOption] = useState(VideoTransformOptions.None);
+  const { activeVideoTransformOption, setActiveVideoTransformOption } = useAppState();
   // Both hooks are needed because this component uses both blur and replacement filters.
   const { isBackgroundBlurSupported, createBackgroundBlurDevice } =
     useBackgroundBlur();
@@ -31,12 +32,6 @@ export const VideoTransformDropdown: React.FC<Props> = ({
   const meetingManager = useMeetingManager();
   const { selectedDevice } = useVideoInputs();
 
-  // useEffect to listen on selected video input device if changed by other components
-  useEffect(() => {
-    if (!isVideoTransformDevice(selectedDevice) && transformOption !== VideoTransformOptions.None) {
-      setTransformOption(VideoTransformOptions.None);
-    }
-  }, [selectedDevice]);
 
   // Available background filter options based off if Background Blur and Replacement ware offered/supported.
   const options: VideoTransformDropdownOptionType[] = [
@@ -80,7 +75,7 @@ export const VideoTransformDropdown: React.FC<Props> = ({
       // Select the newly created device from the above logic as the video input device.
       await meetingManager.startVideoInputDevice(currentDevice);
       // Update the current selected transform.
-      setTransformOption(selectedTransform);
+      setActiveVideoTransformOption(selectedTransform);
     } catch (e) {
       console.error('Error trying to apply', selectTransform, e);
     } finally {
@@ -93,7 +88,7 @@ export const VideoTransformDropdown: React.FC<Props> = ({
       field={Select}
       options={options}
       onChange={selectTransform}
-      value={transformOption}
+      value={activeVideoTransformOption}
       label={label}
     />
   );

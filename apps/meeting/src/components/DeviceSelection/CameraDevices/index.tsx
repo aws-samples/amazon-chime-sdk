@@ -29,7 +29,7 @@ const CameraDevices = () => {
       <StyledInputGroup>
         <QualitySelection />
       </StyledInputGroup>
-      { videoTransformsEnabled ?
+      {videoTransformsEnabled ?
         <StyledInputGroup>
           <VideoTransformDropdown />
         </StyledInputGroup> : ''

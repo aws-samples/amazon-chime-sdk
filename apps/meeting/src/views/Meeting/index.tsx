@@ -9,6 +9,7 @@ import NavigationControl from '../../containers/Navigation/NavigationControl';
 import { useNavigation } from '../../providers/NavigationProvider';
 import MeetingDetails from '../../containers/MeetingDetails';
 import MeetingControls from '../../containers/MeetingControls';
+import DeviceSetup from '../../containers/DeviceSetup';
 import useMeetingEndRedirect from '../../hooks/useMeetingEndRedirect';
 import DynamicMeetingControls from '../../containers/DynamicMeetingControls';
 import { MeetingMode, Layout } from '../../types';
@@ -34,6 +35,7 @@ const MeetingView = (props: { mode: MeetingMode }) => {
                 noRemoteVideoView={<MeetingDetails />}
               />
               {mode === MeetingMode.Spectator ? <DynamicMeetingControls /> : <MeetingControls />}
+              <DeviceSetup />
             </StyledContent>
             <NavigationControl />
           </StyledLayout>

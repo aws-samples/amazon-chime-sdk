@@ -15,6 +15,7 @@ import {
   ZoomOut,
   useContentShareState,
   Chat,
+  Cog,
 } from 'amazon-chime-sdk-component-library-react';
 
 import { useNavigation } from '../../providers/NavigationProvider';
@@ -27,9 +28,13 @@ import { useVideoTileGridControl } from '../../providers/VideoTileGridProvider';
 
 const Navigation: React.FC = () => {
   const { toggleRoster, closeNavbar, toggleChat } = useNavigation();
-  const { theme, toggleTheme, layout, setLayout, priorityBasedPolicy } = useAppState();
+  const { theme, toggleTheme, layout, setLayout, priorityBasedPolicy, setIsDeviceSetupDisplayed } = useAppState();
   const { sharingAttendeeId } = useContentShareState();
   const { zoomIn, zoomOut } = useVideoTileGridControl();
+
+  const openPreviewVideo = (): void => {
+    setIsDeviceSetupDisplayed(true);
+  };
 
   return (
     <Navbar className="nav" flexDirection="column" container>
@@ -93,6 +98,12 @@ const Navigation: React.FC = () => {
           label="Media metrics"
         >
           <LocalMediaStreamMetrics />
+        </NavbarItem>
+        <NavbarItem
+          icon={<Cog />}
+          onClick={openPreviewVideo}
+          label='Preview devices'
+        >
         </NavbarItem>
       </Flex>
     </Navbar>
