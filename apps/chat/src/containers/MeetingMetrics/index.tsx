@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT-0
 
 import React from 'react';
-import { useBandwidthMetrics } from 'amazon-chime-sdk-component-library-react';
+import { useMediaStreamMetrics } from 'amazon-chime-sdk-component-library-react';
 
 import { StyledMetrics } from './Styled';
 import { useNavigation } from '../../providers/NavigationProvider';
@@ -21,7 +21,7 @@ const BandwidthMetrics = () => {
   const {
     availableIncomingBandwidth,
     availableOutgoingBandwidth
-  } = useBandwidthMetrics();
+  } = useMediaStreamMetrics();
 
   return (
     <StyledMetrics>
