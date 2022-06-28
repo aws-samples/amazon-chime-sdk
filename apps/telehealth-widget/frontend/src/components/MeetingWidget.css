@@ -1,0 +1,87 @@
+.MeetingWidget {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+  width: 100%;
+}
+
+.MeetingWidget__videos {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  flex: 1 1 auto;
+  background-color: black;
+}
+
+.MeetingWidget__localVideoContainer {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 4rem;
+  height: 6rem;
+  overflow: hidden;
+  border: 1px solid white;
+  background-color: #131313;
+}
+
+.MeetingWidget__localVideoContainer .VideoPlaceholder {
+  background-color: #131313;
+}
+
+div[data-testid='video-tile'] {
+  background: none;
+  height: 100%;
+}
+
+.MeetingWidget__controlBar {
+}
+
+.MeetingWidget__controlBar .MeetingWidget__controlBarMenu {
+  width: 100%;
+  box-shadow: unset;
+  background-color: transparent;
+}
+
+.MeetingWidget__controlBar .ch-control-bar-item-iconButton {
+  background-color: var(--chime-sdk-widget-button-color);
+}
+
+.MeetingWidget__controlBar .ch-control-bar-item-iconButton:hover {
+  background-color: var(--chime-sdk-widget-button-hover-color);
+}
+
+.MeetingWidget__controlBar .ch-control-bar-item-iconButton:active,
+.MeetingWidget__controlBar .ch-control-bar-item-iconButton:focus {
+  background-color: var(--chime-sdk-widget-button-hover-color);
+  box-shadow: 0 0 0 0.25rem var(--chime-sdk-widget-border-color);
+}
+
+.MeetingWidget__controlBar .ch-control-bar-item-iconButton .ch-icon {
+  color: white;
+  border-color: var(--chime-sdk-widget-border-color);
+}
+
+.MeetingWidget__controlBar .ch-control-bar-item-caret {
+  border-color: transparent;
+  background-color: transparent;
+}
+
+.MeetingWidget__controlBar .ch-control-bar-item-caret:hover {
+  background-color: var(--chime-sdk-widget-button-color);
+  border-color: var(--chime-sdk-widget-border-color);
+}
+
+.MeetingWidget__controlBar .ch-control-bar-item-caret:active,
+.MeetingWidget__controlBar .ch-control-bar-item-caret:focus {
+  background-color: var(--chime-sdk-widget-button-color);
+  border-color: var(--chime-sdk-widget-border-color);
+  box-shadow: 0 0 0 0.25rem var(--chime-sdk-widget-border-color);
+  color: white;
+}
+
+.MeetingWidget__controlBar .MeetingWidget__controlBarMenu .ch-control-bar-item-label {
+  padding-top: 1.25rem;
+  font-size: 0.8rem;
+}

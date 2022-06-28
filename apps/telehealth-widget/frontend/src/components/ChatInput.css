@@ -1,0 +1,31 @@
+.ChatInput {
+  display: grid;
+  flex: 0 0 auto;
+  border-top: 1px solid var(--chime-sdk-widget-border-color);
+}
+
+.ChatInput::after {
+  content: attr(data-replicated-value) ' ';
+  white-space: pre-wrap;
+  visibility: hidden;
+}
+
+.ChatInput::after,
+.ChatInput__textArea {
+  border: none;
+  box-sizing: border-box;
+  grid-area: 1 / 1 / 2 / 2;
+  outline: none;
+  padding: 0.75rem;
+  width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  -ms-word-break: break-all;
+  word-break: break-all;
+  word-break: break-word;
+  max-height: calc(var(--chime-sdk-widget-content-height) / 2);
+}
+
+.ChatInput__textArea {
+  resize: none;
+}

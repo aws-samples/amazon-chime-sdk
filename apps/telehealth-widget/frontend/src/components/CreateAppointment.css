@@ -1,0 +1,111 @@
+.CreateAppointment {
+  display: flex;
+  flex: 1 0 auto;
+  flex-direction: column;
+  gap: 1rem;
+  height: 100%;
+  padding: 1rem;
+}
+
+.CreateAppointment__form {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+  gap: 1.5rem;
+}
+
+.CreateAppointment__dateContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.CreateAppointment__selectContainer {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+  gap: 0.5rem;
+  position: relative;
+  width: 100%;
+}
+
+.CreateAppointment__selectAndArrow {
+  position: relative;
+}
+
+.CreateAppointment__select {
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: white;
+  border-radius: 0.25rem;
+  border: 1px solid var(--chime-sdk-widget-form-border-color);
+  outline: none;
+  padding: 0.5rem 1rem;
+  width: 100%;
+}
+
+.CreateAppointment__selectArrow {
+  position: absolute;
+  right: 1rem;
+  top: 0.6rem;
+  user-select: none;
+}
+
+.CreateAppointment__button {
+  background-color: var(--chime-sdk-widget-button-color);
+  border-radius: 0.25rem;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-weight: 700;
+  padding: 0.5rem;
+  transition: all 0.25s;
+  width: 100%;
+}
+
+.CreateAppointment__button:active,
+.CreateAppointment__button:hover,
+.CreateAppointment__button:focus {
+  background-color: var(--chime-sdk-widget-button-hover-color);
+}
+
+.CreateAppointment__button[disabled] {
+  cursor: not-allowed;
+  color: var(--chime-sdk-widget-button-disabled-color);
+  background-color: var(--chime-sdk-widget-button-disabled-background-color);
+}
+
+.react-datepicker__input-container input {
+  border-radius: 0.25rem;
+  border: 1px solid var(--chime-sdk-widget-form-border-color);
+  padding: 0.5rem 1rem;
+  width: 100%;
+}
+
+.CreateAppointment__listButtonContainer {
+  flex: 0 0 auto;
+  text-align: center;
+}
+
+.CreateAppointment__listButton {
+  background-color: transparent;
+  border: none;
+  color: var(--chime-sdk-widget-button-color);
+  cursor: pointer;
+  transition: all 0.25s;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.25rem;
+}
+
+.CreateAppointment__listButton:active,
+.CreateAppointment__listButton:hover,
+.CreateAppointment__listButton:focus {
+  color: var(--chime-sdk-widget-button-hover-color);
+  background-color: var(--chime-sdk-widget-link-hover-background-color);
+}
+
+#amazon-chime-sdk-date-picker {
+  position: relative;
+  z-index: calc(var(--chime-sdk-widget-z-index) + 1);
+}

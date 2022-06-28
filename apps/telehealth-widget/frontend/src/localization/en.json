@@ -1,0 +1,64 @@
+{
+  "AppointmentList": {
+    "checkedIn": "Checked in",
+    "checkIn": "Check in",
+    "createAppointment": "Create an appointment",
+    "currentAppointments": "Current appointments",
+    "dayJsNextDayFormat": "[Tomorrow]",
+    "dayJsSameDayFormat": "[Today]",
+    "doctor": "Doctor",
+    "patient": "Patient",
+    "upcomingAppointments": "Upcoming appointments"
+  },
+  "AppointmentView": {
+    "appointment": "Appointment",
+    "back": "Back",
+    "call": "Call",
+    "dayJsNextDayFormat": "[Tomorrow at] LT",
+    "dayJsSameDayFormat": "[Today at] LT",
+    "delete": "Delete"
+  },
+  "Chat": {
+    "acceptedInvite": "accepted a meeting invite",
+    "acceptedInviteByPhone": "accepted a meeting invite (phone)",
+    "canceledInvite": "canceled a meeting invite",
+    "checkedIn": "checked in",
+    "declinedInvite": "declined a meeting invite",
+    "declinedInviteByPhone": "declined a meeting invite (phone)",
+    "sendingInvite": "sent a meeting invite"
+  },
+  "ChatInput": {
+    "message": "Message {{recipient}}"
+  },
+  "MeetingDoctorView": {
+    "calling": "Calling...",
+    "declined": "{{name}} declined to join the meeting",
+    "phoneCall": "Make a phone call",
+    "phoneCallDescription": "Are they not joining? Make a phone call to let participants join the meeting from their phones.",
+    "waiting": "Waiting for <strong>{{name}}</strong><br> to join the meeting",
+    "title": "Meeting with {{name}}"
+  },
+  "MeetingPatientView": {
+    "accept": "Accept",
+    "decline": "Decline",
+    "received": "You received a meeting invite from <br><strong>{{name}}</strong>",
+    "starting": "Joining the meeting with <br><strong>{{name}}</strong>",
+    "title": "Meeting with {{name}}"
+  },
+  "MeetingWidget": {
+    "leave": "Leave",
+    "me": "Me",
+    "mute": "Mute",
+    "unmute": "Unmute",
+    "video": "Video"
+  },
+  "RemoteAttendeeVideo": {
+    "left": "{{name}} left the meeting.",
+    "phone": "(phone)",
+    "phoneAndWeb": "(phone and web)"
+  },
+  "Widget": {
+    "signOut": "Sign out",
+    "title": "Amazon Chime SDK Widget"
+  }
+}

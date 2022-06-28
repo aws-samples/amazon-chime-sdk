@@ -1,0 +1,88 @@
+/*
+ * TODO: This styling needs to be adjusted based on where the existing widget is loaded.
+ * The audio video meeting widget needs to calculate the place that it can fit most accurately and then accordingly set the top and bottom properties.
+ */
+
+.MeetingDoctorView__window {
+  left: calc(var(--chime-sdk-widget-width) + 2rem);
+}
+
+.MeetingDoctorView {
+  align-items: center;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  height: var(--chime-sdk-widget-content-height);
+  justify-content: center;
+}
+
+.MeetingDoctorView__progressUpdateContainer {
+  align-items: center;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+  padding: 1rem;
+  text-align: center;
+  width: 100%;
+}
+
+.MeetingDoctorView__waitingContainer {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  justify-content: center;
+}
+
+.MeetingDoctorView__waiting {
+  margin: 0;
+}
+
+.MeetingDoctorView__cancelButton {
+  margin-top: 0.25rem;
+  background-color: transparent;
+  border: none;
+  color: var(--chime-sdk-widget-button-color);
+  cursor: pointer;
+  transition: all 0.25s;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.25rem;
+}
+
+.MeetingDoctorView__cancelButton:active,
+.MeetingDoctorView__cancelButton:hover,
+.MeetingDoctorView__cancelButton:focus {
+  color: var(--chime-sdk-widget-button-hover-color);
+  background-color: var(--chime-sdk-widget-link-hover-background-color);
+}
+
+.MeetingDoctorView__phoneCallButton {
+  background-color: var(--chime-sdk-widget-button-color);
+  border-radius: 0.25rem;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-weight: 700;
+  padding: 0.5rem;
+  transition: all 0.25s;
+  width: 100%;
+}
+
+.MeetingDoctorView__phoneCallButton:active,
+.MeetingDoctorView__phoneCallButton:hover,
+.MeetingDoctorView__phoneCallButton:focus {
+  background-color: var(--chime-sdk-widget-button-hover-color);
+}
+
+.MeetingDoctorView__phoneCallButton[disabled] {
+  cursor: not-allowed;
+  color: var(--chime-sdk-widget-button-disabled-color);
+  background-color: var(--chime-sdk-widget-button-disabled-background-color);
+}
+
+.MeetingDoctorView__phoneCallDescription {
+  font-size: 0.8rem;
+  color: var(--chime-sdk-widget-light-text-color);
+}

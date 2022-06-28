@@ -1,0 +1,111 @@
+.AppointmentView {
+  display: flex;
+  flex-direction: column;
+  height: var(--chime-sdk-widget-content-height);
+}
+
+.AppointmentView__menu {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  border-bottom: 1px solid var(--chime-sdk-widget-border-color);
+  padding: 0.5rem;
+}
+
+.AppointmentView__backButton,
+.AppointmentView__callButton {
+  background-color: transparent;
+  border-radius: 0.25rem;
+  border: none;
+  color: var(--chime-sdk-widget-button-color);
+  cursor: pointer;
+  flex: 0 0 20%;
+  padding: 0.25rem;
+  transition: all 0.25s;
+  user-select: none;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.AppointmentView__backButton:active,
+.AppointmentView__backButton:hover,
+.AppointmentView__backButton:hover {
+  color: var(--chime-sdk-widget-button-hover-color);
+  background-color: var(--chime-sdk-widget-link-hover-background-color);
+}
+
+.AppointmentView__popOverButtonContainer {
+  display: flex;
+  flex: 0 0 60%;
+  justify-content: center;
+  min-width: 0;
+}
+
+.AppointmentView__popOverButtonContainer>[data-testid=popover] {
+  overflow: hidden;
+}
+
+.AppointmentView__popOverButton {
+  align-items: center;
+  border-radius: 0.25rem;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  padding: 0.25rem !important;
+  transition: all 0.25s;
+  user-select: none;
+  width: 100%;
+  color: inherit;
+}
+
+.AppointmentView__popOverButton:active,
+.AppointmentView__popOverButton:hover,
+.AppointmentView__popOverButton:focus {
+  background-color: var(--chime-sdk-widget-link-hover-background-color);
+}
+
+.AppointmentView__title {
+  font-weight: bold;
+  overflow: hidden;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.AppointmentView__icon {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  margin-left: 0.25rem;
+}
+
+.AppointmentView--patient .AppointmentView__popOverButtonContainer [data-testid=popover-header] {
+  border-bottom: none;
+}
+
+.AppointmentView__popOverButtonContainer [data-testid=popover-header]>.ch-title {
+  font-size: 1rem;
+}
+
+.AppointmentView__popOverButtonContainer [data-testid=popover-header]>.ch-subtitle {
+  font-size: 0.8rem;
+  color: var(--chime-sdk-widget-light-text-color) !important;
+}
+
+.AppointmentView__callButton {
+  flex: 0 0 20%;
+}
+
+.AppointmentView__callButton:active,
+.AppointmentView__callButton:hover,
+.AppointmentView__callButton:focus {
+  color: var(--chime-sdk-widget-button-hover-color);
+  background-color: var(--chime-sdk-widget-link-hover-background-color);
+}
+
+.AppointmentView__callButton[disabled] {
+  background-color: transparent !important;
+  color: var(--chime-sdk-widget-text-color) !important;
+  cursor: not-allowed;
+  opacity: 0.5;
+}

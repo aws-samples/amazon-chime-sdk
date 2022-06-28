@@ -1,0 +1,18 @@
+.Widget__window>.Window__main {
+  min-height: var(--chime-sdk-widget-content-height);
+  display: flex;
+  flex-direction: column;
+}
+
+.Widget__window > .Window__header > [data-testid='popover'] {
+  align-items: center;
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: center;
+}
+
+.Widget__popOver {
+  color: white;
+  padding: 0 1rem !important;
+  height: 2.5rem;
+}
