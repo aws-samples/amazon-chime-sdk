@@ -12,48 +12,50 @@ The Amazon Chime SDK Telehealth Widget demo demonstrates various communication c
 |A patient receives an SMS notification if a patient has not checked in. |The solution uses [Amazon Pinpoint](https://aws.amazon.com/pinpoint/) to send an SMS notification.|
 |A doctor and a patient join a meeting with a PSTN call. |The solution uses [Amazon Chime SDK PSTN Audio service](https://docs.aws.amazon.com/chime-sdk/latest/dg/build-lambdas-for-sip-sdk.html) to make a PSTN outbound call from doctor to patient.|
 
-## Demo screenshots
-
-### Sign in/Sign up
-
-![authentication](./github-assets/auth.png)
-
-### Appointment
-
-![appointment](./github-assets/appointment.png)
-
-### Check-in and SMS notification
-
-![checkin-sms-notifcation](./github-assets/sms-notification.png)
-
-### Audio video call (Doctor)
-
-![audio-video-meeting-doctor](./github-assets/audio-video-meeting.png)
-
-### Audio video call (Patient)
-
-![audio-video-meeting-patient](./github-assets/audip-video-meeting-patient.png)
-
-### Phone call (Doctor)
-
-![phone-call-doctor](./github-assets/phone-call-doctor.png)
-
-### Phone call (Patient)
-
-![phone-call-patient](./github-assets/phone-call-patient.png)
-
-### Chat widget
-
-![chat](./github-assets/chat.png)
-
-
-## Solution Architecture
-
-![solution architecture](./github-assets/widget-architecture.png)
-
 ## Getting started
 
 Ensure that you have configured your workstation with the default AWS credentials and an AWS region. Your default credentials should have the administrator permissions to deploy the stack and upload files to an Amazon S3 bucket. See [Getting started with the AWS CDK](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html#getting_started_prerequisites) if you have not configured so.
+
+### Deploy
+
+Deploy the **AmazonChimeSdkTelehealthWidgetDemo** stack using the default AWS profile and generate `dist/widget.js`. Deployment should complete within 5-10 minutes. See [FAQ](#faq) to learn more about the deployment command or troubleshoot issues.
+```
+cd ~/telehealth-widget
+npm run deploy
+```
+
+### Running the demo
+
+Embed the CSS and JS for widget from CloudFront in your website.
+  
+Step 1: Embed the CSS for widget from CloudFront.
+```html
+  <head>
+    ...
+    <!-- Embed the CSS for widget from CloudFront -->
+    <link href="https://<Cloudfront-DistributionUrl>/index.css" rel="stylesheet" />
+  </head>
+```
+
+Step 2: Embed the JavaScript for widget from CloudFront.
+```html
+<body>
+  <!-- Embed the JS script for widget from CloudFront -->
+  <script src="https://<Cloudfront-DistributionUrl>/index.js"></script>
+</body>
+```
+
+Step 3: Load the widget in your website.
+```html
+<body>
+  ...
+  <script>
+    window.initAmazonChimeSDKWidget();
+  </script>
+</body>
+```
+
+Now, run your website and you will see the widget embedded in your website.
 
 ### Sending appointment reminders via SMS
 
@@ -107,47 +109,6 @@ Now users with registered phone numbers will receive the appointment reminder vi
 After testing the SMS feature in the SMS sandbox, you can request production access to send SMS messages to any phone number. To do so, follow the instructions in [Moving from the Amazon Pinpoint SMS sandbox to production](https://docs.aws.amazon.com/pinpoint/latest/userguide/channels-sms-awssupport-sandbox.html).
 
 
-### Deploy
-
-Deploy the **AmazonChimeSdkTelehealthWidgetDemo** stack using the default AWS profile and generate `dist/widget.js`. Deployment should complete within 5-10 minutes. See [FAQ](#faq) to learn more about the deployment command or troubleshoot issues.
-```
-cd ~/telehealth-widget
-npm run deploy
-```
-
-### Running the demo
-
-Embed the CSS and JS for widget from CloudFront in your website.
-  
-Step 1: Embed the CSS for widget from CloudFront.
-```html
-  <head>
-    ...
-    <!-- Embed the CSS for widget from CloudFront -->
-    <link href="https://<Cloudfront-DistributionUrl>/index.css" rel="stylesheet" />
-  </head>
-```
-
-Step 2: Embed the JavaScript for widget from CloudFront.
-```html
-<body>
-  <!-- Embed the JS script for widget from CloudFront -->
-  <script src="https://<Cloudfront-DistributionUrl>/index.js"></script>
-</body>
-```
-
-Step 3: Load the widget in your website.
-```html
-<body>
-  ...
-  <script>
-    window.initAmazonChimeSDKWidget();
-  </script>
-</body>
-```
-
-Now, run your website and you will see the widget embedded in your website.
-
 ## Clean up
 
 Deploying the stack may incur charges to your AWS account. Use the following steps to delete resources.
@@ -173,8 +134,8 @@ AmazonChimeSdkTelehealthWidgetDemo: destroying...
 If any issue deleting the stack through command line, do the following to delete it from the AWS management console:
 
 1. Open the [AWS CloudFormation console](https://console.aws.amazon.com/cloudformation/).
-2. Delete the *AmazonChimeSdkTelehealthWidgetDemo* stack.
-3. Delete the *CDKToolkit* stack if you do not use it for other CDK stacks. The deployment command runs the cdk bootstrap command to provision the *CDKToolkit* stack for storing templates and assets.
+2. Delete the **AmazonChimeSdkTelehealthWidgetDemo** stack.
+3. Delete the **CDKToolkit** stack if you do not use it for other CDK stacks. The deployment command runs the cdk bootstrap command to provision the **CDKToolkit** stack for storing templates and assets.
 
 
 ## Development
@@ -321,3 +282,40 @@ If you do not specify any parameter to `window.initAmazonChimeSDKWidget()`, the 
 
 Yes, the demo supports localization using [i18next](https://www.i18next.com/) and [react-i18next](https://react.i18next.com/) internationalization frameworks. Follow the steps mentioned in `frontend/src/localization/index.ts` to support your language.
 
+## Appendix A: Solution architecture
+
+![solution architecture](./github-assets/widget-architecture.png)
+
+## Appendix B: Demo screenshots
+
+### Sign in/Sign up
+
+![authentication](./github-assets/auth.png)
+
+### Appointment
+
+![appointment](./github-assets/appointment.png)
+
+### Check-in and SMS notification
+
+![checkin-sms-notifcation](./github-assets/sms-notification.png)
+
+### Audio video call (Doctor)
+
+![audio-video-meeting-doctor](./github-assets/audio-video-meeting.png)
+
+### Audio video call (Patient)
+
+![audio-video-meeting-patient](./github-assets/audip-video-meeting-patient.png)
+
+### Phone call (Doctor)
+
+![phone-call-doctor](./github-assets/phone-call-doctor.png)
+
+### Phone call (Patient)
+
+![phone-call-patient](./github-assets/phone-call-patient.png)
+
+### Chat widget
+
+![chat](./github-assets/chat.png)
