@@ -21,10 +21,20 @@ In a browser environment, `window.ChimeSDK` will be available. You can access Ch
 For example, you can [create a meeting session](https://aws.github.io/amazon-chime-sdk-js/modules/apioverview.html#1-create-a-session) and [configure the meeting session](https://aws.github.io/amazon-chime-sdk-js/modules/apioverview.html#2-configure-the-session) using `window.ChimeSDK`.
 
 ```js
-const logger = new ChimeSDK.ConsoleLogger('ChimeMeetingLogs', ChimeSDK.LogLevel.INFO);
+const logger = new ChimeSDK.ConsoleLogger(
+  'ChimeMeetingLogs',
+  ChimeSDK.LogLevel.INFO,
+);
 const deviceController = new ChimeSDK.DefaultDeviceController(logger);
-const configuration = new ChimeSDK.MeetingSessionConfiguration(meeting, attendee);
-const meetingSession = new ChimeSDK.DefaultMeetingSession(configuration, logger, deviceController);
+const configuration = new ChimeSDK.MeetingSessionConfiguration(
+  meetingResponse,
+  attendeeResponse,
+);
+const meetingSession = new ChimeSDK.DefaultMeetingSession(
+  configuration,
+  logger,
+  deviceController,
+);
 ```
 
 ### Changing target version
@@ -33,6 +43,6 @@ You can change the version of `amazon-chime-sdk-js` in `package.json`. By defaul
 
 ```json
 "dependencies": {
-  "amazon-chime-sdk-js": "^2.0.0"
+  "amazon-chime-sdk-js": "^3.5.0"
 }
 ```
