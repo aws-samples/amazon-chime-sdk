@@ -4,7 +4,7 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import {
-  AudioTransformDevice,
+  AudioInputDevice,
   Device,
   VoiceFocusModelName,
   VoiceFocusTransformDevice,
@@ -22,7 +22,6 @@ import { NavigationProvider } from '../../providers/NavigationProvider';
 import NoMeetingRedirect from '../NoMeetingRedirect';
 import { Meeting, Home, DeviceSetup } from '../../views';
 import MeetingEventObserver from '../MeetingEventObserver';
-import meetingConfig from '../../meetingConfig';
 import { useAppState } from '../../providers/AppStateProvider';
 import { VideoFiltersCpuUtilization } from '../../types';
 
@@ -31,7 +30,7 @@ const MeetingProviderWithDeviceReplacement: React.FC = ({ children }) => {
 
   const onDeviceReplacement = (
     nextDevice: string,
-    currentDevice: Device | AudioTransformDevice
+    currentDevice: AudioInputDevice
   ): Promise<Device | VoiceFocusTransformDevice> => {
     if (currentDevice instanceof VoiceFocusTransformDevice) {
       return addVoiceFocus(nextDevice);
@@ -40,8 +39,6 @@ const MeetingProviderWithDeviceReplacement: React.FC = ({ children }) => {
   };
 
   const meetingConfigValue = {
-    ...meetingConfig,
-    enableWebAudio: true,
     onDeviceReplacement,
   };
 
@@ -53,11 +50,6 @@ const MeetingProviderWrapper: React.FC = () => {
   const { isWebAudioEnabled, videoTransformCpuUtilization, imageBlob, joinInfo } = useAppState();
 
   const isFilterEnabled = videoTransformCpuUtilization !== VideoFiltersCpuUtilization.Disabled;
-
-  const meetingConfigValue = {
-    ...meetingConfig,
-    enableWebAudio: isWebAudioEnabled,
-  };
 
   const getMeetingProviderWrapper = () => {
     return (
@@ -91,7 +83,7 @@ const MeetingProviderWrapper: React.FC = () => {
 
   function getVoiceFocusSpecName(): VoiceFocusModelName {
     if (
-      joinInfo && 
+      joinInfo &&
       joinInfo.Meeting?.MeetingFeatures?.Audio?.EchoReduction === 'AVAILABLE'
     ) {
       return voiceFocusName('ns_es');
@@ -100,7 +92,7 @@ const MeetingProviderWrapper: React.FC = () => {
   }
 
   const vfConfigValue = {
-    spec: {name: getVoiceFocusSpecName()},
+    spec: { name: getVoiceFocusSpecName() },
     createMeetingResponse: joinInfo,
   };
 
@@ -115,14 +107,14 @@ const MeetingProviderWrapper: React.FC = () => {
   };
 
   const getWrapperWithVideoFilter = (children: React.ReactNode) => {
-    let filterCPUUtilization = parseInt(videoTransformCpuUtilization,10);
+    let filterCPUUtilization = parseInt(videoTransformCpuUtilization, 10);
     if (!filterCPUUtilization) {
       filterCPUUtilization = 40;
     }
     console.log(`Using ${filterCPUUtilization} background blur and replacement`);
     return (
-      <BackgroundBlurProvider options={{filterCPUUtilization}} >
-        <BackgroundReplacementProvider options={{imageBlob, filterCPUUtilization}} >
+      <BackgroundBlurProvider options={{ filterCPUUtilization }} >
+        <BackgroundReplacementProvider options={{ imageBlob, filterCPUUtilization }} >
           {children}
         </BackgroundReplacementProvider>
       </BackgroundBlurProvider>
@@ -131,7 +123,7 @@ const MeetingProviderWrapper: React.FC = () => {
 
   const getMeetingProvider = (children: React.ReactNode) => {
     return (
-      <MeetingProvider {...meetingConfigValue}>
+      <MeetingProvider>
         {children}
       </MeetingProvider>
     );
@@ -153,7 +145,7 @@ const MeetingProviderWrapper: React.FC = () => {
 
   return (
     <>
-      {imageBlob === undefined ? <div>Loading Assets</div> :getMeetingProviderWithFeatures()}
+      {imageBlob === undefined ? <div>Loading Assets</div> : getMeetingProviderWithFeatures()}
     </>
   );
 };

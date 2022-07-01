@@ -1,8 +1,8 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import React, {ChangeEvent, useContext, useState} from 'react';
-import {useHistory} from 'react-router-dom';
+import React, { ChangeEvent, useContext, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import {
   Checkbox,
   DeviceLabels,
@@ -17,23 +17,24 @@ import {
   Select,
   useMeetingManager,
 } from 'amazon-chime-sdk-component-library-react';
-import { DefaultBrowserBehavior } from 'amazon-chime-sdk-js';
+import { DefaultBrowserBehavior, MeetingSessionConfiguration } from 'amazon-chime-sdk-js';
 
-import {getErrorContext} from '../../providers/ErrorProvider';
+import { getErrorContext } from '../../providers/ErrorProvider';
 import routes from '../../constants/routes';
 import Card from '../../components/Card';
 import Spinner from '../../components/icons/Spinner';
 import DevicePermissionPrompt from '../DevicePermissionPrompt';
 import RegionSelection from './RegionSelection';
-import {createGetAttendeeCallback, fetchMeeting} from '../../utils/api';
-import {useAppState} from '../../providers/AppStateProvider';
-import {MeetingMode, VideoFiltersCpuUtilization} from '../../types';
+import { createGetAttendeeCallback, fetchMeeting } from '../../utils/api';
+import { useAppState } from '../../providers/AppStateProvider';
+import { MeetingMode, VideoFiltersCpuUtilization } from '../../types';
+import { MeetingManagerJoinOptions } from 'amazon-chime-sdk-component-library-react/lib/providers/MeetingProvider/types';
 import meetingConfig from '../../meetingConfig';
 
 const VIDEO_TRANSFORM_FILTER_OPTIONS = [
-  { value: VideoFiltersCpuUtilization.Disabled, label: 'Disable Video Filter' }, 
-  { value: VideoFiltersCpuUtilization.CPU10Percent, label: 'Video Filter CPU 10%' }, 
-  { value: VideoFiltersCpuUtilization.CPU20Percent, label: 'Video Filter CPU 20%' }, 
+  { value: VideoFiltersCpuUtilization.Disabled, label: 'Disable Video Filter' },
+  { value: VideoFiltersCpuUtilization.CPU10Percent, label: 'Video Filter CPU 10%' },
+  { value: VideoFiltersCpuUtilization.CPU20Percent, label: 'Video Filter CPU 20%' },
   { value: VideoFiltersCpuUtilization.CPU40Percent, label: 'Video Filter CPU 40%' },
 ];
 
@@ -92,22 +93,33 @@ const MeetingForm: React.FC = () => {
     try {
       const { JoinInfo } = await fetchMeeting(id, attendeeName, region, isEchoReductionEnabled);
       setJoinInfo(JoinInfo);
+      const meetingSessionConfiguration = new MeetingSessionConfiguration(JoinInfo?.Meeting, JoinInfo?.Attendee);
+      if (
+        meetingConfig.postLogger &&
+        meetingSessionConfiguration.meetingId &&
+        meetingSessionConfiguration.credentials &&
+        meetingSessionConfiguration.credentials.attendeeId
+      ) {
+        const existingMetadata = meetingConfig.postLogger.metadata;
+        meetingConfig.postLogger.metadata = {
+          ...existingMetadata,
+          meetingId: meetingSessionConfiguration.meetingId,
+          attendeeId: meetingSessionConfiguration.credentials.attendeeId,
+        };
+      }
 
-      await meetingManager.join({
-        meetingInfo: JoinInfo?.Meeting,
-        attendeeInfo: JoinInfo?.Attendee,
-        deviceLabels:
-          meetingMode === MeetingMode.Spectator
-            ? DeviceLabels.None
-            : DeviceLabels.AudioAndVideo,
-        meetingManagerConfig: {
-          ...meetingConfig,
-          enableWebAudio: isWebAudioEnabled,
-          simulcastEnabled: enableSimulcast,
-          videoDownlinkBandwidthPolicy: priorityBasedPolicy,
-          keepLastFrameWhenPaused: keepLastFrameWhenPaused,
-        },
-      });
+      setRegion(JoinInfo.Meeting.MediaRegion);
+      meetingSessionConfiguration.enableSimulcastForUnifiedPlanChromiumBasedBrowsers = enableSimulcast;
+      if (priorityBasedPolicy) {
+        meetingSessionConfiguration.videoDownlinkBandwidthPolicy = priorityBasedPolicy;
+      }
+      meetingSessionConfiguration.keepLastFrameWhenPaused = keepLastFrameWhenPaused;
+      const options: MeetingManagerJoinOptions = {
+        deviceLabels: meetingMode === MeetingMode.Spectator ? DeviceLabels.None : DeviceLabels.AudioAndVideo,
+        enableWebAudio: isWebAudioEnabled,
+      };
+
+      await meetingManager.join(meetingSessionConfiguration, options);
       if (meetingMode === MeetingMode.Spectator) {
         await meetingManager.start();
         history.push(`${routes.MEETING}/${meetingId}`);
@@ -190,7 +202,7 @@ const MeetingForm: React.FC = () => {
         infoText="Enable Web Audio to use Voice Focus"
       />
       {/* Amazon Chime Echo Reduction is a premium feature, please refer to the Pricing page for details.*/}
-      { isWebAudioEnabled &&
+      {isWebAudioEnabled && (
         <FormField
           field={Checkbox}
           label="Enable Echo Reduction"
@@ -199,7 +211,7 @@ const MeetingForm: React.FC = () => {
           onChange={toggleEchoReduction}
           infoText="Enable Echo Reduction (new meetings only)"
         />
-      }
+      )}
       {/* BlurSelection */}
       {/* Background Video Transform Selections */}
       <FormField
@@ -212,7 +224,7 @@ const MeetingForm: React.FC = () => {
         label="Background Filters CPU Utilization"
       />
       {/* Video uplink and downlink policies */}
-      { browserBehavior.isSimulcastSupported() &&
+      {browserBehavior.isSimulcastSupported() && (
         <FormField
           field={Checkbox}
           label="Enable Simulcast"
@@ -220,9 +232,9 @@ const MeetingForm: React.FC = () => {
           checked={enableSimulcast}
           onChange={toggleSimulcast}
         />
-      }
+      )}
 
-      { browserBehavior.supportDownlinkBandwidthEstimation() &&
+      {browserBehavior.supportDownlinkBandwidthEstimation() && (
         <FormField
           field={Checkbox}
           label="Use Priority-Based Downlink Policy"
@@ -230,7 +242,7 @@ const MeetingForm: React.FC = () => {
           checked={priorityBasedPolicy !== undefined}
           onChange={togglePriorityBasedPolicy}
         />
-      }
+      )}
       <FormField
         field={Checkbox}
         label="Keep Last Frame When Paused"
@@ -238,16 +250,8 @@ const MeetingForm: React.FC = () => {
         checked={keepLastFrameWhenPaused}
         onChange={toggleKeepLastFrameWhenPaused}
       />
-      <Flex
-        container
-        layout="fill-space-centered"
-        style={{ marginTop: '2.5rem' }}
-      >
-        {isLoading ? (
-          <Spinner />
-        ) : (
-          <PrimaryButton label="Continue" onClick={handleJoinMeeting} />
-        )}
+      <Flex container layout="fill-space-centered" style={{ marginTop: '2.5rem' }}>
+        {isLoading ? <Spinner /> : <PrimaryButton label="Continue" onClick={handleJoinMeeting} />}
       </Flex>
       {errorMessage && (
         <Modal size="md" onClose={closeError}>

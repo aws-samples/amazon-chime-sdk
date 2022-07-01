@@ -79,11 +79,22 @@ const AuthProvider = ({ children }) => {
   };
 
   const getAwsCredentialsFromCognito = async () => {
-    const creds = await Auth.currentCredentials();
-    const essentialCreds = await Auth.essentialCredentials(creds);
+    const creds = await Auth.currentUserCredentials();
+    AWS.config.credentials = new AWS.Credentials(
+        creds.accessKeyId,
+        creds.secretAccessKey,
+        creds.sessionToken);
+
+    AWS.config.credentials.needsRefresh = function() {
+      return Date.now() > creds.expiration;
+    }
+
+    AWS.config.credentials.refresh = function(cb) {
+      console.log("Refresh Cognito IAM Creds");
+      getAwsCredentialsFromCognito().then(cb());
+    }
     AWS.config.region = appConfig.region;
-    AWS.config.credentials = essentialCreds;
-    return essentialCreds;
+    return creds;
   };
 
   const setAuthenticatedUserFromCognito = () => {
@@ -141,11 +152,26 @@ const AuthProvider = ({ children }) => {
     const stsCredentials = response.ChimeCredentials;
     updateUserAttributes(response.ChimeUserId);
     AWS.config.region = appConfig.region;
-    AWS.config.credentials = {
-      accessKeyId: stsCredentials.AccessKeyId,
-      secretAccessKey: stsCredentials.SecretAccessKey,
-      sessionToken: stsCredentials.SessionToken
-    };
+    AWS.config.credentials = new AWS.Credentials(
+        stsCredentials.AccessKeyId,
+        stsCredentials.SecretAccessKey,
+        stsCredentials.SessionToken);
+
+
+    const credentialReceiveTime = Date.now();
+    // In template.yaml the credential role for anonymous is set to expire in 15 mins
+    var CREDENTIAL_ROLE_EXPIRY_DURATION = 15 * 60 * 1000;
+    AWS.config.credentials.needsRefresh = function() {
+      return Date.now() - credentialReceiveTime > CREDENTIAL_ROLE_EXPIRY_DURATION
+    }
+
+    AWS.config.credentials.refresh = function(cb) {
+      console.error("Credentials expired via anonymous token used for Demo. TODO: implement refresh for actual production use case");
+      // TODO, implement this for specific use case.  In demo anonymous users are given a single one time
+      // use token that can not be refreshed.  An implementation here would likely call to your authorization
+      // service to get new credentials
+      cb();
+    }
 
     setIsAuthenticated(true);
   };

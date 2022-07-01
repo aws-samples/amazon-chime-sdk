@@ -293,37 +293,42 @@ async function ensureLogStream(cloudWatchClient, logStreamName) {
 }
 
 exports.logs = async (event, context) => {
-  var response = {
+  const response = {
     "statusCode": 200,
     "headers": {},
     "body": '',
     "isBase64Encoded": false
   };
   {
-    var body = JSON.parse(event.body);
-    if (!body.logs || !body.meetingId || !body.attendeeId || !body.appName) {
+    const body = JSON.parse(event.body);
+    if (!body.logs || !body.appName || !body.timestamp) {
       response.body = "Empty Parameters Received";
       response.statusCode = 400;
       return response;
     }
-    const logStreamName = "ChimeSDKMeeting_" + body.meetingId.toString();
-    var cloudWatchClient = new AWS.CloudWatchLogs({
+    const logStreamName = `ChimeReactSDKMeeting_${body.timestamp}`;
+    const cloudWatchClient = new AWS.CloudWatchLogs({
       apiVersion: '2014-03-28'
     });
-    var putLogEventsInput = {
+    const putLogEventsInput = {
       "logGroupName": logGroupName,
       "logStreamName": logStreamName
     };
-    var uploadSequence = await ensureLogStream(cloudWatchClient, logStreamName);
+    const uploadSequence = await ensureLogStream(cloudWatchClient, logStreamName);
     if (uploadSequence) {
       putLogEventsInput["sequenceToken"] = uploadSequence;
     }
-    var logEvents = [];
+    const logEvents = [];
     if (body.logs.length > 0) {
       for (let i = 0; i < body.logs.length; i++) {
-        var log = body.logs[i];
-        var timestampIso = new Date(log.timestampMs).toISOString();
-        var message = `${timestampIso} [${log.sequenceNumber}] [${log.logLevel}] [mid: ${body.meetingId.toString()}] [aid: ${body.attendeeId}]: ${log.message}`;
+        const log = body.logs[i];
+        const timestampIso = new Date(log.timestampMs).toISOString();
+        let message = `${body.appName} ${timestampIso} [${log.sequenceNumber}] [${log.logLevel}]`;
+        if (body.meetingId && body.attendeeId) {
+          message = `${message} [meetingId: ${body.meetingId.toString()}] [attendeeId: ${body.attendeeId}]: ${log.message}`;
+        } else {
+          message = `${message}: ${log.message}`;
+        }
         logEvents.push({
           "message": message,
           "timestamp": log.timestampMs

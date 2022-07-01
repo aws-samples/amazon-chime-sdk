@@ -9,7 +9,22 @@ The easiest way to get started with messaging in the Amazon Chime SDK is to depl
 - An [AWS account](https://aws.amazon.com/free/) that provides access to AWS services.
 - [Node.js](https://nodejs.org/en/download/) version 14 or higher.
 
-## Deploying the solution
+## Deploying the demo app
+### Using AWS SAM
+1. Run the following commands to provision the demo app's infrastructure, as well as build and deploy the web assets.
+
+```bash
+cd apps/chat
+npm run deploy
+```
+
+2. Verify that the `src/backend/serverless/appconfig.json` is populated with the CloudFormation stack outputs. This JSON file used to
+   configure the app with `src/Config.js.`
+
+3. Then, you can access the app via the CloudFront endpoint found in the CloudFormation stack outputs.
+
+### Using the AWS CloudFormation console
+Alternatively, you can deploy backend and frontend manually:
 
 1. Sign in to the [AWS CloudFormation console](https://console.aws.amazon.com/cloudformation/) and switch to the **US East (N. Virginia)** region. Note that the AWS CloudFormation template in this demo needs to be launched in the US East (N. Virginia) region.
 1. Choose **Create stack**.
@@ -24,10 +39,11 @@ The easiest way to get started with messaging in the Amazon Chime SDK is to depl
 
 After the deployment is complete, the **Outputs** tab of the AWS CloudFormation console includes your resource information. You will update the configuration file with these values in the next section.
 
-## Running the Amazon Chime SDK Chat Demo
+## Running the chat demo app locally
 
 1. Navigate to the root directory of the Amazon Chime SDK chat demo `apps/chat`.
-1. Open `src/Config.js` and update the configuration with the values from the previous section.
+1. If you have deployed the CloudFormation stack via the AWS CloudFormation console in the previous steps, open `src/Config.js` and update
+   the configuration with the values from the stack output.
 1. Install dependencies and start the demo in the `apps/chat` directory.
    ```
    npm install
@@ -93,7 +109,8 @@ Skip to [Creating a Channel](#creating-a-channel)
     }
     ```
 
-## Creating a channel
+## Experimenting with the demo app features
+### Creating a channel
 
 1. Sign in to the client.
 1. In the **Channels** pane, choose the menu (•••).
@@ -218,3 +235,11 @@ async function sendChannelMessage(
 3. Add channel flow to a channel by choosing the **Manage channel flow** option from the channel menu.
 4. Send Messages on the channel with profanity or PII and see sensitive content being redacted. More details in the [Use Channel Flows blog post](https://aws.amazon.com/blogs/business-productivity/use-channel-flows-to-remove-profanity-and-sensitive-content-from-messages-in-amazon-chime-sdk-messaging/).
 
+### Presence and typing indicators
+The chat demo app also supports presence and typing indicators within a channel. To learn more, see the
+[Build presence and typing indicators with Amazon Chime SDK messaging
+](https://aws.amazon.com/blogs/business-productivity/build-presence-and-typing-indicators-with-amazon-chime-sdk-messaging/) blog post.
+
+## Recommendations
+When you deploy the AWS CloudFormation template in a production environment, we recommend that you use a specific origin for the
+`Access-Control-Allow-Origin` response header to scope-down access to resources.

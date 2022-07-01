@@ -1,0 +1,10 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "chime-sdk-chat-demo"
+s3_prefix = "chime-sdk-chat-demo"
+region = "us-east-1"
+confirm_changeset = true
+capabilities = "CAPABILITY_NAMED_IAM"
+parameter_overrides = "DemoName=\"ChimeSDKChatDemo\" S3BucketNameForAssets=\"chime-sdk-chat-demo\""

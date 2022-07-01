@@ -1,3 +1,5 @@
+#NOTE: In a production environment, we recommend that you use a specific origin for the `Access-Control-Allow-Origin` response header
+#to scope-down access to resources.
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: "AWS::Serverless-2016-10-31"
 Description: AWS CloudFormation stack to set up infrastructure required for the Amazon Chime SDK chat demo app
@@ -17,12 +19,19 @@ Parameters:
     NoEcho: true
   APNSPublicCertificate:
     Type: String
+    Default: ""
     Description: APNS Public Certificate for push notifications
     NoEcho: true
   APNSPrivateKey:
     Type: String
+    Default: ""
     Description: APNS Private Key for push notifications
     NoEcho: true
+  S3BucketNameForAssets:
+    Type: String
+    Description: Amazon S3 bucket name to store the chat demo app assets
+    AllowedPattern: (?=^.{3,63}$)(?!^(\d+\.)+\d+$)(^(([a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9])\.)*([a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9])$)
+
 Conditions:
   FCMEnabled:
     Fn::Not: [Fn::Equals: [Ref: FCMServerKey, '']]
@@ -910,9 +919,8 @@ Resources:
       Cors:
         AllowMethods: "'POST, OPTIONS'"
         AllowHeaders: "'Authorization'"
-        AllowOrigin: "'https://localhost:9000'"
+        AllowOrigin: "'*'"
         MaxAge: "'600'"
-        AllowCredentials: True
 
   CredApiFunction: # Adds a POST api endpoint at "/creds" to the ApiGatewayApi via an Api event
     Type: AWS::Serverless::Function
@@ -1010,7 +1018,7 @@ Resources:
                 statusCode: 200,
                 headers: {
                   'Access-Control-Allow-Headers': 'Authorization',
-                  'Access-Control-Allow-Origin': 'https://localhost:9000',
+                  'Access-Control-Allow-Origin': '*',
                   'Access-Control-Allow-Methods': 'POST, OPTIONS',
                   'Access-Control-Allow-Credentials': 'true'
                 },
@@ -1031,7 +1039,7 @@ Resources:
             statusCode: 401,
             headers: {
               'Access-Control-Allow-Headers': 'Authorization',
-              'Access-Control-Allow-Origin': 'https://localhost:9000',
+              'Access-Control-Allow-Origin': '*',
               'Access-Control-Allow-Methods': 'POST, OPTIONS',
               'Access-Control-Allow-Credentials': 'true'
             },
@@ -1095,7 +1103,7 @@ Resources:
               statusCode: 404,
               headers: {
                 'Access-Control-Allow-Headers': 'Authorization',
-                'Access-Control-Allow-Origin': 'https://localhost:9000',
+                'Access-Control-Allow-Origin': '*',
                 'Access-Control-Allow-Methods': 'POST, OPTIONS',
                 'Access-Control-Allow-Credentials': 'true'
               },
@@ -1121,7 +1129,7 @@ Resources:
               statusCode: 403,
               headers: {
                 'Access-Control-Allow-Headers': 'Authorization',
-                'Access-Control-Allow-Origin': 'https://localhost:9000',
+                'Access-Control-Allow-Origin': '*',
                 'Access-Control-Allow-Methods': 'POST, OPTIONS',
                 'Access-Control-Allow-Credentials': 'true'
               },
@@ -1153,7 +1161,7 @@ Resources:
             statusCode: 200,
             headers: {
               'Access-Control-Allow-Headers': 'Authorization',
-              'Access-Control-Allow-Origin': 'https://localhost:9000',
+              'Access-Control-Allow-Origin': '*',
               'Access-Control-Allow-Methods': 'POST, OPTIONS',
               'Access-Control-Allow-Credentials': 'true'
             },
@@ -1213,7 +1221,7 @@ Resources:
               statusCode: 404,
               headers: {
                 'Access-Control-Allow-Headers': 'Authorization',
-                'Access-Control-Allow-Origin': 'https://localhost:9000',
+                'Access-Control-Allow-Origin': '*',
                 'Access-Control-Allow-Methods': 'POST, OPTIONS',
                 'Access-Control-Allow-Credentials': 'true'
               },
@@ -1239,7 +1247,7 @@ Resources:
               statusCode: 403,
               headers: {
                 'Access-Control-Allow-Headers': 'Authorization',
-                'Access-Control-Allow-Origin': 'https://localhost:9000',
+                'Access-Control-Allow-Origin': '*',
                 'Access-Control-Allow-Methods': 'POST, OPTIONS',
                 'Access-Control-Allow-Credentials': 'true'
               },
@@ -1266,7 +1274,7 @@ Resources:
             statusCode: 200,
             headers: {
               'Access-Control-Allow-Headers': 'Authorization',
-              'Access-Control-Allow-Origin': 'https://localhost:9000',
+              'Access-Control-Allow-Origin': '*',
               'Access-Control-Allow-Methods': 'POST, OPTIONS',
               'Access-Control-Allow-Credentials': 'true'
             },
@@ -1311,7 +1319,7 @@ Resources:
             statusCode: 200,
             headers: {
               'Access-Control-Allow-Headers': 'Authorization',
-              'Access-Control-Allow-Origin': 'https://localhost:9000',
+              'Access-Control-Allow-Origin': '*',
               'Access-Control-Allow-Methods': 'POST, OPTIONS',
               'Access-Control-Allow-Credentials': 'true'
             },
@@ -1369,6 +1377,111 @@ Resources:
                 Resource:
                   - !Join ['', [!GetAtt PinpointApplication.Arn, '/messages']]
 
+  s3BucketForAssets:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: !Ref S3BucketNameForAssets
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: True
+        BlockPublicPolicy: True
+        IgnorePublicAcls: True
+        RestrictPublicBuckets: True
+      WebsiteConfiguration:
+        IndexDocument: chat.html
+        ErrorDocument: error.html
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+
+  s3BucketForAssetsPolicy:
+    Type: AWS::S3::BucketPolicy
+    DependsOn:
+      - s3BucketForAssets
+      - CloudFrontDistributionAccessIdentity
+    Properties:
+      Bucket: !Ref s3BucketForAssets
+      PolicyDocument:
+        Statement:
+          - Action:
+              - 's3:GetObject'
+            Effect: 'Allow'
+            Principal:
+              CanonicalUser:
+                Fn::GetAtt:
+                  [CloudFrontDistributionAccessIdentity, S3CanonicalUserId]
+            Resource: !Sub ${s3BucketForAssets.Arn}/*
+          - Action: 's3:*'
+            Resource: !Sub ${s3BucketForAssets.Arn}/*
+            Effect: Deny
+            Condition:
+              Bool:
+                'aws:SecureTransport': false
+            Principal: '*'
+          - Action: 's3:*'
+            Resource: !Sub ${s3BucketForAssets.Arn}/*
+            Effect: Deny
+            Condition:
+              Bool:
+                'aws:SecureTransport': false
+            Principal: '*'
+
+  CloudFrontDistributionAccessIdentity:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: 'CloudFront OAI for the chat demo app'
+
+  CloudFrontDistribution:
+    Type: AWS::CloudFront::Distribution
+    DependsOn:
+      - s3BucketForAssets
+    Properties:
+      DistributionConfig:
+        Origins:
+          - DomainName: !Join
+              - ''
+              - - !Ref S3BucketNameForAssets
+                - .s3.amazonaws.com
+            Id: !Ref S3BucketNameForAssets
+            S3OriginConfig:
+              OriginAccessIdentity: !Join
+                - ''
+                - - 'origin-access-identity/cloudfront/'
+                  - !Ref CloudFrontDistributionAccessIdentity
+        Enabled: True
+        Comment: CloudFront for the chat demo app
+        DefaultRootObject: chat.html
+        DefaultCacheBehavior:
+          AllowedMethods:
+            - DELETE
+            - GET
+            - HEAD
+            - OPTIONS
+            - PATCH
+            - POST
+            - PUT
+          TargetOriginId: !Ref S3BucketNameForAssets
+          ForwardedValues:
+            QueryString: true
+            Cookies:
+              Forward: all
+          ViewerProtocolPolicy: redirect-to-https
+        PriceClass: PriceClass_100
+        Restrictions:
+          GeoRestriction:
+            RestrictionType: whitelist
+            Locations:
+              - US
+              - JP
+              - AU
+              - FR
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W70
+            reason: This is using Cloudfront default TLS, can be changed by customer if needed.
+
 Outputs:
   cognitoUserPoolId:
     Value: !Ref UserPool
@@ -1385,3 +1498,11 @@ Outputs:
   pinpointApplicationArn:
     Condition: PushNotificationEnabled
     Value: !GetAtt PinpointApplication.Arn
+  assetsS3BucketName:
+    Value: !Ref s3BucketForAssets
+  cloudfrontEndpoint:
+    Value: !Join
+      - ''
+      - - 'https://'
+        - !GetAtt [CloudFrontDistribution, DomainName]
+        - '/chat.html'

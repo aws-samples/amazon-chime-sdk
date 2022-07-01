@@ -28,6 +28,8 @@ Resources:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
               SSEAlgorithm: AES256
+      VersioningConfiguration:
+        Status: Enabled
 
   s3WebsiteBucketPolicy:
     Type: AWS::S3::BucketPolicy
