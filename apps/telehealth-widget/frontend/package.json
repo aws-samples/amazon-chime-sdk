@@ -1,0 +1,77 @@
+{
+  "name": "chime-sdk-telehealth-widget-frontend-demo",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@aws-amplify/auth": "^4.4.1",
+    "@aws-amplify/core": "^4.3.14",
+    "@aws-amplify/storage": "^4.4.15",
+    "@aws-amplify/ui-react": "^2.5.0",
+    "@aws-sdk/client-chime-sdk-identity": "^3.52.0",
+    "@aws-sdk/client-chime-sdk-messaging": "^3.52.0",
+    "@aws-sdk/client-cognito-identity": "^3.52.0",
+    "@aws-sdk/client-cognito-identity-provider": "^3.52.0",
+    "@aws-sdk/client-lambda": "^3.53.0",
+    "@aws-sdk/client-sfn": "^3.54.0",
+    "@aws-sdk/credential-providers": "^3.52.0",
+    "@types/node": "^16.11.19",
+    "@types/react": "^17.0.38",
+    "@types/react-datetime-picker": "^3.4.1",
+    "@types/react-dom": "^17.0.11",
+    "amazon-chime-sdk-component-library-react": "^3.0.0",
+    "amazon-chime-sdk-js": "^3.0.0",
+    "aws-amplify": "^4.3.14",
+    "classnames": "^2.3.1",
+    "dayjs": "^1.10.7",
+    "i18next": "^21.6.14",
+    "i18next-browser-languagedetector": "^6.1.3",
+    "install": "^0.13.0",
+    "npm": "^8.5.4",
+    "react": "^17.0.2",
+    "react-datepicker": "^4.6.0",
+    "react-dom": "^17.0.2",
+    "react-draggable": "^4.4.4",
+    "react-i18next": "^11.16.1",
+    "react-scripts": "5.0.0",
+    "styled-components": "^5.3.3",
+    "styled-system": "^5.1.5",
+    "typescript": "^4.5.4",
+    "uuid": "^8.3.2",
+    "web-vitals": "^2.1.3"
+  },
+  "scripts": {
+    "build:widget": "rm -rf widget-dist && parcel build src/index.tsx --no-source-maps --log-level warn --dist-dir widget-dist",
+    "build": "react-scripts build",
+    "deploy": "npm run build:widget && npx ts-node --project scripts/tsconfig.json scripts/deploy.ts",
+    "start": "GENERATE_SOURCEMAP=false react-scripts start"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@aws-sdk/client-cloudfront": "^3.53.0",
+    "@aws-sdk/client-s3": "^3.53.1",
+    "@types/react-datepicker": "^4.3.4",
+    "@types/styled-components": "^5.1.19",
+    "@types/uuid": "^8.3.4",
+    "chalk": "^4.1.2",
+    "parcel": "^2.1.1",
+    "process": "^0.11.10",
+    "querystring-es3": "^0.2.1",
+    "ts-node": "^10.5.0"
+  }
+}

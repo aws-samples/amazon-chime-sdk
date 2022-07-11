@@ -1,0 +1,52 @@
+.Window {
+  background-color: white;
+  border: 1px solid var(--chime-sdk-widget-border-color);
+  box-shadow: 0 8px 24px rgb(141 147 155 / 20%);
+  box-sizing: border-box;
+  color: var(--chime-sdk-widget-text-color);
+  font-size: 16px;
+  line-height: 1.5;
+  pointer-events: auto;
+  position: absolute;
+  text-rendering: optimizeSpeed;
+  width: var(--chime-sdk-widget-width);
+}
+
+.Window * {
+  box-sizing: border-box;
+}
+
+.Window input,
+.Window button,
+.Window textarea,
+.Window select {
+  font: inherit;
+}
+
+.Window__header {
+  background-color: var(--chime-sdk-widget-top-bar-color);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  text-align: center;
+  user-select: none;
+}
+
+.Window__title {
+  cursor: move;
+  flex: 1 1 auto;
+  font-size: 1rem;
+  line-height: inherit;
+  margin: 0;
+  overflow: hidden;
+  padding: 0;
+  padding: 1rem;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.Window__main {
+  background-color: white;
+  min-height: var(--chime-sdk-widget-content-height);
+}

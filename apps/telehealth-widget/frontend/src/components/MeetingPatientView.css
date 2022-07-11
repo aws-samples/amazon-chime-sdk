@@ -1,0 +1,57 @@
+.MeetingPatientView__window {
+  left: calc(var(--chime-sdk-widget-width) + 2rem);
+}
+
+.MeetingPatientView {
+  align-items: center;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  height: var(--chime-sdk-widget-content-height);
+  justify-content: center;
+}
+
+.MeetingPatientView__progressUpdateContainer,
+.MeetingPatientView__invitationContainer {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+  padding: 1rem;
+  text-align: center;
+  width: 100%;
+}
+
+.MeetingPatientView__acceptButton,
+.MeetingPatientView__declineButton {
+  border-radius: 0.25rem;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-weight: 700;
+  padding: 0.5rem;
+  margin: 0.5rem;
+  width: 100%;
+  transition: all 0.25s;
+}
+
+.MeetingPatientView__acceptButton {
+  background-color: var(--chime-sdk-widget-button-color);
+}
+
+.MeetingPatientView__acceptButton:active,
+.MeetingPatientView__acceptButton:hover,
+.MeetingPatientView__acceptButton:focus {
+  background-color: var(--chime-sdk-widget-button-hover-color);
+}
+
+.MeetingPatientView__declineButton {
+  background-color: var(--chime-sdk-widget-form-red-color);
+}
+
+.MeetingPatientView__declineButton:active,
+.MeetingPatientView__declineButton:hover,
+.MeetingPatientView__declineButton:focus {
+  background-color: var(--chime-sdk-widget-form-red-hover-color);
+}

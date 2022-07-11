@@ -1,0 +1,16 @@
+.Chat {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.Chat__messages {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  list-style-type: none;
+  margin: 0;
+  overflow-y: scroll;
+  padding: 0;
+}

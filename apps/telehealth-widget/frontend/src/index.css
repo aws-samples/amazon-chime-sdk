@@ -1,0 +1,63 @@
+:root {
+  /* z-index */
+  --chime-sdk-widget-z-index: 9999;
+
+  /* colors */
+  --chime-sdk-widget-text-color: #333636;
+  --chime-sdk-widget-light-text-color: #747676;
+
+  --chime-sdk-widget-top-bar-color: #0d3b4f;
+  --chime-sdk-widget-light-background-color: #f3f5f5;
+  --chime-sdk-widget-border-color: #dcdee0;
+  --chime-sdk-widget-form-border-color: #aeb3b7;
+  --chime-sdk-widget-form-red-color: #d91717;
+  --chime-sdk-widget-form-red-hover-color: #b91313;
+
+  --chime-sdk-widget-button-color: #047d95;
+  --chime-sdk-widget-button-hover-color: #005566;
+  --chime-sdk-widget-button-disabled-color: #5c6670;
+  --chime-sdk-widget-button-disabled-background-color: #eff0f0;
+  --chime-sdk-widget-link-hover-background-color: #e9f9fc;
+
+  /* size */
+  --chime-sdk-widget-width: 320px;
+  --chime-sdk-widget-content-height: 450px;
+}
+
+#amazon-chime-sdk-widget-container {
+  display: flex;
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Segoe UI', Oxygen, Ubuntu, Cantarell, 'Open Sans',
+    sans-serif;
+  left: 2rem;
+  position: fixed;
+  top: 2rem;
+  z-index: var(--chime-sdk-widget-z-index);
+  pointer-events: none;
+}
+
+/**
+ * Amazon Chime SDK React Components Library PopOver styles
+ */
+[data-testid='popover'] .ch-popover-menu {
+  background-color: white !important;
+  border: 1px solid var(--chime-sdk-widget-border-color) !important;
+  box-shadow: 0 8px 16px rgb(119 124 124 / 20%) !important;
+}
+
+[data-testid='popover-item'] button {
+  font-size: 1rem !important;
+  color: var(--chime-sdk-widget-text-color) !important;
+}
+
+[data-testid='popover-item'] button:hover,
+[data-testid='popover-item'] button:active,
+[data-testid='popover-item'] button:focus {
+  color: white !important;
+  background-color: var(--chime-sdk-widget-button-color) !important;
+}
+
+[data-testid='popover-header'] > .ch-title,
+[data-testid='popover-header'] > .ch-subtitle {
+  color: var(--chime-sdk-widget-text-color) !important;
+  line-height: inherit !important;
+}

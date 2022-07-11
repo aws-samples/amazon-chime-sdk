@@ -1,0 +1,111 @@
+.AppointmentList {
+  display: flex;
+  height: var(--chime-sdk-widget-content-height);
+  flex-direction: column;
+}
+
+.AppointmentList__listContainer {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 0;
+  overflow-y: scroll;
+  padding-bottom: 1rem;
+}
+
+.AppointmentList__noAppointment {
+  padding: 1rem;
+}
+
+.AppointmentList__listTitle {
+  padding: 1rem 0 0 1rem;
+}
+
+.AppointmentList__list {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.AppointmentList__listItem {
+  background-color: white;
+  border-radius: 4px;
+  border: 1px solid var(--chime-sdk-widget-border-color);
+  box-shadow: 0 4px 12px rgb(141 153 155 / 20%);
+  list-style-type: none;
+  margin: 1rem;
+  padding: 1rem;
+  transition: all 0.25s;
+}
+
+.AppointmentList__nameContainer {
+  padding-bottom: 1rem;
+}
+
+.AppointmentList__label {
+  color: var(--chime-sdk-widget-light-text-color);
+}
+
+.AppointmentList__dateTime {
+  border-top: 1px solid var(--chime-sdk-widget-border-color);
+  display: flex;
+  padding-top: 1rem;
+}
+
+.AppointmentList__date {
+  flex: 1 1 55%;
+}
+
+.AppointmentList__time {
+  flex: 1 1 45%;
+}
+
+.AppointmentList__icon {
+  margin-right: 0.5rem;
+}
+
+.AppointmentList__buttonContainer {
+  margin-top: 1rem;
+}
+
+.AppointmentList__button {
+  background-color: var(--chime-sdk-widget-button-color);
+  border-radius: 0.25rem;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-weight: 700;
+  padding: 0.5rem;
+  transition: all 0.25s;
+  width: 100%;
+}
+
+.AppointmentList__button:active,
+.AppointmentList__button:hover,
+.AppointmentList__button:focus {
+  background-color: var(--chime-sdk-widget-button-hover-color);
+}
+
+.AppointmentList__createAppointmentContainer {
+  background-color: white;
+  border-top: 1px solid var(--chime-sdk-widget-border-color);
+  flex: 0 0 auto;
+  padding: 1rem;
+}
+
+.AppointmentList__createAppointmentButton {
+  background-color: var(--chime-sdk-widget-button-color);
+  border-radius: 0.25rem;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-weight: 700;
+  padding: 0.5rem;
+  transition: all 0.25s;
+  width: 100%;
+}
+
+.AppointmentList__createAppointmentButton:active,
+.AppointmentList__createAppointmentButton:hover,
+.AppointmentList__createAppointmentButton:focus {
+  background-color: var(--chime-sdk-widget-button-hover-color);
+}
