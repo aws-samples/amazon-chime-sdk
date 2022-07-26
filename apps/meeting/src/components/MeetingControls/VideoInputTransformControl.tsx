@@ -17,6 +17,8 @@ import {
   useMeetingManager,
   isOptionActive,
   useLogger,
+  MeetingStatus,
+  useMeetingStatus,
 } from 'amazon-chime-sdk-component-library-react';
 import { DeviceType } from '../../types';
 import useMemoCompare from '../../utils/use-memo-compare';
@@ -46,6 +48,18 @@ const VideoInputTransformControl: React.FC<Props> = ({
   const [dropdownWithVideoTransformOptions, setDropdownWithVideoTransformOptions] = useState<ReactNode[] | null>(null);
   const [activeVideoTransformOption, setActiveVideoTransformOption] = useState<string>(VideoTransformOptions.None);
   const videoDevices: DeviceType[] = useMemoCompare(devices, (prev: DeviceType[] | undefined, next: DeviceType[] | undefined): boolean => isEqual(prev, next));
+  const meetingStatus = useMeetingStatus();
+
+  useEffect(() => {
+    const enableBackgroundBlur = async () => {
+      if (meetingStatus === MeetingStatus.Succeeded) {
+        await toggleBackgroundBlur();
+      }
+    };
+
+    enableBackgroundBlur();
+
+  }, [meetingStatus]);
 
   useEffect(() => {
     resetDeviceToIntrinsic();
