@@ -17,6 +17,9 @@ import {
   useMeetingManager,
   isOptionActive,
   useLogger,
+  useMeetingStatus,
+  MeetingStatus,
+  useAudioVideo,
 } from 'amazon-chime-sdk-component-library-react';
 import { DeviceType } from '../../types';
 import useMemoCompare from '../../utils/use-memo-compare';
@@ -39,30 +42,62 @@ const VideoInputTransformControl: React.FC<Props> = ({
   const meetingManager = useMeetingManager();
   const logger = useLogger();
   const { devices, selectedDevice } = useVideoInputs();
-  const { isVideoEnabled, toggleVideo } = useLocalVideo();
+  const { isVideoEnabled, toggleVideo, setIsVideoEnabled } = useLocalVideo();
   const { isBackgroundBlurSupported, createBackgroundBlurDevice } = useBackgroundBlur();
   const { isBackgroundReplacementSupported, createBackgroundReplacementDevice } = useBackgroundReplacement();
   const [isLoading, setIsLoading] = useState(false);
   const [dropdownWithVideoTransformOptions, setDropdownWithVideoTransformOptions] = useState<ReactNode[] | null>(null);
   const [activeVideoTransformOption, setActiveVideoTransformOption] = useState<string>(VideoTransformOptions.None);
   const videoDevices: DeviceType[] = useMemoCompare(devices, (prev: DeviceType[] | undefined, next: DeviceType[] | undefined): boolean => isEqual(prev, next));
+  const audioVideo = useAudioVideo();
+  const meetingStatus = useMeetingStatus();
 
   useEffect(() => {
-    resetDeviceToIntrinsic();
-  }, []);
+    if (!audioVideo) {
+      return;
+    }
 
-  // Reset the video input to intrinsic if current video input is a transform device because this component
-  // does not know if blur or replacement was selected. This depends on how the demo is set up.
-  // TODO: use a hook in the appState to track whether blur or replacement was selected before this component mounts,
-  // or maintain the state of `activeVideoTransformOption` in `MeetingManager`.
-  const resetDeviceToIntrinsic = async () => {
+    if (meetingStatus === MeetingStatus.Succeeded) {
+      enableVideoWithBackgroundBlur();
+    }
+
+  }, [meetingStatus, audioVideo]);
+
+  const enableVideoWithBackgroundBlur = async () => {
+    let current = selectedDevice;
+    if (isLoading || current === undefined) {
+      return;
+    }
     try {
-      if (isVideoTransformDevice(selectedDevice)) {
-        const intrinsicDevice = await selectedDevice.intrinsicDevice();
-        await meetingManager.selectVideoInputDevice(intrinsicDevice);
+      setIsLoading(true);
+
+      if (!isVideoTransformDevice(current)) {
+        // Enable video transform on the default device.
+        current = await createBackgroundBlurDevice(current) as VideoTransformDevice;
+        logger.info(`Video filter turned on - selecting video transform device: ${JSON.stringify(current)}`);
+      } else {
+        // Switch back to intrinsicDevice.
+        const intrinsicDevice = await current.intrinsicDevice();
+        // Stop existing VideoTransformDevice.
+        await current.stop();
+        current = intrinsicDevice;
+        // Switch to background blur device if old selection was background replacement otherwise switch to default intrinsic device.
+        if (activeVideoTransformOption === VideoTransformOptions.Replacement) {
+          current = await createBackgroundBlurDevice(current) as VideoTransformDevice;
+          logger.info(`Video filter was turned on - video transform device: ${JSON.stringify(current)}`);
+        } else {
+          logger.info(`Video filter was turned off - selecting inner device: ${JSON.stringify(current)}`);
+        }
       }
-    } catch (error) {
-      logger.error('Failed to reset Device to intrinsic device');
+
+      await meetingManager.startVideoInputDevice(current);
+      await audioVideo?.startLocalVideoTile();
+      setIsVideoEnabled(true);
+      setActiveVideoTransformOption(VideoTransformOptions.Blur);
+    } catch (e) {
+      logger.error(`Error trying to toggle background blur ${e}`);
+    } finally {
+      setIsLoading(false);
     }
   };
 
