@@ -17,6 +17,8 @@ import {
   useMeetingManager,
   isOptionActive,
   useLogger,
+  MeetingStatus,
+  useMeetingStatus,
 } from 'amazon-chime-sdk-component-library-react';
 import { DeviceType } from '../../types';
 import useMemoCompare from '../../utils/use-memo-compare';
@@ -46,25 +48,25 @@ const VideoInputTransformControl: React.FC<Props> = ({
   const [dropdownWithVideoTransformOptions, setDropdownWithVideoTransformOptions] = useState<ReactNode[] | null>(null);
   const [activeVideoTransformOption, setActiveVideoTransformOption] = useState<string>(VideoTransformOptions.None);
   const videoDevices: DeviceType[] = useMemoCompare(devices, (prev: DeviceType[] | undefined, next: DeviceType[] | undefined): boolean => isEqual(prev, next));
+  const meetingStatus = useMeetingStatus();
+  const [hasBackgroundBlurEnabledOnStart, setHasBackgroundBlurEnabledOnStart] = useState(false);
 
   useEffect(() => {
-    resetDeviceToIntrinsic();
-  }, []);
-
-  // Reset the video input to intrinsic if current video input is a transform device because this component
-  // does not know if blur or replacement was selected. This depends on how the demo is set up.
-  // TODO: use a hook in the appState to track whether blur or replacement was selected before this component mounts,
-  // or maintain the state of `activeVideoTransformOption` in `MeetingManager`.
-  const resetDeviceToIntrinsic = async () => {
-    try {
-      if (isVideoTransformDevice(selectedDevice)) {
-        const intrinsicDevice = await selectedDevice.intrinsicDevice();
-        await meetingManager.selectVideoInputDevice(intrinsicDevice);
-      }
-    } catch (error) {
-      logger.error('Failed to reset Device to intrinsic device');
+    if (meetingStatus === MeetingStatus.Succeeded) {
+      toggleVideo();
     }
-  };
+  }, [meetingStatus]);
+
+  useEffect(() => {
+    if (
+      meetingStatus === MeetingStatus.Succeeded &&
+      isVideoEnabled &&
+      !hasBackgroundBlurEnabledOnStart
+    ) {
+      toggleBackgroundBlur();
+      setHasBackgroundBlurEnabledOnStart(true);
+    }
+  }, [isVideoEnabled, meetingStatus, hasBackgroundBlurEnabledOnStart]);
 
   // Toggle background blur on/off.
   const toggleBackgroundBlur = async () => {
