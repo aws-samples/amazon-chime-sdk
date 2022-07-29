@@ -17,6 +17,7 @@ import {
   ChannelList,
   ChannelItem,
 } from 'amazon-chime-sdk-component-library-react';
+import { MeetingSessionConfiguration } from 'amazon-chime-sdk-js';
 import { useHistory } from 'react-router-dom';
 import {
   Persistence,
@@ -154,7 +155,7 @@ const ChannelsWrapper = () => {
     }
   }, [meetingInfo]);
 
-  function startPublishStatusWithInterval(){
+  function startPublishStatusWithInterval() {
     let publishTimeout;
     (async function publishStatusWithInterval() {
       if (!isAuthenticatedRef.current) {
@@ -182,21 +183,21 @@ const ChannelsWrapper = () => {
     }
   }
 
-  async function publishStatusToAllChannels () {
+  async function publishStatusToAllChannels() {
     const servicePromises = [];
     for (const channel of channelListRef.current) {
       const status = computeAutoStatusForAChannel(channel);
       if (status) {
         servicePromises.push(sendChannelMessage(
-            channel.ChannelArn,
-            toPresenceMessage(PresenceMode.Auto, status, true),
-            Persistence.NON_PERSISTENT,
-            MessageType.CONTROL,
-            member,
+          channel.ChannelArn,
+          toPresenceMessage(PresenceMode.Auto, status, true),
+          Persistence.NON_PERSISTENT,
+          MessageType.CONTROL,
+          member,
         ));
       }
     }
-   return await Promise.all(servicePromises);
+    return await Promise.all(servicePromises);
   }
 
   const getBanList = async () => {
@@ -305,15 +306,16 @@ const ChannelsWrapper = () => {
 
     if (activeChannel.Metadata) {
       let metadata = JSON.parse(activeChannel.Metadata);
-      let meeting = metadata.meeting; 
+      let meeting = metadata.meeting;
 
       // Create own attendee and join meeting
       meetingManager.getAttendee = createGetAttendeeCallback();
       const { JoinInfo } = await createAttendee(member.username, member.userId, activeChannel.ChannelArn, meeting);
-      await meetingManager.join({
-        meetingInfo: JoinInfo.Meeting,
-        attendeeInfo: JoinInfo.Attendee
-      });
+      const meetingSessionConfiguration = new MeetingSessionConfiguration(
+        JoinInfo.Meeting,
+        JoinInfo.Attendee
+      );
+      await meetingManager.join(meetingSessionConfiguration);
 
       setAppMeetingInfo(JoinInfo.Meeting.MeetingId, member.username);
       history.push(routes.DEVICE);
@@ -324,7 +326,7 @@ const ChannelsWrapper = () => {
     e.preventDefault();
 
     let meetingName = `${activeChannel.Name} Instant Meeting`;
-    
+
     // Create Meeting Channel and Memberships from existing Channel
     const meetingChannelArn = await createChannel(
       appConfig.appInstanceArn,
@@ -341,15 +343,16 @@ const ChannelsWrapper = () => {
       meetingChannelArn,
       membership.Member.Arn,
       userId
-    )); 
+    ));
 
     // Create meeting and attendee for self
     meetingManager.getAttendee = createGetAttendeeCallback();
     const { JoinInfo } = await createMeeting(member.username, member.userId, meetingChannelArn);
-    await meetingManager.join({
-      meetingInfo: JoinInfo.Meeting,
-      attendeeInfo: JoinInfo.Attendee
-    });
+    const meetingSessionConfiguration = new MeetingSessionConfiguration(
+      JoinInfo.Meeting,
+      JoinInfo.Attendee
+    );
+    await meetingManager.join(meetingSessionConfiguration);
 
     const meetingId = JoinInfo.Meeting.MeetingId;
     const meeting = JSON.stringify(JoinInfo.Meeting);
@@ -376,7 +379,7 @@ const ChannelsWrapper = () => {
       channelArn: meetingChannelArn,
       channelName: meetingName,
       inviter: member.username,
-    }
+    };
     await sendChannelMessage(
       activeChannel.ChannelArn,
       JSON.stringify(meetingInfoMessage),
@@ -393,15 +396,15 @@ const ChannelsWrapper = () => {
   const setCustomStatus = async (e, status) => {
     e.preventDefault();
     await changeStatus(PresenceMode.Custom, status);
-  }
+  };
 
   const changeStatus = async (type, status) => {
     await sendChannelMessage(
-        activeChannel.ChannelArn,
-        toPresenceMessage(type, status, true),
-        Persistence.NON_PERSISTENT,
-        MessageType.CONTROL,
-        member,
+      activeChannel.ChannelArn,
+      toPresenceMessage(type, status, true),
+      Persistence.NON_PERSISTENT,
+      MessageType.CONTROL,
+      member,
     );
 
     const isAutomatic = type === PresenceMode.Auto;
@@ -421,14 +424,14 @@ const ChannelsWrapper = () => {
 
       // persist presence using standard message and channel flows
       const options = {};
-      options.Metadata = JSON.stringify({IsPresenceInfo: true, Status: toPresenceMessage(type, status, false)});
+      options.Metadata = JSON.stringify({ IsPresenceInfo: true, Status: toPresenceMessage(type, status, false) });
       await sendChannelMessage(
-          activeChannel.ChannelArn,
-          `changed status to ${status}`,
-          Persistence.PERSISTENT,
-          MessageType.STANDARD,
-          member,
-          options
+        activeChannel.ChannelArn,
+        `changed status to ${status}`,
+        Persistence.PERSISTENT,
+        MessageType.STANDARD,
+        member,
+        options
       );
     }
   };
@@ -557,7 +560,7 @@ const ChannelsWrapper = () => {
         userId
       );
 
-      let flow = {Name:selectedMember.label, ChannelFlowArn:selectedMember.value};
+      let flow = { Name: selectedMember.label, ChannelFlowArn: selectedMember.value };
       setActiveChannelFlow(flow);
       dispatch({
         type: 0,
@@ -677,10 +680,11 @@ const ChannelsWrapper = () => {
 
     meetingManager.getAttendee = createGetAttendeeCallback();
     const { JoinInfo } = await createAttendee(member.username, member.userId, meetingChannelArn, meeting);
-    await meetingManager.join({
-      meetingInfo: JoinInfo.Meeting,
-      attendeeInfo: JoinInfo.Attendee
-    });
+    const meetingSessionConfiguration = new MeetingSessionConfiguration(
+      JoinInfo.Meeting,
+      JoinInfo.Attendee
+    );
+    await meetingManager.join(meetingSessionConfiguration);
 
     setAppMeetingInfo(JoinInfo.Meeting.MeetingId, member.username);
 
@@ -688,7 +692,7 @@ const ChannelsWrapper = () => {
     setMeetingInfo(null);
 
     history.push(routes.DEVICE);
-  }
+  };
 
   const handleMessageAll = async (e, meetingChannelArn) => {
     e.preventDefault();
@@ -697,7 +701,7 @@ const ChannelsWrapper = () => {
     setMeetingInfo(null);
 
     await channelIdChangeHandler(meetingChannelArn);
-  }
+  };
 
   const handleDeleteMemberships = () => {
     try {
@@ -762,30 +766,30 @@ const ChannelsWrapper = () => {
   }, [activeChannel]);
 
   const loadUserActions = (role, channel) => {
-      const map = channel.Metadata && JSON.parse(channel.Metadata).Presence && Object.fromEntries(JSON.parse(channel.Metadata).Presence?.map((entry) => [entry.u, entry.s]));
-      const status = map && map[member.userId] || PresenceStatusPrefix.Auto;
+    const map = channel.Metadata && JSON.parse(channel.Metadata).Presence && Object.fromEntries(JSON.parse(channel.Metadata).Presence?.map((entry) => [entry.u, entry.s]));
+    const status = map && map[member.userId] || PresenceStatusPrefix.Auto;
 
     const presenceStatusOption = (
-        <PopOverSubMenu className={'ch-sts-popover-toggle'} as='button' key="presence_status" text={"Change status"}>
-          <PopOverItem
-              as='button'
-              onClick={() => changeStatus(PresenceMode.Auto, 'Online')}
-              checked={status.startsWith(PresenceStatusPrefix.Auto)}
-              children={<span>Automatic</span>}
-          />
-          <PopOverItem
-              as='button'
-              onClick={() => changeStatus(PresenceMode.Wfh, 'Working from Home')}
-              checked={status.startsWith(PresenceStatusPrefix.Wfh)}
-              children={<span>Working from Home</span>}
-          />
-          <PopOverItem
-              as='button'
-              onClick={() => setModal('CustomStatus')}
-              checked={status.startsWith(PresenceStatusPrefix.Custom)}
-              children={<span>Custom {status.startsWith(PresenceStatusPrefix.Custom) ? '(' + status.substr(status.indexOf('|') + 1) + ')' : ''}</span>}
-          />
-        </PopOverSubMenu>
+      <PopOverSubMenu className={'ch-sts-popover-toggle'} as='button' key="presence_status" text={"Change status"}>
+        <PopOverItem
+          as='button'
+          onClick={() => changeStatus(PresenceMode.Auto, 'Online')}
+          checked={status.startsWith(PresenceStatusPrefix.Auto)}
+          children={<span>Automatic</span>}
+        />
+        <PopOverItem
+          as='button'
+          onClick={() => changeStatus(PresenceMode.Wfh, 'Working from Home')}
+          checked={status.startsWith(PresenceStatusPrefix.Wfh)}
+          children={<span>Working from Home</span>}
+        />
+        <PopOverItem
+          as='button'
+          onClick={() => setModal('CustomStatus')}
+          checked={status.startsWith(PresenceStatusPrefix.Custom)}
+          children={<span>Custom {status.startsWith(PresenceStatusPrefix.Custom) ? '(' + status.substr(status.indexOf('|') + 1) + ')' : ''}</span>}
+        />
+      </PopOverSubMenu>
     );
 
     const joinChannelOption = (

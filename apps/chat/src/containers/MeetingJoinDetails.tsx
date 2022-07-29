@@ -31,9 +31,11 @@ const MeetingJoinDetails = () => {
       await meetingManager.start();
       setIsLoading(false);
       history.push(`${routes.MEETING}/${meetingId}`);
-    } catch (error) {
+    } catch (err) {
       setIsLoading(false);
-      setError(error.message);
+      if (err instanceof Error) {
+        setError(err.message);
+      }
     }
   };
 
