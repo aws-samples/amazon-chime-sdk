@@ -16,7 +16,6 @@
     "@aws-amplify/core": "^4.3.12",
     "@aws-amplify/storage": "^4.4.13",
     "amazon-chime-sdk-component-library-react": "^3.2.0",
-    "amazon-chime-sdk-js": "^3.3.0",
     "aws-amplify": "^4.3.12",
     "aws-sdk": "^2.1011.0",
     "core-js": "^3.10.1",
