@@ -1,9 +1,9 @@
 /* Amplify Params - DO NOT EDIT
-	API_CHIME_GRAPHQLAPIENDPOINTOUTPUT
-	API_CHIME_GRAPHQLAPIIDOUTPUT
-	API_CHIME_GRAPHQLAPIKEYOUTPUT
-	ENV
-	REGION
+  API_CHIME_GRAPHQLAPIENDPOINTOUTPUT
+  API_CHIME_GRAPHQLAPIIDOUTPUT
+  API_CHIME_GRAPHQLAPIKEYOUTPUT
+  ENV
+  REGION
 Amplify Params - DO NOT EDIT */
 
 const AWS = require('aws-sdk');
@@ -14,7 +14,7 @@ const { USE_EVENT_BRIDGE, SQS_QUEUE_ARN } = process.env;
 
 // Create a unique id
 function uuid() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
     var r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
     return v.toString(16);
   });
@@ -43,12 +43,12 @@ const createChimeMeeting = async (context) => {
     ClientRequestToken: uuid(),
     MediaRegion: region,
     NotificationsConfiguration: USE_EVENT_BRIDGE === 'false' ? { SqsQueueArn: SQS_QUEUE_ARN } : {},
-    
+
     // Any meeting ID you wish to associate with the meeting.
     // For simplicity here, we use the meeting title.
     ExternalMeetingId: title.substring(0, 64),
     Tags: [
-      { Key: 'Department', Value: 'RND'}
+      { Key: 'Department', Value: 'RND' }
     ]
   };
   console.info('Creating new chime meeting: ' + JSON.stringify(request));
@@ -70,7 +70,7 @@ const createChimeMeeting = async (context) => {
       Meeting: meetingInfo.Meeting,
       Attendee: attendeeInfo.Attendee,
     }, null, 2));
-}
+};
 
 const joinChimeMeeting = async (context) => {
   const meetingId = context.arguments.meetingId;
@@ -97,14 +97,14 @@ const joinChimeMeeting = async (context) => {
     {
       Attendee: attendeeInfo.Attendee
     }, null, 2));
-}
+};
 
 const endChimeMeeting = async (context) => {
   const meetingId = context.arguments.meetingId;
   await chime.deleteMeeting({ MeetingId: meetingId });
   console.log('Deleted Meeting: ' + meetingId);
   return response(200, 'application/json', JSON.stringify({}));
-}
+};
 
 
 const resolvers = {
@@ -119,7 +119,7 @@ const resolvers = {
       return endChimeMeeting(context);
     }
   },
-}
+};
 
 exports.handler = async (event) => {
   console.log(JSON.stringify(event));
@@ -132,4 +132,3 @@ exports.handler = async (event) => {
   }
   throw new Error('Resolver not found.');
 };
-  
