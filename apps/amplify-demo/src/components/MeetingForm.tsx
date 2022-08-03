@@ -10,14 +10,15 @@ import {
   PrimaryButton,
   useMeetingManager,
 } from 'amazon-chime-sdk-component-library-react';
-import { 
+import { MeetingSessionConfiguration } from 'amazon-chime-sdk-js';
+import {
   addAttendeeToDB,
   addMeetingToDB,
   createMeeting,
   getAttendeeFromDB,
   getMeetingFromDB,
   joinMeeting
- } from '../utils/api';
+} from '../utils/api';
 
 const MeetingForm: FC = () => {
   const meetingManager = useMeetingManager();
@@ -48,25 +49,25 @@ const MeetingForm: FC = () => {
         const meetingData = JSON.parse(meetingJson.data);
         const joinInfo = await joinMeeting(meetingData.MeetingId, name);
         await addAttendeeToDB(joinInfo.Attendee.AttendeeId, name);
-
-        await meetingManager.join({
-          meetingInfo: meetingData,
-          attendeeInfo: joinInfo.Attendee
-        });
+        const meetingSessionConfiguration = new MeetingSessionConfiguration(
+          meetingData,
+          joinInfo.Attendee
+        );
+        await meetingManager.join(meetingSessionConfiguration);
       } else {
         const joinInfo = await createMeeting(title, name, 'us-east-1');
         await addMeetingToDB(title, joinInfo.Meeting.MeetingId, JSON.stringify(joinInfo.Meeting));
         await addAttendeeToDB(joinInfo.Attendee.AttendeeId, name);
-
-        await meetingManager.join({
-          meetingInfo: joinInfo.Meeting,
-          attendeeInfo: joinInfo.Attendee
-        });
+        const meetingSessionConfiguration = new MeetingSessionConfiguration(
+          joinInfo.Meeting,
+          joinInfo.Attendee
+        );
+        await meetingManager.join(meetingSessionConfiguration);
       }
     } catch (error) {
       console.log(error);
     }
-  
+
     // At this point you can let users setup their devices, or start the session immediately
     await meetingManager.start();
   };
@@ -74,7 +75,7 @@ const MeetingForm: FC = () => {
   return (
     <form>
       <FormField
-        field={Input}     
+        field={Input}
         label='Meeting Id'
         value={meetingTitle}
         fieldProps={{
@@ -102,7 +103,7 @@ const MeetingForm: FC = () => {
         layout="fill-space-centered"
         style={{ marginTop: '2.5rem' }}
       >
-          <PrimaryButton label="Join Meeting" onClick={clickedJoinMeeting} />
+        <PrimaryButton label="Join Meeting" onClick={clickedJoinMeeting} />
       </Flex>
     </form>
   );
