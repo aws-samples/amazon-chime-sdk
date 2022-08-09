@@ -17,14 +17,14 @@
   },
   "devDependencies": {
     "@types/node": "10.17.27",
-    "aws-cdk": "^2.24.1",
-    "esbuild": "^0.14.23",
-    "ts-node": "^9.0.0",
+    "aws-cdk": "^2.36.0",
+    "esbuild": "^0.14.54",
+    "ts-node": "^9.1.1",
     "typescript": "~3.9.7"
   },
   "dependencies": {
-    "aws-cdk-lib": "^2.24.1",
-    "constructs": "^10.0.0",
-    "source-map-support": "^0.5.16"
+    "aws-cdk-lib": "^2.36.0",
+    "constructs": "^10.1.71",
+    "source-map-support": "^0.5.21"
   }
 }
