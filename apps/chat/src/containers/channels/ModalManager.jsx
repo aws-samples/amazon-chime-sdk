@@ -13,6 +13,8 @@ import {
   EditChannelModal,
   BanModal,
   JoinMeetingModal,
+  ListSubChannelModel,
+  JoinSubChannelModel,
   ManageChannelFlowModal,
   SetCustomStatusModal,
 } from '../../components/ChannelModals';
@@ -41,6 +43,9 @@ const ModalManager = ({
   unbanUser,
   activeChannelFlow,
   setCustomStatus,
+  subChannelList,
+  leaveSubChannel,
+  joinSubChannel,
 }) => {
   if (!modal) {
     return null;
@@ -55,6 +60,24 @@ const ModalManager = ({
           onSubmit={onAddMember}
           handlePickerChange={handlePickerChange}
           members={activeChannelMemberships}
+        />
+      );
+    case 'ListSubChannel':
+      return (
+        <ListSubChannelModel
+          onClose={() => setModal('')}
+          channel={activeChannel}
+          subChannelList={subChannelList}
+          joinSubChannel={joinSubChannel}
+          leaveSubChannel={leaveSubChannel}
+        />
+      );
+    case 'JoinSubChannel':
+      return (
+        <JoinSubChannelModel
+          onClose={() => setModal('')}
+          channel={activeChannel}
+          joinSubChannel={joinSubChannel}
         />
       );
     case 'ManageMembers':
@@ -90,6 +113,7 @@ const ModalManager = ({
         <LeaveChannelModal
           onClose={() => setModal('')}
           handleLeaveChannel={handleLeaveChannel}
+          leaveSubChannel={leaveSubChannel}
           channel={activeChannel}
         />
       );
@@ -111,7 +135,7 @@ const ModalManager = ({
           onSubmit={onManageChannelFlow}
           channelFlow={activeChannelFlow}
         />
-      );  
+      );
     case 'EditChannel':
       return (
         <EditChannelModal

@@ -5,6 +5,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Auth } from '@aws-amplify/auth';
+import { Credentials } from '@aws-amplify/core'
 import { useNotificationDispatch } from 'amazon-chime-sdk-component-library-react';
 import appConfig from '../Config';
 import AWS from 'aws-sdk';
@@ -28,8 +29,11 @@ const AuthProvider = ({ children }) => {
 
   const userSignOut = async () => {
     try {
-      await Auth.signOut();
-      setIsAuthenticated(false);
+      await Auth.signOut().then(() => {
+        AWS.config.credentials = null;
+        setIsAuthenticated(false);
+        setMember({ username: '', userId: '' });
+      });
     } catch (error) {
       console.log(`error signing out ${error}`);
     }
@@ -79,7 +83,8 @@ const AuthProvider = ({ children }) => {
   };
 
   const getAwsCredentialsFromCognito = async () => {
-    const creds = await Auth.currentUserCredentials();
+    AWS.config.region = appConfig.region;
+    const creds = await Credentials.get();
     AWS.config.credentials = new AWS.Credentials(
         creds.accessKeyId,
         creds.secretAccessKey,
@@ -91,9 +96,8 @@ const AuthProvider = ({ children }) => {
 
     AWS.config.credentials.refresh = function(cb) {
       console.log("Refresh Cognito IAM Creds");
-      getAwsCredentialsFromCognito().then(cb());
+      Auth.currentUserCredentials().then(getAwsCredentialsFromCognito().then(cb()));
     }
-    AWS.config.region = appConfig.region;
     return creds;
   };
 
@@ -117,13 +121,13 @@ const AuthProvider = ({ children }) => {
             });
           } else {
             setAnonymous(false);
-            setIsAuthenticated(true);
           }
+        }).then(() => {
+          getAwsCredentialsFromCognito().then(() => { setIsAuthenticated(true) }); //Todo: clean it
         })
         .catch((err) => {
           console.log(`Failed to set authenticated user! ${err}`);
         });
-    getAwsCredentialsFromCognito();
   };
 
   const userSignIn = (username, password) => {

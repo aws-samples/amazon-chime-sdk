@@ -13,3 +13,5 @@ export { ViewMembersModal } from './ViewMembersModal';
 export { EditChannelModal } from './EditChannelModal';
 export { BanModal } from './BanModal';
 export { SetCustomStatusModal } from './SetCustomStatusModal';
+export { ListSubChannelModel } from './ListSubChannelModel';
+export { JoinSubChannelModel } from './JoinSubChannelModel';

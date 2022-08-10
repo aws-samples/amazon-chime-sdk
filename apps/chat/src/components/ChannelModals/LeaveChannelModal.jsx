@@ -9,8 +9,10 @@ import {
   ModalButtonGroup,
   ModalButton,
 } from 'amazon-chime-sdk-component-library-react';
+import { useUserPermission } from '../../providers/UserPermissionProvider';
 
-export const LeaveChannelModal = ({ onClose, channel, handleLeaveChannel }) => {
+export const LeaveChannelModal = ({ onClose, channel, handleLeaveChannel, leaveSubChannel }) => {
+  const userPermission = useUserPermission();
   return (
     <Modal onClose={onClose}>
       <ModalHeader title={`Leave ${channel.Name}?`} />
@@ -21,7 +23,7 @@ export const LeaveChannelModal = ({ onClose, channel, handleLeaveChannel }) => {
         primaryButtons={[
           <ModalButton
             label="Leave"
-            onClick={handleLeaveChannel}
+            onClick={(userPermission.role === 'moderator' && channel.SubChannelId) ? leaveSubChannel : handleLeaveChannel}
             variant="primary"
             closesModal
           />,

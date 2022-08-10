@@ -134,7 +134,7 @@ export const BanModal = ({
   const userItems = nonMods.map((user) => (
     <div className="ban-row" key={user.arn}>
       <span className="ban-row-name">{user.name}</span>
-      <span className="ban-row-role">{user.role}</span>
+      {!channel.ElasticChannelConfiguration && (<span className="ban-row-role">{user.role}</span>)}
       <span className="ban-row-check">
         <Checkbox
           value={user.arn}
@@ -160,7 +160,7 @@ export const BanModal = ({
         </form>
         <div className="ban-row ban-row-header">
           <span className="ban-row-name">Name</span>
-          <span className="ban-row-role">Role</span>
+          {!channel.ElasticChannelConfiguration && (<span className="ban-row-role">Role</span>)}
           <span className="ban-row-check">Ban</span>
         </div>
         <ul className="ban-users-list">{userItems}</ul>

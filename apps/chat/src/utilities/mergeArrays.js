@@ -9,11 +9,22 @@
  */
 const mergeArrayOfObjects = (original, newdata, uniqueSelector = '') => {
   newdata.forEach(dat => {
-    const foundIndex = original.findIndex(
-      ori => ori[uniqueSelector] === dat[uniqueSelector]
-    );
-    if (foundIndex >= 0) original.splice(foundIndex, 1, dat);
-    else original.push(dat);
+    var foundIndex = 0;
+    var firstIndex = -1;
+    while (foundIndex != -1) {
+      foundIndex = original.findIndex(
+        ori => ori[uniqueSelector] === dat[uniqueSelector]
+      );
+      if (foundIndex >= 0) {
+        if (firstIndex == -1) firstIndex = foundIndex;
+        original.splice(foundIndex, 1);
+      }
+    }
+    if (firstIndex >= 0) {
+      original.splice(firstIndex, 0, dat);
+    } else {
+      original.push(dat);
+    }
   });
 
   return original;

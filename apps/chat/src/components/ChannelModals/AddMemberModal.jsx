@@ -111,7 +111,7 @@ export const AddMemberModal = ({
     <Modal onClose={onClose} className="add-members">
       <ModalHeader title={`Add Members to ${channel.Name}`} />
       <ModalBody className="modal-body">
-        <ContactPicker onChange={handlePickerChange} options={nonmembers} />
+        <ContactPicker onChange={handlePickerChange} options={channel.ElasticChannelConfiguration ? usersList : nonmembers} />
       </ModalBody>
       <ModalButtonGroup
         primaryButtons={[
