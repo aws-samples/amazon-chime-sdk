@@ -116,12 +116,12 @@ Skip to [Creating a Channel](#creating-a-channel)
 2. In the **Channels** pane, choose the menu (•••).
 3. In the **Add channel** box, enter a channel name. Choose a desired privacy and mode.
 4. Channel Type decides which channel to create. Choose based on your requirements.
-  - **Create Standard channel**
-  a. Select channel Type `Standard`
-
-  - **Create Elastic channel**
-  a. Select channel Type `Elastic`
-  b. Enter values of `Maximum SubChannels`, `Target Memberships Per SubChannel` and `Scale-In Minimum Memberships`.
+    - **Create Standard channel**
+        - Select channel Type `Standard`.
+    
+    - **Create Elastic channel**
+        - Select channel Type `Elastic`.
+        - Enter values of `Maximum SubChannels`, `Target Memberships Per SubChannel` and `Scale-In Minimum Memberships`.
 
 5. Choose **Add**.
 
