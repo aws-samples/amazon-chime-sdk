@@ -115,12 +115,12 @@ Skip to [Creating a Channel](#creating-a-channel)
 1. Sign in to the client.
 2. In the **Channels** pane, choose the menu (•••).
 3. In the **Add channel** box, enter a channel name. Choose a desired privacy and mode.
-4. 
+4. Channel Type decides which channel to create. Choose based on your requirements.
   - **Create Standard channel**
   a. Select channel Type `Standard`
 
   - **Create Elastic channel**
-  a. Select channel Type `Elastic` 
+  a. Select channel Type `Elastic`
   b. Enter values of `Maximum SubChannels`, `Target Memberships Per SubChannel` and `Scale-In Minimum Memberships`.
 
 5. Choose **Add**.
@@ -128,6 +128,21 @@ Skip to [Creating a Channel](#creating-a-channel)
 **Sample code**
 
 ```js
+
+const getElasticChannelConfig = (
+  maximumSubChannels,
+  targetMembershipsPerSubChannel,
+  minimumMembershipPercentage
+) => {
+  return {
+    MaximumSubChannels: maximumSubChannels,
+    TargetMembershipsPerSubChannel: targetMembershipsPerSubChannel,
+    MinimumMembershipPercentage: minimumMembershipPercentage,
+  };
+};
+
+const elasticChannelConfiguration = getElasticChannelConfig(maximumSubChannels, targetMembershipsPerSubChannel, minimumMembershipPercentage);
+
 async function createChannel(appInstanceArn, name, mode, privacy, elasticChannelConfiguration, userId) {
   console.log('createChannel called');
   const chime =  new AWS.Chime({
@@ -260,7 +275,7 @@ The chat demo app also supports presence and typing indicators within a channel.
 3. Elastic channels feature is available in the US East (N. Virginia) region and supports up to 1 Million members (see [Messaging Quotas](https://docs.aws.amazon.com/general/latest/gr//chime-sdk.html) for default values) 
 4. Existing channel flows feature can be used to automate moderation across all messages sent in the elastic channel.
 5. An elastic channel is a collection of subchannels with memberships distributed across subchannels.
-6. To create an elastic channel, provide channel name, privacy, and select channel Type `Elastic` and add desired value of `Maximum SubChannels`, `Target Memberships Per SubChannel` & `Scale-In Minimum Memberships`. Refer to [document](https://docs.aws.amazon.com/chime-sdk/latest/APIReference/API_messaging-chime_CreateChannel.html) for more details.
+6. To create an elastic channel, provide channel name, privacy, and select channel Type `Elastic` and add desired value of `Maximum SubChannels`, `Target Memberships Per SubChannel` & `Scale-In Minimum Memberships`. Refer to [CreateChannel API](https://docs.aws.amazon.com/chime-sdk/latest/APIReference/API_messaging-chime_CreateChannel.html) for more details.
 7. Moderator can list and join subchannels in an elastic channel with members count by choosing **List subchannels** option from the channel menu.
 8. Moderators can manage members in a subchannel by choosing **Manage members** option from the subchannel menu.
 9. Users can view members and leave subchannel using **View members** and **Leave channel** options repectively, from subchannel menu.

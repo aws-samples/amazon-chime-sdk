@@ -105,7 +105,7 @@ const Channels = () => {
     };
   }
 
-  const showChannelMembers = () => !(activeChannel && JSON.parse(activeChannel.Metadata || "{}").isMeeting) && activeChannelMemberships.length > 1;
+  const showChannelMembers = () => !(activeChannel && JSON.parse(activeChannel.Metadata || '{}').isMeeting) && activeChannelMemberships.length > 1;
 
   return (
     <Grid
@@ -200,7 +200,7 @@ const Channels = () => {
                 />
               </div>
               {showChannelMembers() && !activeChannel.SubChannelId
-                && JSON.parse(activeChannel.Metadata || "{}").ChannelType != 'PUBLIC_ELASTIC' && (
+                && JSON.parse(activeChannel.Metadata || '{}').ChannelType != 'PUBLIC_ELASTIC' && (
                   <div className="channel-members-container">
                     <ChannelPresence />
                   </div>
