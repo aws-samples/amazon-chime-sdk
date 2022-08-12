@@ -10,14 +10,14 @@ import { Cell, Grid, Heading, useNotificationDispatch, } from 'amazon-chime-sdk-
 import { useTheme } from 'styled-components';
 
 import ChannelsWrapper from '../../containers/channels/ChannelsWrapper';
-import ChannelPresence from "../../containers/Presence/ChannelPresence";
+import ChannelPresence from '../../containers/Presence/ChannelPresence';
 import Messages from '../../containers/messages/Messages';
 import Input from '../../containers/input/Input';
-import TypingIndicator from "../../containers/TypingIndicator";
+import TypingIndicator from '../../containers/TypingIndicator';
 import { useChatChannelState, useChatMessagingState, } from '../../providers/ChatMessagesProvider';
 import { useAuthContext } from '../../providers/AuthProvider';
-import { PresenceAutoStatus, PresenceMode, toPresenceMap, toPresenceMessage, } from "../../utilities/presence";
-import { MessageType, Persistence, sendChannelMessage, } from "../../api/ChimeAPI";
+import { PresenceAutoStatus, PresenceMode, toPresenceMap, toPresenceMessage, } from '../../utilities/presence';
+import { MessageType, Persistence, sendChannelMessage, } from '../../api/ChimeAPI';
 
 import './style.css';
 
@@ -35,11 +35,18 @@ const Channels = () => {
 
   const {
     setChannelMessageToken,
+    setSubChannelList,
     setChannelList,
+    setChannelListModerator,
+    setActiveView,
+    activeView,
     activeChannel,
     activeChannelRef,
     channelList,
+    channelListModerator,
+    subChannelList,
     hasMembership,
+    moderatedChannel,
   } = useChatChannelState();
 
   const handleUserNameCopyClick = (_e) => {
@@ -75,11 +82,12 @@ const Channels = () => {
       const customPresenceExists = presenceMap && presenceMap[member.userId];
       if (!customPresenceExists) {
         await sendChannelMessage(
-            activeChannel.ChannelArn,
-            toPresenceMessage(PresenceMode.Auto, PresenceAutoStatus.Offline, true),
-            Persistence.NON_PERSISTENT,
-            MessageType.CONTROL,
-            member,
+          activeChannel.ChannelArn,
+          toPresenceMessage(PresenceMode.Auto, PresenceAutoStatus.Offline, true),
+          Persistence.NON_PERSISTENT,
+          MessageType.CONTROL,
+          member,
+          activeChannel.SubChannelId
         );
       }
     }
@@ -87,7 +95,12 @@ const Channels = () => {
 
   function handleLogout() {
     return async () => {
-      await publishOfflineStatus();
+      if (
+        !activeChannel.ElasticChannelConfiguration &&
+        !activeChannel.SubChannelId
+      ) {
+        await publishOfflineStatus();
+      }
       userSignOut();
     };
   }
@@ -116,7 +129,7 @@ const Channels = () => {
           }}
           className="app-heading"
         >
-          Chat App
+          {activeView === 'Moderator' && moderatedChannel.Name} Chat App
           <div className="user-block">
             <a className="user-info" href="#">
               {member.username || 'Unknown'}
@@ -145,9 +158,17 @@ const Channels = () => {
       </Cell>
       <Cell gridArea="main" style={{ height: 'calc(100vh - 3rem)' }}>
         {/* MAIN CHAT CONTENT WINDOW */}
-        {activeChannel.ChannelArn ? (
+        {activeChannel.ChannelArn &&
+          (!activeChannel.ElasticChannelConfiguration ||
+            activeChannel.SubChannelId) ? (
           <>
-            <div className={"channel-content-container " + (showChannelMembers() ? "channel-content-container-grid" : "")}>
+            <div
+              className={
+                "channel-content-container " +
+                ((showChannelMembers() && !activeChannel.SubChannelId
+                  && JSON.parse(activeChannel.Metadata || '{}').ChannelType != 'PUBLIC_ELASTIC') ? "channel-content-container-grid" : '')
+              }
+            >
               <div className="messaging-container">
                 <Messages
                   messages={messages}
@@ -157,13 +178,17 @@ const Channels = () => {
                   onReceiveMessage={onReceiveMessage}
                   setChannelList={setChannelList}
                   channelList={channelList}
+                  setChannelListModerator={setChannelListModerator}
+                  channelListModerator={channelListModerator}
+                  subChannelList={subChannelList}
+                  setSubChannelList={setSubChannelList}
                   channelArn={activeChannelRef.current.ChannelArn}
                   setChannelMessageToken={setChannelMessageToken}
                   activeChannelRef={activeChannelRef}
                   channelName={activeChannel.Name}
                   userId={member.userId}
                 />
-                <TypingIndicator/>
+                <TypingIndicator />
                 <Input
                   style={{
                     borderTop: `solid 1px ${currentTheme.colors.greys.grey40}`,
@@ -171,13 +196,15 @@ const Channels = () => {
                   activeChannelArn={activeChannel.ChannelArn}
                   member={member}
                   hasMembership={hasMembership}
+                  activeChannel={activeChannel}
                 />
               </div>
-              {showChannelMembers() &&
-              <div className="channel-members-container">
-                <ChannelPresence/>
-              </div>
-              }
+              {showChannelMembers() && !activeChannel.SubChannelId
+                && JSON.parse(activeChannel.Metadata || '{}').ChannelType != 'PUBLIC_ELASTIC' && (
+                  <div className="channel-members-container">
+                    <ChannelPresence />
+                  </div>
+                )}
             </div>
           </>
         ) : (

@@ -69,16 +69,18 @@ const Input = ({ activeChannelArn, member, hasMembership }) => {
       inputRef.current.focus();
     }
   }, [activeChannelArn]);
-
   const eventHandler = async () => {
     const content = JSON.stringify({Typing: 'Indicator'});
-    await sendChannelMessage(
+    if(!activeChannel.ElasticChannelConfiguration && !activeChannel.SubChannelId){
+      await sendChannelMessage(
         activeChannel.ChannelArn,
         content,
         'NON_PERSISTENT',
         'CONTROL',
         member,
+        activeChannel.SubChannelId,
     );
+    }
   };
   const eventHandlerWithDebounce = React.useCallback(debounce(eventHandler, 500), []);
 
@@ -126,6 +128,7 @@ const Input = ({ activeChannelArn, member, hasMembership }) => {
           Persistence.PERSISTENT,
           MessageType.STANDARD,
           member,
+          activeChannel.SubChannelId,
           options
         );
         // Cleanup upload refs
@@ -139,11 +142,11 @@ const Input = ({ activeChannelArn, member, hasMembership }) => {
         throw new Error(`Failed uploading... ${err}`);
       }
     } else {
-      sendMessageResponse = await sendChannelMessage(activeChannelArn, text, Persistence.PERSISTENT, MessageType.STANDARD, member);
+      sendMessageResponse = await sendChannelMessage(activeChannelArn, text, Persistence.PERSISTENT, MessageType.STANDARD, member, activeChannel.SubChannelId);
     }
     resetState();
     if (sendMessageResponse.response.Status == 'PENDING') {
-      const sentMessage = await getChannelMessage(activeChannelArn, member, sendMessageResponse.response.MessageId);
+      const sentMessage = await getChannelMessage(activeChannelArn, member, sendMessageResponse.response.MessageId, activeChannel.SubChannelId);
       const newMessages = [...messages, sentMessage];
       setMessages(newMessages);
     }

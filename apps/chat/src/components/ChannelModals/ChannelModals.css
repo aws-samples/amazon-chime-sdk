@@ -179,6 +179,18 @@ section .modal-header {
   border-bottom: 0.5px solid #d4d5d8;
 }
 
+.subChannel-row-header {
+  padding: 1rem;
+  z-index: 2;
+  background-color: #fff;
+  position: sticky;
+  top: 10px;
+  right: 0;
+  left: 0;
+  border-radius: 3px 3px 0 0;
+  border-bottom: 0.5px solid #d4d5d8;
+}
+
 .ban-row-name {
   width: 50%;
 }
@@ -199,4 +211,20 @@ section .modal-header {
 .ban-input button {
   left: 13.5rem;
   top: 1rem;
+}
+
+.ch-form-field-input .lbl {
+  display: flex;
+  padding: 1rem 0;
+  flex-direction: column;
+  margin: auto 0;
+  min-width: 35%;
+}
+
+.ch-form-field-input .value {
+  display: flex;
+  width: 100%;
+  margin: auto 0;
+  padding: 1rem;
+  flex-direction: column;
 }

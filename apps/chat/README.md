@@ -113,14 +113,28 @@ Skip to [Creating a Channel](#creating-a-channel)
 ### Creating a channel
 
 1. Sign in to the client.
-1. In the **Channels** pane, choose the menu (•••).
-1. In the **Add channel** box, enter a channel name. Choose a desired type and mode.
-1. Choose **Add**.
+2. In the **Channels** pane, choose the menu (•••).
+3. In the **Add channel** box, enter a channel name. Choose a desired privacy and mode.
+4. Channel Type decides which channel to create. Choose based on your requirements.
+    - **Create Standard channel**
+        - Select channel Type `Standard`.
+    
+    - **Create Elastic channel**
+        - Select channel Type `Elastic`.
+        - Enter values of `Maximum SubChannels`, `Target Memberships Per SubChannel` and `Scale-In Minimum Memberships`.
+
+5. Choose **Add**.
 
 **Sample code**
 
 ```js
-async function createChannel(appInstanceArn, name, mode, privacy, userId) {
+const elasticChannelConfiguration = { // with default values
+  MaximumSubChannels: 2, 
+  TargetMembershipsPerSubChannel: 4, 
+  MinimumMembershipPercentage: 40, 
+}
+
+async function createChannel(appInstanceArn, name, mode, privacy, elasticChannelConfiguration, userId) {
   console.log('createChannel called');
   const chime =  new AWS.Chime({
         region: 'us-east-1',
@@ -132,7 +146,9 @@ async function createChannel(appInstanceArn, name, mode, privacy, userId) {
     Mode: mode,
     Privacy: privacy
   };
-
+  if (elasticChannelConfiguration) {
+    params['ElasticChannelConfiguration'] = elasticChannelConfiguration;
+  }
   const request = chime.createChannel(params);
   request.on('build', function() {
     request.httpRequest.headers[appInstanceUserArnHeader] = createMemberArn(
@@ -155,7 +171,7 @@ async function createChannel(appInstanceArn, name, mode, privacy, userId) {
 **Sample code**
 
 ```js
-async function createChannelMembership(channelArn, memberArn, userId) {
+async function createChannelMembership(channelArn, memberArn, userId, subChannelId) {
     console.log('createChannelMembership called');
     const chime =  new AWS.Chime({
         region: 'us-east-1',
@@ -164,7 +180,8 @@ async function createChannelMembership(channelArn, memberArn, userId) {
 
     var params = {
         ChannelArn: channelArn,
-        MemberArn: memberArn
+        MemberArn: memberArn,
+        SubChannelId: subChannelId // Required only when creating memebrship for a subchannel of an elastic channel
     };
 
     let request = chime.createChannelMembership(params);
@@ -191,12 +208,14 @@ async function createChannelMembership(channelArn, memberArn, userId) {
  * @param {messageContent} string Message content
  * @param {member} string Chime channel member
  * @param {options{}} object Additional attributes for the request object.
+ * @param {subChannelId} string subChannelId, available only if the channel is a subchannel
  * @returns {object} sendMessage object;
  */
 async function sendChannelMessage(
   channelArn,
   messageContent,
   member,
+  subChannelId,
   options = null
 ) {
   console.log('sendChannelMessage called');
@@ -208,7 +227,8 @@ async function sendChannelMessage(
     ChannelArn: channelArn,
     Content: messageContent,
     Persistence: 'PERSISTENT', // Allowed types are PERSISTENT and NON_PERSISTENT
-    Type: 'STANDARD' // Allowed types are STANDARD and CONTROL
+    Type: 'STANDARD', // Allowed types are STANDARD and CONTROL
+    SubChannelId: subChannelId, // Required only when sending message to a subchannel of an elastic channel
   };
   if (options && options.Metadata) {
     params.Metadata = options.Metadata;
@@ -239,6 +259,17 @@ async function sendChannelMessage(
 The chat demo app also supports presence and typing indicators within a channel. To learn more, see the
 [Build presence and typing indicators with Amazon Chime SDK messaging
 ](https://aws.amazon.com/blogs/business-productivity/build-presence-and-typing-indicators-with-amazon-chime-sdk-messaging/) blog post.
+
+### Elastic Channels
+1. Elastic channels support large-scale chat experiences for up to one million users. Use cases include watch parties for sporting events, political events, or live entertainment with create elastic channels
+2. Elastic channels make it easy to create secure, scalable, moderated chat experiences for large audiences which one can use with built in moderation features to help enforce brand, corporate, or community guidelines. 
+3. Elastic channels feature is available in the US East (N. Virginia) region and supports up to 1 Million members (see [Messaging Quotas](https://docs.aws.amazon.com/general/latest/gr//chime-sdk.html) for default values) 
+4. Existing channel flows feature can be used to automate moderation across all messages sent in the elastic channel.
+5. An elastic channel is a collection of subchannels with memberships distributed across subchannels.
+6. To create an elastic channel, provide channel name, privacy, and select channel Type `Elastic` and add desired value of `Maximum SubChannels`, `Target Memberships Per SubChannel` & `Scale-In Minimum Memberships`. Refer to [CreateChannel API](https://docs.aws.amazon.com/chime-sdk/latest/APIReference/API_messaging-chime_CreateChannel.html) for more details.
+7. Moderator can list and join subchannels in an elastic channel with members count by choosing **List subchannels** option from the channel menu.
+8. Moderators can manage members in a subchannel by choosing **Manage members** option from the subchannel menu.
+9. Users can view members and leave subchannel using **View members** and **Leave channel** options repectively, from subchannel menu.
 
 ## Recommendations
 When you deploy the AWS CloudFormation template in a production environment, we recommend that you use a specific origin for the

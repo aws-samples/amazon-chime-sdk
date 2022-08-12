@@ -24,6 +24,9 @@ export const ViewChannelDetailsModal = ({ onClose, channel, moderators, channelF
       <ModalHeader title="Channel Details" />
       <ModalBody>
         <div className="container">
+
+        {!channel.SubChannelId && (
+          <>
           <div className="row">
             <div className="key">Channel Name</div>
             <div className="value">{channel.Name}</div>
@@ -37,7 +40,7 @@ export const ViewChannelDetailsModal = ({ onClose, channel, moderators, channelF
           ) : null}
 
           <div className="row">
-            <div className="key">Type</div>
+            <div className="key">Privacy</div>
             <div className="value">
               {channel.Privacy === 'PRIVATE' && (
                 <span>
@@ -79,20 +82,59 @@ export const ViewChannelDetailsModal = ({ onClose, channel, moderators, channelF
               )}
             </div>
           </div>
+          </>
+        )}
+        
+        {channel.SubChannelId && (
+          <>          
           <div className="row">
-            <div className="key">Channel Flow</div>
-            <div className="value">
-              {channel.ChannelFlowArn == null ?
-                <span>
-                  <span className="main">No flow configured</span>
-                </span>
-                :
-                <span>
-                  <span className="main">{channelFlow.Name}</span>
-                </span>
-              }
-            </div>
+            <div className="key">Sub Channel Id</div>
+            <div className="value">{channel.SubChannelId}</div>
           </div>
+          <div className="row">
+            <div className="key">Members Count</div>
+            <div className="value">{channel.MembershipCount}</div>
+          </div> 
+        </>
+          )}
+
+          {channel.ElasticChannelConfiguration && (
+            <>
+            <div className="row">
+              <div className="key">Maximum SubChannels</div>
+              <div className="value">{channel.ElasticChannelConfiguration.MaximumSubChannels}</div>
+            </div> 
+
+            <div className="row">
+              <div className="key">Target Memberships Per SubChannel</div>
+              <div className="value">{channel.ElasticChannelConfiguration.TargetMembershipsPerSubChannel}</div>
+            </div> 
+
+            <div className="row">
+              <div className="key">Scale-In Minimum Memberships(%)</div>
+              <div className="value">{channel.ElasticChannelConfiguration.MinimumMembershipPercentage}</div>
+            </div> 
+            </>
+          
+          )}
+
+        {!channel.SubChannelId && !channel.ElasticChannelConfiguration && (
+          <div className="row">
+          <div className="key">Channel Flow</div>
+          <div className="value">
+            {channel.ChannelFlowArn == null ?
+              <span>
+                <span className="main">No flow configured</span>
+              </span>
+              :
+              <span>
+                <span className="main">{channelFlow.Name}</span>
+              </span>
+            }
+          </div>
+          </div>
+          )
+        }
         </div>  
       </ModalBody>
       <ModalButtonGroup
