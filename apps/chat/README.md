@@ -128,20 +128,11 @@ Skip to [Creating a Channel](#creating-a-channel)
 **Sample code**
 
 ```js
-
-const getElasticChannelConfig = (
-  maximumSubChannels,
-  targetMembershipsPerSubChannel,
-  minimumMembershipPercentage
-) => {
-  return {
-    MaximumSubChannels: maximumSubChannels,
-    TargetMembershipsPerSubChannel: targetMembershipsPerSubChannel,
-    MinimumMembershipPercentage: minimumMembershipPercentage,
-  };
-};
-
-const elasticChannelConfiguration = getElasticChannelConfig(maximumSubChannels, targetMembershipsPerSubChannel, minimumMembershipPercentage);
+const elasticChannelConfiguration = { // with default values
+  MaximumSubChannels: 2, 
+  TargetMembershipsPerSubChannel: 4, 
+  MinimumMembershipPercentage: 40, 
+}
 
 async function createChannel(appInstanceArn, name, mode, privacy, elasticChannelConfiguration, userId) {
   console.log('createChannel called');
