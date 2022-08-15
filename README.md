@@ -34,6 +34,7 @@ To provide feedback, please file an issue.
 - [Supported Browsers](https://docs.aws.amazon.com/chime/latest/dg/meetings-sdk.html#mtg-browsers)
 - [Developer Guide](https://docs.aws.amazon.com/chime/latest/dg/meetings-sdk.html)
 - [Control Plane API Reference](https://docs.aws.amazon.com/chime/latest/APIReference/Welcome.html)
+- [Builder's Journey](BUILDERS_JOURNEY.md)
 
 ## Security
 
