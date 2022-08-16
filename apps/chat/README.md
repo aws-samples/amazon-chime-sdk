@@ -11,17 +11,18 @@ The easiest way to get started with messaging in the Amazon Chime SDK is to depl
 
 ## Deploying the demo app
 ### Using AWS SAM
-1. Run the following commands to provision the demo app's infrastructure, as well as build and deploy the web assets.
+1. Prerequisite: [install the AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
+2. Run the following commands to provision the demo app's infrastructure, as well as build and deploy the web assets.
 
 ```bash
 cd apps/chat
 npm run deploy
 ```
 
-2. Verify that the `src/backend/serverless/appconfig.json` is populated with the CloudFormation stack outputs. This JSON file used to
+3. Verify that the `src/backend/serverless/appconfig.json` is populated with the CloudFormation stack outputs. This JSON file used to
    configure the app with `src/Config.js.`
 
-3. Then, you can access the app via the CloudFront endpoint found in the CloudFormation stack outputs.
+4. Then, you can access the app via the CloudFront endpoint found in the CloudFormation stack outputs.
 
 ### Using the AWS CloudFormation console
 Alternatively, you can deploy backend and frontend manually:
