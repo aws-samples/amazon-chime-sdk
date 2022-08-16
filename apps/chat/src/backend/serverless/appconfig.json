@@ -1,1 +1,34 @@
-[]
+[
+    {
+        "OutputKey": "cognitoIdentityPoolId",
+        "OutputValue": "us-east-1:d15f0829-a521-4a10-be0d-a4005e10ef61"
+    },
+    {
+        "OutputKey": "cloudfrontEndpoint",
+        "OutputValue": "https://d1mdij43c0nasz.cloudfront.net/chat.html"
+    },
+    {
+        "OutputKey": "appInstanceArn",
+        "OutputValue": "arn:aws:chime:us-east-1:925089040268:app-instance/5783ae46-1348-4025-865c-5cd28d73b30a"
+    },
+    {
+        "OutputKey": "apiGatewayInvokeUrl",
+        "OutputValue": "https://rcx8n63wt3.execute-api.us-east-1.amazonaws.com/Stage/"
+    },
+    {
+        "OutputKey": "attachmentsS3BucketName",
+        "OutputValue": "chime-sdk-chat-demo-chatattachmentsbucket-1ib8lvjodp16d"
+    },
+    {
+        "OutputKey": "cognitoAppClientId",
+        "OutputValue": "5qn1ru1ap6ak2ljnt55fi8qu0n"
+    },
+    {
+        "OutputKey": "assetsS3BucketName",
+        "OutputValue": "chime-sdk-chat-demo-s3bucketforassets-1wr3f5tawi6pm"
+    },
+    {
+        "OutputKey": "cognitoUserPoolId",
+        "OutputValue": "us-east-1_dA0bY9xzL"
+    }
+]

@@ -27,10 +27,6 @@ Parameters:
     Default: ""
     Description: APNS Private Key for push notifications
     NoEcho: true
-  S3BucketNameForAssets:
-    Type: String
-    Description: Amazon S3 bucket name to store the chat demo app assets
-    AllowedPattern: (?=^.{3,63}$)(?!^(\d+\.)+\d+$)(^(([a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9])\.)*([a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9])$)
 
 Conditions:
   FCMEnabled:
@@ -357,8 +353,11 @@ Resources:
                 console.log("ERROR CAUGHT \n", error);
                 await response.send(event, context, response.FAILED, {});
               }
+            } else if (event["RequestType"] === "DELETE") {
+              // NOOP as app instance deletion will clean users/admins
+              await response.send(event, context, response.SUCCESS, {});
             } else {
-              // NOT A CREATE REQUEST
+              // NOT A CREATE or DELETE REQUEST
               await response.send(event, context, response.FAILED, {});
             }
           };
@@ -919,9 +918,9 @@ Resources:
       Cors:
         AllowMethods: "'POST, OPTIONS'"
         AllowHeaders: "'Authorization'"
-        AllowOrigin: "'*'"
+        AllowOrigin: "'https://localhost:9000'"
+        AllowCredentials: true
         MaxAge: "'600'"
-
   CredApiFunction: # Adds a POST api endpoint at "/creds" to the ApiGatewayApi via an Api event
     Type: AWS::Serverless::Function
     Properties:
@@ -939,6 +938,7 @@ Resources:
           ChimeAppInstanceArn: !GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn
           UserRoleArn: !GetAtt AuthLambdaUserRole.Arn
           AnonUserRole: !GetAtt AuthLambdaAnonUserRole.Arn
+          CloudfrontDomainName: !GetAtt [CloudFrontDistribution, DomainName]
       Layers:
         - !Ref AWSSDKChimeLayer
       Runtime: nodejs12.x
@@ -1018,7 +1018,7 @@ Resources:
                 statusCode: 200,
                 headers: {
                   'Access-Control-Allow-Headers': 'Authorization',
-                  'Access-Control-Allow-Origin': '*',
+                  'Access-Control-Allow-Origin': 'https://localhost:9000'
                   'Access-Control-Allow-Methods': 'POST, OPTIONS',
                   'Access-Control-Allow-Credentials': 'true'
                 },
@@ -1039,7 +1039,7 @@ Resources:
             statusCode: 401,
             headers: {
               'Access-Control-Allow-Headers': 'Authorization',
-              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Origin': 'https://localhost:9000',
               'Access-Control-Allow-Methods': 'POST, OPTIONS',
               'Access-Control-Allow-Credentials': 'true'
             },
@@ -1066,6 +1066,7 @@ Resources:
       Environment:
         Variables:
           ChimeAppInstanceArn: !GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn
+          CloudfrontDomainName: !GetAtt [CloudFrontDistribution, DomainName]
       Layers:
         - !Ref AWSSDKChimeLayer
       Runtime: nodejs12.x
@@ -1103,7 +1104,7 @@ Resources:
               statusCode: 404,
               headers: {
                 'Access-Control-Allow-Headers': 'Authorization',
-                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Origin': 'https://localhost:9000',
                 'Access-Control-Allow-Methods': 'POST, OPTIONS',
                 'Access-Control-Allow-Credentials': 'true'
               },
@@ -1129,7 +1130,7 @@ Resources:
               statusCode: 403,
               headers: {
                 'Access-Control-Allow-Headers': 'Authorization',
-                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Origin': 'https://localhost:9000',
                 'Access-Control-Allow-Methods': 'POST, OPTIONS',
                 'Access-Control-Allow-Credentials': 'true'
               },
@@ -1161,7 +1162,7 @@ Resources:
             statusCode: 200,
             headers: {
               'Access-Control-Allow-Headers': 'Authorization',
-              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Origin': 'https://localhost:9000',
               'Access-Control-Allow-Methods': 'POST, OPTIONS',
               'Access-Control-Allow-Credentials': 'true'
             },
@@ -1184,6 +1185,7 @@ Resources:
       Environment:
         Variables:
           ChimeAppInstanceArn: !GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn
+          CloudfrontDomainName: !GetAtt [CloudFrontDistribution, DomainName]
       Layers:
         - !Ref AWSSDKChimeLayer
       Runtime: nodejs12.x
@@ -1221,7 +1223,7 @@ Resources:
               statusCode: 404,
               headers: {
                 'Access-Control-Allow-Headers': 'Authorization',
-                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Origin': 'https://localhost:9000',
                 'Access-Control-Allow-Methods': 'POST, OPTIONS',
                 'Access-Control-Allow-Credentials': 'true'
               },
@@ -1247,7 +1249,7 @@ Resources:
               statusCode: 403,
               headers: {
                 'Access-Control-Allow-Headers': 'Authorization',
-                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Origin': 'https://localhost:9000',
                 'Access-Control-Allow-Methods': 'POST, OPTIONS',
                 'Access-Control-Allow-Credentials': 'true'
               },
@@ -1274,7 +1276,7 @@ Resources:
             statusCode: 200,
             headers: {
               'Access-Control-Allow-Headers': 'Authorization',
-              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Origin': 'https://localhost:9000',
               'Access-Control-Allow-Methods': 'POST, OPTIONS',
               'Access-Control-Allow-Credentials': 'true'
             },
@@ -1297,6 +1299,7 @@ Resources:
       Environment:
         Variables:
           ChimeAppInstanceArn: !GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn
+          CloudfrontDomainName: !GetAtt [CloudFrontDistribution, DomainName]
       Layers:
         - !Ref AWSSDKChimeLayer
       Runtime: nodejs12.x
@@ -1319,7 +1322,7 @@ Resources:
             statusCode: 200,
             headers: {
               'Access-Control-Allow-Headers': 'Authorization',
-              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Origin': 'https://localhost:9000',
               'Access-Control-Allow-Methods': 'POST, OPTIONS',
               'Access-Control-Allow-Credentials': 'true'
             },
@@ -1380,7 +1383,6 @@ Resources:
   s3BucketForAssets:
     Type: 'AWS::S3::Bucket'
     Properties:
-      BucketName: !Ref S3BucketNameForAssets
       PublicAccessBlockConfiguration:
         BlockPublicAcls: True
         BlockPublicPolicy: True
@@ -1439,11 +1441,10 @@ Resources:
     Properties:
       DistributionConfig:
         Origins:
-          - DomainName: !Join
-              - ''
-              - - !Ref S3BucketNameForAssets
-                - .s3.amazonaws.com
-            Id: !Ref S3BucketNameForAssets
+          - DomainName: !GetAtt
+              - s3BucketForAssets
+              - DomainName
+            Id: !Ref DemoName
             S3OriginConfig:
               OriginAccessIdentity: !Join
                 - ''
@@ -1461,7 +1462,7 @@ Resources:
             - PATCH
             - POST
             - PUT
-          TargetOriginId: !Ref S3BucketNameForAssets
+          TargetOriginId: !Ref DemoName
           ForwardedValues:
             QueryString: true
             Cookies:
