@@ -121,13 +121,13 @@ const AuthProvider = ({ children }) => {
             });
           } else {
             setAnonymous(false);
+            setIsAuthenticated(true);
           }
-        }).then(() => {
-          getAwsCredentialsFromCognito().then(() => { setIsAuthenticated(true) }); //Todo: clean it
         })
         .catch((err) => {
           console.log(`Failed to set authenticated user! ${err}`);
         });
+    getAwsCredentialsFromCognito();
   };
 
   const userSignIn = (username, password) => {

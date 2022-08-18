@@ -589,20 +589,6 @@ Resources:
               "ForAnyValue:StringLike":
                 "cognito-identity.amazonaws.com:amr": authenticated
       Policies:
-        - PolicyName: !Sub ${DemoName}-CognitoAuthorizedPolicy
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: "Allow"
-                Action:
-                  - "mobileanalytics:PutEvents"
-                  - "cognito-sync:*"
-                  - "cognito-identity:*"
-                Resource: "*"
-              - Effect: "Allow"
-                Action:
-                  - "lambda:InvokeFunction"
-                Resource: "*"
         - PolicyName: !Sub ${DemoName}-AttachmentsS3PermissionPolicy
           PolicyDocument:
             Version: "2012-10-17"
@@ -663,6 +649,8 @@ Resources:
                   - "chime:DisassociateChannelFlow"
                   - "chime:DescribeChannelFlow"
                   - "chime:ListChannelFlows"
+                  - "chime:ListChannelsModeratedByAppInstanceUser"
+                  - "chime:ListSubChannels"
 
                 Resource:
                   - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/user/${cognito-identity.amazonaws.com:sub}']]
