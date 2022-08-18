@@ -476,6 +476,7 @@ Resources:
             if (userId === 'none') {
               console.log(`User hasn't logged in yet and hasn't been setup with profile`);
               callback(null, event);
+              return;
             }
             // Create a Chime App Instance User for the user
             const chimeCreateAppInstanceUserParams = {
