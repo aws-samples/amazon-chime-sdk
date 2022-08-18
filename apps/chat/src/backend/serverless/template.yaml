@@ -663,6 +663,8 @@ Resources:
                   - "chime:DisassociateChannelFlow"
                   - "chime:DescribeChannelFlow"
                   - "chime:ListChannelFlows"
+                  - "chime:ListChannelsModeratedByAppInstanceUser"
+                  - "chime:ListSubChannels"
 
                 Resource:
                   - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/user/${cognito-identity.amazonaws.com:sub}']]
