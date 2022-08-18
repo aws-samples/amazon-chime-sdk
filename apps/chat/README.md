@@ -19,10 +19,13 @@ cd apps/chat
 npm run deploy
 ```
 
-3. Verify that the `src/backend/serverless/appconfig.json` is populated with the CloudFormation stack outputs. This JSON file used to
-   configure the app with `src/Config.js.`
+3. Run app locally
+```bash
+   npm start
+```
 
-4. Then, you can access the app via the CloudFront endpoint found in the CloudFormation stack outputs.
+4. Open https://localhost:9000 in your browser.
+
 
 ### Using the AWS CloudFormation console
 Alternatively, you can deploy backend and frontend manually:
