@@ -55,3 +55,4 @@ export const SDK_LOG_LEVELS = {
 
 export const DATA_MESSAGE_LIFETIME_MS = 300000;
 export const DATA_MESSAGE_TOPIC = 'ChimeComponentLibraryDataMessage';
+export const DATA_MESSAGE_TOPIC_CUSTOM = 'ChimeCustomMessage';
