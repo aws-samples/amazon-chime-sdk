@@ -9,7 +9,7 @@
     "sam:build": "cd src/backend/serverless && sam build && cd - ",
     "sam:deploy:backend": "cd src/backend/serverless && sam deploy --resolve-s3 --no-fail-on-empty-changeset && aws cloudformation describe-stacks --stack-name chime-sdk-chat-demo --query 'Stacks[0].Outputs' --output json > appconfig.json && cd - ",
     "sam:deploy:assets": "aws s3 cp dist s3://$(aws cloudformation describe-stacks --stack-name chime-sdk-chat-demo --query \"Stacks[0].Outputs[?OutputKey=='assetsS3BucketName'].OutputValue\" --output text) --recursive",
-    "deploy": "npm run build && npm run sam:build && npm run sam:deploy:backend && npm run sam:deploy:assets"
+    "deploy": "npm run sam:deploy:backend && npm run build && npm run sam:build && npm run sam:deploy:assets"
   },
   "dependencies": {
     "@aws-amplify/auth": "^4.3.20",
