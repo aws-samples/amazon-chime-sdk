@@ -10,6 +10,7 @@ const routes = {
   HOME: `${rootPath}`,
   DEVICE: `${rootPath}devices`,
   MEETING: `${rootPath}meeting`,
+  USER_SELECT: `${rootPath}user-select`,
 };
 
 export default routes;
