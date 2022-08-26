@@ -10,7 +10,7 @@ import {
   LoggerProvider,
 } from 'amazon-chime-sdk-component-library-react';
 
-import { demoLightTheme, demoDarkTheme } from './theme/demoTheme';
+import { demoDarkTheme, defaultTheme } from './theme/demoTheme';
 import { AppStateProvider, useAppState } from './providers/AppStateProvider';
 import ErrorProvider from './providers/ErrorProvider';
 import Notifications from './containers/Notifications';
@@ -38,7 +38,7 @@ const Theme: React.FC = ({ children }) => {
   const { theme } = useAppState();
 
   return (
-    <ThemeProvider theme={theme === 'light' ? demoLightTheme : demoDarkTheme}>
+    <ThemeProvider theme={theme === 'light' ? defaultTheme : demoDarkTheme}>
       <GlobalStyles />
       {children}
     </ThemeProvider>

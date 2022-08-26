@@ -10,6 +10,7 @@ import {
   RosterAttendeeType,
 } from 'amazon-chime-sdk-component-library-react';
 
+import { defaultTheme } from '../theme/demoTheme';
 import { useNavigation } from '../providers/NavigationProvider';
 import RosterAttendeeWrapper from '../components/RosterAttendeeWrapper';
 
@@ -35,6 +36,8 @@ const MeetingRoster = () => {
     return <RosterAttendeeWrapper key={chimeAttendeeId} attendeeId={chimeAttendeeId} />;
   });
 
+  const color =  defaultTheme.colors.myCustomColorForAnotherLibrary;
+
   return (
     <Roster className="roster">
       <RosterHeader
@@ -45,6 +48,9 @@ const MeetingRoster = () => {
         badge={attendees.length}
       />
       <RosterGroup>{attendeeItems}</RosterGroup>
+      <p color={color}>
+        Test
+      </p>
     </Roster>
   );
 };

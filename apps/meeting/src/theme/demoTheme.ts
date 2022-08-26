@@ -27,6 +27,15 @@ const chatDarkTheme = {
   maxWidth: '18.5rem',
 };
 
+export const defaultTheme = {
+  ...lightTheme,
+  colors: {
+    ... lightTheme.colors,
+    myCustomColorForAnotherLibrary: '#88b2ff',
+  },
+  chat: chatLightTheme,
+};
+
 export const demoLightTheme = {
   ...lightTheme,
   chat: chatLightTheme,
