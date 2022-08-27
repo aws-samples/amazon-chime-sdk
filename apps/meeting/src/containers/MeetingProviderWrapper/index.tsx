@@ -20,7 +20,7 @@ import {
 import routes from '../../constants/routes';
 import { NavigationProvider } from '../../providers/NavigationProvider';
 import NoMeetingRedirect from '../NoMeetingRedirect';
-import { Meeting, Home, DeviceSetup } from '../../views';
+import { Home, DeviceSetup } from '../../views';
 import MeetingEventObserver from '../MeetingEventObserver';
 import { useAppState } from '../../providers/AppStateProvider';
 import { VideoFiltersCpuUtilization } from '../../types';
@@ -57,15 +57,11 @@ const MeetingProviderWrapper: React.FC = () => {
       <>
         <NavigationProvider>
           <Switch>
+            <Route exact path={routes.BASE_URL} render={() => <h1>Enter Meeting Id:</h1>} />
             <Route exact path={routes.HOME} component={Home} />
             <Route path={routes.DEVICE}>
               <NoMeetingRedirect>
                 <DeviceSetup />
-              </NoMeetingRedirect>
-            </Route>
-            <Route path={routes.MEETING}>
-              <NoMeetingRedirect>
-                <MeetingModeSelector />
               </NoMeetingRedirect>
             </Route>
             <Route path={routes.USER_SELECT}>
@@ -152,12 +148,6 @@ const MeetingProviderWrapper: React.FC = () => {
       {imageBlob === undefined ? <div>Loading Assets</div> : getMeetingProviderWithFeatures()}
     </>
   );
-};
-
-const MeetingModeSelector: React.FC = () => {
-  const { meetingMode } = useAppState();
-
-  return <Meeting mode={meetingMode} />;
 };
 
 export default MeetingProviderWrapper;

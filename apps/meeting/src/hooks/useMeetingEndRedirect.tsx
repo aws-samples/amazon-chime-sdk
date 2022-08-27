@@ -12,7 +12,6 @@ import {
   useMeetingStatus,
   useLogger,
 } from 'amazon-chime-sdk-component-library-react';
-import routes from '../constants/routes';
 
 const useMeetingEndRedirect = () => {
   const logger = useLogger();
@@ -32,7 +31,7 @@ const useMeetingEndRedirect = () => {
           replaceAll: true,
         },
       });
-      history.push(routes.HOME);
+      history.push(`/meeting/`);
     }
   }, [meetingStatus]);
 };

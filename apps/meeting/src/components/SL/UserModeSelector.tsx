@@ -10,7 +10,7 @@ import { BigButtonStyles } from "../../styles/customStyles";
 
 const UserModeSelector: React.FC = ({}) => {
   const [isLoading] = useState(false);
-  const meetingId = useAppState();
+  const { meetingId } = useAppState();
 
   const joinAsStudentHandler = (e: any) => {
     e.preventDefault();

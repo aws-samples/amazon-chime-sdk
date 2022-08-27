@@ -13,24 +13,26 @@ import {
   ModalHeader,
 } from 'amazon-chime-sdk-component-library-react';
 
-import routes from '../constants/routes';
 import Card from '../components/Card';
 import { useAppState } from '../providers/AppStateProvider';
+import { SetToLocalStorage } from '../utils/helpers/localStorageHelper';
+import { LOCAL_STORAGE_ITEM_KEYS } from '../utils/enums';
 
 const MeetingJoinDetails = () => {
   const meetingManager = useMeetingManager();
   const history = useHistory();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const { meetingId, localUserName } = useAppState();
+  const { meetingId, localUserName, setMeetingJoined } = useAppState();
 
   const handleJoinMeeting = async () => {
     setIsLoading(true);
-
     try {
       await meetingManager.start();
+      setMeetingJoined(true);
+      SetToLocalStorage(LOCAL_STORAGE_ITEM_KEYS.MEETING_JOINED, true);
       setIsLoading(false);
-      history.push(`${routes.MEETING}/${meetingId}`);
+      history.push(`meeting/${meetingId}`);
     } catch (error: any) {
       setIsLoading(false);
       setError(error.message);

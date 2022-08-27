@@ -3,7 +3,7 @@
 
 import routes from '../constants/routes';
 
-export const BASE_URL = routes.HOME;
+export const BASE_URL = routes.BASE_URL;
 
 export type MeetingFeatures = {
   Audio: {[key: string]: string};

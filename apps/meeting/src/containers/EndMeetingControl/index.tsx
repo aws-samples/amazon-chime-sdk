@@ -17,24 +17,31 @@ import {
 import { endMeeting } from '../../utils/api';
 import { StyledP } from './Styled';
 import { useAppState } from '../../providers/AppStateProvider';
-import routes from '../../constants/routes';
+import { RemoveFromLocalStorage } from '../../utils/helpers/localStorageHelper';
+import { LOCAL_STORAGE_ITEM_KEYS } from '../../utils/enums';
 
 const EndMeetingControl: React.FC = () => {
   const logger = useLogger();
   const [showModal, setShowModal] = useState(false);
   const toggleModal = (): void => setShowModal(!showModal);
-  const { meetingId } = useAppState();
+  const { meetingId, setMeetingJoined } = useAppState();
   const history = useHistory();
 
   const leaveMeeting = async (): Promise<void> => {
-    history.push(routes.HOME);
+    setMeetingJoined(false);
+    RemoveFromLocalStorage(LOCAL_STORAGE_ITEM_KEYS.MEETING_JOINED);
+    RemoveFromLocalStorage(LOCAL_STORAGE_ITEM_KEYS.JOIN_INFO);
+    history.push(`/meeting/`);
   };
 
   const endMeetingForAll = async (): Promise<void> => {
     try {
       if (meetingId) {
         await endMeeting(meetingId);
-        history.push(routes.HOME);
+        setMeetingJoined(false);
+        RemoveFromLocalStorage(LOCAL_STORAGE_ITEM_KEYS.MEETING_JOINED);
+        RemoveFromLocalStorage(LOCAL_STORAGE_ITEM_KEYS.JOIN_INFO);
+        history.push(`/meeting/`);
       }
     } catch (e) {
       logger.error(`Could not end meeting: ${e}`);

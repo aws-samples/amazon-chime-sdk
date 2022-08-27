@@ -10,8 +10,6 @@ import {
   ActionType,
 } from 'amazon-chime-sdk-component-library-react';
 
-import routes from '../constants/routes';
-
 const NoMeetingRedirect: React.FC = ({ children }) => {
   const history = useHistory();
   const dispatch = useNotificationDispatch();
@@ -29,7 +27,7 @@ const NoMeetingRedirect: React.FC = ({ children }) => {
         type: ActionType.ADD,
         payload: payload,
       });
-      history.push(routes.HOME);
+      history.push(`/meeting/`);
     }
   }, []);
 

@@ -26,6 +26,7 @@ interface AppStateValue {
   keepLastFrameWhenPaused: boolean;
   layout: Layout;
   joinInfo: JoinMeetingInfo | undefined;
+  meetingJoined: any;
   toggleTheme: () => void;
   toggleWebAudio: () => void;
   toggleSimulcast: () => void;
@@ -40,6 +41,7 @@ interface AppStateValue {
   setLocalUserName: React.Dispatch<React.SetStateAction<string>>;
   setRegion: React.Dispatch<React.SetStateAction<string>>;
   setBlob: (imageBlob: Blob) => void;
+  setMeetingJoined: (value: boolean) => void;
 }
 
 const AppStateContext = React.createContext<AppStateValue | null>(null);
@@ -76,6 +78,7 @@ export function AppStateProvider({ children }: Props) {
   });
   const [videoTransformCpuUtilization, setCpuPercentage] = useState(VideoFiltersCpuUtilization.CPU40Percent);
   const [imageBlob, setImageBlob] = useState<Blob | undefined>(undefined);
+  const [meetingJoined, setMeetingJoined] = useState<any>(null);
 
   useEffect(() => {
     /* Load a canvas that will be used as the replacement image for Background Replacement */
@@ -158,6 +161,7 @@ export function AppStateProvider({ children }: Props) {
     enableSimulcast,
     priorityBasedPolicy,
     keepLastFrameWhenPaused,
+    meetingJoined,
     toggleTheme,
     toggleWebAudio,
     togglePriorityBasedPolicy,
@@ -172,6 +176,7 @@ export function AppStateProvider({ children }: Props) {
     setLocalUserName,
     setRegion,
     setBlob,
+    setMeetingJoined
   };
 
   return <AppStateContext.Provider value={providerValue}>{children}</AppStateContext.Provider>;
