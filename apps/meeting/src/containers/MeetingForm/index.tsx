@@ -28,7 +28,9 @@ import { MeetingMode, VideoFiltersCpuUtilization } from '../../types';
 import { MeetingManagerJoinOptions } from 'amazon-chime-sdk-component-library-react/lib/providers/MeetingProvider/types';
 import meetingConfig from '../../meetingConfig';
 import { SetToLocalStorage } from '../../utils/helpers/localStorageHelper';
-import { LOCAL_STORAGE_ITEM_KEYS } from '../../utils/enums';
+import { LOCAL_STORAGE_ITEM_KEYS, USER_TYPES } from '../../utils/enums';
+import { ExtractMeetingIdAndUsernameFromURL } from '../../utils/helpers';
+import { MeetingObject } from '../../utils/interfaces';
 
 const MeetingForm: React.FC = () => {
   const meetingManager = useMeetingManager();
@@ -42,19 +44,25 @@ const MeetingForm: React.FC = () => {
     keepLastFrameWhenPaused,
     isWebAudioEnabled,
     isEchoReductionEnabled,
+    joineeType,
     setJoinInfo,
     setMeetingMode,
     setMeetingId,
     setLocalUserName,
     setRegion,
     setCpuUtilization,
-    setMeetingJoined
+    setMeetingJoined,
+    setJoineeType
   } = useAppState();
   const [meetingErr, setMeetingErr] = useState(false);
   const [nameErr, setNameErr] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { errorMessage, updateErrorMessage } = useContext(getErrorContext());
   const [localPassword, setLocalPassword] = useState<string>("");
+
+  const [isMeetingIdEditable, setIsMeetingIdEditable] = useState<boolean>(true);
+  const [isUsernameEditable, setIsUsernameEditable] = useState<boolean>(true);
+
   const history = useHistory();
 
   const handleJoinMeeting = async (e: React.FormEvent) => {
@@ -78,7 +86,7 @@ const MeetingForm: React.FC = () => {
     try {
       const { JoinInfo } = await fetchMeeting(id, attendeeName, region, isEchoReductionEnabled);
       setJoinInfo(JoinInfo);
-      SetToLocalStorage(LOCAL_STORAGE_ITEM_KEYS.JOIN_INFO, {JoinInfo, localInfo: {id, attendeeName, region}});
+      SetToLocalStorage(LOCAL_STORAGE_ITEM_KEYS.JOIN_INFO, {JoinInfo, localInfo: {id, attendeeName, region, joineeType}});
       const meetingSessionConfiguration = new MeetingSessionConfiguration(JoinInfo?.Meeting, JoinInfo?.Attendee);
       if (
         meetingConfig.postLogger &&
@@ -150,7 +158,24 @@ const MeetingForm: React.FC = () => {
   }
 
   const setupForm = (): void => {
-
+    const meetingObjectFromURL : MeetingObject = ExtractMeetingIdAndUsernameFromURL(window.location.href);
+    if(meetingObjectFromURL?.meetingId){
+      setMeetingId(meetingObjectFromURL.meetingId);
+      setIsMeetingIdEditable(false);
+    }
+    if(meetingObjectFromURL?.userName){
+      setLocalUserName(meetingObjectFromURL.meetingId);
+      setIsUsernameEditable(false);
+    }
+    // If we get a usertype from url then make it the current user type
+    // or set the usertype to student as default
+    if(meetingObjectFromURL?.userType){
+      setJoineeType(meetingObjectFromURL.userType);
+    } else {
+      setJoineeType(USER_TYPES.STUDENT);
+    }
+    // replacing the url to hide query params and just keep the meeting id
+    window.history.replaceState(null, "", `/meeting/${meetingObjectFromURL.meetingId}`);
   }
 
   const init = (): void => {
@@ -183,7 +208,7 @@ const MeetingForm: React.FC = () => {
         errorText="Please enter a valid meeting ID"
         error={meetingErr}
         onChange={(e: ChangeEvent<HTMLInputElement>): void => {
-          setMeetingId(e.target.value);
+          if (isMeetingIdEditable) setMeetingId(e.target.value);
           if (meetingErr) {
             setMeetingErr(false);
           }
@@ -200,7 +225,7 @@ const MeetingForm: React.FC = () => {
         errorText="Please enter a valid name"
         error={nameErr}
         onChange={(e: ChangeEvent<HTMLInputElement>): void => {
-          setLocalUserName(e.target.value);
+          if (isUsernameEditable) setLocalUserName(e.target.value);
           if (nameErr) {
             setNameErr(false);
           }

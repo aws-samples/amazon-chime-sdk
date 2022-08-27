@@ -6,6 +6,7 @@ import { VideoPriorityBasedPolicy } from 'amazon-chime-sdk-js';
 import { MeetingMode, Layout, VideoFiltersCpuUtilization } from '../types';
 import { JoinMeetingInfo } from '../utils/api';
 import { useLogger } from 'amazon-chime-sdk-component-library-react';
+import { USER_TYPES } from '../utils/enums';
 
 type Props = {
   children: ReactNode;
@@ -27,6 +28,7 @@ interface AppStateValue {
   layout: Layout;
   joinInfo: JoinMeetingInfo | undefined;
   meetingJoined: any;
+  joineeType: USER_TYPES;
   toggleTheme: () => void;
   toggleWebAudio: () => void;
   toggleSimulcast: () => void;
@@ -42,6 +44,7 @@ interface AppStateValue {
   setRegion: React.Dispatch<React.SetStateAction<string>>;
   setBlob: (imageBlob: Blob) => void;
   setMeetingJoined: (value: boolean) => void;
+  setJoineeType: (value: string) => void;
 }
 
 const AppStateContext = React.createContext<AppStateValue | null>(null);
@@ -79,6 +82,7 @@ export function AppStateProvider({ children }: Props) {
   const [videoTransformCpuUtilization, setCpuPercentage] = useState(VideoFiltersCpuUtilization.CPU40Percent);
   const [imageBlob, setImageBlob] = useState<Blob | undefined>(undefined);
   const [meetingJoined, setMeetingJoined] = useState<any>(null);
+  const [joineeType, setJoineeType] = useState<any>("")
 
   useEffect(() => {
     /* Load a canvas that will be used as the replacement image for Background Replacement */
@@ -162,6 +166,7 @@ export function AppStateProvider({ children }: Props) {
     priorityBasedPolicy,
     keepLastFrameWhenPaused,
     meetingJoined,
+    joineeType,
     toggleTheme,
     toggleWebAudio,
     togglePriorityBasedPolicy,
@@ -176,7 +181,8 @@ export function AppStateProvider({ children }: Props) {
     setLocalUserName,
     setRegion,
     setBlob,
-    setMeetingJoined
+    setMeetingJoined,
+    setJoineeType
   };
 
   return <AppStateContext.Provider value={providerValue}>{children}</AppStateContext.Provider>;

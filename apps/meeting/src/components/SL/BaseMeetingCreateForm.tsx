@@ -14,13 +14,30 @@ import { SetToLocalStorage } from "../../utils/helpers/localStorageHelper";
 import { StyledLayout } from "../../views/DeviceSetup/Styled";
 import { StyledWrapper } from "../DeviceSelection/Styled";
 
+// Can be changed later
+const MEETING_ID_ERROR_TEXT = "Please enter a valid meeting id";
+const MEETING_ID_LENGTH = 4;
+
 const BaseMeetingCreateForm = () => {
     const history = useHistory();
-  const [localMeetingId, setLocalMeetingId] = useState("");
+    const [localMeetingId, setLocalMeetingId] = useState("");
+    const [meetingIdError, setMeetingIdError] = useState<boolean>(false);
+
+
+    const validateMeetingId = (): boolean => {
+      // can setup custom logic later
+      if(localMeetingId.length >= MEETING_ID_LENGTH) return true;
+      return false;
+    }
 
   const handleContinue = (e: any) => {
     e.preventDefault();
-    alert(`Create meeting ${localMeetingId}`);
+
+    if(!validateMeetingId()){
+      setMeetingIdError(true);
+      return;
+    }
+    
     SetToLocalStorage(LOCAL_STORAGE_ITEM_KEYS.LOCAL_MEETING_ID, localMeetingId);
     history.push(`${routes.USER_SELECT}`);
   };
@@ -38,19 +55,22 @@ const BaseMeetingCreateForm = () => {
               level={6}
               css="margin-bottom: 3rem; text-align: center"
             >
-              Join a meeting
+              Create a meeting
             </Heading>
             <FormField
               field={Input}
               label="Meeting Id"
               value={localMeetingId}
               infoText="Anyone with access to the meeting ID can join"
+              errorText={MEETING_ID_ERROR_TEXT}
               fieldProps={{
                 name: "meetingId",
                 placeholder: "Enter Meeting Id",
               }}
+              error={meetingIdError}
               onChange={(e: ChangeEvent<HTMLInputElement>): void => {
                 setLocalMeetingId(e.target.value);
+                setMeetingIdError(false);
               }}
             />
             <Flex

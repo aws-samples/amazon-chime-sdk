@@ -49,6 +49,7 @@ const Home = () => {
     setMeetingJoined,
     setMeetingId,
     setLocalUserName,
+    setJoineeType
   } = useAppState();
 
   const meetingManager = useMeetingManager();
@@ -69,6 +70,7 @@ const Home = () => {
       JoinInfo?.Meeting?.MeetingId
     ) {
       try {
+        setJoineeType(localInfo?.joineeType);
         setLocalUserName(localInfo?.attendeeName);
         setRegion(localInfo?.region);
         setMeetingId(localInfo?.id);

@@ -8,5 +8,5 @@ export enum LOCAL_STORAGE_ITEM_KEYS {
     MEETING_OBJECT = "meeting_details",
     JOIN_INFO = "join_info",
     MEETING_JOINED = "meeting_joined",
-    LOCAL_MEETING_ID = "local_meeting_id",
+    LOCAL_MEETING_ID = "local_meeting_id"
 }

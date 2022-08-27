@@ -18,19 +18,21 @@ import { endMeeting } from '../../utils/api';
 import { StyledP } from './Styled';
 import { useAppState } from '../../providers/AppStateProvider';
 import { RemoveFromLocalStorage } from '../../utils/helpers/localStorageHelper';
-import { LOCAL_STORAGE_ITEM_KEYS } from '../../utils/enums';
+import { LOCAL_STORAGE_ITEM_KEYS, USER_TYPES } from '../../utils/enums';
+import routes from '../../constants/routes';
 
 const EndMeetingControl: React.FC = () => {
   const logger = useLogger();
   const [showModal, setShowModal] = useState(false);
   const toggleModal = (): void => setShowModal(!showModal);
-  const { meetingId, setMeetingJoined } = useAppState();
+  const { meetingId, setMeetingJoined, joineeType } = useAppState();
   const history = useHistory();
 
   const leaveMeeting = async (): Promise<void> => {
     setMeetingJoined(false);
     RemoveFromLocalStorage(LOCAL_STORAGE_ITEM_KEYS.MEETING_JOINED);
     RemoveFromLocalStorage(LOCAL_STORAGE_ITEM_KEYS.JOIN_INFO);
+    RemoveFromLocalStorage(LOCAL_STORAGE_ITEM_KEYS.LOCAL_MEETING_ID);
     history.push(`/meeting/`);
   };
 
@@ -41,12 +43,40 @@ const EndMeetingControl: React.FC = () => {
         setMeetingJoined(false);
         RemoveFromLocalStorage(LOCAL_STORAGE_ITEM_KEYS.MEETING_JOINED);
         RemoveFromLocalStorage(LOCAL_STORAGE_ITEM_KEYS.JOIN_INFO);
-        history.push(`/meeting/`);
+        RemoveFromLocalStorage(LOCAL_STORAGE_ITEM_KEYS.LOCAL_MEETING_ID);
+        history.push(`${routes.BASE_URL}`);
       }
     } catch (e) {
       logger.error(`Could not end meeting: ${e}`);
     }
   };
+
+  // Only teacher or ADMIN can end meeting for all
+  const buttonGroup = joineeType !== USER_TYPES.STUDENT ? [
+    <ModalButton
+      key="end-meeting-for-all"
+      onClick={endMeetingForAll}
+      variant="primary"
+      label="End meeting for all"
+      closesModal
+    />,
+    <ModalButton
+      key="leave-meeting"
+      onClick={leaveMeeting}
+      variant="primary"
+      label="Leave Meeting"
+      closesModal
+    />,
+    <ModalButton key="cancel-meeting-ending" variant="secondary" label="Cancel" closesModal />,
+  ] : [<ModalButton
+        key="leave-meeting"
+        onClick={leaveMeeting}
+        variant="primary"
+        label="Leave Meeting"
+        closesModal
+      />,
+      <ModalButton key="cancel-meeting-ending" variant="secondary" label="Cancel" closesModal />
+    ];
 
   return (
     <>
@@ -61,23 +91,7 @@ const EndMeetingControl: React.FC = () => {
             </StyledP>
           </ModalBody>
           <ModalButtonGroup
-            primaryButtons={[
-              <ModalButton
-                key="end-meeting-for-all"
-                onClick={endMeetingForAll}
-                variant="primary"
-                label="End meeting for all"
-                closesModal
-              />,
-              <ModalButton
-                key="leave-meeting"
-                onClick={leaveMeeting}
-                variant="primary"
-                label="Leave Meeting"
-                closesModal
-              />,
-              <ModalButton key="cancel-meeting-ending" variant="secondary" label="Cancel" closesModal />,
-            ]}
+            primaryButtons={buttonGroup}
           />
         </Modal>
       )}
