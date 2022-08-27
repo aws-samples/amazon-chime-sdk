@@ -11,6 +11,7 @@ const routes = {
   HOME: `${rootPath}meeting/:meetingId?/`,
   DEVICE: `${rootPath}devices`,
   USER_SELECT: `${rootPath}user-select`,
+  LOBBY: `${rootPath}lobby`
 };
 
 export default routes;
