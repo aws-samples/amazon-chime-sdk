@@ -25,6 +25,7 @@ import MeetingEventObserver from '../MeetingEventObserver';
 import { useAppState } from '../../providers/AppStateProvider';
 import { VideoFiltersCpuUtilization } from '../../types';
 import UserModeSelector from '../UserModeSelectorWrapper/index';
+import BaseMeetingCreteFormWrapper from '../BaseMeetingCreteFormWrapper';
 
 const MeetingProviderWithDeviceReplacement: React.FC = ({ children }) => {
   const { addVoiceFocus } = useVoiceFocus();
@@ -57,7 +58,7 @@ const MeetingProviderWrapper: React.FC = () => {
       <>
         <NavigationProvider>
           <Switch>
-            <Route exact path={routes.BASE_URL} render={() => <h1>Enter Meeting Id:</h1>} />
+            <Route exact path={routes.BASE_URL} component={BaseMeetingCreteFormWrapper} />
             <Route exact path={routes.HOME} component={Home} />
             <Route path={routes.DEVICE}>
               <NoMeetingRedirect>
