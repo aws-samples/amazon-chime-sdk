@@ -11,6 +11,6 @@ const appConfig = {
     cognitoIdentityPoolId: '' || appConfigJson.cognitoIdentityPoolId,
     appInstanceArn: '' || appConfigJson.appInstanceArn,
     region: 'us-east-1',  // Only supported region for Amazon Chime SDK Messaging as of this writing
-    attachments_s3_bucket_name: '' || appConfigJson.attachments_s3_bucket_name
+    attachments_s3_bucket_name: '' || appConfigJson.attachmentsS3BucketName
 };
 export default appConfig;
