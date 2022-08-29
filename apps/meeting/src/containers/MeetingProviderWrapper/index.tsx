@@ -27,6 +27,7 @@ import { VideoFiltersCpuUtilization } from '../../types';
 import UserModeSelector from '../UserModeSelectorWrapper/index';
 import BaseMeetingCreteFormWrapper from '../BaseMeetingCreteFormWrapper';
 import LobbyWrapper from '../LobbyWrapper';
+import ErrorPage from '../../components/SL/ErrorPage';
 
 const MeetingProviderWithDeviceReplacement: React.FC = ({ children }) => {
   const { addVoiceFocus } = useVoiceFocus();
@@ -72,6 +73,7 @@ const MeetingProviderWrapper: React.FC = () => {
             <Route path={routes.LOBBY}>
               <LobbyWrapper />
             </Route>
+            <Route path="*" component={ErrorPage}/>
           </Switch>
         </NavigationProvider>
         <MeetingEventObserver />
