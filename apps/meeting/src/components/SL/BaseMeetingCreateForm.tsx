@@ -9,6 +9,7 @@ import React, { ChangeEvent, useState } from "react";
 import { useHistory } from "react-router-dom";
 import routes from "../../constants/routes";
 import { StyledDiv } from "../../containers/MeetingFormSelector/Styled";
+import { BigButtonStyles } from "../../styles/customStyles";
 import { LOCAL_STORAGE_ITEM_KEYS } from "../../utils/enums";
 import { SetToLocalStorage } from "../../utils/helpers/localStorageHelper";
 import { StyledLayout } from "../../views/DeviceSetup/Styled";
@@ -78,7 +79,7 @@ const BaseMeetingCreateForm = () => {
               layout="fill-space-centered"
               style={{ marginTop: "2.5rem" }}
             >
-              <PrimaryButton label="Continue" onClick={handleContinue} />
+              <PrimaryButton label="Continue" onClick={handleContinue} style={BigButtonStyles} />
             </Flex>
           </form>
         </StyledDiv>

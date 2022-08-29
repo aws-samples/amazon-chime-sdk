@@ -53,6 +53,13 @@ export const SDK_LOG_LEVELS = {
   off: LogLevel.OFF,
 };
 
+export const EMPTY_LOCAL_INFO = {
+  id: "",
+  attendeeName: "",
+  region: "",
+  isEchoReductionEnabled: false,
+};
+
 export const DATA_MESSAGE_LIFETIME_MS = 300000;
 export const DATA_MESSAGE_TOPIC = 'ChimeComponentLibraryDataMessage';
 export const DATA_MESSAGE_TOPIC_CUSTOM = 'ChimeCustomMessage';

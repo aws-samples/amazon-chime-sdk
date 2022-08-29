@@ -1,24 +1,41 @@
+import React, { useContext, useEffect, useState } from 'react';
 import {
   Flex,
   Heading,
+  Modal,
+  ModalBody,
+  ModalHeader,
   PrimaryButton,
-} from "amazon-chime-sdk-component-library-react";
-import React, { useEffect, useState } from "react";
-import { useAppState } from "../../providers/AppStateProvider";
-import { BigButtonStyles } from "../../styles/customStyles";
+} from 'amazon-chime-sdk-component-library-react';
+
+import Spinner from '../../components/icons/Spinner';
+import { useAppState } from '../../providers/AppStateProvider';
+import { getErrorContext } from '../../providers/ErrorProvider';
+import Card from '../Card';
+import { BigButtonStyles } from '../../styles/customStyles';
 
 const DUMMY_OTHER_STUDENTS_COUNT = 5;
 
-const StudentLobby = () => {
-  const { meetingId } = useAppState();
+interface IStudentLobbyProps {
+  handleStartMeeting: (e: any) => Promise<void>;
+  isLoading: boolean;
+  setIsLoading: (value: boolean) => void;
+}
+
+const StudentLobby : React.FC<IStudentLobbyProps> = ({handleStartMeeting, isLoading, setIsLoading}) => {
   const [hasTeacherStartedMeeting, setHasTeacherStartedMeeting] = useState<
     boolean
   >(false);
   const [hasTeacherJoined, setHasTeacherJoined] = useState<boolean>(false);
 
-  const handleContinue = (e: any) => {
-    e.preventDefault();
-    // perform Action
+  const {
+    meetingId
+  } = useAppState();
+  const { errorMessage, updateErrorMessage } = useContext(getErrorContext());
+
+  const closeError = (): void => {
+    updateErrorMessage('');
+    setIsLoading(false);
   };
 
   // Just to avoid webpack warnings
@@ -54,13 +71,25 @@ const StudentLobby = () => {
         layout="fill-space-centered"
         style={{ marginTop: "2.5rem" }}
       >
-        <PrimaryButton
+        {isLoading ? <Spinner /> : <PrimaryButton
           disabled={!hasTeacherStartedMeeting}
           label={hasTeacherStartedMeeting ? "Join meet" : "Waiting for teacher"}
-          onClick={handleContinue}
+          onClick={handleStartMeeting}
           style={BigButtonStyles}
-        />
+        />}
       </Flex>
+      {errorMessage && (
+        <Modal size="md" onClose={closeError}>
+          <ModalHeader title={`Meeting ID: ${meetingId}`} />
+          <ModalBody>
+            <Card
+              title="Unable to join meeting"
+              description="There was an issue finding that meeting. The meeting may have already ended, or your authorization may have expired."
+              smallText={errorMessage}
+            />
+          </ModalBody>
+        </Modal>
+      )}
     </form>
   );
 };

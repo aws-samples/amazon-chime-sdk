@@ -13,26 +13,25 @@ import {
   ModalButtonGroup,
   useLogger,
 } from 'amazon-chime-sdk-component-library-react';
-
 import { endMeeting } from '../../utils/api';
 import { StyledP } from './Styled';
 import { useAppState } from '../../providers/AppStateProvider';
-import { RemoveFromLocalStorage } from '../../utils/helpers/localStorageHelper';
-import { LOCAL_STORAGE_ITEM_KEYS, USER_TYPES } from '../../utils/enums';
+import { USER_TYPES } from '../../utils/enums';
 import routes from '../../constants/routes';
+import { ClearMeetingsFromLocalStorage } from '../../utils/helpers';
+import { EMPTY_LOCAL_INFO } from '../../constants';
 
 const EndMeetingControl: React.FC = () => {
   const logger = useLogger();
   const [showModal, setShowModal] = useState(false);
   const toggleModal = (): void => setShowModal(!showModal);
-  const { meetingId, setMeetingJoined, joineeType } = useAppState();
+  const { meetingId, setMeetingJoined, joineeType, setLocalInfo } = useAppState();
   const history = useHistory();
 
   const leaveMeeting = async (): Promise<void> => {
     setMeetingJoined(false);
-    RemoveFromLocalStorage(LOCAL_STORAGE_ITEM_KEYS.MEETING_JOINED);
-    RemoveFromLocalStorage(LOCAL_STORAGE_ITEM_KEYS.JOIN_INFO);
-    RemoveFromLocalStorage(LOCAL_STORAGE_ITEM_KEYS.LOCAL_MEETING_ID);
+    setLocalInfo(EMPTY_LOCAL_INFO);
+    ClearMeetingsFromLocalStorage();
     history.push(`/meeting/`);
   };
 
@@ -41,9 +40,8 @@ const EndMeetingControl: React.FC = () => {
       if (meetingId) {
         await endMeeting(meetingId);
         setMeetingJoined(false);
-        RemoveFromLocalStorage(LOCAL_STORAGE_ITEM_KEYS.MEETING_JOINED);
-        RemoveFromLocalStorage(LOCAL_STORAGE_ITEM_KEYS.JOIN_INFO);
-        RemoveFromLocalStorage(LOCAL_STORAGE_ITEM_KEYS.LOCAL_MEETING_ID);
+        setLocalInfo(EMPTY_LOCAL_INFO);
+        ClearMeetingsFromLocalStorage();
         history.push(`${routes.BASE_URL}`);
       }
     } catch (e) {

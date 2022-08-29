@@ -30,7 +30,8 @@ import meetingConfig from '../../meetingConfig';
 import { SetToLocalStorage } from '../../utils/helpers/localStorageHelper';
 import { LOCAL_STORAGE_ITEM_KEYS, USER_TYPES } from '../../utils/enums';
 import { ExtractMeetingIdAndUsernameFromURL } from '../../utils/helpers';
-import { MeetingObject } from '../../utils/interfaces';
+import { IMeetingObject } from '../../utils/interfaces';
+import {ILocalInfo } from '../../utils/interfaces';
 
 const MeetingForm: React.FC = () => {
   const meetingManager = useMeetingManager();
@@ -52,7 +53,8 @@ const MeetingForm: React.FC = () => {
     setRegion,
     setCpuUtilization,
     setMeetingJoined,
-    setJoineeType
+    setJoineeType,
+    setLocalInfo
   } = useAppState();
   const [meetingErr, setMeetingErr] = useState(false);
   const [nameErr, setNameErr] = useState(false);
@@ -80,6 +82,12 @@ const MeetingForm: React.FC = () => {
       return;
     }
 
+    const localInfoToDispatch: ILocalInfo = {
+      id, 
+      attendeeName, 
+      region, 
+      isEchoReductionEnabled
+    }
     setIsLoading(true);
     meetingManager.getAttendee = createGetAttendeeCallback(id);
 
@@ -125,7 +133,9 @@ const MeetingForm: React.FC = () => {
       }
     } catch (error) {
       updateErrorMessage((error as Error).message);
-    }
+    }    
+    setLocalInfo(localInfoToDispatch);
+    history.push(routes.DEVICE)
   };
 
   const closeError = (): void => {
@@ -158,7 +168,7 @@ const MeetingForm: React.FC = () => {
   }
 
   const setupForm = (): void => {
-    const meetingObjectFromURL : MeetingObject = ExtractMeetingIdAndUsernameFromURL(window.location.href);
+    const meetingObjectFromURL : IMeetingObject = ExtractMeetingIdAndUsernameFromURL(window.location.href);
     if(meetingObjectFromURL?.meetingId){
       setMeetingId(meetingObjectFromURL.meetingId);
       setIsMeetingIdEditable(false);

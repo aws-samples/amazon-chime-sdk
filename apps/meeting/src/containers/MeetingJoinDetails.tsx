@@ -1,67 +1,34 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useHistory } from 'react-router-dom';
 import {
   PrimaryButton,
   Flex,
   Label,
-  useMeetingManager,
-  Modal,
-  ModalBody,
-  ModalHeader,
 } from 'amazon-chime-sdk-component-library-react';
-
-import Card from '../components/Card';
 import { useAppState } from '../providers/AppStateProvider';
-import { SetToLocalStorage } from '../utils/helpers/localStorageHelper';
-import { LOCAL_STORAGE_ITEM_KEYS } from '../utils/enums';
 
 const MeetingJoinDetails = () => {
-  const meetingManager = useMeetingManager();
   const history = useHistory();
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
-  const { meetingId, localUserName, setMeetingJoined } = useAppState();
+  const { meetingId, localUserName } = useAppState();
 
-  const handleJoinMeeting = async () => {
-    setIsLoading(true);
-    try {
-      await meetingManager.start();
-      setMeetingJoined(true);
-      SetToLocalStorage(LOCAL_STORAGE_ITEM_KEYS.MEETING_JOINED, true);
-      setIsLoading(false);
-      history.push(`meeting/${meetingId}`);
-    } catch (error: any) {
-      setIsLoading(false);
-      setError(error.message);
-    }
+  const handleJoinLobby = async () => {
+    history.push(`/meeting/${meetingId}/lobby`);
   };
 
   return (
     <>
       <Flex container alignItems="center" flexDirection="column">
         <PrimaryButton
-          label={isLoading ? 'Loading...' : 'Join meeting'}
-          onClick={handleJoinMeeting}
+          label={'Join lobby'}
+          onClick={handleJoinLobby}
         />
         <Label style={{ margin: '.75rem 0 0 0' }}>
           Joining meeting <b>{meetingId}</b> as <b>{localUserName}</b>
         </Label>
       </Flex>
-      {error && (
-        <Modal size="md" onClose={(): void => setError('')}>
-          <ModalHeader title={`Meeting ID: ${meetingId}`} />
-          <ModalBody>
-            <Card
-              title="Unable to join meeting"
-              description="There was an issue in joining this meeting. Check your connectivity and try again."
-              smallText={error}
-            />
-          </ModalBody>
-        </Modal>
-      )}
     </>
   );
 };

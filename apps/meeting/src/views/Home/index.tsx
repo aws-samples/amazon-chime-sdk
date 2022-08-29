@@ -25,6 +25,7 @@ import { MeetingMode } from "../../types";
 import { useHistory } from "react-router-dom";
 import { getErrorContext } from "../../providers/ErrorProvider";
 import Card from "../../components/Card";
+import { IsMeetingObjectPresentInLocalStorage } from "../../utils/helpers";
 
 const MeetingModeSelector: React.FC = () => {
   const { meetingMode } = useAppState();
@@ -33,8 +34,8 @@ const MeetingModeSelector: React.FC = () => {
 };
 
 const Home = () => {
-  const { errorMessage, updateErrorMessage } = useContext(getErrorContext());
 
+  const { errorMessage, updateErrorMessage } = useContext(getErrorContext());
   const {
     meetingId,
     meetingMode,
@@ -131,7 +132,7 @@ const Home = () => {
   };
 
   useEffect(() => {
-    if(!meetingJoined)
+    if(!meetingJoined && IsMeetingObjectPresentInLocalStorage())
       loadMeetingFromLocalStorage();
   }, []);
 

@@ -12,12 +12,16 @@ import {
   useMeetingStatus,
   useLogger,
 } from 'amazon-chime-sdk-component-library-react';
+import { useAppState } from '../providers/AppStateProvider';
+import { ClearMeetingsFromLocalStorage } from '../utils/helpers';
+import { EMPTY_LOCAL_INFO } from '../constants';
 
 const useMeetingEndRedirect = () => {
   const logger = useLogger();
   const history = useHistory();
   const dispatch = useNotificationDispatch();
   const meetingStatus = useMeetingStatus();
+  const { joineeType, setLocalInfo, setMeetingJoined } = useAppState();
 
   useEffect(() => {
     if (meetingStatus === MeetingStatus.Ended) {
@@ -26,11 +30,14 @@ const useMeetingEndRedirect = () => {
         type: ActionType.ADD,
         payload: {
           severity: Severity.INFO,
-          message: 'The meeting was ended by another attendee',
+          message: `The meeting was ended by the ${joineeType}`,
           autoClose: true,
           replaceAll: true,
         },
       });
+      setMeetingJoined(false);
+      setLocalInfo(EMPTY_LOCAL_INFO);
+      ClearMeetingsFromLocalStorage();
       history.push(`/meeting/`);
     }
   }, [meetingStatus]);

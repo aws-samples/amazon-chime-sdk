@@ -1,20 +1,36 @@
+import React, { useContext } from 'react';
 import {
   Flex,
   Heading,
+  Modal,
+  ModalBody,
+  ModalHeader,
   PrimaryButton,
-} from "amazon-chime-sdk-component-library-react";
-import React from "react";
-import { useAppState } from "../../providers/AppStateProvider";
-import { BigButtonStyles } from "../../styles/customStyles";
+} from 'amazon-chime-sdk-component-library-react';
+import Spinner from '../../components/icons/Spinner';
+import { useAppState } from '../../providers/AppStateProvider';
+import { getErrorContext } from '../../providers/ErrorProvider';
+import Card from '../Card';
+import { BigButtonStyles } from '../../styles/customStyles';
 
 const DUMMY_WAITING_STUDENTS_COUNT = 5;
 
-const TeacherLobby = () => {
-  const { meetingId } = useAppState();
+interface ITeacherLobbyProps {
+  handleStartMeeting: (e: any) => Promise<void>;
+  isLoading: boolean;
+  setIsLoading: (value: boolean) => void;
+}
 
-  const handleContinue = (e: any) => {
-    e.preventDefault();
-    // perform Action
+const TeacherLobby: React.FC<ITeacherLobbyProps> = ({handleStartMeeting, isLoading, setIsLoading}) => {
+
+  const {
+    meetingId
+  } = useAppState();
+  const { errorMessage, updateErrorMessage } = useContext(getErrorContext());
+
+  const closeError = (): void => {
+    updateErrorMessage('');
+    setIsLoading(false);
   };
 
   return (
@@ -37,8 +53,24 @@ const TeacherLobby = () => {
         layout="fill-space-centered"
         style={{ marginTop: "2.5rem" }}
       >
-        <PrimaryButton label="Start meeting" onClick={handleContinue} style={BigButtonStyles} />
+        {isLoading ? <Spinner /> : <PrimaryButton
+          label="Start meeting"
+          onClick={handleStartMeeting}
+          style={BigButtonStyles}
+        />}
       </Flex>
+      {errorMessage && (
+        <Modal size="md" onClose={closeError}>
+          <ModalHeader title={`Meeting ID: ${meetingId}`} />
+          <ModalBody>
+            <Card
+              title="Unable to join meeting"
+              description="There was an issue finding that meeting. The meeting may have already ended, or your authorization may have expired."
+              smallText={errorMessage}
+            />
+          </ModalBody>
+        </Modal>
+      )}
     </form>
   );
 };
