@@ -174,7 +174,7 @@ const MeetingForm: React.FC = () => {
       setIsMeetingIdEditable(false);
     }
     if(meetingObjectFromURL?.userName){
-      setLocalUserName(meetingObjectFromURL.meetingId);
+      setLocalUserName(meetingObjectFromURL.userName);
       setIsUsernameEditable(false);
     }
     // If we get a usertype from url then make it the current user type
@@ -226,13 +226,13 @@ const MeetingForm: React.FC = () => {
       />
       <FormField
         field={Input}
-        label="Name"
+        label={joineeType === USER_TYPES.STUDENT ? "Name" : "Email"}
         value={localUserName}
         fieldProps={{
           name: 'name',
-          placeholder: 'Enter Your Name',
+          placeholder: `Enter Your ${joineeType === USER_TYPES.STUDENT ? "Name" : "Email"}`,
         }}
-        errorText="Please enter a valid name"
+        errorText={`Please enter a valid ${joineeType === USER_TYPES.STUDENT ? "name" : "email"}`}
         error={nameErr}
         onChange={(e: ChangeEvent<HTMLInputElement>): void => {
           if (isUsernameEditable) setLocalUserName(e.target.value);

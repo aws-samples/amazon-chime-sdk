@@ -8,7 +8,7 @@ export const rootPath: string = window.location.href.includes(awsPath)
 
 const routes = {
   BASE_URL: `${rootPath}`,
-  HOME: `${rootPath}meeting/:meetingId?/`,
+  HOME: `${rootPath}meeting/:meetingId?`,
   DEVICE: `${rootPath}devices`,
   USER_SELECT: `${rootPath}user-select`,
   LOBBY: `${rootPath}meeting/:meetingId?/lobby`
