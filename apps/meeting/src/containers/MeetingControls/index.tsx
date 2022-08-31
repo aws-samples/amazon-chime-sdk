@@ -20,12 +20,11 @@ import { StyledControls } from './Styled';
 import { useAppState } from '../../providers/AppStateProvider';
 import { VideoFiltersCpuUtilization } from '../../types';
 import VideoInputTransformControl from '../../components/MeetingControls/VideoInputTransformControl';
-import { USER_TYPES } from '../../utils/enums';
 
 const MeetingControls: React.FC = () => {
   const { toggleNavbar, closeRoster, showRoster } = useNavigation();
   const { isUserActive } = useUserActivityState();
-  const { isWebAudioEnabled, videoTransformCpuUtilization, joineeType } = useAppState();
+  const { isWebAudioEnabled, videoTransformCpuUtilization } = useAppState();
   const videoTransformsEnabled = videoTransformCpuUtilization !== VideoFiltersCpuUtilization.Disabled;
 
   const handleToggle = (): void => {
@@ -34,25 +33,6 @@ const MeetingControls: React.FC = () => {
     }
     toggleNavbar();
   };
-
-  const studentEligibleControls = () => (
-    <>
-      <AudioOutputControl />
-      <EndMeetingControl />
-    </>
-  )
-
-  const teacherEligibleControls = () => (
-    <>
-      { isWebAudioEnabled ? <AudioInputVFControl /> :  <AudioInputControl /> }
-      { videoTransformsEnabled ? <VideoInputTransformControl /> : <VideoInputControl/> }
-      <ContentShareControl />
-      <AudioOutputControl />
-      <EndMeetingControl />
-    </>
-  )
-
-  const renderControls = () => joineeType === USER_TYPES.STUDENT ? studentEligibleControls() : teacherEligibleControls();
 
   return (
     <StyledControls className="controls" active={!!isUserActive}>
@@ -67,7 +47,11 @@ const MeetingControls: React.FC = () => {
           onClick={handleToggle}
           label="Menu"
         />
-        {renderControls()}
+        { isWebAudioEnabled ? <AudioInputVFControl /> :  <AudioInputControl /> }
+        { videoTransformsEnabled ? <VideoInputTransformControl /> : <VideoInputControl/> }
+        <ContentShareControl />
+        <AudioOutputControl />
+        <EndMeetingControl />
       </ControlBar>
     </StyledControls>
   );

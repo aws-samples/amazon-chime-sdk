@@ -24,6 +24,7 @@ import { Layout } from '../../types';
 import GalleryLayout from '../../components/icons/GalleryLayout';
 import FeaturedLayout from '../../components/icons/FeaturedLayout';
 import { useVideoTileGridControl } from '../../providers/VideoTileGridProvider';
+import IframePlugin from '../../plugins/IframePlugin';
 
 const Navigation: React.FC = () => {
   const { toggleRoster, closeNavbar, toggleChat } = useNavigation();
@@ -63,6 +64,7 @@ const Navigation: React.FC = () => {
           disabled={!!sharingAttendeeId}
           label="Switch View"
         />
+        <IframePlugin />
         {layout === Layout.Gallery && priorityBasedPolicy &&
           <>
             <NavbarItem
