@@ -19,13 +19,8 @@ cd apps/chat
 npm run deploy
 ```
 
-3. Run app locally
-```bash
-   npm start
-```
-
-4. Open https://localhost:9000 in your browser.
-
+3. Now you can access the app via the CloudFront endpoint found in the CloudFormation stack outputs. The stack outputs will be exported to
+   `src/backend/serverless/appconfig.json`.
 
 ### Using the AWS CloudFormation console
 Alternatively, you can deploy backend and frontend manually:
@@ -53,7 +48,7 @@ After the deployment is complete, the **Outputs** tab of the AWS CloudFormation 
    npm install
    npm start
    ```
-1. Open https://localhost:9000 in your browser.
+1. Open [http://localhost:9000](http://localhost:9000/) in your browser.
 1. By default, the demo uses the [Amazon Cognito](https://aws.amazon.com/cognito/) User Pools to manage users. Alternatively, you can get credentials using the [AWS Lambda](https://aws.amazon.com/lambda/) function that the AWS CloudFormation template created in the previous section.
 
     If you prefer to use the default Cognito, continue to the [Cognito User Pools](#cognito-user-pools) section.
@@ -66,7 +61,7 @@ After the deployment is complete, the **Outputs** tab of the AWS CloudFormation 
 
 New users can register through the Amazon Chime SDK Chat Demo.
 
-1. Open [http://localhost:9000](http://localhost:9000/) in your browser.
+1. Open the demo app in your browser.
 1. Provide the username and password for a new user.
 1. Choose **Register**.
 1. The user must confirm the account before signing in to the demo. Follow the steps in the next section to confirm.
@@ -83,7 +78,7 @@ New users can register through the Amazon Chime SDK Chat Demo.
 
 ### Signing in
 
-1. Open [http://localhost:9000](http://localhost:9000/) in your browser.
+1. Open the demo app in your browser.
 1. Provide the username and password of the desired user.
 1. Choose **Sign in**.
 
@@ -91,7 +86,7 @@ Skip to [Creating a Channel](#creating-a-channel)
 
 ## Credential Exchange Service
 
-1. Open [http://localhost:9000](http://localhost:9000/) in your browser.
+1. Open the demo app in your browser.
 1. Change the drop down to **Credential Exchange Service**.
 1. The Credential Exchange Service is a small [AWS Lambda](https://aws.amazon.com/lambda/) function running behind [Amazon API Gateway](https://aws.amazon.com/api-gateway/) that enables exchanging your application's or identity provider's (IDP) token for AWS credentials, or for you to implement custom authentication.
 
