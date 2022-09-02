@@ -21,7 +21,7 @@ const useMeetingEndRedirect = () => {
   const history = useHistory();
   const dispatch = useNotificationDispatch();
   const meetingStatus = useMeetingStatus();
-  const { joineeType, setLocalInfo, setMeetingJoined } = useAppState();
+  const { setLocalInfo, setMeetingJoined } = useAppState();
 
   useEffect(() => {
     if (meetingStatus === MeetingStatus.Ended) {
@@ -30,7 +30,7 @@ const useMeetingEndRedirect = () => {
         type: ActionType.ADD,
         payload: {
           severity: Severity.INFO,
-          message: `The meeting was ended by the ${joineeType}`,
+          message: `The meeting was ended by the Teacher`,
           autoClose: true,
           replaceAll: true,
         },

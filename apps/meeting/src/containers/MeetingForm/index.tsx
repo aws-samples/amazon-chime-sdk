@@ -18,7 +18,6 @@ import {
 import { MeetingSessionConfiguration } from 'amazon-chime-sdk-js';
 
 import { getErrorContext } from '../../providers/ErrorProvider';
-import routes from '../../constants/routes';
 import Card from '../../components/Card';
 import Spinner from '../../components/icons/Spinner';
 import DevicePermissionPrompt from '../DevicePermissionPrompt';
@@ -89,6 +88,7 @@ const MeetingForm: React.FC = () => {
       isEchoReductionEnabled
     }
     setIsLoading(true);
+    setLocalInfo(localInfoToDispatch);
     meetingManager.getAttendee = createGetAttendeeCallback(id);
 
     try {
@@ -121,21 +121,24 @@ const MeetingForm: React.FC = () => {
         enableWebAudio: isWebAudioEnabled,
       };
 
+      // Join and start meeting here only as we need roster for
+      // the lobby page
       await meetingManager.join(meetingSessionConfiguration, options);
       if (meetingMode === MeetingMode.Spectator) {
         setMeetingJoined(true);
         SetToLocalStorage(LOCAL_STORAGE_ITEM_KEYS.MEETING_JOINED, "true");
         await meetingManager.start();
-        history.push(`${routes.HOME}/${meetingId}`);
+        history.push(`/meeting/${meetingId}/lobby`);
       } else {
+        setMeetingJoined(true);
+        SetToLocalStorage(LOCAL_STORAGE_ITEM_KEYS.MEETING_JOINED, "true");
+        await meetingManager.start();
         setMeetingMode(MeetingMode.Attendee);
-        history.push(`${routes.DEVICE}`);
+        history.push(`/meeting/${meetingId}/lobby`);
       }
     } catch (error) {
       updateErrorMessage((error as Error).message);
-    }    
-    setLocalInfo(localInfoToDispatch);
-    history.push(routes.DEVICE)
+    }
   };
 
   const closeError = (): void => {

@@ -6,13 +6,14 @@ import {
   ModalBody,
   ModalHeader,
   PrimaryButton,
+  RosterType,
 } from 'amazon-chime-sdk-component-library-react';
 
-import Spinner from '../../components/icons/Spinner';
-import { useAppState } from '../../providers/AppStateProvider';
-import { getErrorContext } from '../../providers/ErrorProvider';
-import Card from '../Card';
-import { BigButtonStyles } from '../../styles/customStyles';
+import Spinner from '../../../components/icons/Spinner';
+import { useAppState } from '../../../providers/AppStateProvider';
+import { getErrorContext } from '../../../providers/ErrorProvider';
+import Card from '../../Card';
+import { BigButtonStyles } from '../../../styles/customStyles';
 
 const DUMMY_OTHER_STUDENTS_COUNT = 5;
 
@@ -20,9 +21,10 @@ interface IStudentLobbyProps {
   handleStartMeeting: (e: any) => Promise<void>;
   isLoading: boolean;
   setIsLoading: (value: boolean) => void;
+  roster: RosterType
 }
 
-const StudentLobby : React.FC<IStudentLobbyProps> = ({handleStartMeeting, isLoading, setIsLoading}) => {
+const StudentLobby : React.FC<IStudentLobbyProps> = ({handleStartMeeting, isLoading, setIsLoading, roster}) => {
   const [hasTeacherStartedMeeting, setHasTeacherStartedMeeting] = useState<
     boolean
   >(false);

@@ -1,34 +1,29 @@
-import { Modal, ModalBody, ModalHeader, useMeetingManager } from "amazon-chime-sdk-component-library-react";
+import { Modal, ModalBody, ModalHeader, useRosterState } from "amazon-chime-sdk-component-library-react";
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import {
   StyledDiv,
   StyledWrapper,
-} from "../../containers/MeetingFormSelector/Styled";
-import { useAppState } from "../../providers/AppStateProvider";
-import { LOCAL_STORAGE_ITEM_KEYS, USER_TYPES } from "../../utils/enums";
-import { SetToLocalStorage } from "../../utils/helpers/localStorageHelper";
-import { StyledLayout } from "../../views/DeviceSetup/Styled";
-import Card from "../Card";
+} from "../../../containers/MeetingFormSelector/Styled";
+import { useAppState } from "../../../providers/AppStateProvider";
+import { USER_TYPES } from "../../../utils/enums";
+import { StyledLayout } from "../../../views/DeviceSetup/Styled";
+import Card from "../../Card";
 import StudentLobby from "./StudentLobby";
 import TeacherLobby from "./TeacherLobby";
 
 const Lobby = () => {
-  const { meetingId, joineeType, setMeetingJoined } = useAppState();
+  const { meetingId, joineeType } = useAppState();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState('');
   const history = useHistory();
-  const meetingManager = useMeetingManager();
+  const { roster } = useRosterState();
 
 
   const handleStartMeeting = async (e: any): Promise<void> => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      await meetingManager.start();
-      setMeetingJoined(true);
-      SetToLocalStorage(LOCAL_STORAGE_ITEM_KEYS.MEETING_JOINED, true);
-      setIsLoading(false);
       history.push(`/meeting/${meetingId}`);
     } catch (error: any) {
       setIsLoading(false);
@@ -42,12 +37,14 @@ const Lobby = () => {
         handleStartMeeting={handleStartMeeting}
         isLoading={isLoading}
         setIsLoading={setIsLoading}
+        roster={roster}
       />
     ) : (
       <TeacherLobby
         handleStartMeeting={handleStartMeeting}
         isLoading={isLoading}
         setIsLoading={setIsLoading}
+        roster={roster}
       />
     );
 

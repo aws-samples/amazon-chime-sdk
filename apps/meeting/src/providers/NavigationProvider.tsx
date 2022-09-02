@@ -25,6 +25,8 @@ export type NavigationContextType = {
   closeNavbar: () => void;
   showChat: boolean;
   toggleChat: () => void;
+  closeChat: () => void;
+  openChat: () => void;
 };
 
 type Props = {
@@ -105,6 +107,14 @@ const NavigationProvider = ({ children }: Props) => {
     setShowChat(!showChat);
   };
 
+  const closeChat = (): void => {
+    setShowChat(false);
+  }
+
+  const openChat = (): void => {
+    setShowChat(true);
+  }
+
   const providerValue = {
     showNavbar,
     showRoster,
@@ -116,6 +126,8 @@ const NavigationProvider = ({ children }: Props) => {
     closeNavbar,
     showChat,
     toggleChat,
+    closeChat,
+    openChat,
   };
   return (
     <NavigationContext.Provider value={providerValue}>

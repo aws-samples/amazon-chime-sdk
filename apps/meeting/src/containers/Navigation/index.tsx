@@ -64,7 +64,10 @@ const Navigation: React.FC = () => {
           disabled={!!sharingAttendeeId}
           label="Switch View"
         />
+
+        {/* Custom SL Plugins */}
         <IframePlugin />
+        
         {layout === Layout.Gallery && priorityBasedPolicy &&
           <>
             <NavbarItem

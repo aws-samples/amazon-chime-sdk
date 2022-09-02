@@ -6,7 +6,7 @@ import { VideoPriorityBasedPolicy } from 'amazon-chime-sdk-js';
 import { MeetingMode, Layout, VideoFiltersCpuUtilization } from '../types';
 import { JoinMeetingInfo } from '../utils/api';
 import { useLogger } from 'amazon-chime-sdk-component-library-react';
-import { USER_TYPES } from '../utils/enums';
+import { CUSTOM_LAYOUTS, USER_TYPES } from '../utils/enums';
 import { ILocalInfo } from '../utils/interfaces';
 
 type Props = {
@@ -31,6 +31,7 @@ interface AppStateValue {
   meetingJoined: any;
   joineeType: USER_TYPES;
   localInfo: ILocalInfo;
+  customLayout: CUSTOM_LAYOUTS;
   toggleTheme: () => void;
   toggleWebAudio: () => void;
   toggleSimulcast: () => void;
@@ -48,6 +49,7 @@ interface AppStateValue {
   setMeetingJoined: (value: boolean) => void;
   setJoineeType: (value: string) => void;
   setLocalInfo: (value: ILocalInfo) => void;
+  setCustomLayout: (value: CUSTOM_LAYOUTS) => void;
 }
 
 const AppStateContext = React.createContext<AppStateValue | null>(null);
@@ -87,6 +89,7 @@ export function AppStateProvider({ children }: Props) {
   const [meetingJoined, setMeetingJoined] = useState<any>(null);
   const [joineeType, setJoineeType] = useState<any>("")
   const [localInfo, setLocalInfo] = useState<any>(null);
+  const [customLayout, setCustomLayout] = useState<CUSTOM_LAYOUTS | any>(null);
 
   useEffect(() => {
     /* Load a canvas that will be used as the replacement image for Background Replacement */
@@ -172,6 +175,7 @@ export function AppStateProvider({ children }: Props) {
     meetingJoined,
     joineeType,
     localInfo,
+    customLayout,
     toggleTheme,
     toggleWebAudio,
     togglePriorityBasedPolicy,
@@ -188,7 +192,8 @@ export function AppStateProvider({ children }: Props) {
     setBlob,
     setMeetingJoined,
     setJoineeType,
-    setLocalInfo
+    setLocalInfo,
+    setCustomLayout
   };
 
   return <AppStateContext.Provider value={providerValue}>{children}</AppStateContext.Provider>;
