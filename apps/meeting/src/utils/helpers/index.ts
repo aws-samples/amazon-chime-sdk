@@ -3,6 +3,8 @@ import { GetFromLocalStorage, RemoveFromLocalStorage } from './localStorageHelpe
 import {LOCAL_STORAGE_ITEM_KEYS, USER_TYPES} from '../enums/index'
 import { IMeetingObject } from '../interfaces';
 
+const DEFAULT_DEFFERED_CALL_DELAY = 2000;
+
 // match a string to a particular user type
 const getUserType = (userStr: string): USER_TYPES => {
     switch(userStr) {
@@ -21,7 +23,7 @@ const getUserType = (userStr: string): USER_TYPES => {
 const extractMeetingIdAndUsernameFromURL = (url: string): IMeetingObject => {
     let [path, searchParams] = url.split('?');
     let urlArr = path.split('/');
-    const meetingId: string = urlArr[urlArr.length - 1];
+    const meetingId: string = urlArr[urlArr.length - 1] === "meeting" ? "" : urlArr[urlArr.length - 1];
     const query = new URLSearchParams(searchParams);
     const userName: string = query.get('username')??"";
     const userType = getUserType(query.get('usertype')??"");
@@ -37,14 +39,20 @@ const clearMeetingsFromLocalStorage = (): void => {
     RemoveFromLocalStorage(LOCAL_STORAGE_ITEM_KEYS.LOCAL_MEETING_ID);
     RemoveFromLocalStorage(LOCAL_STORAGE_ITEM_KEYS.MEETING_OBJECT);
     RemoveFromLocalStorage(LOCAL_STORAGE_ITEM_KEYS.MEETING_JOINED);
+    RemoveFromLocalStorage(LOCAL_STORAGE_ITEM_KEYS.LOBBY_JOINED);
 };
 // to check if a meeting object is present in local storage
 const isMeetingObjectPresentInLocalStorage = (): boolean => {
     return GetFromLocalStorage(LOCAL_STORAGE_ITEM_KEYS.MEETING_OBJECT) === "" ? false : true;
 };
 
+const deferredCall = (callback = () => {}, delay?: number) => {
+    setTimeout(callback, delay || DEFAULT_DEFFERED_CALL_DELAY);
+}
+
 export {
     extractMeetingIdAndUsernameFromURL as ExtractMeetingIdAndUsernameFromURL,
     isMeetingObjectPresentInLocalStorage as IsMeetingObjectPresentInLocalStorage,
-    clearMeetingsFromLocalStorage as ClearMeetingsFromLocalStorage
+    clearMeetingsFromLocalStorage as ClearMeetingsFromLocalStorage,
+    deferredCall as DeferredCall
 }

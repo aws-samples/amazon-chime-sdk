@@ -15,6 +15,7 @@ type Props = {
 // a state like `recievedIframePluginData` below.
 interface AppStateValue {
   recievedIframePluginData: any;
+  recievedLobbyPluginData: any;
   sendCustomEvent: (eventData: any) => void;
 }
 
@@ -24,7 +25,7 @@ export function usePluginState(): AppStateValue {
   const state = useContext(PluginStateContext);
 
   if (!state) {
-    throw new Error('useAppState must be used within PluginProvider. Wrap PluginProvider under MeetingProvider');
+    throw new Error('usePluginState must be used within PluginProvider. Wrap PluginProvider under MeetingProvider');
   }
 
   return state;
@@ -36,6 +37,7 @@ export function PluginProvider({ children }: Props) {
   const meetingManager = useMeetingManager();
   const audioVideo = useAudioVideo();
   const [recievedIframePluginData, setRecievedIframePluginData] = useState<any>(null);
+  const [recievedLobbyPluginData, setRecievedLobbyPluginData] = useState<any>(null);
 
   useEffect(() => {
     if (!audioVideo) {
@@ -46,8 +48,11 @@ export function PluginProvider({ children }: Props) {
     // events for that plugin only. Make sure to unsubscribe it too in the 
     // return function.
     audioVideo.realtimeSubscribeToReceiveDataMessage(SLPlugin.IFrame, customIFramePluginReceiveHandler);
+    audioVideo.realtimeSubscribeToReceiveDataMessage(SLPlugin.Lobby, customLobbyPluginReceiveHandler);
     return () => {
       audioVideo.realtimeUnsubscribeFromReceiveDataMessage(SLPlugin.IFrame);
+      audioVideo.realtimeUnsubscribeFromReceiveDataMessage(SLPlugin.Lobby);
+
     };
   }, [audioVideo]);
 
@@ -59,11 +64,18 @@ export function PluginProvider({ children }: Props) {
       const payload = JSON.parse(new TextDecoder().decode(dataMessage.data));
       const message = dataMessage;
       const payloadToBroadcast = {payload, message};
-      console.log("received inside PluginProvider:", payloadToBroadcast);
       setRecievedIframePluginData(payloadToBroadcast);
     },
     [meetingManager]
   );
+
+  const customLobbyPluginReceiveHandler = useCallback((dataMessage: DataMessage) => {
+    const payload = JSON.parse(new TextDecoder().decode(dataMessage.data));
+    const message = dataMessage;
+    const payloadToBroadcast = {payload, message};
+    console.log("customLobbyPluginReceiveHandler: ", payloadToBroadcast);
+    setRecievedLobbyPluginData(payloadToBroadcast);
+  }, [meetingManager]);
 
   // Universal function to send custom events
   const sendCustomEvent = useCallback(
@@ -88,6 +100,7 @@ export function PluginProvider({ children }: Props) {
   
   const providerValue = {
     recievedIframePluginData,
+    recievedLobbyPluginData,
     sendCustomEvent
   };
 

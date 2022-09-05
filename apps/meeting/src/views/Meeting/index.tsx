@@ -14,7 +14,6 @@ import { MeetingMode } from '../../types';
 import { VideoTileGridProvider } from '../../providers/VideoTileGridProvider';
 import { DataMessagesProvider } from '../../providers/DataMessagesProvider';
 import CustomVideoTileGrid from '../../components/SL/customVideoTileGrid';
-import { PluginProvider } from '../../providers/PluginProvider';
 
 const MeetingView = (props: { mode: MeetingMode }) => {
   useMeetingEndRedirect();
@@ -24,17 +23,15 @@ const MeetingView = (props: { mode: MeetingMode }) => {
   return (
     <UserActivityProvider>
       <DataMessagesProvider>
-        <PluginProvider>
-          <VideoTileGridProvider>
-            <StyledLayout showNav={showNavbar} showRoster={showRoster} showChat={showChat}>
-              <StyledContent>
-                <CustomVideoTileGrid />
-                {mode === MeetingMode.Spectator ? <DynamicMeetingControls /> : <MeetingControls />}
-              </StyledContent>
-              <NavigationControl />
-            </StyledLayout>
-          </VideoTileGridProvider>
-        </PluginProvider>
+        <VideoTileGridProvider>
+          <StyledLayout showNav={showNavbar} showRoster={showRoster} showChat={showChat}>
+            <StyledContent>
+              <CustomVideoTileGrid />
+              {mode === MeetingMode.Spectator ? <DynamicMeetingControls /> : <MeetingControls />}
+            </StyledContent>
+            <NavigationControl />
+          </StyledLayout>
+        </VideoTileGridProvider>
       </DataMessagesProvider>
     </UserActivityProvider>
   );

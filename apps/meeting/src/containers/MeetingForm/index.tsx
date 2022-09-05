@@ -51,7 +51,7 @@ const MeetingForm: React.FC = () => {
     setLocalUserName,
     setRegion,
     setCpuUtilization,
-    setMeetingJoined,
+    setLobbyJoined,
     setJoineeType,
     setLocalInfo
   } = useAppState();
@@ -125,13 +125,13 @@ const MeetingForm: React.FC = () => {
       // the lobby page
       await meetingManager.join(meetingSessionConfiguration, options);
       if (meetingMode === MeetingMode.Spectator) {
-        setMeetingJoined(true);
-        SetToLocalStorage(LOCAL_STORAGE_ITEM_KEYS.MEETING_JOINED, "true");
+        setLobbyJoined(true);
+        SetToLocalStorage(LOCAL_STORAGE_ITEM_KEYS.LOBBY_JOINED, "true");
         await meetingManager.start();
         history.push(`/meeting/${meetingId}/lobby`);
       } else {
-        setMeetingJoined(true);
-        SetToLocalStorage(LOCAL_STORAGE_ITEM_KEYS.MEETING_JOINED, "true");
+        setLobbyJoined(true);
+        SetToLocalStorage(LOCAL_STORAGE_ITEM_KEYS.LOBBY_JOINED, "true");
         await meetingManager.start();
         setMeetingMode(MeetingMode.Attendee);
         history.push(`/meeting/${meetingId}/lobby`);

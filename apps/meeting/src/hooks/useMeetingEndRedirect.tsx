@@ -26,6 +26,7 @@ const useMeetingEndRedirect = () => {
   useEffect(() => {
     if (meetingStatus === MeetingStatus.Ended) {
       logger.info('[useMeetingEndRedirect] Meeting ended');
+      ClearMeetingsFromLocalStorage();
       dispatch({
         type: ActionType.ADD,
         payload: {

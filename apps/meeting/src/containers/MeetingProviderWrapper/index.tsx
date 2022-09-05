@@ -28,6 +28,7 @@ import UserModeSelector from '../UserModeSelectorWrapper/index';
 import BaseMeetingCreteFormWrapper from '../BaseMeetingCreteFormWrapper';
 import ErrorPage from '../../components/SL/ErrorPage';
 import Lobby from '../../components/SL/lobby';
+import { PluginProvider } from '../../providers/PluginProvider';
 
 const MeetingProviderWithDeviceReplacement: React.FC = ({ children }) => {
   const { addVoiceFocus } = useVoiceFocus();
@@ -59,22 +60,24 @@ const MeetingProviderWrapper: React.FC = () => {
     return (
       <>
         <NavigationProvider>
-          <Switch>
-            <Route exact path={routes.BASE_URL} component={BaseMeetingCreteFormWrapper} />
-            <Route exact path={routes.HOME} component={Home} />
-            <Route path={routes.DEVICE}>
-              <NoMeetingRedirect>
-                <DeviceSetup />
-              </NoMeetingRedirect>
-            </Route>
-            <Route path={routes.USER_SELECT}>
-              <UserModeSelector />
-            </Route>
-            <Route path={routes.LOBBY}>
-              <Lobby />
-            </Route>
-            <Route path="*" component={ErrorPage}/>
-          </Switch>
+          <PluginProvider>
+            <Switch>
+              <Route exact path={routes.BASE_URL} component={BaseMeetingCreteFormWrapper} />
+              <Route exact path={routes.HOME} component={Home} />
+              <Route path={routes.DEVICE}>
+                <NoMeetingRedirect>
+                  <DeviceSetup />
+                </NoMeetingRedirect>
+              </Route>
+              <Route path={routes.USER_SELECT}>
+                <UserModeSelector />
+              </Route>
+              <Route path={routes.LOBBY}>
+                <Lobby />
+              </Route>
+              <Route path="*" component={ErrorPage}/>
+            </Switch>
+          </PluginProvider>
         </NavigationProvider>
         <MeetingEventObserver />
       </>

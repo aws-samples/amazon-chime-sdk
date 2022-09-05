@@ -8,7 +8,7 @@ import { StyledDiv } from "../SIPURI/Styled";
 
 const UserModeSelectorWrapper: React.FC = () => {
 
-  const localMeetingId = JSON.parse(GetFromLocalStorage(LOCAL_STORAGE_ITEM_KEYS.LOCAL_MEETING_ID)!!);
+  const localMeetingId = GetFromLocalStorage(LOCAL_STORAGE_ITEM_KEYS.LOCAL_MEETING_ID) || "";
   
   return (
     <Flex container layout="fill-space-centered">

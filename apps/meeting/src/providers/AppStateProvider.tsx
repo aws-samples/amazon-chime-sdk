@@ -32,6 +32,7 @@ interface AppStateValue {
   joineeType: USER_TYPES;
   localInfo: ILocalInfo;
   customLayout: CUSTOM_LAYOUTS;
+  lobbyJoined: boolean | null;
   toggleTheme: () => void;
   toggleWebAudio: () => void;
   toggleSimulcast: () => void;
@@ -50,6 +51,7 @@ interface AppStateValue {
   setJoineeType: (value: string) => void;
   setLocalInfo: (value: ILocalInfo) => void;
   setCustomLayout: (value: CUSTOM_LAYOUTS) => void;
+  setLobbyJoined: (value: boolean) => void;
 }
 
 const AppStateContext = React.createContext<AppStateValue | null>(null);
@@ -90,6 +92,7 @@ export function AppStateProvider({ children }: Props) {
   const [joineeType, setJoineeType] = useState<any>("")
   const [localInfo, setLocalInfo] = useState<any>(null);
   const [customLayout, setCustomLayout] = useState<CUSTOM_LAYOUTS | any>(null);
+  const [lobbyJoined, setLobbyJoined] = useState<boolean | null>(null);
 
   useEffect(() => {
     /* Load a canvas that will be used as the replacement image for Background Replacement */
@@ -176,6 +179,7 @@ export function AppStateProvider({ children }: Props) {
     joineeType,
     localInfo,
     customLayout,
+    lobbyJoined,
     toggleTheme,
     toggleWebAudio,
     togglePriorityBasedPolicy,
@@ -193,7 +197,8 @@ export function AppStateProvider({ children }: Props) {
     setMeetingJoined,
     setJoineeType,
     setLocalInfo,
-    setCustomLayout
+    setCustomLayout,
+    setLobbyJoined
   };
 
   return <AppStateContext.Provider value={providerValue}>{children}</AppStateContext.Provider>;

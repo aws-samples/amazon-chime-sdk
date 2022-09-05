@@ -26,6 +26,7 @@ import { useHistory } from "react-router-dom";
 import { getErrorContext } from "../../providers/ErrorProvider";
 import Card from "../../components/Card";
 import { IsMeetingObjectPresentInLocalStorage } from "../../utils/helpers";
+import { createGetAttendeeCallback } from "../../utils/api";
 
 const MeetingModeSelector: React.FC = () => {
   const { meetingMode } = useAppState();
@@ -58,19 +59,15 @@ const Home = () => {
 
   const loadMeetingFromLocalStorage = async (): Promise<void> => {
     
-    const meetingJoinedFromLocalStorage =
-      GetFromLocalStorage(LOCAL_STORAGE_ITEM_KEYS.MEETING_JOINED) === "true"
-        ? true
-        : false;
-    const {JoinInfo, localInfo} = JSON.parse(
-      GetFromLocalStorage(LOCAL_STORAGE_ITEM_KEYS.JOIN_INFO)!!
-    );
+    const meetingJoinedFromLocalStorage = GetFromLocalStorage(LOCAL_STORAGE_ITEM_KEYS.MEETING_JOINED) ? true : false;
+    const {JoinInfo, localInfo} = GetFromLocalStorage(LOCAL_STORAGE_ITEM_KEYS.JOIN_INFO) || {}
 
     if (
       meetingJoinedFromLocalStorage &&
       JoinInfo?.Meeting?.MeetingId
     ) {
       try {
+        meetingManager.getAttendee = createGetAttendeeCallback(localInfo?.id);
         setJoineeType(localInfo?.joineeType);
         setLocalUserName(localInfo?.attendeeName);
         setRegion(localInfo?.region);

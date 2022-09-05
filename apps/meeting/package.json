@@ -9,6 +9,7 @@
     "amazon-chime-sdk-component-library-react": "file:../../amazon-chime-sdk-component-library-react",
     "amazon-chime-sdk-js": "^3.6.0",
     "aws-sdk": "^2.1190.0",
+    "axios": "^0.27.2",
     "fs-extra": "^10.1.0",
     "lodash.isequal": "^4.5.0",
     "react": "^17.0.1",
