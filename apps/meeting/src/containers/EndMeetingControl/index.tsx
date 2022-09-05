@@ -32,7 +32,7 @@ const EndMeetingControl: React.FC = () => {
     setMeetingJoined(false);
     setLocalInfo(EMPTY_LOCAL_INFO);
     ClearMeetingsFromLocalStorage();
-    history.push(`/meeting/`);
+    history.push(routes.HOME);
   };
 
   const endMeetingForAll = async (): Promise<void> => {

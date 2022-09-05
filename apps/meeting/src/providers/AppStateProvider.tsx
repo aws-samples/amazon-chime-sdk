@@ -77,7 +77,7 @@ export function AppStateProvider({ children }: Props) {
   const [joinInfo, setJoinInfo] = useState<JoinMeetingInfo | undefined>(undefined);
   const [layout, setLayout] = useState(Layout.Gallery);
   const [localUserName, setLocalUserName] = useState('');
-  const [isWebAudioEnabled, setIsWebAudioEnabled] = useState(true);
+  const [isWebAudioEnabled, setIsWebAudioEnabled] = useState(false);
   const [priorityBasedPolicy, setPriorityBasedPolicy] = useState<VideoPriorityBasedPolicy | undefined>(undefined);
   const [enableSimulcast, setEnableSimulcast] = useState(false);
   const [keepLastFrameWhenPaused, setKeepLastFrameWhenPaused] = useState(false);

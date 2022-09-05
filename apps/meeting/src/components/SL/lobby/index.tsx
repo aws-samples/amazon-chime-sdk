@@ -1,4 +1,5 @@
-import React from "react";
+import { useToggleLocalMute } from "amazon-chime-sdk-component-library-react";
+import React, { useEffect } from "react";
 import {
   StyledDiv,
   StyledWrapper,
@@ -12,6 +13,7 @@ import TeacherLobby from "./TeacherLobby";
 const Lobby = () => {
   
   const { joineeType } = useAppState();
+  const { toggleMute } = useToggleLocalMute();
 
   const screenToRender =
     joineeType === USER_TYPES.STUDENT ? (
@@ -21,6 +23,11 @@ const Lobby = () => {
       <TeacherLobby
       />
     );
+
+    useEffect(() => {
+      // muting the audio by default
+      toggleMute();
+    }, [])
 
   return (<>
     <StyledLayout>
