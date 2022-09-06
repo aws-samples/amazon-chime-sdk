@@ -21,7 +21,7 @@ import { getErrorContext } from '../../providers/ErrorProvider';
 import Card from '../../components/Card';
 import Spinner from '../../components/icons/Spinner';
 import DevicePermissionPrompt from '../DevicePermissionPrompt';
-import { createGetAttendeeCallback, fetchMeeting } from '../../utils/api';
+import { createGetAttendeeCallback, joinAsStudent, joinAsTeacher, joinViaToken } from '../../utils/api';
 import { useAppState } from '../../providers/AppStateProvider';
 import { MeetingMode, VideoFiltersCpuUtilization } from '../../types';
 import { MeetingManagerJoinOptions } from 'amazon-chime-sdk-component-library-react/lib/providers/MeetingProvider/types';
@@ -63,6 +63,8 @@ const MeetingForm: React.FC = () => {
 
   const [isMeetingIdEditable, setIsMeetingIdEditable] = useState<boolean>(true);
   const [isUsernameEditable, setIsUsernameEditable] = useState<boolean>(true);
+  const [loginToken, setLoginToken] = useState<string | null>(null);
+  const [header, setHeader] = useState<string>("Join as Student");
 
   const history = useHistory();
 
@@ -89,12 +91,24 @@ const MeetingForm: React.FC = () => {
     }
     setIsLoading(true);
     setLocalInfo(localInfoToDispatch);
-    meetingManager.getAttendee = createGetAttendeeCallback(id);
 
     try {
-      const { JoinInfo } = await fetchMeeting(id, attendeeName, region, isEchoReductionEnabled);
+      if(loginToken) {
+        var {JoinInfo, participant, slMeet} = await joinViaToken(id, {userType: joineeType, t: loginToken, displayName: localUserName});
+      } else {
+        if(joineeType === USER_TYPES.TEACHER) {
+          var {JoinInfo, participant, slMeet} = await joinAsTeacher(id, {email: localUserName, password: localPassword});
+        } else if(joineeType === USER_TYPES.STUDENT) {
+          var {JoinInfo, participant, slMeet} = await joinAsStudent(id, {displayName: localUserName, password: localPassword});
+        }
+      }
       setJoinInfo(JoinInfo);
-      SetToLocalStorage(LOCAL_STORAGE_ITEM_KEYS.JOIN_INFO, {JoinInfo, localInfo: {id, attendeeName, region, joineeType}});
+      SetToLocalStorage(LOCAL_STORAGE_ITEM_KEYS.PARTICIPANT_TOKEN, participant.token);
+      SetToLocalStorage(LOCAL_STORAGE_ITEM_KEYS.JOIN_INFO, {JoinInfo, participant, slMeet, localInfo: {id, attendeeName, region, joineeType}});
+      if(slMeet?.startedAt){
+        SetToLocalStorage(LOCAL_STORAGE_ITEM_KEYS.MEETING_STARTED_FOR_ALL, slMeet.startedAt);
+      }
+      meetingManager.getAttendee = createGetAttendeeCallback(slMeet.slug, participant.token);
       const meetingSessionConfiguration = new MeetingSessionConfiguration(JoinInfo?.Meeting, JoinInfo?.Attendee);
       if (
         meetingConfig.postLogger &&
@@ -184,8 +198,13 @@ const MeetingForm: React.FC = () => {
     // or set the usertype to student as default
     if(meetingObjectFromURL?.userType){
       setJoineeType(meetingObjectFromURL.userType);
+      setHeader(`Join as ${meetingObjectFromURL.userType}`);
     } else {
       setJoineeType(USER_TYPES.STUDENT);
+    }
+    if(meetingObjectFromURL?.token) {
+      setLoginToken(meetingObjectFromURL.token);
+      setHeader(`Join via Token`);
     }
     // replacing the url to hide query params and just keep the meeting id
     window.history.replaceState(null, "", `/meeting/${meetingObjectFromURL.meetingId}`);
@@ -207,7 +226,7 @@ const MeetingForm: React.FC = () => {
         SplashLiv
       </Heading>
       <Heading tag="h6" level={6} css="margin-bottom: 3rem; text-align: center">
-        Join a meeting
+        {header}
       </Heading>
       <FormField
         field={Input}
@@ -227,35 +246,59 @@ const MeetingForm: React.FC = () => {
           }
         }}
       />
-      <FormField
-        field={Input}
-        label={joineeType === USER_TYPES.STUDENT ? "Name" : "Email"}
-        value={localUserName}
-        fieldProps={{
-          name: 'name',
-          placeholder: `Enter Your ${joineeType === USER_TYPES.STUDENT ? "Name" : "Email"}`,
-        }}
-        errorText={`Please enter a valid ${joineeType === USER_TYPES.STUDENT ? "name" : "email"}`}
-        error={nameErr}
-        onChange={(e: ChangeEvent<HTMLInputElement>): void => {
-          if (isUsernameEditable) setLocalUserName(e.target.value);
-          if (nameErr) {
-            setNameErr(false);
-          }
-        }}
-      />
-      <FormField
-        field={Input}
-        label="Password"
-        value={localPassword}
-        fieldProps={{
-          name: 'name',
-          placeholder: 'Enter Your Password',
-        }}
-        onChange={(e: ChangeEvent<HTMLInputElement>): void => {
-          setLocalPassword(e.target.value);
-        }}
-      />
+
+      {/* Form rendering on the basis of whether token present in URL or not */}
+      {loginToken ? (
+          <FormField
+            field={Input}
+            label={`Display Name`}
+            value={localUserName}
+            fieldProps={{
+              name: 'name',
+              placeholder: `Display Name}`,
+            }}
+            errorText={`Please enter a valid Display Name`}
+            error={nameErr}
+            onChange={(e: ChangeEvent<HTMLInputElement>): void => {
+              if (isUsernameEditable) setLocalUserName(e.target.value);
+              if (nameErr) {
+                setNameErr(false);
+              }
+            }}
+          />
+        ) : (
+        <>
+          <FormField
+            field={Input}
+            label={joineeType === USER_TYPES.STUDENT ? "Nickname" : "Email"}
+            value={localUserName}
+            fieldProps={{
+              name: 'name',
+              placeholder: `Enter Your ${joineeType === USER_TYPES.STUDENT ? "Nickname" : "Email"}`,
+            }}
+            errorText={`Please enter a valid ${joineeType === USER_TYPES.STUDENT ? "Nickname" : "email"}`}
+            error={nameErr}
+            onChange={(e: ChangeEvent<HTMLInputElement>): void => {
+              if (isUsernameEditable) setLocalUserName(e.target.value);
+              if (nameErr) {
+                setNameErr(false);
+              }
+            }}
+          />
+          <FormField
+            field={Input}
+            label="Password"
+            value={localPassword}
+            fieldProps={{
+              name: 'name',
+              placeholder: 'Enter Your Password',
+            }}
+            onChange={(e: ChangeEvent<HTMLInputElement>): void => {
+              setLocalPassword(e.target.value);
+            }}
+          />
+        </>
+      )}
       <Flex container layout="fill-space-centered" style={{ marginTop: '2.5rem' }}>
         {isLoading ? <Spinner /> : <PrimaryButton label="Continue" onClick={handleJoinMeeting} />}
       </Flex>

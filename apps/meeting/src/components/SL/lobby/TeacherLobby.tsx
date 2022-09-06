@@ -13,12 +13,13 @@ import { useAppState } from "../../../providers/AppStateProvider";
 import { getErrorContext } from "../../../providers/ErrorProvider";
 import Card from "../../Card";
 import { BigButtonStyles } from "../../../styles/customStyles";
-import { SetToLocalStorage } from "../../../utils/helpers/localStorageHelper";
+import { GetFromLocalStorage, SetToLocalStorage } from "../../../utils/helpers/localStorageHelper";
 import { LOCAL_STORAGE_ITEM_KEYS } from "../../../utils/enums";
 import { useHistory } from "react-router-dom";
 import { usePluginState } from "../../../providers/PluginProvider";
 import { SLPlugin, SLPlugins } from "../../../plugins/IframePlugin/pluginManager";
 import {DeferredCall} from '../../../utils/helpers'
+import { markMeetStarted } from "../../../utils/api";
 
 const DUMMY_TEACHER_ID = "123";
 
@@ -54,6 +55,9 @@ const TeacherLobby: React.FC = () => {
       }
       sendCustomEvent(eventParams);
 
+      // Marking the meet started so that the new joinees can have updated state in lobby.
+      await markMeetStarted(meetingId, GetFromLocalStorage(LOCAL_STORAGE_ITEM_KEYS.PARTICIPANT_TOKEN));
+
       history.push(`/meeting/${meetingId}`);
     } catch (error: any) {
       setIsLoading(false);
@@ -63,7 +67,7 @@ const TeacherLobby: React.FC = () => {
 
   const studentsCount = useMemo(() => {
     // The getAttendee callback takes around 1-2 seconds, till then -1 is shown, to get around that,
-    // we show 0 till api call is finished and number is updated correctly.
+    // we show 0 till api call is finished and then number is updated correctly.
     return Object.keys(roster).length - 1 < 0
       ? 0
       : Object.keys(roster).length - 1;

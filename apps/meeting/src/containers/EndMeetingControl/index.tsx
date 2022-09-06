@@ -16,10 +16,11 @@ import {
 import { endMeeting } from '../../utils/api';
 import { StyledP } from './Styled';
 import { useAppState } from '../../providers/AppStateProvider';
-import { USER_TYPES } from '../../utils/enums';
+import { LOCAL_STORAGE_ITEM_KEYS, USER_TYPES } from '../../utils/enums';
 import routes from '../../constants/routes';
 import { ClearMeetingsFromLocalStorage } from '../../utils/helpers';
 import { EMPTY_LOCAL_INFO } from '../../constants';
+import { GetFromLocalStorage } from '../../utils/helpers/localStorageHelper';
 
 const EndMeetingControl: React.FC = () => {
   const logger = useLogger();
@@ -32,13 +33,13 @@ const EndMeetingControl: React.FC = () => {
     setMeetingJoined(false);
     setLocalInfo(EMPTY_LOCAL_INFO);
     ClearMeetingsFromLocalStorage();
-    history.push(routes.HOME);
+    history.push(`/meeting/`);
   };
 
   const endMeetingForAll = async (): Promise<void> => {
     try {
       if (meetingId) {
-        await endMeeting(meetingId);
+        await endMeeting(meetingId, GetFromLocalStorage(LOCAL_STORAGE_ITEM_KEYS.PARTICIPANT_TOKEN));
         setMeetingJoined(false);
         setLocalInfo(EMPTY_LOCAL_INFO);
         ClearMeetingsFromLocalStorage();
@@ -49,7 +50,7 @@ const EndMeetingControl: React.FC = () => {
     }
   };
 
-  // Only teacher or ADMIN can end meeting for all
+  // Only Teacher or ADMIN can end meeting for all
   const buttonGroup = joineeType !== USER_TYPES.STUDENT ? [
     <ModalButton
       key="end-meeting-for-all"

@@ -1,5 +1,5 @@
 // This file will contain helper functions for UI
-import { GetFromLocalStorage, RemoveFromLocalStorage } from './localStorageHelper'
+import { ClearLocalStorage, GetFromLocalStorage } from './localStorageHelper'
 import {LOCAL_STORAGE_ITEM_KEYS, USER_TYPES} from '../enums/index'
 import { IMeetingObject } from '../interfaces';
 
@@ -27,20 +27,18 @@ const extractMeetingIdAndUsernameFromURL = (url: string): IMeetingObject => {
     const query = new URLSearchParams(searchParams);
     const userName: string = query.get('username')??"";
     const userType = getUserType(query.get('usertype')??"");
+    const token = query.get('t') || null;
     const meetingObjectFromURL = {
-        meetingId, userName, userType
+        meetingId, userName, userType, token
     }
     return meetingObjectFromURL;
 }
 
 // remove meeting related state from localStorage
 const clearMeetingsFromLocalStorage = (): void => {
-    RemoveFromLocalStorage(LOCAL_STORAGE_ITEM_KEYS.JOIN_INFO);
-    RemoveFromLocalStorage(LOCAL_STORAGE_ITEM_KEYS.LOCAL_MEETING_ID);
-    RemoveFromLocalStorage(LOCAL_STORAGE_ITEM_KEYS.MEETING_OBJECT);
-    RemoveFromLocalStorage(LOCAL_STORAGE_ITEM_KEYS.MEETING_JOINED);
-    RemoveFromLocalStorage(LOCAL_STORAGE_ITEM_KEYS.LOBBY_JOINED);
+    ClearLocalStorage();
 };
+
 // to check if a meeting object is present in local storage
 const isMeetingObjectPresentInLocalStorage = (): boolean => {
     return GetFromLocalStorage(LOCAL_STORAGE_ITEM_KEYS.MEETING_OBJECT) === "" ? false : true;

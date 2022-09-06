@@ -11,6 +11,8 @@ export enum LOCAL_STORAGE_ITEM_KEYS {
     LOCAL_MEETING_ID = "local_meeting_id",
     LOBBY_JOINED = "lobby_joined",
     TOKEN = "token",
+    PARTICIPANT_TOKEN = "participant_token",
+    MEETING_STARTED_FOR_ALL = "meeting_started_for_all",
 }
 
 export enum CUSTOM_LAYOUTS {

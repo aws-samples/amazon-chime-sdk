@@ -60,18 +60,18 @@ const Home = () => {
   const loadMeetingFromLocalStorage = async (): Promise<void> => {
     
     const meetingJoinedFromLocalStorage = GetFromLocalStorage(LOCAL_STORAGE_ITEM_KEYS.MEETING_JOINED) ? true : false;
-    const {JoinInfo, localInfo} = GetFromLocalStorage(LOCAL_STORAGE_ITEM_KEYS.JOIN_INFO) || {}
+    const {JoinInfo, localInfo, slMeet, participant} = GetFromLocalStorage(LOCAL_STORAGE_ITEM_KEYS.JOIN_INFO) || {}
 
     if (
       meetingJoinedFromLocalStorage &&
       JoinInfo?.Meeting?.MeetingId
     ) {
       try {
-        meetingManager.getAttendee = createGetAttendeeCallback(localInfo?.id);
-        setJoineeType(localInfo?.joineeType);
+        meetingManager.getAttendee = createGetAttendeeCallback(slMeet.slug, participant.token);
+        setJoineeType(participant?.userType);
         setLocalUserName(localInfo?.attendeeName);
         setRegion(localInfo?.region);
-        setMeetingId(localInfo?.id);
+        setMeetingId(slMeet?.slug);
         setJoinInfo(JoinInfo);
         const meetingSessionConfiguration = new MeetingSessionConfiguration(
           JoinInfo?.Meeting,
