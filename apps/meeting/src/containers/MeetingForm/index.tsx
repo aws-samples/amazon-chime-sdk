@@ -255,7 +255,7 @@ const MeetingForm: React.FC = () => {
             value={localUserName}
             fieldProps={{
               name: 'name',
-              placeholder: `Display Name}`,
+              placeholder: `Display Name`,
             }}
             errorText={`Please enter a valid Display Name`}
             error={nameErr}
