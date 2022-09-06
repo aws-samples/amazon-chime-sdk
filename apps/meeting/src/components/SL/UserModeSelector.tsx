@@ -1,3 +1,6 @@
+// UserModeSelector. Here the user selects a userType according to which the
+// MeetingForm in the next step will be updated.
+
 import {
   Flex,
   Heading,

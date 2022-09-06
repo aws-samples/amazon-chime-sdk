@@ -1,3 +1,6 @@
+// StudentLobby. This component is rendered whenever a Student successfully joins a meeting.
+// After this the Student can jump into the meeting once the Teacher/Addmin allows.
+
 import React, { useContext, useEffect, useState } from "react";
 import {
   Flex,

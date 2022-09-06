@@ -1,3 +1,7 @@
+// PluginRenderer. This component is responsible for changing the layout of the Meeting
+// as directed by the customLayout state. The `CUSTOM_LAYOUTS.DEFAULT_LAYOUT` is the original
+// layout provided by the amazon-chime. 
+
 import React from 'react'
 import { useAppState } from '../../../../providers/AppStateProvider'
 import { CUSTOM_LAYOUTS } from '../../../../utils/enums';

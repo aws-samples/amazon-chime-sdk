@@ -1,3 +1,6 @@
+// CustomContentShareControl. This basically overrides the ContentShareControl component of
+// amazon-chime-sdk-component-library-reac and adds our custom logic to it.
+
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 

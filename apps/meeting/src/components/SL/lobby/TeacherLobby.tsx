@@ -1,3 +1,7 @@
+// TeacherLobby. This component is rendered whenever a Teacher successfully joins a meeting.
+// This component makes use of the sendCustomEvent provided by the pluginProvider to dispatch
+// realtime events to other joinees.
+
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import {
   Flex,

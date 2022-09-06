@@ -1,3 +1,6 @@
+// CustomAudioInputControl. This basically overrides the AudioInputControl component of
+// amazon-chime-sdk-component-library-reac and adds our custom logic to it.
+
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 

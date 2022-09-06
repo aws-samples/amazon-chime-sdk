@@ -1,3 +1,6 @@
+// CustomVideoTileGrid. This component is basically a wrapper which renders either 
+// CustomTeacherVideoTileGrid or CustomStudentVideoTileGrid depending upon the joineeType
+
 import React from "react";
 import { useAppState } from "../../../providers/AppStateProvider";
 import { Layout } from "../../../types";

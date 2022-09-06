@@ -1,3 +1,6 @@
+// BasicMeetingCreateForm. This component just has one field which takes in
+// meet.slug or meetingId as input and directs user to the UserSelect component.
+
 import {
   Flex,
   FormField,
@@ -24,7 +27,7 @@ const BaseMeetingCreateForm = () => {
     const [localMeetingId, setLocalMeetingId] = useState("");
     const [meetingIdError, setMeetingIdError] = useState<boolean>(false);
 
-
+    // TBD: update the validation logic
     const validateMeetingId = (): boolean => {
       // can setup custom logic later
       if(localMeetingId.length >= MEETING_ID_LENGTH) return true;

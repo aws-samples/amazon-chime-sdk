@@ -1,3 +1,5 @@
+// This component basically renders the lobby type according to the current joineeType.
+
 import { useToggleLocalMute } from "amazon-chime-sdk-component-library-react";
 import React, { useEffect } from "react";
 import {

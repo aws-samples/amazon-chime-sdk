@@ -1,3 +1,6 @@
+// IFramePluginLayout. This layout is rendered when the teacher dispatches the event
+// SLPlugins.IFrame.startedPlugin
+
 import {
   ContentShare,
   Flex,
@@ -61,11 +64,13 @@ const IFramePluginLayout: React.FC<Props> = ({
   const { localUserName, joineeType } = useAppState();
   const { sendCustomEvent, recievedIframePluginData } = usePluginState();
 
+  // TBD: update logic for validating URL.
   const isValidURL = () => {
     // logic can be changed later
     return localURL.length < 5 ? false : true;
   }
 
+  // Opening the URL in our as well as other students instance.
   const openURL = (e?: any): void => {
     e?.preventDefault();
 
@@ -88,6 +93,7 @@ const IFramePluginLayout: React.FC<Props> = ({
     toggleLinkActive(true);
   }
 
+  // Closing the URL in our as well as other students instance.
   const closeURL = (e?: any): void => {
     e?.preventDefault();
     setLocalURL("");
@@ -105,7 +111,7 @@ const IFramePluginLayout: React.FC<Props> = ({
   }
 
 
-
+  // IFramePluginRecieveEvent handler
   const handleReceivedEvent = (recievedIframePluginData: any) => {
     switch(recievedIframePluginData?.payload?.action){
       case SLPlugins.iframe.openURL: {
@@ -118,12 +124,14 @@ const IFramePluginLayout: React.FC<Props> = ({
     }
   }
 
+  // UseEffect to fire the event handler as soon as we recieve an event.
   useEffect(() => {
     handleReceivedEvent(recievedIframePluginData);
   }, [recievedIframePluginData]);
 
   return (
     <>
+      {/* URL input and cta will be rendered only for Teacer/Admin users */}
       {joineeType !== USER_TYPES.STUDENT ? (
         <div>
           <ContentShare css="grid-area: ft;" />

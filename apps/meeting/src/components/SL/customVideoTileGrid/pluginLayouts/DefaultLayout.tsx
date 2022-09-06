@@ -1,3 +1,5 @@
+// DefaultLayout. Defauly Meeting view.
+
 import {
   ContentShare,
   LocalVideo,

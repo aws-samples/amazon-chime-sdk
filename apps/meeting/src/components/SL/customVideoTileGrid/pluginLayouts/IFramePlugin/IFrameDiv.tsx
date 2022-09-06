@@ -1,3 +1,6 @@
+// IFrameDiv. This component holds the div element that is rendered inside the 
+// `CUSTOM_LAYOUTS.IFRAME_PLUGIN_LAYOUT` layout.
+
 import { Heading } from "amazon-chime-sdk-component-library-react";
 import React from "react";
 import { useAppState } from "../../../../../providers/AppStateProvider";
@@ -35,6 +38,7 @@ const IFrameDiv: React.FC<IFrameDivProps> = ({ linkToOpen, toggleIframe }) => {
     border: "1px solid black"
   }
 
+  // To render a blank div until a URL is dispatched by the teacher.
   const toRender = !toggleIframe ? (
     <div style={blankComponentStyles}>
       <Heading tag="h6" level={6} css="margin-bottom: 1rem;">
