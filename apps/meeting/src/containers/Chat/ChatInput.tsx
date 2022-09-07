@@ -5,7 +5,7 @@ import { StyledChatInputContainer } from './Styled';
 
 export default function ChatInput() {
   const [message, setMessage] = useState('');
-  const { sendMessage } = useDataMessages();
+  const { sendMessage, sendCustomMessage } = useDataMessages();
 
   const handleMessageChange = (event: ChangeEvent<HTMLInputElement>) => {
     setMessage(event.target.value);
@@ -16,8 +16,13 @@ export default function ChatInput() {
   // For now use, any as type and cast internally to KeyboardEvent.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleKeyPress = (event: any) => {
-    if ((event as KeyboardEvent).key === 'Enter') {
+    const pressedKey = (event as KeyboardEvent).key;
+    if (pressedKey === 'Enter') {
       sendMessage(message);
+      setMessage('');
+    }
+    if (pressedKey === '\\') {
+      sendCustomMessage('custom1', {k1: 'v1', message: message});
       setMessage('');
     }
   };

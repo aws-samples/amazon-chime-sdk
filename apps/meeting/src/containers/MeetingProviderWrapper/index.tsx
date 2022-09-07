@@ -20,10 +20,15 @@ import {
 import routes from '../../constants/routes';
 import { NavigationProvider } from '../../providers/NavigationProvider';
 import NoMeetingRedirect from '../NoMeetingRedirect';
-import { Meeting, Home, DeviceSetup } from '../../views';
+import { Home, DeviceSetup } from '../../views';
 import MeetingEventObserver from '../MeetingEventObserver';
 import { useAppState } from '../../providers/AppStateProvider';
 import { VideoFiltersCpuUtilization } from '../../types';
+import UserModeSelector from '../UserModeSelectorWrapper/index';
+import BaseMeetingCreteFormWrapper from '../BaseMeetingCreteFormWrapper';
+import ErrorPage from '../../components/SL/ErrorPage';
+import Lobby from '../../components/SL/lobby';
+import { PluginProvider } from '../../providers/PluginProvider';
 
 const MeetingProviderWithDeviceReplacement: React.FC = ({ children }) => {
   const { addVoiceFocus } = useVoiceFocus();
@@ -55,19 +60,24 @@ const MeetingProviderWrapper: React.FC = () => {
     return (
       <>
         <NavigationProvider>
-          <Switch>
-            <Route exact path={routes.HOME} component={Home} />
-            <Route path={routes.DEVICE}>
-              <NoMeetingRedirect>
-                <DeviceSetup />
-              </NoMeetingRedirect>
-            </Route>
-            <Route path={routes.MEETING}>
-              <NoMeetingRedirect>
-                <MeetingModeSelector />
-              </NoMeetingRedirect>
-            </Route>
-          </Switch>
+          <PluginProvider>
+            <Switch>
+              <Route exact path={routes.BASE_URL} component={BaseMeetingCreteFormWrapper} />
+              <Route exact path={routes.HOME} component={Home} />
+              <Route path={routes.DEVICE}>
+                <NoMeetingRedirect>
+                  <DeviceSetup />
+                </NoMeetingRedirect>
+              </Route>
+              <Route path={routes.USER_SELECT}>
+                <UserModeSelector />
+              </Route>
+              <Route path={routes.LOBBY}>
+                <Lobby />
+              </Route>
+              <Route path="*" component={ErrorPage}/>
+            </Switch>
+          </PluginProvider>
         </NavigationProvider>
         <MeetingEventObserver />
       </>
@@ -148,12 +158,6 @@ const MeetingProviderWrapper: React.FC = () => {
       {imageBlob === undefined ? <div>Loading Assets</div> : getMeetingProviderWithFeatures()}
     </>
   );
-};
-
-const MeetingModeSelector: React.FC = () => {
-  const { meetingMode } = useAppState();
-
-  return <Meeting mode={meetingMode} />;
 };
 
 export default MeetingProviderWrapper;

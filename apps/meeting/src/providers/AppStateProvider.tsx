@@ -6,6 +6,8 @@ import { VideoPriorityBasedPolicy } from 'amazon-chime-sdk-js';
 import { MeetingMode, Layout, VideoFiltersCpuUtilization } from '../types';
 import { JoinMeetingInfo } from '../utils/api';
 import { useLogger } from 'amazon-chime-sdk-component-library-react';
+import { CUSTOM_LAYOUTS, USER_TYPES } from '../utils/enums';
+import { ILocalInfo } from '../utils/interfaces';
 
 type Props = {
   children: ReactNode;
@@ -26,6 +28,11 @@ interface AppStateValue {
   keepLastFrameWhenPaused: boolean;
   layout: Layout;
   joinInfo: JoinMeetingInfo | undefined;
+  meetingJoined: any;
+  joineeType: USER_TYPES;
+  localInfo: ILocalInfo;
+  customLayout: CUSTOM_LAYOUTS;
+  lobbyJoined: boolean | null;
   toggleTheme: () => void;
   toggleWebAudio: () => void;
   toggleSimulcast: () => void;
@@ -40,6 +47,11 @@ interface AppStateValue {
   setLocalUserName: React.Dispatch<React.SetStateAction<string>>;
   setRegion: React.Dispatch<React.SetStateAction<string>>;
   setBlob: (imageBlob: Blob) => void;
+  setMeetingJoined: (value: boolean) => void;
+  setJoineeType: (value: string) => void;
+  setLocalInfo: (value: ILocalInfo) => void;
+  setCustomLayout: (value: CUSTOM_LAYOUTS) => void;
+  setLobbyJoined: (value: boolean) => void;
 }
 
 const AppStateContext = React.createContext<AppStateValue | null>(null);
@@ -65,7 +77,7 @@ export function AppStateProvider({ children }: Props) {
   const [joinInfo, setJoinInfo] = useState<JoinMeetingInfo | undefined>(undefined);
   const [layout, setLayout] = useState(Layout.Gallery);
   const [localUserName, setLocalUserName] = useState('');
-  const [isWebAudioEnabled, setIsWebAudioEnabled] = useState(true);
+  const [isWebAudioEnabled, setIsWebAudioEnabled] = useState(false);
   const [priorityBasedPolicy, setPriorityBasedPolicy] = useState<VideoPriorityBasedPolicy | undefined>(undefined);
   const [enableSimulcast, setEnableSimulcast] = useState(false);
   const [keepLastFrameWhenPaused, setKeepLastFrameWhenPaused] = useState(false);
@@ -76,6 +88,11 @@ export function AppStateProvider({ children }: Props) {
   });
   const [videoTransformCpuUtilization, setCpuPercentage] = useState(VideoFiltersCpuUtilization.CPU40Percent);
   const [imageBlob, setImageBlob] = useState<Blob | undefined>(undefined);
+  const [meetingJoined, setMeetingJoined] = useState<any>(null);
+  const [joineeType, setJoineeType] = useState<any>("")
+  const [localInfo, setLocalInfo] = useState<any>(null);
+  const [customLayout, setCustomLayout] = useState<CUSTOM_LAYOUTS | any>(null);
+  const [lobbyJoined, setLobbyJoined] = useState<boolean | null>(null);
 
   useEffect(() => {
     /* Load a canvas that will be used as the replacement image for Background Replacement */
@@ -158,6 +175,11 @@ export function AppStateProvider({ children }: Props) {
     enableSimulcast,
     priorityBasedPolicy,
     keepLastFrameWhenPaused,
+    meetingJoined,
+    joineeType,
+    localInfo,
+    customLayout,
+    lobbyJoined,
     toggleTheme,
     toggleWebAudio,
     togglePriorityBasedPolicy,
@@ -172,6 +194,11 @@ export function AppStateProvider({ children }: Props) {
     setLocalUserName,
     setRegion,
     setBlob,
+    setMeetingJoined,
+    setJoineeType,
+    setLocalInfo,
+    setCustomLayout,
+    setLobbyJoined
   };
 
   return <AppStateContext.Provider value={providerValue}>{children}</AppStateContext.Provider>;

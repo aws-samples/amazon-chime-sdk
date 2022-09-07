@@ -12,6 +12,7 @@ import { useLocation } from 'react-router-dom';
 import { useMeetingManager } from 'amazon-chime-sdk-component-library-react';
 
 import routes from '../constants/routes';
+import { useAppState } from './AppStateProvider';
 
 export type NavigationContextType = {
   showNavbar: boolean;
@@ -24,6 +25,8 @@ export type NavigationContextType = {
   closeNavbar: () => void;
   showChat: boolean;
   toggleChat: () => void;
+  closeChat: () => void;
+  openChat: () => void;
 };
 
 type Props = {
@@ -41,12 +44,13 @@ const NavigationProvider = ({ children }: Props) => {
   const [showRoster, setShowRoster] = useState(() => isDesktop());
   const [showChat, setShowChat] = useState(() => isDesktop());
   const isDesktopView = useRef(isDesktop());
+  const { meetingJoined } = useAppState();
 
   const location = useLocation();
   const meetingManager = useMeetingManager();
 
   useEffect(() => {
-    if (location.pathname.includes(routes.MEETING)) {
+    if (meetingJoined && location.pathname.includes(routes.HOME)) {
       return () => {
         meetingManager.leave();
       };
@@ -103,6 +107,14 @@ const NavigationProvider = ({ children }: Props) => {
     setShowChat(!showChat);
   };
 
+  const closeChat = (): void => {
+    setShowChat(false);
+  }
+
+  const openChat = (): void => {
+    setShowChat(true);
+  }
+
   const providerValue = {
     showNavbar,
     showRoster,
@@ -114,6 +126,8 @@ const NavigationProvider = ({ children }: Props) => {
     closeNavbar,
     showChat,
     toggleChat,
+    closeChat,
+    openChat,
   };
   return (
     <NavigationContext.Provider value={providerValue}>

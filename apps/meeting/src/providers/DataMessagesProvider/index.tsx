@@ -1,12 +1,13 @@
 import { useAudioVideo, useMeetingManager } from 'amazon-chime-sdk-component-library-react';
 import { DataMessage } from 'amazon-chime-sdk-js';
 import React, { useEffect, useReducer, createContext, useContext, FC, useCallback } from 'react';
-import { DATA_MESSAGE_LIFETIME_MS, DATA_MESSAGE_TOPIC } from '../../constants';
+import { DATA_MESSAGE_LIFETIME_MS, DATA_MESSAGE_TOPIC, DATA_MESSAGE_TOPIC_CUSTOM } from '../../constants';
 import { useAppState } from '../AppStateProvider';
 import { DataMessagesActionType, initialState, ChatDataMessage, reducer } from './state';
 
 interface DataMessagesStateContextType {
   sendMessage: (message: string) => void;
+  sendCustomMessage: (msg: string, attrs: any) => void;
   messages: ChatDataMessage[];
 }
 
@@ -23,8 +24,10 @@ export const DataMessagesProvider: FC = ({ children }) => {
       return;
     }
     audioVideo.realtimeSubscribeToReceiveDataMessage(DATA_MESSAGE_TOPIC, handler);
+    audioVideo.realtimeSubscribeToReceiveDataMessage(DATA_MESSAGE_TOPIC_CUSTOM, customHandler);
     return () => {
       audioVideo.realtimeUnsubscribeFromReceiveDataMessage(DATA_MESSAGE_TOPIC);
+      audioVideo.realtimeUnsubscribeFromReceiveDataMessage(DATA_MESSAGE_TOPIC_CUSTOM);
     };
   }, [audioVideo]);
 
@@ -91,8 +94,49 @@ export const DataMessagesProvider: FC = ({ children }) => {
     [meetingManager, audioVideo]
   );
 
+  const customHandler = useCallback(
+    (dataMessage: DataMessage) => {
+      console.group("SLCustomMessage");
+      console.log(dataMessage);
+      console.groupEnd();
+    },
+    [meetingManager]
+  );
+
+  const sendCustomMessage = useCallback(
+    (msg: string, attrs: any) => {
+      if (
+        !meetingManager ||
+        !meetingManager.meetingSession ||
+        !meetingManager.meetingSession.configuration.credentials ||
+        !meetingManager.meetingSession.configuration.credentials.attendeeId ||
+        !audioVideo
+      ) {
+        return;
+      }
+      const message = JSON.stringify({message: msg, payload: attrs})
+      const payload = {
+        message: message,
+        senderName: localUserName
+      };
+      const senderAttendeeId = meetingManager.meetingSession.configuration.credentials.attendeeId;
+      audioVideo.realtimeSendDataMessage(DATA_MESSAGE_TOPIC_CUSTOM, payload, DATA_MESSAGE_LIFETIME_MS);
+      customHandler(
+        new DataMessage(
+          Date.now(),
+          DATA_MESSAGE_TOPIC_CUSTOM,
+          new TextEncoder().encode(message),
+          senderAttendeeId,
+          localUserName
+        )
+      );
+    },
+    [meetingManager, audioVideo]
+  )
+
   const value = {
     sendMessage,
+    sendCustomMessage,
     messages: state.messages,
   };
   return <DataMessagesStateContext.Provider value={value}>{children}</DataMessagesStateContext.Provider>;
@@ -100,6 +144,7 @@ export const DataMessagesProvider: FC = ({ children }) => {
 
 export const useDataMessages = (): {
   sendMessage: (message: string) => void;
+  sendCustomMessage: (msg: string, attrs: any) => void;
   messages: ChatDataMessage[];
 } => {
   const meetingManager = useMeetingManager();

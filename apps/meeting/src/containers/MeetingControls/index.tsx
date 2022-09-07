@@ -4,28 +4,22 @@
 import React from 'react';
 import {
   ControlBar,
-  AudioInputVFControl,
-  AudioInputControl,
-  ContentShareControl,
   AudioOutputControl,
   ControlBarButton,
   useUserActivityState,
   Dots,
-  VideoInputControl,
 } from 'amazon-chime-sdk-component-library-react';
 
 import EndMeetingControl from '../EndMeetingControl';
 import { useNavigation } from '../../providers/NavigationProvider';
 import { StyledControls } from './Styled';
-import { useAppState } from '../../providers/AppStateProvider';
-import { VideoFiltersCpuUtilization } from '../../types';
-import VideoInputTransformControl from '../../components/MeetingControls/VideoInputTransformControl';
+import CustomAudioInputControl from '../../components/SL/customControls/CustomAudioInputControl';
+import CustomVideoInputControl from '../../components/SL/customControls/CustomVideoInputControl';
+import CustomContentShareControl from '../../components/SL/customControls/CustomContentShareControl';
 
 const MeetingControls: React.FC = () => {
   const { toggleNavbar, closeRoster, showRoster } = useNavigation();
   const { isUserActive } = useUserActivityState();
-  const { isWebAudioEnabled, videoTransformCpuUtilization } = useAppState();
-  const videoTransformsEnabled = videoTransformCpuUtilization !== VideoFiltersCpuUtilization.Disabled;
 
   const handleToggle = (): void => {
     if (showRoster) {
@@ -47,9 +41,9 @@ const MeetingControls: React.FC = () => {
           onClick={handleToggle}
           label="Menu"
         />
-        { isWebAudioEnabled ? <AudioInputVFControl /> :  <AudioInputControl /> }
-        { videoTransformsEnabled ? <VideoInputTransformControl /> : <VideoInputControl/> }
-        <ContentShareControl />
+        <CustomAudioInputControl /> 
+        <CustomVideoInputControl/> 
+        <CustomContentShareControl />
         <AudioOutputControl />
         <EndMeetingControl />
       </ControlBar>

@@ -2,8 +2,12 @@
 // SPDX-License-Identifier: MIT-0
 
 import routes from '../constants/routes';
+import { DELETE_API, GET_API, POST_API } from '../service/api';
+import { IJoinParams, IStudentParams, ITeacherParams } from './interfaces';
+import ConfigKeys from '../../config.json'
 
-export const BASE_URL = routes.HOME;
+export const BASE_URL = routes.BASE_URL;
+export const SL_BASE_URL = ConfigKeys.base_api_gateway_url;
 
 export type MeetingFeatures = {
   Audio: {[key: string]: string};
@@ -19,12 +23,36 @@ export type JoinMeetingInfo = {
   Attendee: string;
 }
 
-interface MeetingResponse {
+export interface MeetingResponse {
   JoinInfo: JoinMeetingInfo;
 }
 
 interface GetAttendeeResponse {
   name: string;
+}
+
+export interface ISLMeet {
+  id: string;
+  title: string;
+  slug: string;
+  teacherId: string;
+  adminId: string;
+  durationInSeconds: number;
+  startedAt?: string;
+}
+
+export interface ISLParticipant {
+  id: string;
+  meetId: string;
+  userType: string;
+  userId: string;
+  token: string;
+}
+
+interface ISLMeetingResponse {
+  slMeet: ISLMeet;
+  participant: ISLParticipant;
+  JoinInfo: JoinMeetingInfo;
 }
 
 export async function fetchMeeting(
@@ -40,57 +68,93 @@ export async function fetchMeeting(
     ns_es: String(echoReductionCapability),
   };
 
-  const res = await fetch(BASE_URL + 'join?' + new URLSearchParams(params), {
-    method: 'POST',
+  const res = await POST_API(`${BASE_URL}join?${new URLSearchParams(params)}`).then(res => res.data).catch((error) => {
+    throw new Error(`Server error: ${JSON.stringify(error)}`);
   });
 
-  const data = await res.json();
-
-  if (data.error) {
-    throw new Error(`Server error: ${data.error}`);
-  }
-
-  return data;
+  return res;
 }
 
 export async function getAttendee(
-  meetingId: string,
-  chimeAttendeeId: string
+  meetSlug: string,
+  participantToken: string,
+  chimeAttendeeId: string,
 ): Promise<GetAttendeeResponse> {
   const params = {
-    title: encodeURIComponent(meetingId),
-    attendee: encodeURIComponent(chimeAttendeeId),
+    token: encodeURIComponent(participantToken),
+    attendeeId: encodeURIComponent(chimeAttendeeId),
   };
 
-  const res = await fetch(BASE_URL + 'attendee?' + new URLSearchParams(params), {
-    method: 'GET',
+  const res = await GET_API(`${SL_BASE_URL}/slMeet/${meetSlug}/getChimeAttendee?${new URLSearchParams(params)}`).then(res => res.data).catch((error) => {
+    throw new Error('Invalid server response' + JSON.stringify(error));
   });
-
-  if (!res.ok) {
-    throw new Error('Invalid server response');
-  }
-
-  const data = await res.json();
 
   return {
-    name: data.AttendeeInfo.Name,
+    name: res.AttendeeInfo.Name,
   };
 }
 
-export async function endMeeting(meetingId: string): Promise<void> {
+export async function endMeeting(meetSlug: string, participantToken: string): Promise<void> {
   const params = {
-    title: encodeURIComponent(meetingId),
+    token: encodeURIComponent(participantToken),
   };
 
-  const res = await fetch(BASE_URL + 'end?' + new URLSearchParams(params), {
-    method: 'POST',
+  return await DELETE_API(`${SL_BASE_URL}/slMeet/${meetSlug}/endMeet?${new URLSearchParams(params)}`).then().catch((error) => {
+    throw new Error('Server error ending meeting' + JSON.stringify(error));
+  });
+}
+
+export const createGetAttendeeCallback = (meetSlug: string, participantToken: string) =>
+  (chimeAttendeeId: string): Promise<GetAttendeeResponse> =>
+    getAttendee(meetSlug, participantToken, chimeAttendeeId);
+
+
+// CUSTOM SL API's
+export const joinAsTeacher = async (meetSlug: string, params: ITeacherParams): Promise<ISLMeetingResponse> => {
+  
+  const res: ISLMeetingResponse = await POST_API(`${SL_BASE_URL}/slMeet/${meetSlug}/joinAsTeacher`, params, {data: JSON.stringify(params)}).then(res => res.data).catch((error => {
+    throw new Error(`Server error in joinAsTeacher: ${error}`);
+  }))
+
+  return res;
+}
+
+export const joinAsStudent = async (meetSlug: string, params: IStudentParams): Promise<ISLMeetingResponse> => {
+  
+  const res: ISLMeetingResponse = await POST_API(`${SL_BASE_URL}/slMeet/${meetSlug}/joinAsStudent`, params, {data: JSON.stringify(params)}).then(res => res.data).catch((error => {
+    throw new Error(`Server error in joinAsStudent: ${error}`);
+  }))
+
+  return res;
+}
+
+export const joinViaToken = async (meetSlug: string, params: IJoinParams): Promise<ISLMeetingResponse> => {
+  
+  const res: ISLMeetingResponse = await POST_API(`${SL_BASE_URL}/slMeet/${meetSlug}/join`, params, {data: JSON.stringify(params)}).then(res => res.data).catch((error => {
+    throw new Error(`Server error in joinViaToken: ${error}`);
+  }))
+
+  return res;
+}
+
+export const listParticipants = async (meetSlug: string, participantToken: string): Promise<any> => {
+  const params = {
+    token: encodeURIComponent(participantToken),
+  };
+  const res: any = await GET_API(`${SL_BASE_URL}/slMeet/${meetSlug}/listParticipants?${new URLSearchParams(params)}`).then(res => res.data).catch(error => {
+    throw new Error(`Server error in listParticipants: ${error}`);
+  });
+  
+  return res;
+}
+
+export const markMeetStarted = async (meetSlug: string, participantToken: string): Promise<any> =>{
+  const params = {
+    token: encodeURIComponent(participantToken),
+  };
+  const res: any = await POST_API(`${SL_BASE_URL}/slMeet/${meetSlug}/markMeetStarted?${new URLSearchParams(params)}`).then(res => res.data).catch(error => {
+    throw new Error(`Server error in listParticipants: ${error}`);
   });
 
-  if (!res.ok) {
-    throw new Error('Server error ending meeting');
-  }
+  return res;
 }
-
-export const createGetAttendeeCallback = (meetingId: string) =>
-  (chimeAttendeeId: string): Promise<GetAttendeeResponse> =>
-    getAttendee(meetingId, chimeAttendeeId);
