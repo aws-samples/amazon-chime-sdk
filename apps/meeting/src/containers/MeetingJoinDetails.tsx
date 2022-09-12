@@ -33,7 +33,7 @@ const MeetingJoinDetails = () => {
       history.push(`${routes.MEETING}/${meetingId}`);
     } catch (error) {
       setIsLoading(false);
-      setError(error.message);
+      setError((error as Error).message);
     }
   };
 
