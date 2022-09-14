@@ -20,8 +20,8 @@
   "module": "lib/index.js",
   "types": "dist/index.d.ts",
   "devDependencies": {
-    "@amazon-chime-sdk-messaging-yjs-demo/eslint-config": "1.0.0",
     "@amazon-chime-sdk-messaging-yjs-demo/build-tools": "1.0.0",
+    "@amazon-chime-sdk-messaging-yjs-demo/eslint-config": "1.0.0",
     "eslint": "^7.22.0",
     "rimraf": "^3.0.2",
     "typescript": "^4.2.3",
@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "@types/uuid": "^8.3.0",
-    "amazon-chime-sdk-js": "^2.6.0",
+    "amazon-chime-sdk-js": "^3.7.0",
     "aws-sdk": "^2.865.0",
     "lib0": "^0.2.40",
     "lodash": "^4.17.21",
