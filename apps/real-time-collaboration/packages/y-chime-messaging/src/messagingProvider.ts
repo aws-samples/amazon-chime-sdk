@@ -142,7 +142,6 @@ export class MessagingProvider extends Observable<string> implements MessagingSe
       null,
       endpoint.Endpoint!.Url!,
       this.chimeClient,
-      AWS,
     );
 
     this.messagingSession = new DefaultMessagingSession(
@@ -150,7 +149,7 @@ export class MessagingProvider extends Observable<string> implements MessagingSe
       new ConsoleLogger('SDK', LogLevel.INFO),
     );
     this.messagingSession.addObserver(this);
-    this.messagingSession.start();
+    await this.messagingSession.start();
     this.doc.on('destroy', this.destroy);
     this.emit('connected', []);
   };
