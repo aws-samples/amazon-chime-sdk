@@ -7,8 +7,8 @@
     "start": "webpack serve"
   },
   "dependencies": {
-    "amazon-chime-sdk-component-library-react": "^2.15.0",
-    "amazon-chime-sdk-js": "^2.31.0",
+    "amazon-chime-sdk-component-library-react": "^3.2.0",
+    "amazon-chime-sdk-js": "^3.7.0",
     "aws-sdk": "^2.1216.0",
     "core-js": "^3.25.1",
     "react": "^17.0.2",
