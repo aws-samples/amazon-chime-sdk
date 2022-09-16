@@ -22,6 +22,9 @@ export default {
       return;
     } else if (warning.code === 'EVAL') {
       return;
+    } else if (warning.code === 'THIS_IS_UNDEFINED') {
+      // https://stackoverflow.com/questions/43556940/rollup-js-and-this-keyword-is-equivalent-to-undefined
+      return;
     }
     next(warning);
   },

@@ -13,6 +13,7 @@ It will generate `amazon-chime-sdk.min.js` and `amazon-chime-sdk.min.js.map` in 
 
 ```html
 <script src="path/to/amazon-chime-sdk.min.js"></script>
+<script src="path/to/amazon-chime-sdk.min.js.map"></script>
 ```
 
 ### Using ChimeSDK
@@ -33,6 +34,6 @@ You can change the version of `amazon-chime-sdk-js` in `package.json`. By defaul
 
 ```json
 "dependencies": {
-  "amazon-chime-sdk-js": "^2.0.0"
+  "amazon-chime-sdk-js": "^2.31.0"
 }
 ```
