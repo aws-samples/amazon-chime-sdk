@@ -51,7 +51,6 @@ class MessagingService {
           this.sessionId,
           this._endpoint,
           chimeClient.client,
-          chimeClient.awsClient
         );
 
         this._session = new DefaultMessagingSession(
@@ -60,7 +59,7 @@ class MessagingService {
         );
 
         this._session.addObserver(this.messageObserver);
-        this._session.start();
+        await this._session.start();
       })
       .catch((err) => {
         console.error(err);
