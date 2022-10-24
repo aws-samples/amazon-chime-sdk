@@ -1454,12 +1454,16 @@ Resources:
         PriceClass: PriceClass_100
         Restrictions:
           GeoRestriction:
-            RestrictionType: whitelist
-            Locations:
-              - US
-              - JP
-              - AU
-              - FR
+            RestrictionType: none
+        CustomErrorResponses:
+          - ErrorCachingMinTTL: 300
+            ErrorCode: 404
+            ResponseCode: 200
+            ResponsePagePath: /chat.html
+          - ErrorCachingMinTTL: 300
+            ErrorCode: 403
+            ResponseCode: 200
+            ResponsePagePath: /chat.html
     Metadata:
       cfn_nag:
         rules_to_suppress:
