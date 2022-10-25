@@ -630,6 +630,7 @@ const ChannelsWrapper = () => {
       meetingName,
       'RESTRICTED',
       'PRIVATE',
+      null,
       userId
     );
     const meetingChannel = await describeChannel(meetingChannelArn, userId);
@@ -1058,8 +1059,11 @@ const ChannelsWrapper = () => {
 
   const handleJoinMeeting = async (e, meeting, meetingChannelArn) => {
     e.preventDefault();
+    const meetingChannel = {
+      ChannelArn: meetingChannelArn
+    };
 
-    await channelIdChangeHandler(meetingChannelArn);
+    await channelIdChangeHandler(meetingChannel);
 
     meetingManager.getAttendee = createGetAttendeeCallback();
     const { JoinInfo } = await createAttendee(member.username, member.userId, meetingChannelArn, meeting);
@@ -1082,8 +1086,12 @@ const ChannelsWrapper = () => {
 
     setModal('');
     setMeetingInfo(null);
+    
+    const meetingChannel = {
+      ChannelArn: meetingChannelArn
+    };
 
-    await channelIdChangeHandler(meetingChannelArn);
+    await channelIdChangeHandler(meetingChannel);
   };
 
   const handleDeleteMemberships = () => {

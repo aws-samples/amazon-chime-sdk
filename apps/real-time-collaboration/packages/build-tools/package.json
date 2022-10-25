@@ -1,7 +1,6 @@
 {
   "name": "@amazon-chime-sdk-messaging-yjs-demo/build-tools",
   "version": "1.0.0",
-  "private": true,
   "description": "Build tools for the Amazon Chime SDK Messaging Yjs Demo",
   "scripts": {},
   "author": "Amazon Chime SDK",
