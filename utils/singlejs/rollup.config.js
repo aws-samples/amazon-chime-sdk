@@ -3,6 +3,7 @@
 
 import commonjs from '@rollup/plugin-commonjs';
 import resolve from '@rollup/plugin-node-resolve';
+import json from '@rollup/plugin-json';
 import { terser } from 'rollup-plugin-terser';
 
 export default {
@@ -15,7 +16,15 @@ export default {
       sourcemap: true,
     },
   ],
-  plugins: [resolve(), commonjs(), terser()],
+  plugins: [
+      resolve({
+        browser: true,
+        mainFields: ['module', 'browser'],
+      }),
+      json(),
+      commonjs(),
+      terser()
+    ],
   onwarn: (warning, next) => {
     if (warning.code === 'CIRCULAR_DEPENDENCY') {
       // TODO: Fix https://github.com/aws/amazon-chime-sdk-js/issues/107
