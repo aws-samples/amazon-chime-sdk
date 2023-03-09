@@ -1,5 +1,21 @@
 # README - React Meeting Demo
 
+This specific branch demo is updated to test `SendingAudioFailed` event in Safari 16.3 (and other browsers). Thus, the `index.tsx`, loads a simple meeting form with two input boxes to take in meeting and attendee names using which a meeting is created. The meeting form has two buttons "join" and "leave".
+
+Clicking "join", a simple component makes below calls:
+```
+await meetingManager.join(meetingSessionConfiguration, options);
+const stream = await navigator.mediaDevices.getUserMedia({
+  audio: true
+});
+await meetingManager.startAudioInputDevice(stream);
+await meetingManager.start();
+```
+
+Clicking "leave" should leave the meeting.
+
+Open the browser console log and you can filter the meeting events with "Received meeting event" string to check for meeting start success and attendee presence success.
+
 This is the SDK react meeting demo app. It shows how to use the Amazon Chime SDK and Chime SDK UI Component Library to build a react meeting app. Since it incorporates Amazon Voice Focus feature, please make sure your device meets the minimum requirement based on [Browser compatibility](https://github.com/aws/amazon-chime-sdk-js/blob/master/guides/09_Amazon_Voice_Focus.md#browser-compatibility). If you want to use premium feature like Amazon Chime Echo Reduction, the aws-sdk version is required to be at least 2.1034.0.
 
 ## To run the demo app locally:

@@ -30,7 +30,7 @@ interface GetAttendeeResponse {
 export async function fetchMeeting(
   meetingId: string,
   name: string,
-  region: string,
+  region: string = 'us-east-1',
   echoReductionCapability = false
 ): Promise<MeetingResponse> {
   const params = {

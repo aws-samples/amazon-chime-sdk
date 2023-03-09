@@ -5,8 +5,8 @@ import ReactDOM from 'react-dom';
 import React from 'react';
 
 import './style.css';
-import App from './app';
+import SendingAudioFailedDemoApp from './SendingAudioFailedDemoApp';
 
 window.addEventListener('load', () => {
-  ReactDOM.render(<App />, document.getElementById('root'));
+  ReactDOM.render(<SendingAudioFailedDemoApp />, document.getElementById('root'));
 });
