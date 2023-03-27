@@ -6,11 +6,17 @@ This is the SDK react meeting demo app. It shows how to use the Amazon Chime SDK
 
 1. If you haven't already, [configure your AWS credentials](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-quickstart.html).
 
-2. In the root directory `apps/meeting`, run `npm install`
+2. If cloning and running for the first time skip this step. If you want to make demo changes based on latest commits in `amazon-chime-sdk-component-library-react` (already added as a submodule to this repository), then, update submodule to the latest commit using:
+```
+// from root of this cloned repository
+git submodule update --remote amazon-chime-sdk-component-library-react
+```
 
-3. Start the webpack server and node server concurrently: `npm start`
+3. In the root directory `cd apps/meeting`, run `npm install`
 
-4. Open https://0.0.0.0:9000/ in your browser
+4. Start the webpack server and node server concurrently: `npm start`
+
+5. Open https://0.0.0.0:9000/ in your browser
 
 ### Troubleshooting
 
@@ -41,7 +47,3 @@ node ./deploy.js -r us-east-1 -b <YOUR-S3-BUCKET-NAME> -s <YOUR-CLOUDFORMATION-S
 ```
 
 The script will create an S3 bucket and CloudFormation stack with Lambda and API Gateway resources required to run the demo. After the script finishes, it will output a URL that can be opened in a browser.
-
-## Contributing
-
-Please check the CONTRIBUTING.md file in `apps/meeting` for more information. Please do not open PRs against the "main" branch for this demo. "main" branch is the stable branch and "meeting-dev" branch is used for contributing.

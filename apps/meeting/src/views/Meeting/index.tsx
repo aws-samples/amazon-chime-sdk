@@ -15,6 +15,7 @@ import { MeetingMode, Layout } from '../../types';
 import { VideoTileGridProvider } from '../../providers/VideoTileGridProvider';
 import { useAppState } from '../../providers/AppStateProvider';
 import { DataMessagesProvider } from '../../providers/DataMessagesProvider';
+import MeetingStatusNotifier from '../../containers/MeetingStatusNotifier';
 
 const MeetingView = (props: { mode: MeetingMode }) => {
   useMeetingEndRedirect();
@@ -35,6 +36,7 @@ const MeetingView = (props: { mode: MeetingMode }) => {
               />
               {mode === MeetingMode.Spectator ? <DynamicMeetingControls /> : <MeetingControls />}
             </StyledContent>
+            <MeetingStatusNotifier />
             <NavigationControl />
           </StyledLayout>
         </VideoTileGridProvider>
