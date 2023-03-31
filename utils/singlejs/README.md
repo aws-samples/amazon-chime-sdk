@@ -34,6 +34,6 @@ You can change the version of `amazon-chime-sdk-js` in `package.json`. By defaul
 
 ```json
 "dependencies": {
-  "amazon-chime-sdk-js": "^2.31.0"
+  "amazon-chime-sdk-js": "^3.12.0"
 }
 ```
