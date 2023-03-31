@@ -18,6 +18,6 @@
   "type": "module",
   "dependencies": {
     "@rollup/plugin-json": "^6.0.0",
-    "amazon-chime-sdk-js": "^3.10.0"
+    "amazon-chime-sdk-js": "^3.12.0"
   }
 }
