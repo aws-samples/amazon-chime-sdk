@@ -30,7 +30,7 @@
   "dependencies": {
     "@types/uuid": "^8.3.0",
     "amazon-chime-sdk-js": "^3.7.0",
-    "aws-sdk": "^2.865.0",
+    "aws-sdk": "^2.1354.0",
     "lib0": "^0.2.40",
     "lodash": "^4.17.21",
     "uuid": "^8.3.2",
