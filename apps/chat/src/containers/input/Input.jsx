@@ -162,6 +162,7 @@ const Input = ({ activeChannelArn, member, hasMembership }) => {
       className="write-link attach"
       onClick={(_event) => {
         uploadRef.current.value = null;
+        setUploadObj(uploadObjDefaults);
         uploadRef.current.click();
       }}
       icon={<Attachment width="1.5rem" height="1.5rem" />}
@@ -188,7 +189,7 @@ const Input = ({ activeChannelArn, member, hasMembership }) => {
                 height="1.5rem"
               />
               <Label style={{ margin: 'auto 0' }}>{uploadObj?.name}</Label>
-              <IconButton icon={<Remove width="1.5rem" height="1.5rem" />} />
+              <IconButton onClick={onRemoveAttachmentHandler} icon={<Remove width="1.5rem" height="1.5rem" />} type="button" />
             </div>
           ) : null}
         </form>
