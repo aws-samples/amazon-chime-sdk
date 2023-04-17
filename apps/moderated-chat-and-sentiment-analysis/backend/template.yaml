@@ -470,6 +470,98 @@ Resources:
                 }
             ContentType: "application/json"
 
+    s3BucketForAssets:
+        Type: 'AWS::S3::Bucket'
+        Properties:
+            PublicAccessBlockConfiguration:
+                BlockPublicAcls: True
+                BlockPublicPolicy: True
+                IgnorePublicAcls: True
+                RestrictPublicBuckets: True
+            WebsiteConfiguration:
+                IndexDocument: chat.html
+                ErrorDocument: error.html
+            BucketEncryption:
+                ServerSideEncryptionConfiguration:
+                    - ServerSideEncryptionByDefault:
+                          SSEAlgorithm: AES256
+
+    s3BucketForAssetsPolicy:
+        Type: AWS::S3::BucketPolicy
+        DependsOn:
+            - s3BucketForAssets
+            - CloudFrontDistributionAccessIdentity
+        Properties:
+            Bucket: !Ref s3BucketForAssets
+            PolicyDocument:
+                Statement:
+                    - Action:
+                          - 's3:GetObject'
+                      Effect: 'Allow'
+                      Principal:
+                          CanonicalUser:
+                              Fn::GetAtt:
+                                [ CloudFrontDistributionAccessIdentity, S3CanonicalUserId ]
+                      Resource: !Sub ${s3BucketForAssets.Arn}/*
+                    - Action: 's3:*'
+                      Resource: !Sub ${s3BucketForAssets.Arn}/*
+                      Effect: Deny
+                      Condition:
+                          Bool:
+                              'aws:SecureTransport': false
+                      Principal: '*'
+                    - Action: 's3:*'
+                      Resource: !Sub ${s3BucketForAssets.Arn}/*
+                      Effect: Deny
+                      Condition:
+                          Bool:
+                              'aws:SecureTransport': false
+                      Principal: '*'
+
+    CloudFrontDistributionAccessIdentity:
+        Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+        Properties:
+            CloudFrontOriginAccessIdentityConfig:
+                Comment: 'CloudFront OAI for the chat demo app'
+
+    CloudFrontDistribution:
+        Type: AWS::CloudFront::Distribution
+        DependsOn:
+            - s3BucketForAssets
+        Properties:
+            DistributionConfig:
+                Origins:
+                    - DomainName: !GetAtt
+                          - s3BucketForAssets
+                          - DomainName
+                      Id: !Ref DemoName
+                      S3OriginConfig:
+                          OriginAccessIdentity: !Join
+                              - ''
+                              - - 'origin-access-identity/cloudfront/'
+                                - !Ref CloudFrontDistributionAccessIdentity
+                Enabled: True
+                Comment: CloudFront for the chat post processing demo app
+                DefaultRootObject: chat.html
+                DefaultCacheBehavior:
+                    AllowedMethods:
+                        - GET
+                        - HEAD
+                        - OPTIONS
+                    CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad # Managed-CachingDisabled
+                    TargetOriginId: !Ref DemoName
+                    ForwardedValues:
+                        QueryString: true
+                        Cookies:
+                            Forward: all
+                    ViewerProtocolPolicy: redirect-to-https
+                PriceClass: PriceClass_100
+        Metadata:
+            cfn_nag:
+                rules_to_suppress:
+                    - id: W70
+                      reason: This is using Cloudfront default TLS, can be changed by customer if needed.
+
 Outputs:
     appInstanceArn:
         Value: !GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn
@@ -479,4 +571,11 @@ Outputs:
         Value: !GetAtt TriggerChimeAppInstanceLambda.adminUserArn
     channelArn:
         Value: !GetAtt TriggerChimeAppInstanceLambda.channelArn
-
+    assetsS3BucketName:
+        Value: !Ref s3BucketForAssets
+    cloudfrontEndpoint:
+        Value: !Join
+            - ''
+            - - 'https://'
+              - !GetAtt [ CloudFrontDistribution, DomainName ]
+              - '/chat.html'

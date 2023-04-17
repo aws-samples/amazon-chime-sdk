@@ -34,7 +34,23 @@ There are 7 key components of this architecture:
 
 ## Deploying the Demo Application
 
-### Step 1. Setup the Chime SDK messaging instance for the demo
+### Using AWS SAM
+1. Prerequisite: [install the AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
+2. Run the following commands to provision the demo app's infrastructure, as well as build and deploy the web assets.
+
+```bash
+cd apps/moderated-chat-and-sentiment-analysis
+npm run deploy
+```
+
+2. Verify that the `backend/appconfig.json` is populated with the CloudFormation stack outputs. This JSON file is used to
+   configure the app with `src/Config.js.`
+
+3. Then, you can access the app via the CloudFront endpoint found in the CloudFormation stack outputs.
+
+### Using the AWS CloudFormation console
+Alternatively, you can deploy backend and frontend manually:
+#### Step 1. Setup the Chime SDK messaging instance for the demo
 
 1. Sign in to the AWS Management Console with your primary account. Switch to the us-east-1 (N. Virginia) Region. Note: The AWS CloudFormation template in this section needs to be launched in US east (N. Virginia) Region.
 2. Deploy included CloudFormation template via [CloudFormation Console](https://aws.amazon.com/cloudformation/) or
@@ -45,7 +61,7 @@ There are 7 key components of this architecture:
 3. Creating the stack generates 4 outputs- createUserApiGatewayURL, appInstanceArn, adminUserArn and channelArn. Note
  these values for the demo app configuration in the next step.
 
-### Step 2. Deploy the Amazon Chime SDK automated moderation demo app locally
+#### Step 2. Deploy the Amazon Chime SDK automated moderation demo app locally
 
 1. Run the following commands to install all the dependencies 
  

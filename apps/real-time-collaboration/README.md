@@ -15,8 +15,26 @@ that provides access to AWS services.
 * Ensure that you have installed [Node.js](https://nodejs.org/en/) version 14 or higher.
 
 ## Getting started
+### Deploying the demo app using AWS SAM
+1. Prerequisite: [install the AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
+2. Run the following commands to provision the demo app's infrastructure, as well as build and deploy the web assets.
 
-### Creating AWS resources
+```bash
+cd apps/real-time-collaboration
+npm install
+npm run build
+cd examples/text-editor
+npm run deploy
+```
+
+2. Verify that the `../../backend/appconfig.json` is populated with the CloudFormation stack outputs. This JSON file is used to
+   configure the app with `src/Config.js.`
+
+3. Then, you can access the app via the CloudFront endpoint found in the CloudFormation stack outputs.
+
+### Deploying the demo app using the AWS CloudFormation console
+Alternatively, you can deploy backend and frontend manually:
+##### Creating AWS resources
 
 1. Sign in to the AWS Management Console with your primary account. Switch to the **us-east-1 (N. Virginia)** Region. 
    Note: The AWS CloudFormation (https://aws.amazon.com/cloudformation/) template in this section needs to be 
@@ -30,17 +48,17 @@ that provides access to AWS services.
 6. On the **Specify Details** page, enter the stack name: **DemoName-ChimeCollabDemo**
 7. Choose **Next**, and then **Next** on the **Configure stack options** page.
 8. On the **Review** page, check the **I acknowledge that AWS CloudFormation might create IAM resources** check box. Then click **Create**.
-9. Creating the stack generates 3 outputs: **ApiGatewayUrl, AppInstanceArn, AdminUserArn**. Note these values 
+9. Creating the stack generates 5 outputs: **ApiGatewayUrl, AppInstanceArn, AdminUserArn, AssetsS3BucketName, CloudfrontEndpoint**. Note these values 
    for the outputs to use to configure the app in the next step.
 
-### Building the packages
+##### Building the packages
 
 ```
 npm install
 npm run build
 ```
 
-### Running the text editor demo application locally
+##### Running the text editor demo application locally
 1. Run the following commands to navigate to the `text-editor` folder:
 
     ```shell
@@ -50,11 +68,13 @@ npm run build
 2. Open src/Config.js with the editor of your choice. Add the following configuration to it:
 
     ```js
-    export const appConfig = {
-      ApiGatewayUrl: '',
-      AppInstanceArn: '',
-      AdminUserArn: ''
-    };
+   export const appConfig = {
+     ApiGatewayUrl: '' || appConfigJson.ApiGatewayUrl,
+     AppInstanceArn: '' || appConfigJson.AppInstanceArn,
+     AdminUserArn: '' || appConfigJson.AdminUserArn,
+     AssetsS3BucketName: '' || appConfigJson.AssetsS3BucketName,
+     CloudfrontEndpoint: '' || appConfigJson.CloudfrontEndpoint,
+   };
     ```
 
 3. Once the configuration for the application is entered, run the following commands in the text editor folder.

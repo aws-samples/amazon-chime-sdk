@@ -1,0 +1,10 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "moderated-chat-and-real-time-sentiment-analysis-demo"
+s3_prefix = "moderated-chat-and-real-time-sentiment-analysis-demo"
+region = "us-east-1"
+confirm_changeset = true
+capabilities = "CAPABILITY_NAMED_IAM"
+parameter_overrides = "DemoName=\"AWSSDKChimeModeratedChatDemo\""

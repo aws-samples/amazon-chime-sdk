@@ -11,7 +11,12 @@
     "lint": "eslint --format stylish src",
     "lint:fix": "eslint --format stylish src --fix",
     "tsfmt": "tsfmt --verify",
-    "tsfmt:fix": "tsfmt --replace"
+    "tsfmt:fix": "tsfmt --replace",
+    "build": "rm -rf dist && webpack build",
+    "sam:build": "cd ../../backend && rm -rf .aws-sam && sam build && cd - ",
+    "sam:deploy:backend": "npm run sam:build && cd ../../backend && sam deploy --resolve-s3 --no-fail-on-empty-changeset && aws cloudformation describe-stacks --stack-name amazon-chime-sdk-messaging-yjs-demo --query 'Stacks[0].Outputs' --output json > appconfig.json && cd - ",
+    "sam:deploy:assets": "npm run build && aws s3 cp dist s3://$(aws cloudformation describe-stacks --stack-name amazon-chime-sdk-messaging-yjs-demo --query \"Stacks[0].Outputs[?OutputKey=='AssetsS3BucketName'].OutputValue\" --output text) --recursive",
+    "deploy": "npm run sam:deploy:backend && npm run sam:deploy:assets"
   },
   "dependencies": {
     "@types/uuid": "^8.3.0",

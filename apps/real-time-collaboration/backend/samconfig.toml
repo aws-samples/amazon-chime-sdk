@@ -1,0 +1,10 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "amazon-chime-sdk-messaging-yjs-demo"
+s3_prefix = "amazon-chime-sdk-messaging-yjs-demo"
+region = "us-east-1"
+confirm_changeset = true
+capabilities = "CAPABILITY_NAMED_IAM"
+parameter_overrides = "DemoName=\"AWSSDKChimeCollabAppDemo\""

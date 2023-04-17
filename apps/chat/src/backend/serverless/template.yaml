@@ -1597,14 +1597,6 @@ Resources:
               Forward: all
           ViewerProtocolPolicy: redirect-to-https
         PriceClass: PriceClass_100
-        Restrictions:
-          GeoRestriction:
-            RestrictionType: whitelist
-            Locations:
-              - US
-              - JP
-              - AU
-              - FR
     Metadata:
       cfn_nag:
         rules_to_suppress:
