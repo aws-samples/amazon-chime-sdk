@@ -35,7 +35,8 @@ There are 7 key components of this architecture:
 ## Deploying the Demo Application
 
 ### Using AWS SAM
-1. Run the following commands to provision the demo app's infrastructure, as well as build and deploy the web assets.
+1. Prerequisite: [install the AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
+2. Run the following commands to provision the demo app's infrastructure, as well as build and deploy the web assets.
 
 ```bash
 cd apps/moderated-chat-and-sentiment-analysis

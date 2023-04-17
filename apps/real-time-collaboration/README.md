@@ -16,7 +16,8 @@ that provides access to AWS services.
 
 ## Getting started
 ### Deploying the demo app using AWS SAM
-1. Run the following commands to provision the demo app's infrastructure, as well as build and deploy the web assets.
+1. Prerequisite: [install the AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
+2. Run the following commands to provision the demo app's infrastructure, as well as build and deploy the web assets.
 
 ```bash
 cd apps/real-time-collaboration
