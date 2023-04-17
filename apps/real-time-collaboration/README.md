@@ -15,8 +15,22 @@ that provides access to AWS services.
 * Ensure that you have installed [Node.js](https://nodejs.org/en/) version 14 or higher.
 
 ## Getting started
+### Deploying the demo app using AWS SAM
+1. Run the following commands to provision the demo app's infrastructure, as well as build and deploy the web assets.
 
-### Creating AWS resources
+```bash
+cd apps/real-time-collaboration/examples/text-editor
+npm run deploy
+```
+
+2. Verify that the `../../backend/appconfig.json` is populated with the CloudFormation stack outputs. This JSON file is used to
+   configure the app with `src/Config.js.`
+
+3. Then, you can access the app via the CloudFront endpoint found in the CloudFormation stack outputs.
+
+### Deploying the demo app using the AWS CloudFormation console
+Alternatively, you can deploy backend and frontend manually:
+##### Creating AWS resources
 
 1. Sign in to the AWS Management Console with your primary account. Switch to the **us-east-1 (N. Virginia)** Region. 
    Note: The AWS CloudFormation (https://aws.amazon.com/cloudformation/) template in this section needs to be 
@@ -33,14 +47,14 @@ that provides access to AWS services.
 9. Creating the stack generates 3 outputs: **ApiGatewayUrl, AppInstanceArn, AdminUserArn**. Note these values 
    for the outputs to use to configure the app in the next step.
 
-### Building the packages
+##### Building the packages
 
 ```
 npm install
 npm run build
 ```
 
-### Running the text editor demo application locally
+##### Running the text editor demo application locally
 1. Run the following commands to navigate to the `text-editor` folder:
 
     ```shell

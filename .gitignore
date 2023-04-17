@@ -6,3 +6,5 @@ build
 apps/chat/src/Config.js
 apps/chat/src/backend/serverless/appconfig.json
 apps/chat/src/backend/serverless/.aws-sam
+apps/real-time-collaboration/backend/.aws-sam
+apps/moderated-chat-and-sentiment-analysis/backend/.aws-sam/

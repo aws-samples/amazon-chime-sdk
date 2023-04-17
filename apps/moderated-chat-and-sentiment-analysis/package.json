@@ -4,7 +4,12 @@
   "description": "Amazon Chime SDK Moderated Chat and Real Time Sentiment Analysis Demo",
   "scripts": {
     "lint": "eslint src --ext .js,.jsx --fix",
-    "start": "webpack serve"
+    "start": "webpack serve",
+    "build": "rm -rf dist && webpack build",
+    "sam:build": "cd backend && rm -rf .aws-sam && sam build && cd - ",
+    "sam:deploy:backend": "npm run sam:build && cd backend && sam deploy --resolve-s3 --no-fail-on-empty-changeset && aws cloudformation describe-stacks --stack-name moderated-chat-and-real-time-sentiment-analysis-demo --query 'Stacks[0].Outputs' --output json > appconfig.json && cd - ",
+    "sam:deploy:assets": "npm run build && aws s3 cp dist s3://$(aws cloudformation describe-stacks --stack-name moderated-chat-and-real-time-sentiment-analysis-demo --query \"Stacks[0].Outputs[?OutputKey=='assetsS3BucketName'].OutputValue\" --output text) --recursive",
+    "deploy": "npm run sam:deploy:backend && npm run sam:deploy:assets"
   },
   "dependencies": {
     "amazon-chime-sdk-component-library-react": "^3.2.0",
