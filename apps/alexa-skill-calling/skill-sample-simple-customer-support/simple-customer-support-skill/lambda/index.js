@@ -39,7 +39,7 @@ const CallSupportIntentHandler = {
         config.skillConfig.sourcePhoneNumber,
         config.skillConfig.destinationPhoneNumber
       );
-      speakOutput = 'Calling from skill';
+      speakOutput = '';
     } catch (error) {
       speakOutput = 'Sorry, I am having problem right now.';
     }
