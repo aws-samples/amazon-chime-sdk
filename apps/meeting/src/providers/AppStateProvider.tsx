@@ -40,6 +40,8 @@ interface AppStateValue {
   setLocalUserName: React.Dispatch<React.SetStateAction<string>>;
   setRegion: React.Dispatch<React.SetStateAction<string>>;
   setBlob: (imageBlob: Blob) => void;
+  skipDeviceSelection: boolean;
+  toggleMeetingJoinDeviceSelection: () => void;
 }
 
 const AppStateContext = React.createContext<AppStateValue | null>(null);
@@ -76,6 +78,7 @@ export function AppStateProvider({ children }: Props) {
   });
   const [videoTransformCpuUtilization, setCpuPercentage] = useState(VideoFiltersCpuUtilization.CPU40Percent);
   const [imageBlob, setImageBlob] = useState<Blob | undefined>(undefined);
+  const [skipDeviceSelection, setSkipDeviceSelection] = useState(false);
 
   useEffect(() => {
     /* Load a canvas that will be used as the replacement image for Background Replacement */
@@ -109,6 +112,10 @@ export function AppStateProvider({ children }: Props) {
       setTheme('light');
       localStorage.setItem('theme', 'light');
     }
+  };
+
+  const toggleMeetingJoinDeviceSelection = (): void => {
+    setSkipDeviceSelection((current) => !current);
   };
 
   const toggleWebAudio = (): void => {
@@ -172,6 +179,8 @@ export function AppStateProvider({ children }: Props) {
     setLocalUserName,
     setRegion,
     setBlob,
+    skipDeviceSelection,
+    toggleMeetingJoinDeviceSelection,
   };
 
   return <AppStateContext.Provider value={providerValue}>{children}</AppStateContext.Provider>;

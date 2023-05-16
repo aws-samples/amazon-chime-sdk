@@ -62,6 +62,8 @@ const MeetingForm: React.FC = () => {
     setLocalUserName,
     setRegion,
     setCpuUtilization,
+    skipDeviceSelection,
+    toggleMeetingJoinDeviceSelection,
   } = useAppState();
   const [meetingErr, setMeetingErr] = useState(false);
   const [nameErr, setNameErr] = useState(false);
@@ -117,6 +119,7 @@ const MeetingForm: React.FC = () => {
       const options: MeetingManagerJoinOptions = {
         deviceLabels: meetingMode === MeetingMode.Spectator ? DeviceLabels.None : DeviceLabels.AudioAndVideo,
         enableWebAudio: isWebAudioEnabled,
+        skipDeviceSelection,
       };
 
       await meetingManager.join(meetingSessionConfiguration, options);
@@ -182,7 +185,7 @@ const MeetingForm: React.FC = () => {
       <RegionSelection setRegion={setRegion} region={region} />
       <FormField
         field={Checkbox}
-        label="Join w/o Audio and Video"
+        label="Join w/o Audio and Video (spectator mode)"
         value=""
         checked={meetingMode === MeetingMode.Spectator}
         onChange={(): void => {
@@ -249,6 +252,14 @@ const MeetingForm: React.FC = () => {
         value=""
         checked={keepLastFrameWhenPaused}
         onChange={toggleKeepLastFrameWhenPaused}
+      />
+      <FormField
+        field={Checkbox}
+        label="Skip meeting join device selection"
+        value=""
+        checked={skipDeviceSelection}
+        onChange={toggleMeetingJoinDeviceSelection}
+        infoText="Please select the devices manually to successfully join a meeting"
       />
       <Flex container layout="fill-space-centered" style={{ marginTop: '2.5rem' }}>
         {isLoading ? <Spinner /> : <PrimaryButton label="Continue" onClick={handleJoinMeeting} />}
