@@ -1,7 +1,7 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import {
   AudioInputDevice,
@@ -25,7 +25,7 @@ import MeetingEventObserver from '../MeetingEventObserver';
 import { useAppState } from '../../providers/AppStateProvider';
 import { VideoFiltersCpuUtilization } from '../../types';
 
-const MeetingProviderWithDeviceReplacement: React.FC = ({ children }) => {
+const MeetingProviderWithDeviceReplacement: React.FC<PropsWithChildren> = ({ children }) => {
   const { addVoiceFocus } = useVoiceFocus();
 
   const onDeviceReplacement = (

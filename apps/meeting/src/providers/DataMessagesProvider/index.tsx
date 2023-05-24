@@ -1,6 +1,6 @@
 import { useAudioVideo, useMeetingManager } from 'amazon-chime-sdk-component-library-react';
 import { DataMessage } from 'amazon-chime-sdk-js';
-import React, { useEffect, useReducer, createContext, useContext, FC, useCallback } from 'react';
+import React, { useEffect, useReducer, createContext, useContext, FC, useCallback, PropsWithChildren } from 'react';
 import { DATA_MESSAGE_LIFETIME_MS, DATA_MESSAGE_TOPIC } from '../../constants';
 import { useAppState } from '../AppStateProvider';
 import { DataMessagesActionType, initialState, ChatDataMessage, reducer } from './state';
@@ -12,7 +12,7 @@ interface DataMessagesStateContextType {
 
 const DataMessagesStateContext = createContext<DataMessagesStateContextType | undefined>(undefined);
 
-export const DataMessagesProvider: FC = ({ children }) => {
+export const DataMessagesProvider: FC<PropsWithChildren> = ({ children }) => {
   const { localUserName } = useAppState();
   const meetingManager = useMeetingManager();
   const audioVideo = useAudioVideo();
