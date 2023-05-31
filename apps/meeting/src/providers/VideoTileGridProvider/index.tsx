@@ -14,7 +14,7 @@ import {
   VideoDownlinkObserver,
   VideoSource,
 } from 'amazon-chime-sdk-js';
-import React, { createContext, useContext, useEffect, useReducer } from 'react';
+import React, { PropsWithChildren, createContext, useContext, useEffect, useReducer } from 'react';
 import { Layout } from '../../types';
 import { useAppState } from '../AppStateProvider';
 import {
@@ -28,7 +28,7 @@ import {
 const VideoTileGridStateContext = createContext<State | undefined>(undefined);
 const VideoTileGridControlContext = createContext<Controls | undefined>(undefined);
 
-const VideoTileGridProvider: React.FC = ({ children }) => {
+const VideoTileGridProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const { priorityBasedPolicy } = useAppState();
   const meetingManager = useMeetingManager();
   const audioVideo = useAudioVideo();

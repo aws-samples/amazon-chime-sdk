@@ -1,7 +1,7 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import React, { FC } from 'react';
+import React, { FC, PropsWithChildren } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import {
@@ -34,7 +34,7 @@ const App: FC = () => (
   </Router>
 );
 
-const Theme: React.FC = ({ children }) => {
+const Theme: React.FC<PropsWithChildren> = ({ children }) => {
   const { theme } = useAppState();
 
   return (
