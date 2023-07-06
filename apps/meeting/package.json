@@ -7,7 +7,7 @@
     "@types/styled-components": "^4.4.3",
     "@types/webpack-env": "^1.17.0",
     "amazon-chime-sdk-component-library-react": "file:../../amazon-chime-sdk-component-library-react",
-    "amazon-chime-sdk-js": "^3.14.0",
+    "amazon-chime-sdk-js": "^3.14.1",
     "aws-sdk": "^2.1354.0",
     "fs-extra": "^10.1.0",
     "lodash.isequal": "^4.5.0",
