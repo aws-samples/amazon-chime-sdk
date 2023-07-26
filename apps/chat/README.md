@@ -135,7 +135,7 @@ const elasticChannelConfiguration = { // with default values
 
 async function createChannel(appInstanceArn, name, mode, privacy, elasticChannelConfiguration, userId) {
   console.log('createChannel called');
-  const chime =  new AWS.Chime({
+  const chime =  new AWS.ChimeSDKMessaging({
         region: 'us-east-1',
         endpoint: endpoint
   });
@@ -172,7 +172,7 @@ async function createChannel(appInstanceArn, name, mode, privacy, elasticChannel
 ```js
 async function createChannelMembership(channelArn, memberArn, userId, subChannelId) {
     console.log('createChannelMembership called');
-    const chime =  new AWS.Chime({
+    const chime =  new AWS.ChimeSDKMessaging({
         region: 'us-east-1',
         endpoint: endpoint
     });
@@ -218,7 +218,7 @@ async function sendChannelMessage(
   options = null
 ) {
   console.log('sendChannelMessage called');
-  const chime =  new AWS.Chime({
+  const chime =  new AWS.ChimeSDKMessaging({
         region: 'us-east-1',
         endpoint: endpoint
   });

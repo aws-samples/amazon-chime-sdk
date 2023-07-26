@@ -44,6 +44,7 @@ import {
   deleteChannelBan,
   createMeeting,
   createAttendee,
+  getMeeting,
   endMeeting,
   createGetAttendeeCallback,
   listChannelFlows,
@@ -602,11 +603,14 @@ const ChannelsWrapper = () => {
 
     if (activeChannel.Metadata) {
       let metadata = JSON.parse(activeChannel.Metadata);
-      let meeting = metadata.meeting;
+      let meetingId = metadata.meetingId;
+
+      // Getting meeting details
+      let meetingResponse = await getMeeting(meetingId);
 
       // Create own attendee and join meeting
       meetingManager.getAttendee = createGetAttendeeCallback();
-      const { JoinInfo } = await createAttendee(member.username, member.userId, activeChannel.ChannelArn, meeting);
+      const { JoinInfo } = await createAttendee(member.username, member.userId, activeChannel.ChannelArn, JSON.stringify(meetingResponse.Meeting));
       const meetingSessionConfiguration = new MeetingSessionConfiguration(
         JoinInfo.Meeting,
         JoinInfo.Attendee
@@ -658,7 +662,7 @@ const ChannelsWrapper = () => {
     // Update meeting channel metadata with meeting info
     let meetingChannelmetadata = {
       isMeeting: true,
-      meeting: meeting
+      meetingId: meetingId
     };
 
     await updateChannel(
@@ -1026,8 +1030,7 @@ const ChannelsWrapper = () => {
     if (channelMetadata) {
       const metadata = JSON.parse(channelMetadata);
       if (metadata.isMeeting) {
-        const meeting = JSON.parse(metadata.meeting);
-        await endMeeting(meeting.MeetingId);
+        await endMeeting(metadata.meetingId);
       }
     }
   };
