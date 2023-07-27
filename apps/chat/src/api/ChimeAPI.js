@@ -8,6 +8,7 @@ import appConfig from '../Config';
 // eslint-disable-next-line no-unused-vars
 const ChimeIdentity = require('aws-sdk/clients/chimesdkidentity');
 const ChimeMessaging = require('aws-sdk/clients/chimesdkmessaging');
+const ChimeMeetings = require('aws-sdk/clients/chimesdkmeetings');
 
 export const BASE_URL = routes.SIGNIN;
 export const createMemberArn = (userId) =>
@@ -27,6 +28,7 @@ const appInstanceUserArnHeader = 'x-amz-chime-bearer';
 
 let chimeMessaging = null;
 let chimeIdentity = null;
+let chimeMeetings = null;
 
 // Setup Chime Messaging Client lazily
 async function chimeMessagingClient() {
@@ -39,6 +41,7 @@ async function chimeMessagingClient() {
 function resetAWSClients() {
   chimeMessaging = null;
   chimeIdentity = null;
+  chimeMeetings = null;
 }
 // Setup Chime Identity Client lazily
 async function chimeIdentityClient() {
@@ -52,6 +55,14 @@ async function getMessagingSessionEndpoint() {
   const request = (await chimeMessagingClient()).getMessagingSessionEndpoint();
   const response = await request.promise();
   return response;
+}
+
+// Setup Chime Meetings Client lazily
+async function chimeMeetingsClient() {
+  if (chimeMeetings == null) {
+    chimeMeetings = new ChimeMeetings();
+  }
+  return chimeMeetings;
 }
 
 async function sendChannelMessage(
@@ -547,6 +558,21 @@ async function redactChannelMessage(
   return response;
 }
 
+async function getMeeting(
+    meetingId
+) {
+  console.log('geeMeeting called')
+
+  const params = {
+    MeetingId: meetingId
+  };
+
+  const request = (await chimeMeetingsClient()).getMeeting(params);
+  const response = await request.promise();
+
+  return response;
+}
+
 async function createMeeting(name, userId, channelArn) {
   const response = await fetch(
     `${appConfig.apiGatewayInvokeUrl}create?name=${encodeURIComponent(
@@ -643,4 +669,5 @@ export {
   createGetAttendeeCallback,
   endMeeting,
   resetAWSClients,
+  getMeeting,
 };
