@@ -650,11 +650,13 @@ Resources:
                   - "chime:ListChannelFlows"
                   - "chime:ListChannelsModeratedByAppInstanceUser"
                   - "chime:ListSubChannels"
+                  - "chime:GetMeeting"
 
                 Resource:
                   - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/user/${cognito-identity.amazonaws.com:sub}']]
                   - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/channel/*']]
                   - !Join ['', [!GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn, '/channel-flow/*']]
+                  - !Sub arn:aws:chime:${AWS::Region}:${AWS::AccountId}:meeting/*
 
   PinpointAccessPolicy:
     Type: "AWS::IAM::Policy"
@@ -1185,14 +1187,11 @@ Resources:
       Environment:
         Variables:
           ChimeAppInstanceArn: !GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn
-      Layers:
-        - !Ref AWSSDKChimeLayer
       Runtime: nodejs14.x
       Handler: index.handler
       InlineCode: |
         const AWS = require('aws-sdk');
-        const uuidv4 = require('uuid');
-        const chime = new AWS.Chime({ region: 'us-east-1' });
+        const chimeMeetings = new AWS.ChimeSDKMeetings({ region: process.env.AWS_REGION });
         const chimeMessaging = new AWS.ChimeSDKMessaging({ region: process.env.AWS_REGION });
 
         const APP_INSTANCE_ID = process.env.ChimeAppInstanceArn;
@@ -1263,13 +1262,14 @@ Resources:
 
           console.info('Creating new meeting before joining');
           const createMeetingRequest = {
-            ClientRequestToken: uuidv4(),
+            ClientRequestToken: AWS.util.uuid.v4(),
             MediaRegion: region,
+            ExternalMeetingId: AWS.util.uuid.v4()
           };
-          const meetingInfo = await chime.createMeeting(createMeetingRequest).promise();
+          const meetingInfo = await chimeMeetings.createMeeting(createMeetingRequest).promise();
 
           console.info('Adding new attendee');
-          const attendeeInfo = (await chime.createAttendee({
+          const attendeeInfo = (await chimeMeetings.createAttendee({
               MeetingId: meetingInfo.Meeting.MeetingId,
               ExternalUserId: name,
             }).promise());
@@ -1308,14 +1308,11 @@ Resources:
       Environment:
         Variables:
           ChimeAppInstanceArn: !GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn
-      Layers:
-        - !Ref AWSSDKChimeLayer
       Runtime: nodejs14.x
       Handler: index.handler
       InlineCode: |
         const AWS = require('aws-sdk');
-        const uuidv4 = require('uuid');
-        const chime = new AWS.Chime({ region: 'us-east-1' });
+        const chimeMeetings = new AWS.ChimeSDKMeetings({ region: process.env.AWS_REGION });
         const chimeMessaging = new AWS.ChimeSDKMessaging({ region: process.env.AWS_REGION });
 
         const APP_INSTANCE_ID = process.env.ChimeAppInstanceArn;
@@ -1387,7 +1384,7 @@ Resources:
           const meetingInfo = JSON.parse(meeting);
 
           console.info('Adding new attendee');
-          const attendeeInfo = (await chime.createAttendee({
+          const attendeeInfo = (await chimeMeetings.createAttendee({
               MeetingId: meetingInfo.MeetingId,
               ExternalUserId: name,
             }).promise());
@@ -1426,19 +1423,17 @@ Resources:
       Environment:
         Variables:
           ChimeAppInstanceArn: !GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn
-      Layers:
-        - !Ref AWSSDKChimeLayer
       Runtime: nodejs14.x
       Handler: index.handler
       InlineCode: |
         const AWS = require('aws-sdk');
-        const chime = new AWS.Chime({ region: 'us-east-1' });
+        const chimeMeetings = new AWS.ChimeSDKMeetings({ region: process.env.AWS_REGION });
 
         exports.handler = async event => {
           const meetingId = event.queryStringParameters.meetingId;
 
           console.info('Deleting meeting');
-          await chime
+          await chimeMeetings
           .deleteMeeting({
             MeetingId: meetingId
           })
