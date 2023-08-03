@@ -12,7 +12,7 @@ Resources:
     Description: The AWS SDK with support for Amazon Chime SDK messaging features.
     Properties:
       CompatibleRuntimes:
-        - "nodejs12.x"
+        - "nodejs14.x"
       Content:
         S3Bucket: aws-sdk-chime-channelflowdemo-assets
         S3Key: aws-sdk-chime-layer.zip
@@ -32,7 +32,7 @@ Resources:
           S3Key: ChannelFlowProfanityDLPProcessor.zip
       MemorySize: 128
       Role: !GetAtt ProcessorLambdaRole.Arn
-      Runtime: "nodejs12.x"
+      Runtime: "nodejs14.x"
       Timeout: 30
       Layers:
           - !Ref AWSSDKChimeLayer
@@ -101,7 +101,7 @@ Resources:
           Variables:
               PROCESSOR_LAMBDA_ARN: !GetAtt ProfanityAndDLPProcessor.Arn
         Role: !GetAtt LambdaExecuteRole.Arn
-        Runtime: "nodejs12.x"
+        Runtime: "nodejs14.x"
         Timeout: 60
         Layers:
           - !Ref AWSSDKChimeLayer
@@ -274,7 +274,7 @@ Resources:
     Properties:
       FunctionName: !Sub ${DemoName}-SignInHook
       Handler: "index.handler"
-      Runtime: nodejs12.x
+      Runtime: nodejs14.x
       MemorySize: 512
       Role: !GetAtt LambdaExecuteRole.Arn
       Layers:
