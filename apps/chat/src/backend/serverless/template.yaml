@@ -40,7 +40,7 @@ Resources:
     Description: The AWS SDK with support for Amazon Chime SDK messaging features.
     Properties:
       CompatibleRuntimes:
-        - nodejs14.x
+        - nodejs16.x
       Content:
         S3Bucket: aws-blog-business-productivity-chime-sdk
         S3Key: chat-sdk-demo/aws-sdk-chime-layer.zip
@@ -60,7 +60,7 @@ Resources:
           S3Key: ChannelFlowProfanityDLPProcessor.zip
       MemorySize: 128
       Role: !GetAtt ProcessorLambdaRole.Arn
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 30
       Layers:
         - !Ref AWSSDKChimeLayer
@@ -82,7 +82,7 @@ Resources:
           S3Key: presence-demo-assets/custom-presence-channel-processor.zip
       MemorySize: 128
       Role: !GetAtt PresenceProcessorLambdaRole.Arn
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 30
       Layers:
         - !Ref AWSSDKChimeLayer
@@ -185,7 +185,7 @@ Resources:
           PROCESSOR_LAMBDA_ARN: !GetAtt ProfanityAndDLPProcessor.Arn
           PRESENCE_PROCESSOR_LAMBDA_ARN: !GetAtt PresenceProcessor.Arn
       Role: !GetAtt LambdaExecuteRole.Arn
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 60
       Layers:
         - !Ref AWSSDKChimeLayer
@@ -298,7 +298,7 @@ Resources:
     Properties:
       Handler: "index.handler"
       Role: !GetAtt LambdaExecuteRole.Arn
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 60
       Layers:
         - !Ref AWSSDKChimeLayer
@@ -450,7 +450,7 @@ Resources:
     Properties:
       FunctionName: !Sub ${DemoName}-SignInHook
       Handler: "index.handler"
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       MemorySize: 512
       Role: !GetAtt LambdaExecuteRole.Arn
       Layers:
@@ -927,7 +927,7 @@ Resources:
         Fn::GetAtt:
           - LambdaExecuteRole
           - Arn
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 60
 
   PreflightRequestLambdaPermission:
@@ -1057,7 +1057,7 @@ Resources:
           AnonUserRole: !GetAtt AuthLambdaAnonUserRole.Arn
       Layers:
         - !Ref AWSSDKChimeLayer
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Handler: index.handler
       InlineCode: |
         // Lambda that validates user tokens and returns AWS Creds for access to chime, scoped to that user
@@ -1187,7 +1187,7 @@ Resources:
       Environment:
         Variables:
           ChimeAppInstanceArn: !GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Handler: index.handler
       InlineCode: |
         const AWS = require('aws-sdk');
@@ -1308,7 +1308,7 @@ Resources:
       Environment:
         Variables:
           ChimeAppInstanceArn: !GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Handler: index.handler
       InlineCode: |
         const AWS = require('aws-sdk');
@@ -1423,7 +1423,7 @@ Resources:
       Environment:
         Variables:
           ChimeAppInstanceArn: !GetAtt TriggerChimeAppInstanceLambda.AppInstanceArn
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Handler: index.handler
       InlineCode: |
         const AWS = require('aws-sdk');

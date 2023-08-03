@@ -56,7 +56,7 @@ Resources:
                 }
 
 
-    AWSServiceRoleForAmazonChime:
+    AWSServiceRoleForAmazonChimeSdk:
         Type: "AWS::IAM::ServiceLinkedRole"
         Properties:
           AWSServiceName: "chime.amazonaws.com"
@@ -292,7 +292,7 @@ Resources:
         Description: The AWS SDK with support for Amazon Chime SDK messaging features.
         Properties:
             CompatibleRuntimes:
-            - "nodejs12.x"
+            - "nodejs16.x"
             Content:
                 S3Bucket: aws-sdk-chime-moderatedchatdemo-assets
                 S3Key: AWSSDKChimeLayer.zip
@@ -312,7 +312,7 @@ Resources:
                 S3Key: AWSSDKChimeModeratedChatDemo-MessageModerator.zip
             MemorySize: 128
             Role: !GetAtt LambdaKinesisRole.Arn
-            Runtime: "nodejs12.x"
+            Runtime: "nodejs16.x"
             Timeout: 30
             TracingConfig:
                 Mode: "PassThrough"
@@ -333,7 +333,7 @@ Resources:
                 S3Key: AWSSDKChimeModeratedChatDemo-createChatUser.zip
             MemorySize: 128
             Role: !GetAtt AuthLambdaIAMRole.Arn
-            Runtime: "nodejs12.x"
+            Runtime: "nodejs16.x"
             Timeout: 3
             TracingConfig:
                 Mode: "PassThrough"
@@ -348,7 +348,7 @@ Resources:
             Handler: "index.handler"
             MemorySize: 128
             Role: !GetAtt LambdaExecuteRole.Arn
-            Runtime: "nodejs12.x"
+            Runtime: "nodejs16.x"
             Timeout: 900
             TracingConfig:
                 Mode: "PassThrough"

@@ -145,7 +145,7 @@ Resources:
     Description: The AWS SDK with support for Amazon Chime SDK messaging features.
     Properties:
       CompatibleRuntimes:
-        - "nodejs12.x"
+        - "nodejs16.x"
       Content:
         S3Bucket: aws-sdk-chime-real-time-collaboration-assets
         S3Key: AWSSDKChimeLayer.zip
@@ -166,7 +166,7 @@ Resources:
         S3Key: AWSSDKChimeCollabAppDemo-CreateUser.zip
       MemorySize: 128
       Role: !GetAtt CollabLambdaIAMRole.Arn
-      Runtime: "nodejs12.x"
+      Runtime: "nodejs16.x"
       Timeout: 3
       TracingConfig:
         Mode: "PassThrough"
@@ -191,7 +191,7 @@ Resources:
         S3Key: AWSSDKChimeCollabAppDemo-CreateChannel.zip
       MemorySize: 128
       Role: !GetAtt CollabLambdaIAMRole.Arn
-      Runtime: "nodejs12.x"
+      Runtime: "nodejs16.x"
       Timeout: 3
       TracingConfig:
         Mode: "PassThrough"
@@ -211,7 +211,7 @@ Resources:
       Handler: "index.handler"
       MemorySize: 128
       Role: !GetAtt LambdaExecuteRole.Arn
-      Runtime: "nodejs12.x"
+      Runtime: "nodejs16.x"
       Timeout: 900
       TracingConfig:
         Mode: "PassThrough"
