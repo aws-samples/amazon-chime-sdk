@@ -56,7 +56,7 @@ Resources:
                 }
 
 
-    AWSServiceRoleForAmazonChimeSdk:
+    AWSServiceRoleForAmazonChime:
         Type: "AWS::IAM::ServiceLinkedRole"
         Properties:
           AWSServiceName: "chime.amazonaws.com"
