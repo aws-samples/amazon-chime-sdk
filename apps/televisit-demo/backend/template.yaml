@@ -25,13 +25,13 @@ Resources:
     Type: AWS::Serverless::LayerVersion
     Description: The AWS SDK with support for Amazon Chime SDK media capture feature.
     Metadata:
-      BuildMethod: nodejs12.x
+      BuildMethod: nodejs18.x
     Properties:
       LayerName: aws-chime-sdk-layer
       Description: Dependencies Layer
       ContentUri: dependencies/
       CompatibleRuntimes:
-        - nodejs12.x
+        - nodejs18.x
 
   # service linked role for live transcription
   ChimeServiceLinkedRole:
@@ -48,7 +48,7 @@ Resources:
     Properties:
       Handler: 'index.handler'
       Role: !GetAtt LambdaExecuteRole.Arn
-      Runtime: 'nodejs12.x'
+      Runtime: 'nodejs18.x'
       Timeout: 60
       ReservedConcurrentExecutions: 30
       Layers:
@@ -199,7 +199,7 @@ Resources:
       CodeUri: messagemoderator/
       Handler: index.handler
       MemorySize: 128
-      Runtime: nodejs12.x
+      Runtime: nodejs18.x
       Timeout: 30
       ReservedConcurrentExecutions: 30
       Environment:
@@ -343,7 +343,6 @@ Resources:
   LoggingBucket:
     Type: 'AWS::S3::Bucket'
     Properties:
-      AccessControl: LogDeliveryWrite
       PublicAccessBlockConfiguration:
         BlockPublicAcls: True
         BlockPublicPolicy: True
@@ -472,7 +471,7 @@ Resources:
     Properties:
       FunctionName: !Sub ${DemoName}-SignInHook
       Handler: 'index.handler'
-      Runtime: nodejs12.x
+      Runtime: nodejs18.x
       CodeUri: signinhook/
       MemorySize: 512
       Role: !GetAtt LambdaSignInRole.Arn
@@ -1063,7 +1062,7 @@ Resources:
       ReservedConcurrentExecutions: 30
       Layers:
         - !Ref AWSSDKChimeLayer
-      Runtime: nodejs12.x
+      Runtime: nodejs18.x
       CodeUri: usercreds/
       Handler: index.handler
 
@@ -1143,7 +1142,7 @@ Resources:
       ReservedConcurrentExecutions: 30
       Layers:
         - !Ref AWSSDKChimeLayer
-      Runtime: nodejs12.x
+      Runtime: nodejs18.x
       CodeUri: createmeeting/
       Handler: index.handler
 
@@ -1192,7 +1191,7 @@ Resources:
       Layers:
         - !Ref AWSSDKChimeLayer
       ReservedConcurrentExecutions: 30
-      Runtime: nodejs12.x
+      Runtime: nodejs18.x
       CodeUri: starttranscript/
       Handler: index.handler
 
@@ -1268,7 +1267,7 @@ Resources:
       ReservedConcurrentExecutions: 30
       Layers:
         - !Ref AWSSDKChimeLayer
-      Runtime: nodejs12.x
+      Runtime: nodejs18.x
       CodeUri: createattendee/
       Handler: index.handler
 
@@ -1359,7 +1358,7 @@ Resources:
       ReservedConcurrentExecutions: 30
       Layers:
         - !Ref AWSSDKChimeLayer
-      Runtime: nodejs12.x
+      Runtime: nodejs18.x
       CodeUri: startrecording/
       Handler: index.handler
 
@@ -1428,7 +1427,7 @@ Resources:
       ReservedConcurrentExecutions: 30
       Layers:
         - !Ref AWSSDKChimeLayer
-      Runtime: nodejs12.x
+      Runtime: nodejs18.x
       CodeUri: stoprecording/
       Handler: index.handler
 
@@ -1479,7 +1478,7 @@ Resources:
       ReservedConcurrentExecutions: 30
       Layers:
         - !Ref AWSSDKChimeLayer
-      Runtime: nodejs12.x
+      Runtime: nodejs18.x
       CodeUri: endmeeting/
       Handler: index.handler
 
