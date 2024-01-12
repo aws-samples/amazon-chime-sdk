@@ -30,7 +30,7 @@ if (alternateEndpoint) {
   chime.endpoint = new AWS.Endpoint(alternateEndpoint);
 } else {
   chime.endpoint = new AWS.Endpoint(
-    'https://service.chime.aws.amazon.com/console'
+    'https://meetings-chime.us-east-1.amazonaws.com'
   );
 }
 
