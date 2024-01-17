@@ -2,21 +2,24 @@
   "name": "chime-sdk-meeting-demo",
   "version": "0.1.0",
   "dependencies": {
+    "@aws-sdk/client-chime-sdk-meetings": "^3.485.0",
     "@types/react": "^18.2.7",
     "@types/react-dom": "^18.2.4",
     "@types/styled-components": "^4.4.3",
     "@types/webpack-env": "^1.17.0",
     "amazon-chime-sdk-component-library-react": "file:../../amazon-chime-sdk-component-library-react",
     "amazon-chime-sdk-js": "^3.18.2",
-    "aws-sdk": "^2.1354.0",
+    "body-parser": "^1.20.2",
     "fs-extra": "^10.1.0",
     "lodash.isequal": "^4.5.0",
+    "morgan-body": "^2.6.9",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^5.3.3",
     "styled-components": "^5.3.5",
     "styled-system": "^5.1.5",
-    "throttle-debounce": "^2.3.0"
+    "throttle-debounce": "^2.3.0",
+    "uuid": "^9.0.1"
   },
   "scripts": {
     "lint": "eslint src --ext .ts,.tsx --fix",
