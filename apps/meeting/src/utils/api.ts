@@ -6,18 +6,18 @@ import routes from '../constants/routes';
 export const BASE_URL = routes.HOME;
 
 export type MeetingFeatures = {
-  Audio: {[key: string]: string};
-}
+  Audio: { [key: string]: string };
+};
 
 export type CreateMeetingResponse = {
   MeetingFeatures: MeetingFeatures;
   MediaRegion: string;
-}
+};
 
 export type JoinMeetingInfo = {
   Meeting: CreateMeetingResponse;
   Attendee: string;
-}
+};
 
 interface MeetingResponse {
   JoinInfo: JoinMeetingInfo;
@@ -27,21 +27,25 @@ interface GetAttendeeResponse {
   name: string;
 }
 
-export async function fetchMeeting(
-  meetingId: string,
-  name: string,
+export async function createMeetingAndAttendee(
+  title: string,
+  attendeeName: string,
   region: string,
   echoReductionCapability = false
 ): Promise<MeetingResponse> {
-  const params = {
-    title: encodeURIComponent(meetingId),
-    name: encodeURIComponent(name),
+  const body = {
+    title: encodeURIComponent(title),
+    attendeeName: encodeURIComponent(attendeeName),
     region: encodeURIComponent(region),
     ns_es: String(echoReductionCapability),
   };
 
-  const res = await fetch(BASE_URL + 'join?' + new URLSearchParams(params), {
+  const res = await fetch(BASE_URL + 'join', {
     method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
   });
 
   const data = await res.json();
@@ -53,13 +57,10 @@ export async function fetchMeeting(
   return data;
 }
 
-export async function getAttendee(
-  meetingId: string,
-  chimeAttendeeId: string
-): Promise<GetAttendeeResponse> {
+export async function getAttendee(title: string, attendeeId: string): Promise<GetAttendeeResponse> {
   const params = {
-    title: encodeURIComponent(meetingId),
-    attendee: encodeURIComponent(chimeAttendeeId),
+    title: encodeURIComponent(title),
+    attendeeId: encodeURIComponent(attendeeId),
   };
 
   const res = await fetch(BASE_URL + 'attendee?' + new URLSearchParams(params), {
@@ -73,17 +74,21 @@ export async function getAttendee(
   const data = await res.json();
 
   return {
-    name: data.AttendeeInfo.Name,
+    name: data.Name,
   };
 }
 
-export async function endMeeting(meetingId: string): Promise<void> {
-  const params = {
-    title: encodeURIComponent(meetingId),
+export async function endMeeting(title: string): Promise<void> {
+  const body = {
+    title: encodeURIComponent(title),
   };
 
-  const res = await fetch(BASE_URL + 'end?' + new URLSearchParams(params), {
+  const res = await fetch(BASE_URL + 'end', {
     method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
   });
 
   if (!res.ok) {
@@ -91,6 +96,6 @@ export async function endMeeting(meetingId: string): Promise<void> {
   }
 }
 
-export const createGetAttendeeCallback = (meetingId: string) =>
-  (chimeAttendeeId: string): Promise<GetAttendeeResponse> =>
-    getAttendee(meetingId, chimeAttendeeId);
+export const createGetAttendeeCallback = (meetingId: string) => (
+  chimeAttendeeId: string
+): Promise<GetAttendeeResponse> => getAttendee(meetingId, chimeAttendeeId);

@@ -1,7 +1,7 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import { fetchMeeting } from '../../utils/api';
+import { createMeetingAndAttendee } from '../../utils/api';
 import { AMAZON_CHIME_VOICE_CONNECTOR_PHONE_NUMDER } from '../../constants';
 
 export class SIPMeetingManager {
@@ -19,7 +19,7 @@ export class SIPMeetingManager {
     voiceConnectorId: string
   ): Promise<string> => {
     try {
-      this.meetingData = await fetchMeeting(
+      this.meetingData = await createMeetingAndAttendee(
         meetingId,
         AMAZON_CHIME_VOICE_CONNECTOR_PHONE_NUMDER,
         this.region
