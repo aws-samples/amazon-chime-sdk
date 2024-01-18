@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT-0
 
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   PrimaryButton,
   Flex,
@@ -19,7 +19,7 @@ import { useAppState } from '../providers/AppStateProvider';
 
 const MeetingJoinDetails = () => {
   const meetingManager = useMeetingManager();
-  const history = useHistory();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const { meetingId, localUserName } = useAppState();
@@ -30,7 +30,7 @@ const MeetingJoinDetails = () => {
     try {
       await meetingManager.start();
       setIsLoading(false);
-      history.push(`${routes.MEETING}/${meetingId}`);
+      navigate(`${routes.MEETING}/${meetingId}`);
     } catch (error) {
       setIsLoading(false);
       setError((error as Error).message);

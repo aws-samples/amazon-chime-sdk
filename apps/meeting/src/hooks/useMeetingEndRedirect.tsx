@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT-0
 
 import { useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import {
   MeetingStatus,
@@ -16,7 +16,7 @@ import routes from '../constants/routes';
 
 const useMeetingEndRedirect = () => {
   const logger = useLogger();
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useNotificationDispatch();
   const meetingStatus = useMeetingStatus();
 
@@ -32,7 +32,7 @@ const useMeetingEndRedirect = () => {
           replaceAll: true,
         },
       });
-      history.push(routes.HOME);
+      navigate(routes.HOME);
     }
   }, [meetingStatus]);
 };

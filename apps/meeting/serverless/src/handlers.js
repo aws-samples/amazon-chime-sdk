@@ -1,32 +1,12 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-const AWS = require('aws-sdk');
-const ddb = new AWS.DynamoDB();
-const chime = new AWS.Chime({ region: 'us-east-1' });
-chime.endpoint = new AWS.Endpoint('https://service.chime.aws.amazon.com/console');
+const { ChimeSDKMeetings } = require('@aws-sdk/client-chime-sdk-meetings');
+const { CloudWatchLogs } = require('@aws-sdk/client-cloudwatch-logs');
+const { DynamoDB } = require('@aws-sdk/client-dynamodb');
 
-// Optional features like Echo Reduction is only available on Regional Meetings API
-// https://docs.aws.amazon.com/chime/latest/APIReference/API_Operations_Amazon_Chime_SDK_Meetings.html
-const chimeRegional = new AWS.ChimeSDKMeetings({ region: 'us-east-1' });
-const chimeRegionalEndpoint = 
-  process.env.REGIONAL_ENDPOINT || 
-  'https://meetings-chime.us-east-1.amazonaws.com';
-chimeRegional.endpoint = new AWS.Endpoint(chimeRegionalEndpoint);
-
-// return regional API just for Echo Reduction for now.
-function getClientForMeeting(meeting, echoReduction = 'false') {
-  if ( echoReduction === 'true' || (
-    meeting &&
-    meeting.Meeting &&
-    meeting.Meeting.MeetingFeatures &&
-    meeting.Meeting.MeetingFeatures.Audio &&
-    meeting.Meeting.MeetingFeatures.Audio.EchoReduction === 'AVAILABLE')
-  ) {
-      return chimeRegional;
-    }
-  return chime;
-}
+const chimeSDKMeetings = new ChimeSDKMeetings({ region: 'us-east-1' });
+const ddb = new DynamoDB();
 
 const oneDayFromNow = Math.floor(Date.now() / 1000) + 60 * 60 * 24;
 
@@ -40,7 +20,8 @@ const logGroupName = process.env.BROWSER_LOG_GROUP_NAME;
 // Create a unique id
 function uuid() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    var r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+    const r = (Math.random() * 16) | 0,
+      v = c === 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
 }
@@ -50,172 +31,113 @@ const getMeeting = async (meetingTitle) => {
   const result = await ddb.getItem({
     TableName: meetingsTableName,
     Key: {
-      'Title': {
-        S: meetingTitle
+      Title: {
+        S: meetingTitle,
       },
     },
-  }).promise();
+  });
   return result.Item ? JSON.parse(result.Item.Data.S) : null;
-}
+};
 
 // Add meeting in the meeting table
 const putMeeting = async (title, meetingInfo) => {
   await ddb.putItem({
     TableName: meetingsTableName,
     Item: {
-      'Title': { S: title },
-      'Data': { S: JSON.stringify(meetingInfo) },
-      'TTL': {
-        N: '' + oneDayFromNow
-      }
-    }
-  }).promise();
-}
+      Title: { S: title },
+      Data: { S: JSON.stringify(meetingInfo) },
+      TTL: {
+        N: '' + oneDayFromNow,
+      },
+    },
+  });
+};
 
 // Retrieve attendee from the attendee table
 const getAttendee = async (title, attendeeId) => {
   const result = await ddb.getItem({
     TableName: attendeesTableName,
     Key: {
-      'AttendeeId': {
-        S: `${title}/${attendeeId}`
-      }
-    }
-  }).promise();
+      AttendeeId: {
+        S: `${title}/${attendeeId}`,
+      },
+    },
+  });
   if (!result.Item) {
     return 'Unknown';
   }
   return result.Item.Name.S;
-}
+};
 
 // Add attendee in the attendee table
-const putAttendee = async (title, attendeeId, name) => {
+const putAttendee = async (title, attendeeId, attendeeName) => {
   await ddb.putItem({
     TableName: attendeesTableName,
     Item: {
-      'AttendeeId': {
-        S: `${title}/${attendeeId}`
+      AttendeeId: {
+        S: `${title}/${attendeeId}`,
       },
-      'Name': { S: name },
-      'TTL': {
-        N: '' + oneDayFromNow
-      }
-    }
-  }).promise();
-}
+      Name: { S: attendeeName },
+      TTL: {
+        N: '' + oneDayFromNow,
+      },
+    },
+  });
+};
 
 // Set up SQS notifications
 function getNotificationsConfig() {
   if (provideQueueArn) {
-    return  {
+    return {
       SqsQueueArn: sqsQueueArn,
     };
   }
-  return {}
+  return {};
 }
 
-exports.createMeeting = async (event, context, callback) => {
-  var response = {
-    "statusCode": 200,
-    "headers": {},
-    "body": '',
-    "isBase64Encoded": false
-  };
-  const title = event.queryStringParameters.title;
-  const region = event.queryStringParameters.region || 'us-east-1';
-
-  if (!title) {
-    response["statusCode"] = 400;
-    response["body"] = "Must provide title";
-    callback(null, response);
-    return;
-  }
-
-  let meetingInfo = await getMeeting(title);
-  const client = getClientForMeeting(meetingInfo, event.queryStringParameters.ns_es);
-  if (!meetingInfo) {
-    const request = {
-      ClientRequestToken: uuid(),
-      MediaRegion: region,
-      NotificationsConfiguration: getNotificationsConfig(),
-      ExternalMeetingId: title.substring(0, 64),
-    };
-    if (event.queryStringParameters.ns_es === 'true') {
-      request.MeetingFeatures = {
-        Audio: {
-          // The EchoReduction parameter helps the user enable and use Amazon Echo Reduction.
-          EchoReduction: 'AVAILABLE'
-        }
-      };
-    } 
-    console.info('Creating new meeting: ' + JSON.stringify(request));
-    meetingInfo = await client.createMeeting(request).promise();
-    await putMeeting(title, meetingInfo);
-  }
-
-  const joinInfo = {
-    JoinInfo: {
-      Title: title,
-      Meeting: meetingInfo.Meeting,
-    },
-  };
-
-  response.body = JSON.stringify(joinInfo, '', 2);
-  callback(null, response);
-};
-
 exports.join = async (event, context, callback) => {
-  var response = {
-    "statusCode": 200,
-    "headers": {},
-    "body": '',
-    "isBase64Encoded": false
+  const response = {
+    statusCode: 200,
+    headers: {},
+    body: '',
+    isBase64Encoded: false,
   };
-  const title = event.queryStringParameters.title;
-  const name = event.queryStringParameters.name;
-  const region = event.queryStringParameters.region || 'us-east-1';
+  const { title, attendeeName, region = 'us-east-1', ns_es } = JSON.parse(event.body);
 
-  if (!title || !name) {
-    response["statusCode"] = 400;
-    response["body"] = "Must provide title and name";
+  if (!title || !attendeeName) {
+    response['statusCode'] = 400;
+    response['body'] = 'Must provide title and name';
     callback(null, response);
     return;
   }
 
   let meetingInfo = await getMeeting(title);
-  const client = getClientForMeeting(meetingInfo, event.queryStringParameters.ns_es);
+
   if (!meetingInfo) {
     const request = {
       ClientRequestToken: uuid(),
       MediaRegion: region,
       NotificationsConfiguration: getNotificationsConfig(),
       ExternalMeetingId: title.substring(0, 64),
+      MeetingFeatures: ns_es === 'true' ? { Audio: { EchoReduction: 'AVAILABLE' } } : undefined,
     };
-    if (event.queryStringParameters.ns_es === 'true') {
-      request.MeetingFeatures = {
-        Audio: {
-          // The EchoReduction parameter helps the user enable and use Amazon Echo Reduction.
-          EchoReduction: 'AVAILABLE'
-        }
-      };
-    }
     console.info('Creating new meeting before joining: ' + JSON.stringify(request));
-    meetingInfo = await client.createMeeting(request).promise();
+    meetingInfo = await chimeSDKMeetings.createMeeting(request);
     await putMeeting(title, meetingInfo);
   }
 
   console.info('Adding new attendee');
-  const attendeeInfo = (await client.createAttendee({
-      MeetingId: meetingInfo.Meeting.MeetingId,
-      ExternalUserId: uuid(),
-    }).promise());
-  putAttendee(title, attendeeInfo.Attendee.AttendeeId, name);
+  const attendeeInfo = await chimeSDKMeetings.createAttendee({
+    MeetingId: meetingInfo.Meeting.MeetingId,
+    ExternalUserId: uuid(),
+  });
+  putAttendee(title, attendeeInfo.Attendee.AttendeeId, attendeeName);
 
   const joinInfo = {
     JoinInfo: {
       Title: title,
       Meeting: meetingInfo.Meeting,
-      Attendee: attendeeInfo.Attendee
+      Attendee: attendeeInfo.Attendee,
     },
   };
 
@@ -224,39 +146,36 @@ exports.join = async (event, context, callback) => {
 };
 
 exports.end = async (event, context, callback) => {
-  var response = {
-    "statusCode": 200,
-    "headers": {},
-    "body": '',
-    "isBase64Encoded": false
+  const response = {
+    statusCode: 200,
+    headers: {},
+    body: '',
+    isBase64Encoded: false,
   };
-  const title = event.queryStringParameters.title;
-  let meetingInfo = await getMeeting(title);
-  const client = getClientForMeeting(meetingInfo);
-  await client.deleteMeeting({
+  const { title } = JSON.parse(event.body);
+  const meetingInfo = await getMeeting(title);
+  await chimeSDKMeetings.deleteMeeting({
     MeetingId: meetingInfo.Meeting.MeetingId,
-  }).promise();
+  });
   callback(null, response);
 };
 
 exports.attendee = async (event, context, callback) => {
-  var response = {
-    "statusCode": 200,
-    "headers": {},
-    "body": '',
-    "isBase64Encoded": false
+  const response = {
+    statusCode: 200,
+    headers: {},
+    body: '',
+    isBase64Encoded: false,
   };
-  const title = event.queryStringParameters.title;
-  const attendeeId = event.queryStringParameters.attendee;
+  const { title, attendeeId } = event.queryStringParameters;
+
   const attendeeInfo = {
-    AttendeeInfo: {
-      AttendeeId: attendeeId,
-      Name: await getAttendee(title, attendeeId),
-    },
+    AttendeeId: attendeeId,
+    Name: await getAttendee(title, attendeeId),
   };
   response.body = JSON.stringify(attendeeInfo, '', 2);
   callback(null, response);
-}
+};
 
 // Called when SQS receives records of meeting events and logs out those records
 exports.sqs_handler = async (event, context, callback) => {
@@ -265,58 +184,58 @@ exports.sqs_handler = async (event, context, callback) => {
   console.log(records);
 
   return {};
-}
+};
 
 // Called when EventBridge receives a meeting event and logs out the event
 exports.event_bridge_handler = async (event, context, callback) => {
   console.log(event);
 
   return {};
-}
+};
 
 async function ensureLogStream(cloudWatchClient, logStreamName) {
-  var describeLogStreamsParams = {
-    "logGroupName": logGroupName,
-    "logStreamNamePrefix": logStreamName
+  const describeLogStreamsParams = {
+    logGroupName: logGroupName,
+    logStreamNamePrefix: logStreamName,
   };
-  var response = await cloudWatchClient.describeLogStreams(describeLogStreamsParams).promise();
-  var foundStream = response.logStreams.find(s => s.logStreamName === logStreamName);
+  const response = await cloudWatchClient.describeLogStreams(describeLogStreamsParams);
+  const foundStream = response.logStreams.find((s) => s.logStreamName === logStreamName);
   if (foundStream) {
     return foundStream.uploadSequenceToken;
   }
-  var putLogEventsInput = {
-    "logGroupName": logGroupName,
-    "logStreamName": logStreamName
+  const putLogEventsInput = {
+    logGroupName: logGroupName,
+    logStreamName: logStreamName,
   };
-  await cloudWatchClient.createLogStream(putLogEventsInput).promise();
+  await cloudWatchClient.createLogStream(putLogEventsInput);
   return null;
 }
 
 exports.logs = async (event, context) => {
   const response = {
-    "statusCode": 200,
-    "headers": {},
-    "body": '',
-    "isBase64Encoded": false
+    statusCode: 200,
+    headers: {},
+    body: '',
+    isBase64Encoded: false,
   };
   {
     const body = JSON.parse(event.body);
     if (!body.logs || !body.appName || !body.timestamp) {
-      response.body = "Empty Parameters Received";
+      response.body = 'Empty Parameters Received';
       response.statusCode = 400;
       return response;
     }
     const logStreamName = `ChimeReactSDKMeeting_${body.timestamp}`;
-    const cloudWatchClient = new AWS.CloudWatchLogs({
-      apiVersion: '2014-03-28'
+    const cloudWatchClient = new CloudWatchLogs({
+      apiVersion: '2014-03-28',
     });
     const putLogEventsInput = {
-      "logGroupName": logGroupName,
-      "logStreamName": logStreamName
+      logGroupName: logGroupName,
+      logStreamName: logStreamName,
     };
     const uploadSequence = await ensureLogStream(cloudWatchClient, logStreamName);
     if (uploadSequence) {
-      putLogEventsInput["sequenceToken"] = uploadSequence;
+      putLogEventsInput['sequenceToken'] = uploadSequence;
     }
     const logEvents = [];
     if (body.logs.length > 0) {
@@ -325,17 +244,19 @@ exports.logs = async (event, context) => {
         const timestampIso = new Date(log.timestampMs).toISOString();
         let message = `${body.appName} ${timestampIso} [${log.sequenceNumber}] [${log.logLevel}]`;
         if (body.meetingId && body.attendeeId) {
-          message = `${message} [meetingId: ${body.meetingId.toString()}] [attendeeId: ${body.attendeeId}]: ${log.message}`;
+          message = `${message} [meetingId: ${body.meetingId.toString()}] [attendeeId: ${body.attendeeId}]: ${
+            log.message
+          }`;
         } else {
           message = `${message}: ${log.message}`;
         }
         logEvents.push({
-          "message": message,
-          "timestamp": log.timestampMs
+          message: message,
+          timestamp: log.timestampMs,
         });
       }
-      putLogEventsInput["logEvents"] = logEvents;
-      await cloudWatchClient.putLogEvents(putLogEventsInput).promise();
+      putLogEventsInput['logEvents'] = logEvents;
+      await cloudWatchClient.putLogEvents(putLogEventsInput);
     }
   }
   return response;

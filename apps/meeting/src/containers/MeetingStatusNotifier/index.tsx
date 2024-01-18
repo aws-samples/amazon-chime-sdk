@@ -7,7 +7,7 @@ import {
 } from 'amazon-chime-sdk-component-library-react';
 import React, { useEffect, useState } from 'react';
 import routes from '../../constants/routes';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 type DemoMeetingStatus = 'connecting' | 'connected' | 'reconnecting' | 'disconnected' | 'failed';
 
@@ -15,7 +15,7 @@ const MeetingStatusNotifier: React.FC = () => {
   const meetingStatus = useMeetingStatus();
   const dispatch = useNotificationDispatch();
   const [status, setStatus] = useState<DemoMeetingStatus>();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const getMeetingStatusPayload = (message: string, severity: Severity) => {
     return {
@@ -65,7 +65,7 @@ const MeetingStatusNotifier: React.FC = () => {
             Severity.ERROR
           ),
         });
-        history.push(routes.HOME);
+        navigate(routes.HOME);
         break;
       case MeetingStatus.TerminalFailure:
         setStatus('failed');
@@ -76,7 +76,7 @@ const MeetingStatusNotifier: React.FC = () => {
             Severity.ERROR
           ),
         });
-        history.push(routes.HOME);
+        navigate(routes.HOME);
         break;
       default:
         break;
