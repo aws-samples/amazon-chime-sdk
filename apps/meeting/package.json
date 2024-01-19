@@ -2,7 +2,7 @@
   "name": "chime-sdk-meeting-demo",
   "version": "0.1.0",
   "dependencies": {
-    "@aws-sdk/client-chime-sdk-meetings": "^3.485.0",
+    "@aws-sdk/client-chime-sdk-meetings": "^3.490.0",
     "@types/react": "^18.2.7",
     "@types/react-dom": "^18.2.4",
     "@types/styled-components": "^4.4.3",
@@ -15,14 +15,14 @@
     "morgan-body": "^2.6.9",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^5.3.3",
+    "react-router-dom": "^6.21.2",
     "styled-components": "^5.3.5",
     "styled-system": "^5.1.5",
     "throttle-debounce": "^2.3.0",
     "uuid": "^9.0.1"
   },
   "scripts": {
-    "lint": "eslint src --ext .ts,.tsx --fix",
+    "lint": "eslint --fix",
     "preinstall": "scripts/setup-chime-react-submodule.js",
     "build:fast": "webpack --config ./webpack.config.js",
     "build": "npm run lint && npm install && npm run build:fast",
@@ -33,7 +33,6 @@
   },
   "devDependencies": {
     "@types/lodash.isequal": "^4.5.6",
-    "@types/react-router-dom": "^5.3.3",
     "@types/styled-system": "^5.1.15",
     "@types/throttle-debounce": "^2.1.0",
     "@typescript-eslint/eslint-plugin": "^5.33.0",
@@ -50,7 +49,7 @@
     "resize-observer-polyfill": "^1.5.1",
     "style-loader": "^3.3.1",
     "ts-loader": "^8.4.0",
-    "typescript": "4.2.3",
+    "typescript": "^4.9.5",
     "webpack": "^5.74.0",
     "webpack-cli": "^4.10.0",
     "webpack-dev-server": "^4.9.3"

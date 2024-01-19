@@ -1,6 +1,5 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
-
 {
   "root": true,
   "env": {
@@ -13,6 +12,9 @@
       "version": "detect"
     }
   },
+  "files": [
+    "src/*.(ts|tsx)"
+  ],
   "extends": [
     "eslint:recommended",
     "plugin:react/recommended",

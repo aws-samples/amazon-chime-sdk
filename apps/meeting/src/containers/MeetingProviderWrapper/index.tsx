@@ -2,13 +2,8 @@
 // SPDX-License-Identifier: MIT-0
 
 import React, { PropsWithChildren } from 'react';
-import { Route, Switch } from 'react-router-dom';
-import {
-  AudioInputDevice,
-  Device,
-  VoiceFocusModelName,
-  VoiceFocusTransformDevice,
-} from 'amazon-chime-sdk-js';
+import { Route, Routes } from 'react-router-dom';
+import { AudioInputDevice, Device, VoiceFocusModelName, VoiceFocusTransformDevice } from 'amazon-chime-sdk-js';
 import {
   BackgroundBlurProvider,
   BackgroundReplacementProvider,
@@ -46,7 +41,6 @@ const MeetingProviderWithDeviceReplacement: React.FC<PropsWithChildren> = ({ chi
 };
 
 const MeetingProviderWrapper: React.FC = () => {
-
   const { isWebAudioEnabled, videoTransformCpuUtilization, imageBlob, joinInfo } = useAppState();
 
   const isFilterEnabled = videoTransformCpuUtilization !== VideoFiltersCpuUtilization.Disabled;
@@ -55,19 +49,25 @@ const MeetingProviderWrapper: React.FC = () => {
     return (
       <>
         <NavigationProvider>
-          <Switch>
-            <Route exact path={routes.HOME} component={Home} />
-            <Route path={routes.DEVICE}>
-              <NoMeetingRedirect>
-                <DeviceSetup />
-              </NoMeetingRedirect>
-            </Route>
-            <Route path={routes.MEETING}>
-              <NoMeetingRedirect>
-                <MeetingModeSelector />
-              </NoMeetingRedirect>
-            </Route>
-          </Switch>
+          <Routes>
+            <Route path={routes.HOME} element={<Home />} />
+            <Route
+              path={routes.DEVICE}
+              element={
+                <NoMeetingRedirect>
+                  <DeviceSetup />
+                </NoMeetingRedirect>
+              }
+            ></Route>
+            <Route
+              path={`${routes.MEETING}/:meetingId`}
+              element={
+                <NoMeetingRedirect>
+                  <MeetingModeSelector />
+                </NoMeetingRedirect>
+              }
+            ></Route>
+          </Routes>
         </NavigationProvider>
         <MeetingEventObserver />
       </>
@@ -82,10 +82,7 @@ const MeetingProviderWrapper: React.FC = () => {
   }
 
   function getVoiceFocusSpecName(): VoiceFocusModelName {
-    if (
-      joinInfo &&
-      joinInfo.Meeting?.MeetingFeatures?.Audio?.EchoReduction === 'AVAILABLE'
-    ) {
+    if (joinInfo && joinInfo.Meeting?.MeetingFeatures?.Audio?.EchoReduction === 'AVAILABLE') {
       return voiceFocusName('ns_es');
     }
     return voiceFocusName('default');
@@ -99,9 +96,7 @@ const MeetingProviderWrapper: React.FC = () => {
   const getMeetingProviderWrapperWithVF = (children: React.ReactNode) => {
     return (
       <VoiceFocusProvider {...vfConfigValue}>
-        <MeetingProviderWithDeviceReplacement>
-          {children}
-        </MeetingProviderWithDeviceReplacement>
+        <MeetingProviderWithDeviceReplacement>{children}</MeetingProviderWithDeviceReplacement>
       </VoiceFocusProvider>
     );
   };
@@ -113,8 +108,8 @@ const MeetingProviderWrapper: React.FC = () => {
     }
     console.log(`Using ${filterCPUUtilization} background blur and replacement`);
     return (
-      <BackgroundBlurProvider options={{ filterCPUUtilization }} >
-        <BackgroundReplacementProvider options={{ imageBlob, filterCPUUtilization }} >
+      <BackgroundBlurProvider options={{ filterCPUUtilization }}>
+        <BackgroundReplacementProvider options={{ imageBlob, filterCPUUtilization }}>
           {children}
         </BackgroundReplacementProvider>
       </BackgroundBlurProvider>
@@ -122,11 +117,7 @@ const MeetingProviderWrapper: React.FC = () => {
   };
 
   const getMeetingProvider = (children: React.ReactNode) => {
-    return (
-      <MeetingProvider>
-        {children}
-      </MeetingProvider>
-    );
+    return <MeetingProvider>{children}</MeetingProvider>;
   };
 
   const getMeetingProviderWithFeatures = (): React.ReactNode => {
@@ -143,11 +134,7 @@ const MeetingProviderWrapper: React.FC = () => {
     return children;
   };
 
-  return (
-    <>
-      {imageBlob === undefined ? <div>Loading Assets</div> : getMeetingProviderWithFeatures()}
-    </>
-  );
+  return <>{imageBlob === undefined ? <div>Loading Assets</div> : getMeetingProviderWithFeatures()}</>;
 };
 
 const MeetingModeSelector: React.FC = () => {

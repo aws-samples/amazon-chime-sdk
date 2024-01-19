@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT-0
 
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   ControlBarButton,
   Phone,
@@ -24,17 +24,17 @@ const EndMeetingControl: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const toggleModal = (): void => setShowModal(!showModal);
   const { meetingId } = useAppState();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const leaveMeeting = async (): Promise<void> => {
-    history.push(routes.HOME);
+    navigate(routes.HOME);
   };
 
   const endMeetingForAll = async (): Promise<void> => {
     try {
       if (meetingId) {
         await endMeeting(meetingId);
-        history.push(routes.HOME);
+        navigate(routes.HOME);
       }
     } catch (e) {
       logger.error(`Could not end meeting: ${e}`);

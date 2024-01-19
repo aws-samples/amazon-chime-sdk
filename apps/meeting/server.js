@@ -1,7 +1,6 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-/* eslint-disable */
 const express = require('express');
 const compression = require('compression');
 const { v4: uuidv4 } = require('uuid');
@@ -9,7 +8,6 @@ const morganBody = require('morgan-body');
 const bodyParser = require('body-parser');
 
 const { ChimeSDKMeetings } = require('@aws-sdk/client-chime-sdk-meetings');
-/* eslint-enabled */
 
 const port = 8080;
 const region = 'us-east-1';

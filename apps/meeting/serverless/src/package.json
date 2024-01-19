@@ -2,12 +2,14 @@
   "name": "chime-sdk-meeting-serverless-demos",
   "version": "0.1.0",
   "description": "Amazon Chime SDK Serverless Demos",
-  "dependencies": {
-    "aws-sdk": "^2.1357.0"
-  },
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "git://github.com/aws-samples/amazon-chime-sdk"
+  },
+  "dependencies": {
+    "@aws-sdk/client-chime-sdk-meetings": "^3.490.0",
+    "@aws-sdk/client-cloudwatch-logs": "^3.490.0",
+    "@aws-sdk/client-dynamodb": "^3.494.0"
   }
 }

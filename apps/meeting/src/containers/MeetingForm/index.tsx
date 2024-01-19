@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT-0
 
 import React, { ChangeEvent, useContext, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   Checkbox,
   DeviceLabels,
@@ -69,7 +69,7 @@ const MeetingForm: React.FC = () => {
   const [nameErr, setNameErr] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { errorMessage, updateErrorMessage } = useContext(getErrorContext());
-  const history = useHistory();
+  const navigate = useNavigate();
   const browserBehavior = new DefaultBrowserBehavior();
 
   const handleJoinMeeting = async (e: React.FormEvent) => {
@@ -125,10 +125,10 @@ const MeetingForm: React.FC = () => {
       await meetingManager.join(meetingSessionConfiguration, options);
       if (meetingMode === MeetingMode.Spectator) {
         await meetingManager.start();
-        history.push(`${routes.MEETING}/${meetingId}`);
+        navigate(`${routes.MEETING}/${meetingId}`);
       } else {
         setMeetingMode(MeetingMode.Attendee);
-        history.push(routes.DEVICE);
+        navigate(routes.DEVICE);
       }
     } catch (error) {
       updateErrorMessage((error as Error).message);
