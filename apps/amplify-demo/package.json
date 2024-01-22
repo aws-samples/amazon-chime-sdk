@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@aws-sdk/client-chime-sdk-meetings": "^3.496.0",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "amazon-chime-sdk-component-library-react": "^3.2.0",

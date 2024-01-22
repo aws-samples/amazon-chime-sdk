@@ -145,7 +145,7 @@ Edit your schema at /<path-to-amplify-demo>/amplify/backend/api/reactSampleApi/s
   This will end with success output providing generated GraphQL endpoint and API KEY.
 
 #### 4. Modify IAM Role policy to include Amazon Chime Full Access in order to allow your Lambda function to call Amazon Chime APIs, such as createMeeting and deleteMeeting:
-  1. Navigate to your account under AWS CloudFormation stacks and choose "amplify-<your-demo-name>-dev-*".
+  1. Navigate to your account under AWS CloudFormation stacks and choose `amplify-<your-demo-name>-dev-*`.
   2. Under "Resources", choose the Physical ID link against "functionreactSampleLambda" (function<name provided when you executed amplify add function>).
   3. A nested stack will open and again choose "Resources".
   4. Choose the Physical ID link in front of "LambdaExecutionRole". This will take you to the lambda execution role in IAM.

@@ -6,9 +6,8 @@
   REGION
 Amplify Params - DO NOT EDIT */
 
-const AWS = require('aws-sdk');
-const chime = new AWS.Chime({ region: 'us-east-1' });
-chime.endpoint = new AWS.Endpoint('https://service.chime.aws.amazon.com/console');
+const { ChimeSDKMeetings } = require('@aws-sdk/client-chime-sdk-meetings');
+const chime = new ChimeSDKMeetings({ region: 'us-east-1' });
 
 const { USE_EVENT_BRIDGE, SQS_QUEUE_ARN } = process.env;
 
@@ -52,7 +51,7 @@ const createChimeMeeting = async (context) => {
     ]
   };
   console.info('Creating new chime meeting: ' + JSON.stringify(request));
-  meetingInfo = await chime.createMeeting(request).promise();
+  let meetingInfo = await chime.createMeeting(request);
 
   console.info('Adding new attendee');
   const attendeeInfo = (await chime.createAttendee({
@@ -63,7 +62,7 @@ const createChimeMeeting = async (context) => {
     // combined with the name the user provided, which can later
     // be used to help build the roster.
     ExternalUserId: `${uuid().substring(0, 8)}#${name}`.substring(0, 64),
-  }).promise());
+  }));
 
   return response(200, 'application/json', JSON.stringify(
     {
@@ -91,7 +90,7 @@ const joinChimeMeeting = async (context) => {
     // combined with the name the user provided, which can later
     // be used to help build the roster.
     ExternalUserId: `${uuid().substring(0, 8)}#${name}`.substring(0, 64),
-  }).promise());
+  }));
 
   return response(200, 'application/json', JSON.stringify(
     {
