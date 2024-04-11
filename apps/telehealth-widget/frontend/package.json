@@ -29,7 +29,7 @@
     "i18next": "^21.9.0",
     "i18next-browser-languagedetector": "^6.1.4",
     "install": "^0.13.0",
-    "npm": "^8.16.0",
+    "npm": "^10.5.2",
     "react": "^17.0.2",
     "react-datepicker": "^4.8.0",
     "react-dom": "^17.0.2",
