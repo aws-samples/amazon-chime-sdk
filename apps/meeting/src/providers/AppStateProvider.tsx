@@ -3,9 +3,10 @@
 
 import React, { useContext, useState, ReactNode, useEffect } from 'react';
 import { VideoPriorityBasedPolicy } from 'amazon-chime-sdk-js';
-import { MeetingMode, Layout, VideoFiltersCpuUtilization } from '../types';
+import { MeetingMode, Layout, VideoFiltersCpuUtilization, ReplacementOptions } from '../types';
 import { JoinMeetingInfo } from '../utils/api';
 import { useLogger } from 'amazon-chime-sdk-component-library-react';
+import { BackgroundImageEncoding, createColorBlob, createImageBlob } from '../utils/image';
 
 type Props = {
   children: ReactNode;
@@ -26,6 +27,7 @@ interface AppStateValue {
   keepLastFrameWhenPaused: boolean;
   layout: Layout;
   joinInfo: JoinMeetingInfo | undefined;
+  backgroundReplacementOption: string;
   toggleTheme: () => void;
   toggleWebAudio: () => void;
   toggleSimulcast: () => void;
@@ -42,6 +44,7 @@ interface AppStateValue {
   setBlob: (imageBlob: Blob) => void;
   skipDeviceSelection: boolean;
   toggleMeetingJoinDeviceSelection: () => void;
+  setBackgroundReplacementOption: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const AppStateContext = React.createContext<AppStateValue | null>(null);
@@ -79,30 +82,22 @@ export function AppStateProvider({ children }: Props) {
   const [videoTransformCpuUtilization, setCpuPercentage] = useState(VideoFiltersCpuUtilization.CPU40Percent);
   const [imageBlob, setImageBlob] = useState<Blob | undefined>(undefined);
   const [skipDeviceSelection, setSkipDeviceSelection] = useState(false);
+  const [backgroundReplacementOption, setBackgroundReplacementOption] = useState<string>(ReplacementOptions.Blue);
 
   useEffect(() => {
     /* Load a canvas that will be used as the replacement image for Background Replacement */
     async function loadImage() {
-      const canvas = document.createElement('canvas');
-      canvas.width = 500;
-      canvas.height = 500;
-      const ctx = canvas.getContext('2d');
-      if (ctx !== null) {
-        const grd = ctx.createLinearGradient(0, 0, 250, 0);
-        grd.addColorStop(0, '#000428');
-        grd.addColorStop(1, '#004e92');
-        ctx.fillStyle = grd;
-        ctx.fillRect(0, 0, 500, 500);
-        canvas.toBlob(function(blob) {
-          if (blob !== null) {
-            console.log('loaded canvas', canvas, blob);
-            setImageBlob(blob);
-          }
-        });
-      }
+      let blob: Blob | undefined = undefined;
+      if (backgroundReplacementOption === ReplacementOptions.Beach) {
+        const imageInBase64 = BackgroundImageEncoding();
+        blob = await createImageBlob(imageInBase64);
+      } else if (backgroundReplacementOption === ReplacementOptions.Blue) {
+        blob = await createColorBlob();
+      } 
+      setImageBlob(blob);
     }
     loadImage();
-  }, []);
+  }, [backgroundReplacementOption]);
 
   const toggleTheme = (): void => {
     if (theme === 'light') {
@@ -181,6 +176,8 @@ export function AppStateProvider({ children }: Props) {
     setBlob,
     skipDeviceSelection,
     toggleMeetingJoinDeviceSelection,
+    backgroundReplacementOption,
+    setBackgroundReplacementOption,
   };
 
   return <AppStateContext.Provider value={providerValue}>{children}</AppStateContext.Provider>;

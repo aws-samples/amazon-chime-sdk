@@ -67,6 +67,17 @@ export type VideoTransformDropdownOptionType = {
   value: string;
 };
 
+// Bcakground Replacement Options
+export const ReplacementOptions = {
+  Blue: 'Blue',
+  Beach: 'Beach',
+};
+
+export type ReplacementDropdownOptionType = {
+  label: string;
+  value: string;
+};
+
 export type MeetingConfig = {
   simulcastEnabled: boolean;
   logger: Logger;

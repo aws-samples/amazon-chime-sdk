@@ -14,13 +14,16 @@ import {
   Spinner,
   PopOverItem,
   PopOverSeparator,
+  PopOverSubMenu,
   useMeetingManager,
   isOptionActive,
   useLogger,
 } from 'amazon-chime-sdk-component-library-react';
 import { DeviceType } from '../../types';
 import useMemoCompare from '../../utils/use-memo-compare';
-import { VideoTransformOptions } from '../../types/index';
+import { VideoTransformOptions, ReplacementOptions } from '../../types/index';
+import { BackgroundImageEncoding, createColorBlob, createImageBlob } from '../../utils/image';
+import { useAppState } from '../../providers/AppStateProvider';
 
 interface Props {
   /** The label that will be shown for video input control, it defaults to `Video`. */
@@ -41,11 +44,12 @@ const VideoInputTransformControl: React.FC<Props> = ({
   const { devices, selectedDevice } = useVideoInputs();
   const { isVideoEnabled, toggleVideo } = useLocalVideo();
   const { isBackgroundBlurSupported, createBackgroundBlurDevice } = useBackgroundBlur();
-  const { isBackgroundReplacementSupported, createBackgroundReplacementDevice } = useBackgroundReplacement();
+  const { isBackgroundReplacementSupported, createBackgroundReplacementDevice, changeBackgroundReplacementImage } = useBackgroundReplacement();
   const [isLoading, setIsLoading] = useState(false);
   const [dropdownWithVideoTransformOptions, setDropdownWithVideoTransformOptions] = useState<ReactNode[] | null>(null);
   const [activeVideoTransformOption, setActiveVideoTransformOption] = useState<string>(VideoTransformOptions.None);
   const videoDevices: DeviceType[] = useMemoCompare(devices, (prev: DeviceType[] | undefined, next: DeviceType[] | undefined): boolean => isEqual(prev, next));
+  const { backgroundReplacementOption, setBackgroundReplacementOption } = useAppState();
 
   useEffect(() => {
     resetDeviceToIntrinsic();
@@ -164,6 +168,31 @@ const VideoInputTransformControl: React.FC<Props> = ({
     }
   };
 
+  const changeBackgroundReplacementOption = async (replacementOption: string) => {
+    let current = selectedDevice;
+    if (isLoading || current === undefined) {
+      return;
+    }
+    try {
+      setIsLoading(true);
+      if (replacementOption === ReplacementOptions.Beach) {
+        const imageInBase64 = BackgroundImageEncoding();
+        const blob = await createImageBlob(imageInBase64);
+        await changeBackgroundReplacementImage(blob);
+        logger.info(`Video filter changed to Relacement - Beach`);
+      } else if (replacementOption === ReplacementOptions.Blue) {
+        const blob = await createColorBlob();
+        await changeBackgroundReplacementImage(blob);
+        logger.info(`Video filter changed to Relacement - Blue`);
+      }
+      setBackgroundReplacementOption(replacementOption);
+    } catch (error) {
+      logger.error(`Error trying to change background replacement image ${error}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     const handleClick = async (deviceId: string): Promise<void> => {
       try {
@@ -241,6 +270,40 @@ const VideoInputTransformControl: React.FC<Props> = ({
         deviceOptions.push(videoTransformOptions);
       }
 
+      // Add 'Select Background Replacement Filter' to the selection dropdown as an option if it's offered/supported.
+      if (isBackgroundReplacementSupported) {
+        const replacementOptions: ReactNode = (
+          <PopOverSubMenu
+            key="backgrounReplacementFilterList"
+            text="Select Background Replacement Filter"
+          >
+            <PopOverItem
+              key="backgroundReplacementBlue"
+              checked={backgroundReplacementOption === ReplacementOptions.Blue}
+              disabled={isLoading}
+              onClick={async () => await changeBackgroundReplacementOption(ReplacementOptions.Blue)}
+            >
+              <>
+                {isLoading && <Spinner width="1.5rem" height="1.5rem" />}
+                {ReplacementOptions.Blue}
+              </>
+            </PopOverItem>
+            <PopOverItem
+              key="backgroundReplacementBeach"
+              checked={backgroundReplacementOption === ReplacementOptions.Beach}
+              disabled={isLoading}
+              onClick={async () => await changeBackgroundReplacementOption(ReplacementOptions.Beach)}
+            >
+              <>
+                {isLoading && <Spinner width="1.5rem" height="1.5rem" />}
+                {ReplacementOptions.Beach}
+              </>
+            </PopOverItem>
+          </PopOverSubMenu>
+        );
+        deviceOptions.push(<PopOverSeparator key="separator3" />);
+        deviceOptions.push(replacementOptions);
+      }
       setDropdownWithVideoTransformOptions(deviceOptions);
     };
 
