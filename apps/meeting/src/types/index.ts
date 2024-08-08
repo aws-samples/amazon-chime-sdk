@@ -68,10 +68,10 @@ export type VideoTransformDropdownOptionType = {
 };
 
 // Bcakground Replacement Options
-export const ReplacementOptions = {
-  Blue: 'Blue',
-  Beach: 'Beach',
-};
+export enum ReplacementOptions {
+  Blue = 'Blue',
+  Beach = 'Beach',
+}
 
 export enum ReplacementType {
   Color,
@@ -79,7 +79,7 @@ export enum ReplacementType {
 };
 
 export type ReplacementDropdownOptionType = {
-  label: string;
+  label: ReplacementOptions;
   type: ReplacementType;
   value: string;
 };

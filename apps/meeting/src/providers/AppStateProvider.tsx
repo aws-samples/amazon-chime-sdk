@@ -6,7 +6,7 @@ import { VideoPriorityBasedPolicy } from 'amazon-chime-sdk-js';
 import { MeetingMode, Layout, VideoFiltersCpuUtilization, ReplacementOptions, ReplacementType, ReplacementDropdownOptionType } from '../types';
 import { JoinMeetingInfo } from '../utils/api';
 import { useLogger } from 'amazon-chime-sdk-component-library-react';
-import { createBlob } from '../utils/image';
+import { createBlob } from '../utils/background-replacement';
 
 type Props = {
   children: ReactNode;
@@ -27,7 +27,7 @@ interface AppStateValue {
   keepLastFrameWhenPaused: boolean;
   layout: Layout;
   joinInfo: JoinMeetingInfo | undefined;
-  backgroundReplacementOption: string;
+  backgroundReplacementOption: ReplacementOptions;
   replacementOptionsList: ReplacementDropdownOptionType[];
   toggleTheme: () => void;
   toggleWebAudio: () => void;
@@ -45,7 +45,7 @@ interface AppStateValue {
   setBlob: (imageBlob: Blob) => void;
   skipDeviceSelection: boolean;
   toggleMeetingJoinDeviceSelection: () => void;
-  setBackgroundReplacementOption: React.Dispatch<React.SetStateAction<string>>;
+  setBackgroundReplacementOption: React.Dispatch<React.SetStateAction<ReplacementOptions>>;
 }
 
 const AppStateContext = React.createContext<AppStateValue | null>(null);
@@ -83,7 +83,7 @@ export function AppStateProvider({ children }: Props) {
   const [videoTransformCpuUtilization, setCpuPercentage] = useState(VideoFiltersCpuUtilization.CPU40Percent);
   const [imageBlob, setImageBlob] = useState<Blob | undefined>(undefined);
   const [skipDeviceSelection, setSkipDeviceSelection] = useState(false);
-  const [backgroundReplacementOption, setBackgroundReplacementOption] = useState(ReplacementOptions.Blue);
+  const [backgroundReplacementOption, setBackgroundReplacementOption] = useState<ReplacementOptions>(ReplacementOptions.Blue);
 
   const replacementOptionsList: ReplacementDropdownOptionType[] = [
     {

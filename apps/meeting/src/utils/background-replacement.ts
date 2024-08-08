@@ -36,7 +36,7 @@ export async function createColorBlob(color: string): Promise<Blob> {
     return new Promise<Blob>((resolve, reject) => {
       canvas.toBlob((blob) => {
         if (blob !== null) {
-          console.log('loaded canvas', canvas, blob);
+          console.log(`loaded canvas ${canvas}: ${blob}`);
           resolve(blob);
         } else {
           reject(new Error('Failed to create blob from canvas'));
@@ -54,10 +54,8 @@ export async function createImageBlob(image: string): Promise<Blob> {
     case ReplacementOptions.Beach:
       option = beach;
     default:
+      console.log(`Unsupported replacement image: ${image}`);
       break;
-  }
-  if (!option) {
-    throw new Error(`Unsupported replacement image: ${image}`);
   }
   try {
     const response = await fetch(option);
@@ -67,7 +65,7 @@ export async function createImageBlob(image: string): Promise<Blob> {
     const blob = await response.blob();
     return blob;
   } catch (e) {
-    console.error(`Cannot create image blob with ${beach}:`, e);
+    console.log(`Cannot create image blob with ${beach}: ${e}`);
     throw e;
   }
 }

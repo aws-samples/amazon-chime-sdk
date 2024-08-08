@@ -21,8 +21,8 @@ import {
 } from 'amazon-chime-sdk-component-library-react';
 import { DeviceType } from '../../types';
 import useMemoCompare from '../../utils/use-memo-compare';
-import { VideoTransformOptions, ReplacementOptions } from '../../types/index';
-import { createBlob } from '../../utils/image';
+import { VideoTransformOptions } from '../../types/index';
+import { createBlob } from '../../utils/background-replacement';
 import { useAppState } from '../../providers/AppStateProvider';
 
 interface Props {
@@ -180,7 +180,7 @@ const VideoInputTransformControl: React.FC<Props> = ({
         const blob = await createBlob(selectedOption);
         logger.info(`Video filter changed to Replacement - ${selectedOption.label}`);
         await changeBackgroundReplacementImage(blob);
-        setBackgroundReplacementOption(replacementOption); 
+        setBackgroundReplacementOption(selectedOption.label); 
       } else {
         logger.error(`Error: Cannot find ${replacementOption} in the replacementOptionsList: ${replacementOptionsList}`);
       }
@@ -275,28 +275,19 @@ const VideoInputTransformControl: React.FC<Props> = ({
             key="backgrounReplacementFilterList"
             text="Select Background Replacement Filter"
           >
-            <PopOverItem
-              key="backgroundReplacementBlue"
-              checked={backgroundReplacementOption === ReplacementOptions.Blue}
-              disabled={isLoading}
-              onClick={async () => await changeBackgroundReplacementOption(ReplacementOptions.Blue)}
-            >
-              <>
-                {isLoading && <Spinner width="1.5rem" height="1.5rem" />}
-                {ReplacementOptions.Blue}
-              </>
-            </PopOverItem>
-            <PopOverItem
-              key="backgroundReplacementBeach"
-              checked={backgroundReplacementOption === ReplacementOptions.Beach}
-              disabled={isLoading}
-              onClick={async () => await changeBackgroundReplacementOption(ReplacementOptions.Beach)}
-            >
-              <>
-                {isLoading && <Spinner width="1.5rem" height="1.5rem" />}
-                {ReplacementOptions.Beach}
-              </>
-            </PopOverItem>
+            {replacementOptionsList.map((option) => (
+              <PopOverItem
+                key={option.label}
+                checked={backgroundReplacementOption === option.label}
+                disabled={isLoading}
+                onClick={async () => await changeBackgroundReplacementOption(option.label)}
+              >
+                <>
+                  {isLoading && <Spinner width="1.5rem" height="1.5rem" />}
+                  {option.label}
+                </>
+              </PopOverItem>
+            ))}
           </PopOverSubMenu>
         );
         deviceOptions.push(<PopOverSeparator key="separator3" />);

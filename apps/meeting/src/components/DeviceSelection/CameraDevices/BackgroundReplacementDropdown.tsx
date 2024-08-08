@@ -9,7 +9,7 @@ import {
   useVideoInputs,
   useLogger,
 } from 'amazon-chime-sdk-component-library-react';
-import { createBlob } from '../../../utils/image';
+import { createBlob } from '../../../utils/background-replacement';
 import { useAppState } from '../../../providers/AppStateProvider';
 
 interface Props {
@@ -41,12 +41,12 @@ export const BackgroundReplacementDropdown: React.FC<Props> = ({
         const blob = await createBlob(selectedOption);
         logger.info(`Video filter changed to Replacement - ${selectedOption.label}`);
         await changeBackgroundReplacementImage(blob);
-        setBackgroundReplacementOption(selectReplacement); 
+        setBackgroundReplacementOption(selectedOption.label); 
       } else {
         logger.error(`Error: Cannot find ${selectReplacement} in the replacementOptionsList: ${replacementOptionsList}`);
       }
     } catch (e) {
-      console.error('Error trying to apply', selectReplacement, e);
+      logger.error(`Error trying to apply ${selectReplacement}: ${e}`);
     } finally {
       setIsLoading(false);
     }
