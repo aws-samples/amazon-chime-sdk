@@ -8,6 +8,7 @@ import {
   QualitySelection,
   CameraSelection,
   Label,
+  useBackgroundReplacement,
 } from 'amazon-chime-sdk-component-library-react';
 
 import { title, StyledInputGroup } from '../Styled';
@@ -19,6 +20,7 @@ import { BackgroundReplacementDropdown } from '../CameraDevices/BackgroundReplac
 const CameraDevices = () => {
   const { videoTransformCpuUtilization } = useAppState();
   const videoTransformsEnabled = videoTransformCpuUtilization !== VideoFiltersCpuUtilization.Disabled;
+  const { isBackgroundReplacementSupported } = useBackgroundReplacement();
   return (
     <div>
       <Heading tag="h2" level={6} css={title}>
@@ -35,9 +37,11 @@ const CameraDevices = () => {
           <VideoTransformDropdown />
         </StyledInputGroup> : ''
       }
-      <StyledInputGroup>
-        <BackgroundReplacementDropdown />
-      </StyledInputGroup>
+      { isBackgroundReplacementSupported ?
+        <StyledInputGroup>
+          <BackgroundReplacementDropdown />
+        </StyledInputGroup> : ''
+      }
       <Label style={{ display: 'block', marginBottom: '.5rem' }}>
         Video preview
       </Label>

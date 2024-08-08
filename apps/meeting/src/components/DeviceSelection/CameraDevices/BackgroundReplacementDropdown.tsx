@@ -7,9 +7,9 @@ import {
   FormField,
   Select,
   useVideoInputs,
+  useLogger,
 } from 'amazon-chime-sdk-component-library-react';
-import { BackgroundImageEncoding, createColorBlob, createImageBlob } from '../../../utils/image';
-import { ReplacementDropdownOptionType, ReplacementOptions } from '../../../types/index';
+import { createBlob } from '../../../utils/image';
 import { useAppState } from '../../../providers/AppStateProvider';
 
 interface Props {
@@ -21,20 +21,10 @@ export const BackgroundReplacementDropdown: React.FC<Props> = ({
   label = 'Background Replacement Dropdown',
 }) => {
   const { selectedDevice } = useVideoInputs();
-  const { backgroundReplacementOption, setBackgroundReplacementOption } = useAppState();
-  const { isBackgroundReplacementSupported, changeBackgroundReplacementImage } = useBackgroundReplacement();
+  const { backgroundReplacementOption, setBackgroundReplacementOption, replacementOptionsList } = useAppState();
+  const { changeBackgroundReplacementImage } = useBackgroundReplacement();
   const [isLoading, setIsLoading] = useState(false);
-
-  const options: ReplacementDropdownOptionType[] = [
-    {
-      label: ReplacementOptions.Blue,
-      value: isBackgroundReplacementSupported === undefined || isBackgroundReplacementSupported === false ? 'Background Replacement not supported' :ReplacementOptions.Blue,
-    },
-    {
-      label: ReplacementOptions.Beach,
-      value: isBackgroundReplacementSupported === undefined || isBackgroundReplacementSupported === false ? 'Background Replacement not supported' :ReplacementOptions.Beach,
-    },
-  ];
+  const logger = useLogger();
 
   // Creates a image blob on the selections (Blue, Beach) and changes the background image.
   const selectReplacement = async (e: ChangeEvent<HTMLSelectElement>) => {
@@ -46,18 +36,15 @@ export const BackgroundReplacementDropdown: React.FC<Props> = ({
     }
     try {
       setIsLoading(true);
-      if (selectReplacement === ReplacementOptions.Blue && isBackgroundReplacementSupported) {
-        const blob = await createColorBlob();
+      const selectedOption = replacementOptionsList.find(option => selectReplacement === option.value);
+      if (selectedOption) {
+        const blob = await createBlob(selectedOption);
+        logger.info(`Video filter changed to Replacement - ${selectedOption.label}`);
         await changeBackgroundReplacementImage(blob);
-        console.info(`Video filter changed to Relacement - Blue`);
-      } else if (selectReplacement === ReplacementOptions.Beach && isBackgroundReplacementSupported) {
-        const imageInBase64 = BackgroundImageEncoding();
-        const blob = await createImageBlob(imageInBase64);
-        await changeBackgroundReplacementImage(blob);
-        console.info(`Video filter changed to Relacement - Beach`);
-      }      
-      // Update the current selected transform.
-      setBackgroundReplacementOption(selectReplacement);  
+        setBackgroundReplacementOption(selectReplacement); 
+      } else {
+        logger.error(`Error: Cannot find ${selectReplacement} in the replacementOptionsList: ${replacementOptionsList}`);
+      }
     } catch (e) {
       console.error('Error trying to apply', selectReplacement, e);
     } finally {
@@ -68,7 +55,7 @@ export const BackgroundReplacementDropdown: React.FC<Props> = ({
   return (
     <FormField
       field={Select}
-      options={options}
+      options={replacementOptionsList}
       onChange={selectReplacement}
       value={backgroundReplacementOption}
       label={label}

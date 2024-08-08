@@ -22,7 +22,7 @@ import {
 import { DeviceType } from '../../types';
 import useMemoCompare from '../../utils/use-memo-compare';
 import { VideoTransformOptions, ReplacementOptions } from '../../types/index';
-import { BackgroundImageEncoding, createColorBlob, createImageBlob } from '../../utils/image';
+import { createBlob } from '../../utils/image';
 import { useAppState } from '../../providers/AppStateProvider';
 
 interface Props {
@@ -44,12 +44,12 @@ const VideoInputTransformControl: React.FC<Props> = ({
   const { devices, selectedDevice } = useVideoInputs();
   const { isVideoEnabled, toggleVideo } = useLocalVideo();
   const { isBackgroundBlurSupported, createBackgroundBlurDevice } = useBackgroundBlur();
-  const { isBackgroundReplacementSupported, createBackgroundReplacementDevice, changeBackgroundReplacementImage } = useBackgroundReplacement();
+  const { isBackgroundReplacementSupported, createBackgroundReplacementDevice, changeBackgroundReplacementImage, backgroundReplacementProcessor } = useBackgroundReplacement();
   const [isLoading, setIsLoading] = useState(false);
   const [dropdownWithVideoTransformOptions, setDropdownWithVideoTransformOptions] = useState<ReactNode[] | null>(null);
   const [activeVideoTransformOption, setActiveVideoTransformOption] = useState<string>(VideoTransformOptions.None);
   const videoDevices: DeviceType[] = useMemoCompare(devices, (prev: DeviceType[] | undefined, next: DeviceType[] | undefined): boolean => isEqual(prev, next));
-  const { backgroundReplacementOption, setBackgroundReplacementOption } = useAppState();
+  const { backgroundReplacementOption, setBackgroundReplacementOption, replacementOptionsList } = useAppState();
 
   useEffect(() => {
     resetDeviceToIntrinsic();
@@ -175,17 +175,15 @@ const VideoInputTransformControl: React.FC<Props> = ({
     }
     try {
       setIsLoading(true);
-      if (replacementOption === ReplacementOptions.Beach) {
-        const imageInBase64 = BackgroundImageEncoding();
-        const blob = await createImageBlob(imageInBase64);
+      const selectedOption = replacementOptionsList.find(option => replacementOption === option.label);
+      if (selectedOption) {
+        const blob = await createBlob(selectedOption);
+        logger.info(`Video filter changed to Replacement - ${selectedOption.label}`);
         await changeBackgroundReplacementImage(blob);
-        logger.info(`Video filter changed to Relacement - Beach`);
-      } else if (replacementOption === ReplacementOptions.Blue) {
-        const blob = await createColorBlob();
-        await changeBackgroundReplacementImage(blob);
-        logger.info(`Video filter changed to Relacement - Blue`);
+        setBackgroundReplacementOption(replacementOption); 
+      } else {
+        logger.error(`Error: Cannot find ${replacementOption} in the replacementOptionsList: ${replacementOptionsList}`);
       }
-      setBackgroundReplacementOption(replacementOption);
     } catch (error) {
       logger.error(`Error trying to change background replacement image ${error}`);
     } finally {
@@ -271,7 +269,7 @@ const VideoInputTransformControl: React.FC<Props> = ({
       }
 
       // Add 'Select Background Replacement Filter' to the selection dropdown as an option if it's offered/supported.
-      if (isBackgroundReplacementSupported) {
+      if (isBackgroundReplacementSupported && backgroundReplacementProcessor) {
         const replacementOptions: ReactNode = (
           <PopOverSubMenu
             key="backgrounReplacementFilterList"

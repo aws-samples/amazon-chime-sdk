@@ -3,10 +3,10 @@
 
 import React, { useContext, useState, ReactNode, useEffect } from 'react';
 import { VideoPriorityBasedPolicy } from 'amazon-chime-sdk-js';
-import { MeetingMode, Layout, VideoFiltersCpuUtilization, ReplacementOptions } from '../types';
+import { MeetingMode, Layout, VideoFiltersCpuUtilization, ReplacementOptions, ReplacementType, ReplacementDropdownOptionType } from '../types';
 import { JoinMeetingInfo } from '../utils/api';
 import { useLogger } from 'amazon-chime-sdk-component-library-react';
-import { BackgroundImageEncoding, createColorBlob, createImageBlob } from '../utils/image';
+import { createBlob } from '../utils/image';
 
 type Props = {
   children: ReactNode;
@@ -28,6 +28,7 @@ interface AppStateValue {
   layout: Layout;
   joinInfo: JoinMeetingInfo | undefined;
   backgroundReplacementOption: string;
+  replacementOptionsList: ReplacementDropdownOptionType[];
   toggleTheme: () => void;
   toggleWebAudio: () => void;
   toggleSimulcast: () => void;
@@ -82,19 +83,31 @@ export function AppStateProvider({ children }: Props) {
   const [videoTransformCpuUtilization, setCpuPercentage] = useState(VideoFiltersCpuUtilization.CPU40Percent);
   const [imageBlob, setImageBlob] = useState<Blob | undefined>(undefined);
   const [skipDeviceSelection, setSkipDeviceSelection] = useState(false);
-  const [backgroundReplacementOption, setBackgroundReplacementOption] = useState<string>(ReplacementOptions.Blue);
+  const [backgroundReplacementOption, setBackgroundReplacementOption] = useState(ReplacementOptions.Blue);
+
+  const replacementOptionsList: ReplacementDropdownOptionType[] = [
+    {
+      label: ReplacementOptions.Blue,
+      type: ReplacementType.Color,
+      value: '#0000ff',
+    },
+    {
+      label: ReplacementOptions.Beach,
+      type: ReplacementType.Image,
+      value: ReplacementOptions.Beach,
+    },
+  ];
 
   useEffect(() => {
     /* Load a canvas that will be used as the replacement image for Background Replacement */
     async function loadImage() {
-      let blob: Blob | undefined = undefined;
-      if (backgroundReplacementOption === ReplacementOptions.Beach) {
-        const imageInBase64 = BackgroundImageEncoding();
-        blob = await createImageBlob(imageInBase64);
-      } else if (backgroundReplacementOption === ReplacementOptions.Blue) {
-        blob = await createColorBlob();
-      } 
-      setImageBlob(blob);
+      const option = replacementOptionsList.find(option => backgroundReplacementOption === option.label);
+      if (option) {
+        const blob = await createBlob(option);
+        setImageBlob(blob);
+      } else {
+        logger.error(`Error: Cannot find ${backgroundReplacementOption} in the replacementOptionsList: ${replacementOptionsList}`);
+      }
     }
     loadImage();
   }, [backgroundReplacementOption]);
@@ -178,6 +191,7 @@ export function AppStateProvider({ children }: Props) {
     toggleMeetingJoinDeviceSelection,
     backgroundReplacementOption,
     setBackgroundReplacementOption,
+    replacementOptionsList,
   };
 
   return <AppStateContext.Provider value={providerValue}>{children}</AppStateContext.Provider>;

@@ -73,8 +73,14 @@ export const ReplacementOptions = {
   Beach: 'Beach',
 };
 
+export enum ReplacementType {
+  Color,
+  Image,
+};
+
 export type ReplacementDropdownOptionType = {
   label: string;
+  type: ReplacementType;
   value: string;
 };
 
