@@ -14,6 +14,7 @@ import {
   Spinner,
   PopOverItem,
   PopOverSeparator,
+  PopOverSubMenu,
   useMeetingManager,
   isOptionActive,
   useLogger,
@@ -21,6 +22,8 @@ import {
 import { DeviceType } from '../../types';
 import useMemoCompare from '../../utils/use-memo-compare';
 import { VideoTransformOptions } from '../../types/index';
+import { createBlob } from '../../utils/background-replacement';
+import { useAppState } from '../../providers/AppStateProvider';
 
 interface Props {
   /** The label that will be shown for video input control, it defaults to `Video`. */
@@ -41,11 +44,12 @@ const VideoInputTransformControl: React.FC<Props> = ({
   const { devices, selectedDevice } = useVideoInputs();
   const { isVideoEnabled, toggleVideo } = useLocalVideo();
   const { isBackgroundBlurSupported, createBackgroundBlurDevice } = useBackgroundBlur();
-  const { isBackgroundReplacementSupported, createBackgroundReplacementDevice } = useBackgroundReplacement();
+  const { isBackgroundReplacementSupported, createBackgroundReplacementDevice, changeBackgroundReplacementImage, backgroundReplacementProcessor } = useBackgroundReplacement();
   const [isLoading, setIsLoading] = useState(false);
   const [dropdownWithVideoTransformOptions, setDropdownWithVideoTransformOptions] = useState<ReactNode[] | null>(null);
   const [activeVideoTransformOption, setActiveVideoTransformOption] = useState<string>(VideoTransformOptions.None);
   const videoDevices: DeviceType[] = useMemoCompare(devices, (prev: DeviceType[] | undefined, next: DeviceType[] | undefined): boolean => isEqual(prev, next));
+  const { backgroundReplacementOption, setBackgroundReplacementOption, replacementOptionsList } = useAppState();
 
   useEffect(() => {
     resetDeviceToIntrinsic();
@@ -164,6 +168,29 @@ const VideoInputTransformControl: React.FC<Props> = ({
     }
   };
 
+  const changeBackgroundReplacementOption = async (replacementOption: string) => {
+    let current = selectedDevice;
+    if (isLoading || current === undefined) {
+      return;
+    }
+    try {
+      setIsLoading(true);
+      const selectedOption = replacementOptionsList.find(option => replacementOption === option.label);
+      if (selectedOption) {
+        const blob = await createBlob(selectedOption);
+        logger.info(`Video filter changed to Replacement - ${selectedOption.label}`);
+        await changeBackgroundReplacementImage(blob);
+        setBackgroundReplacementOption(selectedOption.label); 
+      } else {
+        logger.error(`Error: Cannot find ${replacementOption} in the replacementOptionsList: ${replacementOptionsList}`);
+      }
+    } catch (error) {
+      logger.error(`Error trying to change background replacement image ${error}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     const handleClick = async (deviceId: string): Promise<void> => {
       try {
@@ -241,6 +268,31 @@ const VideoInputTransformControl: React.FC<Props> = ({
         deviceOptions.push(videoTransformOptions);
       }
 
+      // Add 'Select Background Replacement Filter' to the selection dropdown as an option if it's offered/supported.
+      if (isBackgroundReplacementSupported && backgroundReplacementProcessor) {
+        const replacementOptions: ReactNode = (
+          <PopOverSubMenu
+            key="backgrounReplacementFilterList"
+            text="Select Background Replacement Filter"
+          >
+            {replacementOptionsList.map((option) => (
+              <PopOverItem
+                key={option.label}
+                checked={backgroundReplacementOption === option.label}
+                disabled={isLoading}
+                onClick={async () => await changeBackgroundReplacementOption(option.label)}
+              >
+                <>
+                  {isLoading && <Spinner width="1.5rem" height="1.5rem" />}
+                  {option.label}
+                </>
+              </PopOverItem>
+            ))}
+          </PopOverSubMenu>
+        );
+        deviceOptions.push(<PopOverSeparator key="separator3" />);
+        deviceOptions.push(replacementOptions);
+      }
       setDropdownWithVideoTransformOptions(deviceOptions);
     };
 
