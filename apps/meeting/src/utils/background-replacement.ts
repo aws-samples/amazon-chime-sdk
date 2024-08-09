@@ -1,7 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-import beach from '../assets/beach.jpg';
+import { BackgroundImageBeach } from './background-replacement-image';
 import { ReplacementDropdownOptionType, ReplacementOptions, ReplacementType } from '../types/index';
 
 export async function createBlob(option: ReplacementDropdownOptionType): Promise<Blob> {
@@ -49,13 +49,13 @@ export async function createColorBlob(color: string): Promise<Blob> {
 }
 
 export async function createImageBlob(image: string): Promise<Blob> {
-  let option;
+  let option: string | undefined;
   switch (image) {
     case ReplacementOptions.Beach:
-      option = beach;
-    default:
-      console.log(`Unsupported replacement image: ${image}`);
+      option = BackgroundImageBeach();
       break;
+    default:
+      return Promise.reject(new Error(`Unsupported replacement image: ${image}`));
   }
   try {
     const response = await fetch(option);
@@ -65,7 +65,7 @@ export async function createImageBlob(image: string): Promise<Blob> {
     const blob = await response.blob();
     return blob;
   } catch (e) {
-    console.log(`Cannot create image blob with ${beach}: ${e}`);
+    console.log(`Cannot create image blob with ${image}: ${e}`);
     throw e;
   }
 }
