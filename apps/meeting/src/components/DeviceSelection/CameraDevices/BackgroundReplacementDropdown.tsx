@@ -22,7 +22,7 @@ export const BackgroundReplacementDropdown: React.FC<Props> = ({
 }) => {
   const { selectedDevice } = useVideoInputs();
   const { backgroundReplacementOption, setBackgroundReplacementOption, replacementOptionsList } = useAppState();
-  const { changeBackgroundReplacementImage } = useBackgroundReplacement();
+  const { isBackgroundReplacementSupported, changeBackgroundReplacementImage } = useBackgroundReplacement();
   const [isLoading, setIsLoading] = useState(false);
   const logger = useLogger();
 
@@ -53,13 +53,17 @@ export const BackgroundReplacementDropdown: React.FC<Props> = ({
   };
 
   return (
-    <FormField
-      field={Select}
-      options={replacementOptionsList}
-      onChange={selectReplacement}
-      value={backgroundReplacementOption}
-      label={label}
-    />
+    <>
+    {isBackgroundReplacementSupported ? (
+      <FormField
+        field={Select}
+        options={replacementOptionsList}
+        onChange={selectReplacement}
+        value={backgroundReplacementOption}
+        label={label}
+      />
+    ) : ''}
+  </>
   );
 };
 
