@@ -8,7 +8,6 @@ import {
   QualitySelection,
   CameraSelection,
   Label,
-  useBackgroundReplacement,
 } from 'amazon-chime-sdk-component-library-react';
 
 import { title, StyledInputGroup } from '../Styled';
