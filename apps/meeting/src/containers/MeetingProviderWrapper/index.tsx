@@ -8,6 +8,7 @@ import {
   BackgroundBlurProvider,
   BackgroundReplacementProvider,
   MeetingProvider,
+  useLogger,
   useVoiceFocus,
   VoiceFocusProvider,
 } from 'amazon-chime-sdk-component-library-react';
@@ -42,6 +43,7 @@ const MeetingProviderWithDeviceReplacement: React.FC<PropsWithChildren> = ({ chi
 
 const MeetingProviderWrapper: React.FC = () => {
   const { isWebAudioEnabled, videoTransformCpuUtilization, imageBlob, joinInfo } = useAppState();
+  const logger = useLogger();
 
   const isFilterEnabled = videoTransformCpuUtilization !== VideoFiltersCpuUtilization.Disabled;
 
@@ -108,8 +110,8 @@ const MeetingProviderWrapper: React.FC = () => {
     }
     console.log(`Using ${filterCPUUtilization} background blur and replacement`);
     return (
-      <BackgroundBlurProvider options={{ filterCPUUtilization }}>
-        <BackgroundReplacementProvider options={{ imageBlob, filterCPUUtilization }}>
+      <BackgroundBlurProvider options={{ filterCPUUtilization, logger }}>
+        <BackgroundReplacementProvider options={{ imageBlob, filterCPUUtilization, logger }}>
           {children}
         </BackgroundReplacementProvider>
       </BackgroundBlurProvider>
