@@ -7,7 +7,7 @@
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "amazon-chime-sdk-component-library-react": "^3.2.0",
-    "aws-amplify": "^4.3.30",
+    "aws-amplify": "^6.0.17",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "styled-components": "^5.3.5",
