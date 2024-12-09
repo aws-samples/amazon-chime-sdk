@@ -4,7 +4,7 @@
   "dependencies": {
     "@aws-sdk/client-chime-sdk-meetings": "^3.490.0",
     "amazon-chime-sdk-component-library-react": "file:../../amazon-chime-sdk-component-library-react",
-    "amazon-chime-sdk-js": "^3.21.1",
+    "amazon-chime-sdk-js": "^3.23.0",
     "body-parser": "^1.20.2",
     "fs-extra": "^10.1.0",
     "lodash.isequal": "^4.5.0",
