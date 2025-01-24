@@ -43,6 +43,7 @@ const MeetingForm: React.FC = () => {
   const {
     region,
     meetingId,
+    localUserName,
     meetingMode,
     enableSimulcast,
     priorityBasedPolicy,
@@ -64,8 +65,6 @@ const MeetingForm: React.FC = () => {
     skipDeviceSelection,
     toggleMeetingJoinDeviceSelection,
   } = useAppState();
-  const [formMeetingId, setFormMeetingId] = useState('');
-  const [formLocalUserName, setFormLocalUserName] = useState('');
   const [meetingErr, setMeetingErr] = useState(false);
   const [nameErr, setNameErr] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -75,11 +74,8 @@ const MeetingForm: React.FC = () => {
 
   const handleJoinMeeting = async (e: React.FormEvent) => {
     e.preventDefault();
-    const id = formMeetingId.trim().toLocaleLowerCase();
-    const attendeeName = formLocalUserName.trim();
-    
-    setMeetingId(id);
-    setLocalUserName(attendeeName);
+    const id = meetingId.trim().toLocaleLowerCase();
+    const attendeeName = localUserName.trim();
 
     if (!id || !attendeeName) {
       if (!attendeeName) {
@@ -129,7 +125,7 @@ const MeetingForm: React.FC = () => {
       await meetingManager.join(meetingSessionConfiguration, options);
       if (meetingMode === MeetingMode.Spectator) {
         await meetingManager.start();
-        navigate(`${routes.MEETING}/${id}`);
+        navigate(`${routes.MEETING}/${meetingId}`);
       } else {
         setMeetingMode(MeetingMode.Attendee);
         navigate(routes.DEVICE);
@@ -154,7 +150,7 @@ const MeetingForm: React.FC = () => {
       <FormField
         field={Input}
         label="Meeting Id"
-        value={formMeetingId}
+        value={meetingId}
         infoText="Anyone with access to the meeting ID can join"
         fieldProps={{
           name: 'meetingId',
@@ -163,7 +159,7 @@ const MeetingForm: React.FC = () => {
         errorText="Please enter a valid meeting ID"
         error={meetingErr}
         onChange={(e: ChangeEvent<HTMLInputElement>): void => {
-          setFormMeetingId(e.target.value);
+          setMeetingId(e.target.value);
           if (meetingErr) {
             setMeetingErr(false);
           }
@@ -172,7 +168,7 @@ const MeetingForm: React.FC = () => {
       <FormField
         field={Input}
         label="Name"
-        value={formLocalUserName}
+        value={localUserName}
         fieldProps={{
           name: 'name',
           placeholder: 'Enter Your Name',
@@ -180,7 +176,7 @@ const MeetingForm: React.FC = () => {
         errorText="Please enter a valid name"
         error={nameErr}
         onChange={(e: ChangeEvent<HTMLInputElement>): void => {
-          setFormLocalUserName(e.target.value);
+          setLocalUserName(e.target.value);
           if (nameErr) {
             setNameErr(false);
           }
