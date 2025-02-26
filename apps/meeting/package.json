@@ -12,8 +12,9 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.21.2",
-    "styled-components": "^5.3.5",
+    "styled-components": "^6.1.15",
     "styled-system": "^5.1.5",
+    "stylis": "^4.3.6",
     "throttle-debounce": "^2.3.0",
     "uuid": "^9.0.1"
   },
@@ -31,7 +32,6 @@
     "@types/lodash.isequal": "^4.5.6",
     "@types/react": "^18.2.79",
     "@types/react-dom": "^18.2.4",
-    "@types/styled-components": "^4.4.3",
     "@types/styled-system": "^5.1.15",
     "@types/throttle-debounce": "^2.1.0",
     "@types/webpack-env": "^1.17.0",

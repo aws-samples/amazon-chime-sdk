@@ -4,44 +4,43 @@
 import styled from 'styled-components';
 
 interface Props {
-  showNav: boolean;
-  showRoster: boolean;
-  showChat: boolean;
+  $showNav: boolean;
+  $showRoster: boolean;
+  $showChat: boolean;
 }
 
 export const StyledLayout = styled.main<Props>`
   height: 100vh;
   width: 100%;
-
   display: grid;
 
   .video-content {
     grid-area: content;
   }
 
-  ${({ showNav, showRoster, showChat }) => {
-    if (showNav && (showRoster || showChat)) {
+  ${({ $showNav, $showRoster, $showChat }) => {
+    if ($showNav && ($showRoster || $showChat)) {
       return `
         grid-template-columns: auto auto 1fr;
         grid-template-areas: 'nav side-panel content';
       `;
     }
 
-    if (showNav && (showRoster || showChat)) {
+    if ($showNav && ($showRoster || $showChat)) {
       return `
         grid-template-columns: auto auto 1fr;
         grid-template-areas: 'nav side-panel content';
       `;
     }
 
-    if (showNav) {
+    if ($showNav) {
       return `
         grid-template-columns: auto 1fr;
         grid-template-areas: 'nav content';
       `;
     }
 
-    if (showRoster || showChat) {
+    if ($showRoster || $showChat) {
       return `
         grid-template-columns: auto 1fr;
         grid-template-areas: 'side-panel content';
