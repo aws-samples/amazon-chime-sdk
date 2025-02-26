@@ -27,7 +27,7 @@ const MeetingView = (props: { mode: MeetingMode }) => {
     <UserActivityProvider>
       <DataMessagesProvider>
         <VideoTileGridProvider>
-          <StyledLayout showNav={showNavbar} showRoster={showRoster} showChat={showChat}>
+          <StyledLayout $showNav={showNavbar} $showRoster={showRoster} $showChat={showChat}>
             <StyledContent>
               <VideoTileGrid
                 layout={layout === Layout.Gallery ? 'standard' : 'featured'}

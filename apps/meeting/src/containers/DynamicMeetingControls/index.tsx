@@ -35,7 +35,7 @@ const DynamicMeetingControls = () => {
   };
 
   return (
-    <StyledControls className="controls" active={!!isUserActive}>
+    <StyledControls className="controls" $active={!!isUserActive}>
       <ControlBar
         className="controls-menu"
         layout="undocked-horizontal"
