@@ -3,7 +3,7 @@
 
 import React, { PropsWithChildren } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import { AudioInputDevice, Device, VoiceFocusModelName, VoiceFocusTransformDevice } from 'amazon-chime-sdk-js';
+import { AudioInputDevice, VoiceFocusModelName, VoiceFocusTransformDevice } from 'amazon-chime-sdk-js';
 import {
   BackgroundBlurProvider,
   BackgroundReplacementProvider,
@@ -12,22 +12,20 @@ import {
   useVoiceFocus,
   VoiceFocusProvider,
 } from 'amazon-chime-sdk-component-library-react';
+import { useAppState } from '../../providers/AppStateProvider';
 
 import routes from '../../constants/routes';
 import { NavigationProvider } from '../../providers/NavigationProvider';
 import NoMeetingRedirect from '../NoMeetingRedirect';
 import { Meeting, Home, DeviceSetup } from '../../views';
 import MeetingEventObserver from '../MeetingEventObserver';
-import { useAppState } from '../../providers/AppStateProvider';
 import { VideoFiltersCpuUtilization } from '../../types';
 
 const MeetingProviderWithDeviceReplacement: React.FC<PropsWithChildren> = ({ children }) => {
   const { addVoiceFocus } = useVoiceFocus();
+  const { enableMaxContentShares } = useAppState();
 
-  const onDeviceReplacement = (
-    nextDevice: string,
-    currentDevice: AudioInputDevice
-  ): Promise<Device | VoiceFocusTransformDevice> => {
+  const onDeviceReplacement = (nextDevice: string, currentDevice: AudioInputDevice) => {
     if (currentDevice instanceof VoiceFocusTransformDevice) {
       return addVoiceFocus(nextDevice);
     }
@@ -35,7 +33,8 @@ const MeetingProviderWithDeviceReplacement: React.FC<PropsWithChildren> = ({ chi
   };
 
   const meetingConfigValue = {
-    onDeviceReplacement,
+    onDeviceReplacement: onDeviceReplacement as any,
+    ...(enableMaxContentShares ? { maxContentShares: 2 } : {}),
   };
 
   return <MeetingProvider {...meetingConfigValue}>{children}</MeetingProvider>;
