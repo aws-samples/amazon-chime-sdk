@@ -17,12 +17,13 @@ import { useAppState } from '../../providers/AppStateProvider';
 import { DataMessagesProvider } from '../../providers/DataMessagesProvider';
 import MeetingStatusNotifier from '../../containers/MeetingStatusNotifier';
 import VideoTileGrid from '../../components/VideoTileGrid/VideoTileGrid';
+import AnnotatedContentShare from '../../components/AnnotatedContentShare';
 
 const MeetingView = (props: { mode: MeetingMode }) => {
   useMeetingEndRedirect();
   const { showNavbar, showRoster, showChat } = useNavigation();
   const { mode } = props;
-  const { layout } = useAppState();
+  const { layout, showAnnotatedContentShare } = useAppState();
 
   return (
     <UserActivityProvider>
@@ -35,6 +36,7 @@ const MeetingView = (props: { mode: MeetingMode }) => {
                 className="videos"
                 noRemoteVideoView={<MeetingDetails />}
               />
+              {showAnnotatedContentShare && <AnnotatedContentShare />}
               {mode === MeetingMode.Spectator ? <DynamicMeetingControls /> : <MeetingControls />}
             </StyledContent>
             <MeetingStatusNotifier />

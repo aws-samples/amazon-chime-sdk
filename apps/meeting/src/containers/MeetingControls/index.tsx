@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT-0
 
 import React from 'react';
+import AnnotationRecordingControl from '../../components/AnnotationRecordingControl';
 import {
   ControlBar,
   AudioInputVFControl,
@@ -50,6 +51,7 @@ const MeetingControls: React.FC = () => {
         { isWebAudioEnabled ? <AudioInputVFControl /> :  <AudioInputControl /> }
         { videoTransformsEnabled ? <VideoInputTransformControl /> : <VideoInputControl/> }
         <ContentShareControl />
+        <AnnotationRecordingControl />
         <AudioOutputControl />
         <EndMeetingControl />
       </ControlBar>
