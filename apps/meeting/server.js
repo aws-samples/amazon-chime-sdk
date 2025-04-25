@@ -16,7 +16,7 @@ const app = express();
 app.use(compression());
 app.use(express.json());
 app.use(bodyParser.json());
-morganBody(app);
+morganBody(app, { maxBodyLength: Infinity });
 
 const chimeSDKMeetings = new ChimeSDKMeetings({ region });
 

@@ -29,11 +29,13 @@ interface AppStateValue {
   joinInfo: JoinMeetingInfo | undefined;
   backgroundReplacementOption: ReplacementOptions;
   replacementOptionsList: ReplacementDropdownOptionType[];
+  enableMaxContentShares: boolean;
   toggleTheme: () => void;
   toggleWebAudio: () => void;
   toggleSimulcast: () => void;
   togglePriorityBasedPolicy: () => void;
   toggleKeepLastFrameWhenPaused: () => void;
+  toggleMaxContentShares: () => void;
   setCpuUtilization: (videoTransformCpuUtilization: string) => void;
   toggleEchoReduction: () => void;
   setMeetingMode: React.Dispatch<React.SetStateAction<MeetingMode>>;
@@ -84,6 +86,7 @@ export function AppStateProvider({ children }: Props) {
   const [imageBlob, setImageBlob] = useState<Blob | undefined>(undefined);
   const [skipDeviceSelection, setSkipDeviceSelection] = useState(false);
   const [backgroundReplacementOption, setBackgroundReplacementOption] = useState<ReplacementOptions>(ReplacementOptions.Blue);
+  const [enableMaxContentShares, setEnableMaxContentShares] = useState(false);
 
   const replacementOptionsList: ReplacementDropdownOptionType[] = [
     {
@@ -158,6 +161,10 @@ export function AppStateProvider({ children }: Props) {
     setIsEchoReductionEnabled((current) => !current);
   };
 
+  const toggleMaxContentShares = (): void => {
+    setEnableMaxContentShares((current) => !current);
+  };
+
   const providerValue = {
     meetingId,
     localUserName,
@@ -192,6 +199,8 @@ export function AppStateProvider({ children }: Props) {
     backgroundReplacementOption,
     setBackgroundReplacementOption,
     replacementOptionsList,
+    enableMaxContentShares,
+    toggleMaxContentShares,
   };
 
   return <AppStateContext.Provider value={providerValue}>{children}</AppStateContext.Provider>;

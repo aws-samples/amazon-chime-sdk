@@ -52,11 +52,13 @@ const MeetingForm: React.FC = () => {
     videoTransformCpuUtilization: videoTransformCpuUtilization,
     setJoinInfo,
     isEchoReductionEnabled,
+    enableMaxContentShares,
     toggleEchoReduction,
     toggleWebAudio,
     toggleSimulcast,
     togglePriorityBasedPolicy,
     toggleKeepLastFrameWhenPaused,
+    toggleMaxContentShares,
     setMeetingMode,
     setMeetingId,
     setLocalUserName,
@@ -122,7 +124,7 @@ const MeetingForm: React.FC = () => {
         skipDeviceSelection,
       };
 
-      await meetingManager.join(meetingSessionConfiguration, options);
+      await meetingManager.join(meetingSessionConfiguration as any, options);
       if (meetingMode === MeetingMode.Spectator) {
         await meetingManager.start();
         navigate(`${routes.MEETING}/${meetingId}`);
@@ -255,11 +257,19 @@ const MeetingForm: React.FC = () => {
       />
       <FormField
         field={Checkbox}
-        label="Skip meeting join device selection"
+        label="Skip Meeting Join Device Selection"
         value=""
         checked={skipDeviceSelection}
         onChange={toggleMeetingJoinDeviceSelection}
         infoText="Please select the devices manually to successfully join a meeting"
+      />
+      <FormField
+        field={Checkbox}
+        label="Enable Multiple Content Shares (max: 2)"
+        value=""
+        checked={enableMaxContentShares}
+        onChange={toggleMaxContentShares}
+        infoText="Allow up to 2 simultaneous content shares in the meeting"
       />
       <Flex container layout="fill-space-centered" style={{ marginTop: '2.5rem' }}>
         {isLoading ? <Spinner /> : <PrimaryButton label="Continue" onClick={handleJoinMeeting} />}
