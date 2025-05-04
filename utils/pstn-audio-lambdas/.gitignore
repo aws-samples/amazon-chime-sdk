@@ -1,3 +1,4 @@
 samconfig.toml
 packaged-template.yaml
 .aws-sam
+packaged.yaml
