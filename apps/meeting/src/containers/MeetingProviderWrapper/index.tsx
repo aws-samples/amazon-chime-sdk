@@ -3,14 +3,13 @@
 
 import React, { PropsWithChildren } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import { AudioInputDevice, VoiceFocusModelName, VoiceFocusTransformDevice } from 'amazon-chime-sdk-js';
+import { AudioInputDevice, VoiceFocusTransformDevice } from 'amazon-chime-sdk-js';
 import {
   BackgroundBlurProvider,
   BackgroundReplacementProvider,
   MeetingProvider,
   useLogger,
   useVoiceFocus,
-  VoiceFocusProvider,
 } from 'amazon-chime-sdk-component-library-react';
 import { useAppState } from '../../providers/AppStateProvider';
 
@@ -41,7 +40,7 @@ const MeetingProviderWithDeviceReplacement: React.FC<PropsWithChildren> = ({ chi
 };
 
 const MeetingProviderWrapper: React.FC = () => {
-  const { isWebAudioEnabled, videoTransformCpuUtilization, imageBlob, joinInfo } = useAppState();
+  const { videoTransformCpuUtilization, imageBlob } = useAppState();
   const logger = useLogger();
 
   const isFilterEnabled = videoTransformCpuUtilization !== VideoFiltersCpuUtilization.Disabled;
@@ -75,33 +74,6 @@ const MeetingProviderWrapper: React.FC = () => {
     );
   };
 
-  function voiceFocusName(name: string): VoiceFocusModelName {
-    if (name && ['default', 'ns_es'].includes(name)) {
-      return name as VoiceFocusModelName;
-    }
-    return 'default';
-  }
-
-  function getVoiceFocusSpecName(): VoiceFocusModelName {
-    if (joinInfo && joinInfo.Meeting?.MeetingFeatures?.Audio?.EchoReduction === 'AVAILABLE') {
-      return voiceFocusName('ns_es');
-    }
-    return voiceFocusName('default');
-  }
-
-  const vfConfigValue = {
-    spec: { name: getVoiceFocusSpecName() },
-    createMeetingResponse: joinInfo,
-  };
-
-  const getMeetingProviderWrapperWithVF = (children: React.ReactNode) => {
-    return (
-      <VoiceFocusProvider {...vfConfigValue}>
-        <MeetingProviderWithDeviceReplacement>{children}</MeetingProviderWithDeviceReplacement>
-      </VoiceFocusProvider>
-    );
-  };
-
   const getWrapperWithVideoFilter = (children: React.ReactNode) => {
     let filterCPUUtilization = parseInt(videoTransformCpuUtilization, 10);
     if (!filterCPUUtilization) {
@@ -117,22 +89,14 @@ const MeetingProviderWrapper: React.FC = () => {
     );
   };
 
-  const getMeetingProvider = (children: React.ReactNode) => {
-    return <MeetingProvider>{children}</MeetingProvider>;
-  };
-
   const getMeetingProviderWithFeatures = (): React.ReactNode => {
-    let children = getMeetingProviderWrapper();
+    const baseWrapper = getMeetingProviderWrapper();
 
-    if (isFilterEnabled) {
-      children = getWrapperWithVideoFilter(children);
-    }
-    if (isWebAudioEnabled) {
-      children = getMeetingProviderWrapperWithVF(children);
-    } else {
-      children = getMeetingProvider(children);
-    }
-    return children;
+    return (
+      <MeetingProviderWithDeviceReplacement>
+        {isFilterEnabled ? getWrapperWithVideoFilter(baseWrapper) : baseWrapper}
+      </MeetingProviderWithDeviceReplacement>
+    );
   };
 
   return <>{imageBlob === undefined ? <div>Loading Assets</div> : getMeetingProviderWithFeatures()}</>;
