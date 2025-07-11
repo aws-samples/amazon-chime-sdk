@@ -3,7 +3,14 @@
 
 import React, { useContext, useState, ReactNode, useEffect } from 'react';
 import { VideoPriorityBasedPolicy } from 'amazon-chime-sdk-js';
-import { MeetingMode, Layout, VideoFiltersCpuUtilization, ReplacementOptions, ReplacementType, ReplacementDropdownOptionType } from '../types';
+import {
+  MeetingMode,
+  Layout,
+  VideoFiltersCpuUtilization,
+  ReplacementOptions,
+  ReplacementType,
+  ReplacementDropdownOptionType,
+} from '../types';
 import { JoinMeetingInfo } from '../utils/api';
 import { useLogger } from 'amazon-chime-sdk-component-library-react';
 import { createBlob } from '../utils/background-replacement';
@@ -17,7 +24,8 @@ interface AppStateValue {
   localUserName: string;
   theme: string;
   region: string;
-  isWebAudioEnabled: boolean;
+  isVoiceFocusDesired: boolean;
+  isVoiceFocusEnabled: boolean;
   videoTransformCpuUtilization: string;
   imageBlob: Blob | undefined;
   isEchoReductionEnabled: boolean;
@@ -31,7 +39,8 @@ interface AppStateValue {
   replacementOptionsList: ReplacementDropdownOptionType[];
   enableMaxContentShares: boolean;
   toggleTheme: () => void;
-  toggleWebAudio: () => void;
+  toggleVoiceFocusDesired: () => void;
+  setIsVoiceFocusEnabled: (enabled: boolean) => void;
   toggleSimulcast: () => void;
   togglePriorityBasedPolicy: () => void;
   toggleKeepLastFrameWhenPaused: () => void;
@@ -73,7 +82,8 @@ export function AppStateProvider({ children }: Props) {
   const [joinInfo, setJoinInfo] = useState<JoinMeetingInfo | undefined>(undefined);
   const [layout, setLayout] = useState(Layout.Gallery);
   const [localUserName, setLocalUserName] = useState('');
-  const [isWebAudioEnabled, setIsWebAudioEnabled] = useState(true);
+  const [isVoiceFocusDesired, setIsVoiceFocusDesired] = useState(false);
+  const [isVoiceFocusEnabled, setIsVoiceFocusEnabled] = useState(false);
   const [priorityBasedPolicy, setPriorityBasedPolicy] = useState<VideoPriorityBasedPolicy | undefined>(undefined);
   const [enableSimulcast, setEnableSimulcast] = useState(false);
   const [keepLastFrameWhenPaused, setKeepLastFrameWhenPaused] = useState(false);
@@ -85,7 +95,9 @@ export function AppStateProvider({ children }: Props) {
   const [videoTransformCpuUtilization, setCpuPercentage] = useState(VideoFiltersCpuUtilization.CPU40Percent);
   const [imageBlob, setImageBlob] = useState<Blob | undefined>(undefined);
   const [skipDeviceSelection, setSkipDeviceSelection] = useState(false);
-  const [backgroundReplacementOption, setBackgroundReplacementOption] = useState<ReplacementOptions>(ReplacementOptions.Blue);
+  const [backgroundReplacementOption, setBackgroundReplacementOption] = useState<ReplacementOptions>(
+    ReplacementOptions.Blue
+  );
   const [enableMaxContentShares, setEnableMaxContentShares] = useState(false);
 
   const replacementOptionsList: ReplacementDropdownOptionType[] = [
@@ -104,12 +116,14 @@ export function AppStateProvider({ children }: Props) {
   useEffect(() => {
     /* Load a canvas that will be used as the replacement image for Background Replacement */
     async function loadImage() {
-      const option = replacementOptionsList.find(option => backgroundReplacementOption === option.label);
+      const option = replacementOptionsList.find((option) => backgroundReplacementOption === option.label);
       if (option) {
         const blob = await createBlob(option);
         setImageBlob(blob);
       } else {
-        logger.error(`Error: Cannot find ${backgroundReplacementOption} in the replacementOptionsList: ${replacementOptionsList}`);
+        logger.error(
+          `Error: Cannot find ${backgroundReplacementOption} in the replacementOptionsList: ${replacementOptionsList}`
+        );
       }
     }
     loadImage();
@@ -129,8 +143,8 @@ export function AppStateProvider({ children }: Props) {
     setSkipDeviceSelection((current) => !current);
   };
 
-  const toggleWebAudio = (): void => {
-    setIsWebAudioEnabled((current) => !current);
+  const toggleVoiceFocusDesired = (): void => {
+    setIsVoiceFocusDesired((current) => !current);
   };
 
   const toggleSimulcast = (): void => {
@@ -169,10 +183,11 @@ export function AppStateProvider({ children }: Props) {
     meetingId,
     localUserName,
     theme,
-    isWebAudioEnabled,
     videoTransformCpuUtilization,
     imageBlob,
     isEchoReductionEnabled,
+    isVoiceFocusDesired,
+    isVoiceFocusEnabled,
     region,
     meetingMode,
     layout,
@@ -181,7 +196,8 @@ export function AppStateProvider({ children }: Props) {
     priorityBasedPolicy,
     keepLastFrameWhenPaused,
     toggleTheme,
-    toggleWebAudio,
+    toggleVoiceFocusDesired,
+    setIsVoiceFocusEnabled,
     togglePriorityBasedPolicy,
     toggleKeepLastFrameWhenPaused,
     toggleSimulcast,
