@@ -48,12 +48,11 @@ export async function createMeetingAndAttendee(
     body: JSON.stringify(body),
   });
 
-  const data = await res.json();
-
-  if (data.error) {
-    throw new Error(`Server error: ${data.error}`);
+  if (!res.ok) {
+    throw new Error(`HTTP error! status: ${res.status}`);
   }
 
+  const data = await res.json();
   return data;
 }
 
