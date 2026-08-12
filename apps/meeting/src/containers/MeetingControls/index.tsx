@@ -18,7 +18,7 @@ import EndMeetingControl from '../EndMeetingControl';
 import { useNavigation } from '../../providers/NavigationProvider';
 import { StyledControls } from './Styled';
 import { useAppState } from '../../providers/AppStateProvider';
-import { VideoFiltersCpuUtilization } from '../../types';
+import { VideoFiltersCpuUtilization } from '../../constants';
 import VideoInputTransformControl from '../../components/MeetingControls/VideoInputTransformControl';
 
 const MeetingControls: React.FC = () => {

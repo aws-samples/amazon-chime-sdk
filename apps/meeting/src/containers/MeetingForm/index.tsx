@@ -28,7 +28,8 @@ import DevicePermissionPrompt from '../DevicePermissionPrompt';
 import RegionSelection from './RegionSelection';
 import { createGetAttendeeCallback, createMeetingAndAttendee, JoinMeetingInfo } from '../../utils/api';
 import { useAppState } from '../../providers/AppStateProvider';
-import { MeetingMode, VideoFiltersCpuUtilization } from '../../types';
+import { MeetingMode } from '../../types';
+import { VideoFiltersCpuUtilization } from '../../constants';
 import { MeetingManagerJoinOptions } from 'amazon-chime-sdk-component-library-react/lib/providers/MeetingProvider/types';
 import meetingConfig from '../../meetingConfig';
 
