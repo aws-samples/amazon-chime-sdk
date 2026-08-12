@@ -1,7 +1,7 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import { Logger, POSTLogger } from 'amazon-chime-sdk-js';
+import { BackgroundSegmentationVideoFrameProcessorConfig, Logger, ModelType, POSTLogger } from 'amazon-chime-sdk-js';
 
 export type FormattedDeviceType = {
   deviceId: string;
@@ -47,45 +47,16 @@ export enum Layout {
   Featured,
 }
 
-// Different CPU Utilizations percentage options for initializing background blur and replacement processors
-export const VideoFiltersCpuUtilization = {
-  Disabled: '0',
-  CPU10Percent: '10',
-  CPU20Percent: '20',
-  CPU40Percent: '40',
-};
-
-// Video Transform Options
-export enum VideoTransformOptions {
-  None = 'None',
-  Blur = 'Background Blur',
-  Replacement = 'Background Replacement',
-}
-
-export type VideoTransformDropdownOptionType = {
-  label: string;
-  value: string;
-};
-
-// Bcakground Replacement Options
-export enum ReplacementOptions {
-  Blue = 'Blue',
-  Beach = 'Beach',
-}
-
-export enum ReplacementType {
-  Color,
-  Image,
-};
-
-export type ReplacementDropdownOptionType = {
-  label: ReplacementOptions;
-  type: ReplacementType;
-  value: string;
-};
 
 export type MeetingConfig = {
   simulcastEnabled: boolean;
   logger: Logger;
   postLogger?: POSTLogger; // Keep track of POSTLogger to update meeting metadata while joining a meeting.
 };
+
+export interface EffectOption {
+  label: string;
+  value: string;
+  config: BackgroundSegmentationVideoFrameProcessorConfig | null;
+  modelType: ModelType;
+}
