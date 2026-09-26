@@ -1,20 +1,15 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import React, { useContext, useState, ReactNode, useEffect } from 'react';
+import React, { useContext, useState, ReactNode } from 'react';
 import { VideoPriorityBasedPolicy } from 'amazon-chime-sdk-js';
 import {
   MeetingMode,
   Layout,
-  VideoFiltersCpuUtilization,
-  VideoTransformOptions,
-  ReplacementOptions,
-  ReplacementType,
-  ReplacementDropdownOptionType,
 } from '../types';
+import { VideoFiltersCpuUtilization } from '../constants';
 import { JoinMeetingInfo } from '../utils/api';
 import { useLogger } from 'amazon-chime-sdk-component-library-react';
-import { createBlob } from '../utils/background-replacement';
 
 type Props = {
   children: ReactNode;
@@ -28,7 +23,6 @@ interface AppStateValue {
   isVoiceFocusDesired: boolean;
   isVoiceFocusEnabled: boolean;
   videoTransformCpuUtilization: string;
-  imageBlob: Blob | undefined;
   isEchoReductionEnabled: boolean;
   meetingMode: MeetingMode;
   enableSimulcast: boolean;
@@ -36,13 +30,10 @@ interface AppStateValue {
   keepLastFrameWhenPaused: boolean;
   layout: Layout;
   joinInfo: JoinMeetingInfo | undefined;
-  backgroundReplacementOption: ReplacementOptions;
-  replacementOptionsList: ReplacementDropdownOptionType[];
   enableMaxContentShares: boolean;
-  /** The video transform (None/Blur/Replacement) selected before joining, so the
-   * in-meeting control can re-apply it instead of resetting to the plain device. */
-  videoTransformOption: VideoTransformOptions;
-  setVideoTransformOption: React.Dispatch<React.SetStateAction<VideoTransformOptions>>;
+  /** The selected background segmentation effect (persisted across preview → meeting). */
+  selectedEffect: string;
+  setSelectedEffect: React.Dispatch<React.SetStateAction<string>>;
   toggleTheme: () => void;
   toggleVoiceFocusDesired: () => void;
   setIsVoiceFocusEnabled: (enabled: boolean) => void;
@@ -58,10 +49,8 @@ interface AppStateValue {
   setMeetingId: React.Dispatch<React.SetStateAction<string>>;
   setLocalUserName: React.Dispatch<React.SetStateAction<string>>;
   setRegion: React.Dispatch<React.SetStateAction<string>>;
-  setBlob: (imageBlob: Blob) => void;
   skipDeviceSelection: boolean;
   toggleMeetingJoinDeviceSelection: () => void;
-  setBackgroundReplacementOption: React.Dispatch<React.SetStateAction<ReplacementOptions>>;
 }
 
 const AppStateContext = React.createContext<AppStateValue | null>(null);
@@ -98,44 +87,9 @@ export function AppStateProvider({ children }: Props) {
     return storedTheme || 'light';
   });
   const [videoTransformCpuUtilization, setCpuPercentage] = useState(VideoFiltersCpuUtilization.CPU40Percent);
-  const [imageBlob, setImageBlob] = useState<Blob | undefined>(undefined);
   const [skipDeviceSelection, setSkipDeviceSelection] = useState(false);
-  const [backgroundReplacementOption, setBackgroundReplacementOption] = useState<ReplacementOptions>(
-    ReplacementOptions.Blue
-  );
   const [enableMaxContentShares, setEnableMaxContentShares] = useState(false);
-  const [videoTransformOption, setVideoTransformOption] = useState<VideoTransformOptions>(
-    VideoTransformOptions.None
-  );
-
-  const replacementOptionsList: ReplacementDropdownOptionType[] = [
-    {
-      label: ReplacementOptions.Blue,
-      type: ReplacementType.Color,
-      value: '#0000ff',
-    },
-    {
-      label: ReplacementOptions.Beach,
-      type: ReplacementType.Image,
-      value: ReplacementOptions.Beach,
-    },
-  ];
-
-  useEffect(() => {
-    /* Load a canvas that will be used as the replacement image for Background Replacement */
-    async function loadImage() {
-      const option = replacementOptionsList.find((option) => backgroundReplacementOption === option.label);
-      if (option) {
-        const blob = await createBlob(option);
-        setImageBlob(blob);
-      } else {
-        logger.error(
-          `Error: Cannot find ${backgroundReplacementOption} in the replacementOptionsList: ${replacementOptionsList}`
-        );
-      }
-    }
-    loadImage();
-  }, [backgroundReplacementOption]);
+  const [selectedEffect, setSelectedEffect] = useState('none');
 
   const toggleTheme = (): void => {
     if (theme === 'light') {
@@ -175,10 +129,6 @@ export function AppStateProvider({ children }: Props) {
     setCpuPercentage(filterValue);
   };
 
-  const setBlob = (imageBlob: Blob): void => {
-    setImageBlob(imageBlob);
-  };
-
   const toggleEchoReduction = (): void => {
     setIsEchoReductionEnabled((current) => !current);
   };
@@ -192,7 +142,6 @@ export function AppStateProvider({ children }: Props) {
     localUserName,
     theme,
     videoTransformCpuUtilization,
-    imageBlob,
     isEchoReductionEnabled,
     isVoiceFocusDesired,
     isVoiceFocusEnabled,
@@ -217,16 +166,12 @@ export function AppStateProvider({ children }: Props) {
     setMeetingId,
     setLocalUserName,
     setRegion,
-    setBlob,
     skipDeviceSelection,
     toggleMeetingJoinDeviceSelection,
-    backgroundReplacementOption,
-    setBackgroundReplacementOption,
-    replacementOptionsList,
     enableMaxContentShares,
     toggleMaxContentShares,
-    videoTransformOption,
-    setVideoTransformOption,
+    selectedEffect,
+    setSelectedEffect,
   };
 
   return <AppStateContext.Provider value={providerValue}>{children}</AppStateContext.Provider>;

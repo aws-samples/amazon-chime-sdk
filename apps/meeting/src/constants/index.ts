@@ -3,6 +3,14 @@
 
 import { LogLevel } from 'amazon-chime-sdk-js';
 
+// Background Segmentation Effect Options
+import {
+  BackgroundSegmentationBlurStrength as BlurStrength,
+  ModelType,
+  ProcessorEffect,
+} from 'amazon-chime-sdk-js';
+import { EffectOption } from '../types';
+
 export const AMAZON_CHIME_VOICE_CONNECTOR_PHONE_NUMDER = '+17035550122';
 
 export const VIDEO_INPUT = {
@@ -55,3 +63,25 @@ export const SDK_LOG_LEVELS = {
 
 export const DATA_MESSAGE_LIFETIME_MS = 300000;
 export const DATA_MESSAGE_TOPIC = 'ChimeComponentLibraryDataMessage';
+
+// Different CPU Utilizations percentage options for initializing background segmentation processor
+export const VideoFiltersCpuUtilization = {
+  Disabled: '0',
+  CPU10Percent: '10',
+  CPU20Percent: '20',
+  CPU40Percent: '40',
+};
+
+export const EFFECT_OPTIONS: EffectOption[] = [
+  { label: 'None', value: 'none', config: null, modelType: ModelType.SELFIE_GENERAL },
+  { label: 'Blur Low (General)', value: 'blur-low-general', config: { type: ProcessorEffect.BLUR, blurStrength: BlurStrength.LOW }, modelType: ModelType.SELFIE_GENERAL },
+  { label: 'Blur Medium (General)', value: 'blur-medium-general', config: { type: ProcessorEffect.BLUR, blurStrength: BlurStrength.MEDIUM }, modelType: ModelType.SELFIE_GENERAL },
+  { label: 'Blur High (General)', value: 'blur-high-general', config: { type: ProcessorEffect.BLUR, blurStrength: BlurStrength.HIGH }, modelType: ModelType.SELFIE_GENERAL },
+  { label: 'Blur Low (Multiclass)', value: 'blur-low-multiclass', config: { type: ProcessorEffect.BLUR, blurStrength: BlurStrength.LOW }, modelType: ModelType.SELFIE_MULTICLASS },
+  { label: 'Blur Medium (Multiclass)', value: 'blur-medium-multiclass', config: { type: ProcessorEffect.BLUR, blurStrength: BlurStrength.MEDIUM }, modelType: ModelType.SELFIE_MULTICLASS },
+  { label: 'Blur High (Multiclass)', value: 'blur-high-multiclass', config: { type: ProcessorEffect.BLUR, blurStrength: BlurStrength.HIGH }, modelType: ModelType.SELFIE_MULTICLASS },
+  { label: 'Color Blue (General)', value: 'color-general', config: { type: ProcessorEffect.COLOR_REPLACEMENT, replacementColor: '#0000FF' }, modelType: ModelType.SELFIE_GENERAL },
+  { label: 'Color Blue (Multiclass)', value: 'color-multiclass', config: { type: ProcessorEffect.COLOR_REPLACEMENT, replacementColor: '#0000FF' }, modelType: ModelType.SELFIE_MULTICLASS },
+  { label: 'Image Beach (General)', value: 'image-general', config: { type: ProcessorEffect.IMAGE_REPLACEMENT, replacementImageURL: '' }, modelType: ModelType.SELFIE_GENERAL },
+  { label: 'Image Beach (Multiclass)', value: 'image-multiclass', config: { type: ProcessorEffect.IMAGE_REPLACEMENT, replacementImageURL: '' }, modelType: ModelType.SELFIE_MULTICLASS },
+];
