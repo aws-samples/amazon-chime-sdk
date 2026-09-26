@@ -1,9 +1,13 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import React, { PropsWithChildren } from 'react';
+import React, { PropsWithChildren, useEffect, useMemo } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import { AudioInputDevice, VoiceFocusTransformDevice } from 'amazon-chime-sdk-js';
+import {
+  AudioInputDevice,
+  DefaultDeviceController,
+  VoiceFocusTransformDevice,
+} from 'amazon-chime-sdk-js';
 import {
   BackgroundBlurProvider,
   BackgroundReplacementProvider,
@@ -22,7 +26,8 @@ import { VideoFiltersCpuUtilization } from '../../types';
 
 const MeetingProviderWithDeviceReplacement: React.FC<PropsWithChildren> = ({ children }) => {
   const { addVoiceFocus } = useVoiceFocus();
-  const { enableMaxContentShares } = useAppState();
+  const { enableMaxContentShares, isPreMeetingDeviceSetupAllowed, isVoiceFocusDesired } = useAppState();
+  const logger = useLogger();
 
   const onDeviceReplacement = (nextDevice: string, currentDevice: AudioInputDevice) => {
     if (currentDevice instanceof VoiceFocusTransformDevice) {
@@ -31,12 +36,35 @@ const MeetingProviderWithDeviceReplacement: React.FC<PropsWithChildren> = ({ chi
     return Promise.resolve(nextDevice);
   };
 
+  // Web Audio is fixed at construction, so derive it from the Voice Focus choice.
+  const deviceController = useMemo(
+    () =>
+      isPreMeetingDeviceSetupAllowed
+        ? new DefaultDeviceController(logger, {
+            enableWebAudio: isVoiceFocusDesired,
+          })
+        : undefined,
+    [isPreMeetingDeviceSetupAllowed, isVoiceFocusDesired, logger]
+  );
+
+  useEffect(() => {
+    return () => {
+      void deviceController?.destroy();
+    };
+  }, [deviceController]);
+
   const meetingConfigValue = {
     onDeviceReplacement: onDeviceReplacement as any,
     ...(enableMaxContentShares ? { maxContentShares: 2 } : {}),
+    ...(deviceController ? { deviceController } : {}),
   };
 
-  return <MeetingProvider {...meetingConfigValue}>{children}</MeetingProvider>;
+  // MeetingProvider captures the deviceController once, so key on its presence to remount on toggle.
+  return (
+    <MeetingProvider key={deviceController ? 'with-dc' : 'no-dc'} {...meetingConfigValue}>
+      {children}
+    </MeetingProvider>
+  );
 };
 
 const MeetingProviderWrapper: React.FC = () => {

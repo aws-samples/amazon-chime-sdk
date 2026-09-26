@@ -10,6 +10,7 @@ import {
   FormField,
   Heading,
   Input,
+  MeetingManagerJoinOptions,
   Modal,
   ModalBody,
   ModalHeader,
@@ -29,7 +30,6 @@ import RegionSelection from './RegionSelection';
 import { createGetAttendeeCallback, createMeetingAndAttendee, JoinMeetingInfo } from '../../utils/api';
 import { useAppState } from '../../providers/AppStateProvider';
 import { MeetingMode, VideoFiltersCpuUtilization } from '../../types';
-import { MeetingManagerJoinOptions } from 'amazon-chime-sdk-component-library-react/lib/providers/MeetingProvider/types';
 import meetingConfig from '../../meetingConfig';
 
 const VIDEO_TRANSFORM_FILTER_OPTIONS = [
@@ -70,6 +70,8 @@ const MeetingForm: React.FC = () => {
     toggleEchoReduction,
     setIsVoiceFocusEnabled,
     toggleMeetingJoinDeviceSelection,
+    isPreMeetingDeviceSetupAllowed,
+    togglePreMeetingDeviceSetupAllowed,
   } = useAppState();
   const [meetingErr, setMeetingErr] = useState(false);
   const [nameErr, setNameErr] = useState(false);
@@ -146,20 +148,34 @@ const MeetingForm: React.FC = () => {
       const isVoiceFocusEnabled = isVoiceFocusDesired && isVoiceFocusSupported === true;
       setIsVoiceFocusEnabled(isVoiceFocusEnabled);
 
+      if (meetingMode === MeetingMode.Spectator) {
+        const options: MeetingManagerJoinOptions = {
+          deviceLabels: DeviceLabels.None,
+          enableWebAudio: isVoiceFocusEnabled,
+          skipDeviceSelection,
+        };
+        await meetingManager.join(meetingSessionConfiguration as any, options);
+        await meetingManager.start();
+        navigate(`${routes.MEETING}/${meetingId}`);
+        setIsLoading(false);
+        return;
+      }
+
+      setMeetingMode(MeetingMode.Attendee);
+
+      if (isPreMeetingDeviceSetupAllowed) {
+        navigate(routes.DEVICE);
+        setIsLoading(false);
+        return;
+      }
+
       const options: MeetingManagerJoinOptions = {
-        deviceLabels: meetingMode === MeetingMode.Spectator ? DeviceLabels.None : DeviceLabels.AudioAndVideo,
+        deviceLabels: DeviceLabels.AudioAndVideo,
         enableWebAudio: isVoiceFocusEnabled,
         skipDeviceSelection,
       };
       await meetingManager.join(meetingSessionConfiguration as any, options);
-
-      if (meetingMode === MeetingMode.Spectator) {
-        await meetingManager.start();
-        navigate(`${routes.MEETING}/${meetingId}`);
-      } else {
-        setMeetingMode(MeetingMode.Attendee);
-        navigate(routes.DEVICE);
-      }
+      navigate(routes.DEVICE);
       setIsLoading(false);
     } catch (error) {
       updateErrorMessage((error as Error).message);
@@ -317,6 +333,14 @@ const MeetingForm: React.FC = () => {
         checked={skipDeviceSelection}
         onChange={toggleMeetingJoinDeviceSelection}
         infoText="Please select the devices manually to successfully join a meeting"
+      />
+      <FormField
+        field={Checkbox}
+        label="Set Up Devices Before Joining"
+        value=""
+        checked={isPreMeetingDeviceSetupAllowed}
+        onChange={togglePreMeetingDeviceSetupAllowed}
+        infoText="Preview and select devices on the setup page before the meeting is joined"
       />
       <FormField
         field={Checkbox}
