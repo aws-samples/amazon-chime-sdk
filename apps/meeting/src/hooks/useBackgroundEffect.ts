@@ -1,7 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import { useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Device,
   isVideoTransformDevice,
@@ -70,9 +70,16 @@ export const useBackgroundEffect = (
   const cpuUsagePercentage = parseInt(videoTransformCpuUtilization, 10) || 30;
 
   const [pendingEffect, setPendingEffect] = useState<string | null>(null);
-  // Tracks whether a processor is attached. Initialized from the persisted
-  // effect so entering the meeting with a preview effect is already active.
-  const isProcessorActiveRef = useRef(selectedEffect !== 'none');
+
+  useEffect(() => {
+    if (
+      !pendingEffect &&
+      !isVideoTransformDevice(selectedDevice) &&
+      selectedEffect !== 'none'
+    ) {
+      setSelectedEffect('none');
+    }
+  }, [selectedDevice, pendingEffect, selectedEffect, setSelectedEffect]);
 
   const applyDevice = async (device: VideoInputDevice): Promise<void> => {
     if (alwaysStart || isVideoEnabled) {
@@ -118,22 +125,18 @@ export const useBackgroundEffect = (
           current = intrinsicDevice;
         }
         await applyDevice(current);
-        isProcessorActiveRef.current = false;
         logger.info('[useBackgroundEffect] Effect set to None');
-      } else if (!isProcessorActiveRef.current) {
+      } else if (!isVideoTransformDevice(selectedDevice)) {
         // No processor yet — create a segmentation device and apply it.
-        let current: VideoInputDevice = selectedDevice;
-        if (isVideoTransformDevice(current)) {
-          const intrinsicDevice = await current.intrinsicDevice();
-          await current.stop();
-          current = intrinsicDevice;
-        }
-        const device = await createSegmentationDevice(current as Device, config, {
-          modelType: option.modelType,
-          cpuUsagePercentage,
-        });
+        const device = await createSegmentationDevice(
+          selectedDevice as Device,
+          config,
+          {
+            modelType: option.modelType,
+            cpuUsagePercentage,
+          }
+        );
         await applyDevice(device);
-        isProcessorActiveRef.current = true;
         logger.info(
           `[useBackgroundEffect] Processor created. Effect: ${config.type}, Model: ${option.modelType}, CPU: ${cpuUsagePercentage}%`
         );
