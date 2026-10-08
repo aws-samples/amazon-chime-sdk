@@ -1,0 +1,47 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+
+Metadata:
+  AWS::ServerlessRepo::Application:
+    Name: amazon-chime-sdk-pstn-audio-basic-ivr
+    Description: Amazon Chime PSTN Audio Basic IVR Handler
+    Author: Amazon Chime SDK
+    SpdxLicenseId: MIT-0
+    LicenseUrl: LICENSE.md
+    ReadmeUrl: README.md
+    HomePageUrl: https://github.com/aws-samples/amazon-chime-sdk/blob/main/utils/pstn-audio-lambdas/nodejs/base-handler
+    SemanticVersion: 0.0.3
+    SourceCodeUrl: https://github.com/aws-samples/amazon-chime-sdk/blob/main/utils/pstn-audio-lambdas/nodejs/base-handler
+
+Globals:
+  Function:
+    Timeout: 3
+
+Resources:
+  ChimeSDKIvr:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: app.lambdaHandler
+      Runtime: nodejs16.x
+      Timeout: 1
+      Architectures:
+        - arm64
+      Environment:
+        Variables:
+          BRIDGE_NUMBER: ''
+          MAIN_MENU: ''
+          WELCOME_MESSAGE: ''
+          ADDRESS: ''
+          HOURS_OF_OPERATION: ''
+          WAV_BUCKET: ''
+          TONE_KEY: ''
+
+Outputs:
+  ChimeSDKIvr:
+    Description: 'Chime SDK IVR Lambda Function ARN'
+    Value: !GetAtt ChimeSDKIvr.Arn
+  ChimeSDKIvrIamRole:
+    Description: 'Chime SDK IVR Role created for ChimeSDKIvr function'
+    Value: !GetAtt ChimeSDKIvr.Arn
