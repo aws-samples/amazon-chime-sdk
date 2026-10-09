@@ -10,6 +10,7 @@ import {
   FormField,
   Heading,
   Input,
+  MeetingManagerJoinOptions,
   Modal,
   ModalBody,
   ModalHeader,
@@ -30,7 +31,6 @@ import { createGetAttendeeCallback, createMeetingAndAttendee, JoinMeetingInfo } 
 import { useAppState } from '../../providers/AppStateProvider';
 import { MeetingMode } from '../../types';
 import { VideoFiltersCpuUtilization } from '../../constants';
-import { MeetingManagerJoinOptions } from 'amazon-chime-sdk-component-library-react/lib/providers/MeetingProvider/types';
 import meetingConfig from '../../meetingConfig';
 
 const VIDEO_TRANSFORM_FILTER_OPTIONS = [
@@ -71,6 +71,8 @@ const MeetingForm: React.FC = () => {
     toggleEchoReduction,
     setIsVoiceFocusEnabled,
     toggleMeetingJoinDeviceSelection,
+    isPreMeetingDeviceSetupAllowed,
+    togglePreMeetingDeviceSetupAllowed,
   } = useAppState();
   const [meetingErr, setMeetingErr] = useState(false);
   const [nameErr, setNameErr] = useState(false);
@@ -152,15 +154,27 @@ const MeetingForm: React.FC = () => {
         enableWebAudio: isVoiceFocusEnabled,
         skipDeviceSelection,
       };
-      await meetingManager.join(meetingSessionConfiguration as any, options);
 
       if (meetingMode === MeetingMode.Spectator) {
+        await meetingManager.join(meetingSessionConfiguration as any, options);
         await meetingManager.start();
         navigate(`${routes.MEETING}/${meetingId}`);
-      } else {
-        setMeetingMode(MeetingMode.Attendee);
-        navigate(routes.DEVICE);
+        setIsLoading(false);
+        return;
       }
+
+      setMeetingMode(MeetingMode.Attendee);
+
+      // Opt-in: defer join to the device-setup page so devices are selected on the persistent
+      // controller before the meeting session is created.
+      if (isPreMeetingDeviceSetupAllowed) {
+        navigate(routes.DEVICE);
+        setIsLoading(false);
+        return;
+      }
+
+      await meetingManager.join(meetingSessionConfiguration as any, options);
+      navigate(routes.DEVICE);
       setIsLoading(false);
     } catch (error) {
       updateErrorMessage((error as Error).message);
@@ -318,6 +332,14 @@ const MeetingForm: React.FC = () => {
         checked={skipDeviceSelection}
         onChange={toggleMeetingJoinDeviceSelection}
         infoText="Please select the devices manually to successfully join a meeting"
+      />
+      <FormField
+        field={Checkbox}
+        label="Set Up Devices Before Joining"
+        value=""
+        checked={isPreMeetingDeviceSetupAllowed}
+        onChange={togglePreMeetingDeviceSetupAllowed}
+        infoText="Preview and select devices on the setup page before the meeting is joined"
       />
       <FormField
         field={Checkbox}
