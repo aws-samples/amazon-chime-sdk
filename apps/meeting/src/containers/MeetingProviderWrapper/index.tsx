@@ -1,15 +1,12 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import React, { PropsWithChildren, useEffect, useMemo } from 'react';
+import React, { PropsWithChildren } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import { AudioInputDevice, DefaultDeviceController, VoiceFocusTransformDevice } from 'amazon-chime-sdk-js';
-import {
-  MeetingProvider,
-  useLogger,
-  useVoiceFocus,
-} from 'amazon-chime-sdk-component-library-react';
+import { AudioInputDevice, VoiceFocusTransformDevice } from 'amazon-chime-sdk-js';
+import { MeetingProvider, useVoiceFocus } from 'amazon-chime-sdk-component-library-react';
 import { useAppState } from '../../providers/AppStateProvider';
+import usePreMeetingDeviceController from '../../hooks/usePreMeetingDeviceController';
 
 import routes from '../../constants/routes';
 import { NavigationProvider } from '../../providers/NavigationProvider';
@@ -19,8 +16,7 @@ import MeetingEventObserver from '../MeetingEventObserver';
 
 const MeetingProviderWithDeviceReplacement: React.FC<PropsWithChildren> = ({ children }) => {
   const { addVoiceFocus } = useVoiceFocus();
-  const { enableMaxContentShares, isPreMeetingDeviceSetupAllowed, isVoiceFocusDesired } = useAppState();
-  const logger = useLogger();
+  const { enableMaxContentShares, isVoiceFocusDesired } = useAppState();
 
   const onDeviceReplacement = (nextDevice: string, currentDevice: AudioInputDevice) => {
     if (currentDevice instanceof VoiceFocusTransformDevice) {
@@ -29,28 +25,11 @@ const MeetingProviderWithDeviceReplacement: React.FC<PropsWithChildren> = ({ chi
     return Promise.resolve(nextDevice);
   };
 
-  // Opt-in pre-meeting device setup: build one persistent DeviceController so the device
-  // selection survives leave/rejoin. Web Audio is fixed at construction, so derive it from
-  // the Voice Focus choice.
-  const deviceController = useMemo(
-    () =>
-      isPreMeetingDeviceSetupAllowed
-        ? new DefaultDeviceController(logger, {
-            enableWebAudio: isVoiceFocusDesired,
-          })
-        : undefined,
-    [isPreMeetingDeviceSetupAllowed, isVoiceFocusDesired, logger]
-  );
-
-  useEffect(() => {
-    return () => {
-      void deviceController?.destroy();
-    };
-  }, [deviceController]);
+  const deviceController = usePreMeetingDeviceController();
 
   // MeetingProvider captures the deviceController once at mount, so remount whenever the controller
   // is created/destroyed or rebuilt because Voice Focus flipped Web Audio (fixed at construction).
-  const meetingProviderKey = `persistent-${isPreMeetingDeviceSetupAllowed}-webaudio-${isVoiceFocusDesired}`;
+  const meetingProviderKey = `persistent-${!!deviceController}-webaudio-${isVoiceFocusDesired}`;
 
   const meetingConfigValue = {
     onDeviceReplacement: onDeviceReplacement as any,

@@ -95,6 +95,8 @@ export async function endMeeting(title: string): Promise<void> {
   }
 }
 
+export const normalizeMeetingId = (meetingId: string): string => meetingId.trim().toLocaleLowerCase();
+
 export const createGetAttendeeCallback = (meetingId: string) => (
   chimeAttendeeId: string
 ): Promise<GetAttendeeResponse> => getAttendee(meetingId, chimeAttendeeId);
