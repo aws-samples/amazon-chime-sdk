@@ -4,6 +4,7 @@
 import React, { useEffect } from 'react';
 import { DeviceLabels, Heading, useMeetingManager } from 'amazon-chime-sdk-component-library-react';
 import MeetingJoinDetails from '../../containers/MeetingJoinDetails';
+import DevicePermissionPrompt from '../../containers/DevicePermissionPrompt';
 import { StyledLayout } from './Styled';
 import DeviceSelection from '../../components/DeviceSelection';
 import { useAppState } from '../../providers/AppStateProvider';
@@ -27,6 +28,7 @@ const DeviceSetup: React.FC = () => {
       </Heading>
       <DeviceSelection />
       <MeetingJoinDetails />
+      <DevicePermissionPrompt />
     </StyledLayout>
   );
 };
