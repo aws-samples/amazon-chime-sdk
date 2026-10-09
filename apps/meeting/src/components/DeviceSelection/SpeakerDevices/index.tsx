@@ -1,7 +1,7 @@
 // Copyright 2020-2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import React, { useState } from 'react';
+import React from 'react';
 import {
   SpeakerSelection,
   SecondaryButton,
@@ -12,19 +12,14 @@ import TestSound from '../../../utils/TestSound';
 
 const SpeakerDevices = () => {
   const { selectedDevice } = useAudioOutputs();
-  const [selectedOutput, setSelectedOutput] = useState(selectedDevice);
-
-  const handleChange = (deviceId: string): void => {
-    setSelectedOutput(deviceId);
-  };
 
   const handleTestSpeaker = () => {
-    new TestSound(selectedOutput);
+    new TestSound(selectedDevice);
   };
 
   return (
     <div>
-      <SpeakerSelection onChange={handleChange} />
+      <SpeakerSelection />
       <SecondaryButton label="Test speakers" onClick={handleTestSpeaker} />
     </div>
   );
