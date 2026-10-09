@@ -48,15 +48,18 @@ const MeetingProviderWithDeviceReplacement: React.FC<PropsWithChildren> = ({ chi
     };
   }, [deviceController]);
 
+  // MeetingProvider captures the deviceController once at mount, so remount whenever the controller
+  // is created/destroyed or rebuilt because Voice Focus flipped Web Audio (fixed at construction).
+  const meetingProviderKey = `persistent-${isPreMeetingDeviceSetupAllowed}-webaudio-${isVoiceFocusDesired}`;
+
   const meetingConfigValue = {
     onDeviceReplacement: onDeviceReplacement as any,
     ...(enableMaxContentShares ? { maxContentShares: 2 } : {}),
     ...(deviceController ? { deviceController } : {}),
   };
 
-  // MeetingProvider captures the deviceController once, so key on its presence to remount on toggle.
   return (
-    <MeetingProvider key={deviceController ? 'with-dc' : 'no-dc'} {...meetingConfigValue}>
+    <MeetingProvider key={meetingProviderKey} {...meetingConfigValue}>
       {children}
     </MeetingProvider>
   );
