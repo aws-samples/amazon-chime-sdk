@@ -18,6 +18,7 @@ import { MeetingSessionConfiguration } from 'amazon-chime-sdk-js';
 
 import routes from '../constants/routes';
 import Card from '../components/Card';
+import { createGetAttendeeCallback } from '../utils/api';
 import { useAppState } from '../providers/AppStateProvider';
 
 const MeetingJoinDetails = () => {
@@ -33,6 +34,8 @@ const MeetingJoinDetails = () => {
 
     try {
       if (isPreMeetingDeviceSetupAllowed) {
+        // MeetingProvider remounted when the device controller was created, so set this again.
+        meetingManager.getAttendee = createGetAttendeeCallback(meetingId.trim().toLocaleLowerCase());
         const meetingSessionConfiguration = new MeetingSessionConfiguration(joinInfo!.Meeting, joinInfo!.Attendee);
         const options: MeetingManagerJoinOptions = {
           deviceLabels: DeviceLabels.AudioAndVideo,

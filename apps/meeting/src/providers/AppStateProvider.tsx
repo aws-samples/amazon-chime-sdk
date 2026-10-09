@@ -53,6 +53,8 @@ interface AppStateValue {
   toggleMeetingJoinDeviceSelection: () => void;
   isPreMeetingDeviceSetupAllowed: boolean;
   togglePreMeetingDeviceSetupAllowed: () => void;
+  hasEnteredDeviceSetup: boolean;
+  setHasEnteredDeviceSetup: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const AppStateContext = React.createContext<AppStateValue | null>(null);
@@ -91,6 +93,7 @@ export function AppStateProvider({ children }: Props) {
   const [videoTransformCpuUtilization, setCpuPercentage] = useState(VideoFiltersCpuUtilization.CPU40Percent);
   const [skipDeviceSelection, setSkipDeviceSelection] = useState(false);
   const [isPreMeetingDeviceSetupAllowed, setIsPreMeetingDeviceSetupAllowed] = useState(false);
+  const [hasEnteredDeviceSetup, setHasEnteredDeviceSetup] = useState(false);
   const [enableMaxContentShares, setEnableMaxContentShares] = useState(false);
   const [selectedEffect, setSelectedEffect] = useState('none');
 
@@ -110,6 +113,7 @@ export function AppStateProvider({ children }: Props) {
 
   const togglePreMeetingDeviceSetupAllowed = (): void => {
     setIsPreMeetingDeviceSetupAllowed((current) => !current);
+    setHasEnteredDeviceSetup(false);
   };
 
   const toggleVoiceFocusDesired = (): void => {
@@ -177,6 +181,8 @@ export function AppStateProvider({ children }: Props) {
     toggleMeetingJoinDeviceSelection,
     isPreMeetingDeviceSetupAllowed,
     togglePreMeetingDeviceSetupAllowed,
+    hasEnteredDeviceSetup,
+    setHasEnteredDeviceSetup,
     enableMaxContentShares,
     toggleMaxContentShares,
     selectedEffect,

@@ -19,7 +19,8 @@ import MeetingEventObserver from '../MeetingEventObserver';
 
 const MeetingProviderWithDeviceReplacement: React.FC<PropsWithChildren> = ({ children }) => {
   const { addVoiceFocus } = useVoiceFocus();
-  const { enableMaxContentShares, isPreMeetingDeviceSetupAllowed, isVoiceFocusDesired } = useAppState();
+  const { enableMaxContentShares, isPreMeetingDeviceSetupAllowed, hasEnteredDeviceSetup, isVoiceFocusDesired } =
+    useAppState();
   const logger = useLogger();
 
   const onDeviceReplacement = (nextDevice: string, currentDevice: AudioInputDevice) => {
@@ -30,16 +31,18 @@ const MeetingProviderWithDeviceReplacement: React.FC<PropsWithChildren> = ({ chi
   };
 
   // Opt-in pre-meeting device setup: build one persistent DeviceController so the device
-  // selection survives leave/rejoin. Web Audio is fixed at construction, so derive it from
-  // the Voice Focus choice.
+  // selection survives leave/rejoin. It is created only after the device-setup page is reached,
+  // because MeetingProvider enumerates devices (and may prompt) as soon as it has a controller.
+  // Web Audio is fixed at construction, so derive it from the Voice Focus choice.
+  const isPersistentControllerActive = isPreMeetingDeviceSetupAllowed && hasEnteredDeviceSetup;
   const deviceController = useMemo(
     () =>
-      isPreMeetingDeviceSetupAllowed
+      isPersistentControllerActive
         ? new DefaultDeviceController(logger, {
             enableWebAudio: isVoiceFocusDesired,
           })
         : undefined,
-    [isPreMeetingDeviceSetupAllowed, isVoiceFocusDesired, logger]
+    [isPersistentControllerActive, isVoiceFocusDesired, logger]
   );
 
   useEffect(() => {
@@ -50,7 +53,7 @@ const MeetingProviderWithDeviceReplacement: React.FC<PropsWithChildren> = ({ chi
 
   // MeetingProvider captures the deviceController once at mount, so remount whenever the controller
   // is created/destroyed or rebuilt because Voice Focus flipped Web Audio (fixed at construction).
-  const meetingProviderKey = `persistent-${isPreMeetingDeviceSetupAllowed}-webaudio-${isVoiceFocusDesired}`;
+  const meetingProviderKey = `persistent-${isPersistentControllerActive}-webaudio-${isVoiceFocusDesired}`;
 
   const meetingConfigValue = {
     onDeviceReplacement: onDeviceReplacement as any,

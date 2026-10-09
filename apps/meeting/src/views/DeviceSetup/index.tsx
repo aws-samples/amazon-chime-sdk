@@ -10,15 +10,22 @@ import { useAppState } from '../../providers/AppStateProvider';
 
 const DeviceSetup: React.FC = () => {
   const meetingManager = useMeetingManager();
-  const { isPreMeetingDeviceSetupAllowed } = useAppState();
+  const { isPreMeetingDeviceSetupAllowed, hasEnteredDeviceSetup, setHasEnteredDeviceSetup } = useAppState();
 
-  // Enumerate, prompt for permission, and start default devices so the pickers populate before joining.
   useEffect(() => {
-    if (isPreMeetingDeviceSetupAllowed) {
-      meetingManager.invokeDeviceProvider(DeviceLabels.AudioAndVideo);
-      meetingManager.listAndSelectDevices(DeviceLabels.AudioAndVideo);
+    if (!isPreMeetingDeviceSetupAllowed) {
+      return;
     }
-  }, [meetingManager, isPreMeetingDeviceSetupAllowed]);
+    // The device controller is created only once this page is reached, so the home form never
+    // prompts for permission. Setting the flag remounts MeetingProvider with the controller.
+    if (!hasEnteredDeviceSetup) {
+      setHasEnteredDeviceSetup(true);
+      return;
+    }
+    // Enumerate, prompt for permission, and start default devices so the pickers populate before joining.
+    meetingManager.invokeDeviceProvider(DeviceLabels.AudioAndVideo);
+    meetingManager.listAndSelectDevices(DeviceLabels.AudioAndVideo);
+  }, [meetingManager, isPreMeetingDeviceSetupAllowed, hasEnteredDeviceSetup]);
 
   return (
     <StyledLayout>
