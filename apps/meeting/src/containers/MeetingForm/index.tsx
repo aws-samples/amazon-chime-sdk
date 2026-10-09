@@ -332,7 +332,7 @@ const MeetingForm: React.FC = () => {
       />
       <FormField
         field={Checkbox}
-        label="Skip Meeting Join Device Selection"
+        label="Skip Auto Device Selection on Join"
         value=""
         checked={skipDeviceSelection}
         onChange={toggleMeetingJoinDeviceSelection}
