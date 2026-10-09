@@ -27,7 +27,12 @@ import Card from '../../components/Card';
 import Spinner from '../../components/icons/Spinner';
 import DevicePermissionPrompt from '../DevicePermissionPrompt';
 import RegionSelection from './RegionSelection';
-import { createGetAttendeeCallback, createMeetingAndAttendee, JoinMeetingInfo } from '../../utils/api';
+import {
+  createGetAttendeeCallback,
+  createMeetingAndAttendee,
+  JoinMeetingInfo,
+  normalizeMeetingId,
+} from '../../utils/api';
 import { useAppState } from '../../providers/AppStateProvider';
 import { MeetingMode } from '../../types';
 import { VideoFiltersCpuUtilization } from '../../constants';
@@ -184,7 +189,7 @@ const MeetingForm: React.FC = () => {
 
   const handleJoinMeeting = async (e: React.FormEvent) => {
     e.preventDefault();
-    const id = meetingId.trim().toLocaleLowerCase();
+    const id = normalizeMeetingId(meetingId);
     const attendeeName = localUserName.trim();
 
     if (!validateInput(id, attendeeName)) {
