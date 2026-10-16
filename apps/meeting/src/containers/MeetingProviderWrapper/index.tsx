@@ -4,7 +4,13 @@
 import React, { PropsWithChildren } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { AudioInputDevice, VoiceFocusTransformDevice } from 'amazon-chime-sdk-js';
-import { MeetingProvider, useVoiceFocus } from 'amazon-chime-sdk-component-library-react';
+import {
+  BackgroundBlurProvider,
+  BackgroundReplacementProvider,
+  MeetingProvider,
+  useLogger,
+  useVoiceFocus,
+} from 'amazon-chime-sdk-component-library-react';
 import { useAppState } from '../../providers/AppStateProvider';
 import usePreMeetingDeviceController from '../../hooks/usePreMeetingDeviceController';
 
@@ -13,6 +19,7 @@ import { NavigationProvider } from '../../providers/NavigationProvider';
 import NoMeetingRedirect from '../NoMeetingRedirect';
 import { Meeting, Home, DeviceSetup } from '../../views';
 import MeetingEventObserver from '../MeetingEventObserver';
+import { VideoFiltersCpuUtilization } from '../../types';
 
 const MeetingProviderWithDeviceReplacement: React.FC<PropsWithChildren> = ({ children }) => {
   const { addVoiceFocus } = useVoiceFocus();
@@ -45,6 +52,11 @@ const MeetingProviderWithDeviceReplacement: React.FC<PropsWithChildren> = ({ chi
 };
 
 const MeetingProviderWrapper: React.FC = () => {
+  const { videoTransformCpuUtilization, imageBlob } = useAppState();
+  const logger = useLogger();
+
+  const isFilterEnabled = videoTransformCpuUtilization !== VideoFiltersCpuUtilization.Disabled;
+
   const getMeetingProviderWrapper = () => {
     return (
       <>
@@ -74,11 +86,32 @@ const MeetingProviderWrapper: React.FC = () => {
     );
   };
 
-  return (
-    <MeetingProviderWithDeviceReplacement>
-      {getMeetingProviderWrapper()}
-    </MeetingProviderWithDeviceReplacement>
-  );
+  const getWrapperWithVideoFilter = (children: React.ReactNode) => {
+    let filterCPUUtilization = parseInt(videoTransformCpuUtilization, 10);
+    if (!filterCPUUtilization) {
+      filterCPUUtilization = 40;
+    }
+    console.log(`Using ${filterCPUUtilization} background blur and replacement`);
+    return (
+      <BackgroundBlurProvider options={{ filterCPUUtilization, logger }}>
+        <BackgroundReplacementProvider options={{ imageBlob, filterCPUUtilization, logger }}>
+          {children}
+        </BackgroundReplacementProvider>
+      </BackgroundBlurProvider>
+    );
+  };
+
+  const getMeetingProviderWithFeatures = (): React.ReactNode => {
+    const baseWrapper = getMeetingProviderWrapper();
+
+    return (
+      <MeetingProviderWithDeviceReplacement>
+        {isFilterEnabled ? getWrapperWithVideoFilter(baseWrapper) : baseWrapper}
+      </MeetingProviderWithDeviceReplacement>
+    );
+  };
+
+  return <>{imageBlob === undefined ? <div>Loading Assets</div> : getMeetingProviderWithFeatures()}</>;
 };
 
 const MeetingModeSelector: React.FC = () => {
