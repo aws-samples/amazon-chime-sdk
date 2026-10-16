@@ -23,7 +23,7 @@ import { StyledControls } from './Styled';
 import DevicePermissionControl from '../DevicePermissionControl/DevicePermissionControl';
 import { useAppState } from '../../providers/AppStateProvider';
 import VideoInputTransformControl from '../../components/MeetingControls/VideoInputTransformControl';
-import { VideoFiltersCpuUtilization } from '../../constants';
+import { VideoFiltersCpuUtilization } from '../../types';
 
 const DynamicMeetingControls = () => {
   const { toggleNavbar, closeRoster, showRoster } = useNavigation();

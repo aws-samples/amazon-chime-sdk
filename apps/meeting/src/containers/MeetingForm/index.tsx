@@ -34,8 +34,7 @@ import {
   normalizeMeetingId,
 } from '../../utils/api';
 import { useAppState } from '../../providers/AppStateProvider';
-import { MeetingMode } from '../../types';
-import { VideoFiltersCpuUtilization } from '../../constants';
+import { MeetingMode, VideoFiltersCpuUtilization } from '../../types';
 import meetingConfig from '../../meetingConfig';
 
 const VIDEO_TRANSFORM_FILTER_OPTIONS = [
